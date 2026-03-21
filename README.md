@@ -1,4 +1,4 @@
-# 🛡️ RyDit Language - v0.1.9 Checkpoint 100 Tests
+# 🛡️ RyDit Motor gaming Language scripting  - v0.1.9 Checkpoint 110 Tests
 
 **Versión:** v0.1.9 (Sesión 26 - Checkpoint 100 Tests - COMPLETADA)
 **Fecha:** 2026-03-20
