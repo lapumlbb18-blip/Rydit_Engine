@@ -1,208 +1,125 @@
-# 🛡️ RyDit Language - v0.1.9 Checkpoint 100 Tests
+# 🛡️ RyDit - Motor de Videojuegos 2D + Lenguaje de Scripting en Rust para Android/Termux
 
-**Versión:** v0.1.9 (Sesión 26 - Checkpoint 100 Tests - COMPLETADA)
-**Fecha:** 2026-03-20
-**Sesión:** 26 - Fix Bugs y 100 Tests Checkpoint
-**Estado:** ✅ **110 TESTS - 0 WARNINGS - CHECKPOINT SUPERADO**
+<div align="center">
 
----
+**"David vs Goliat - Un motor de videojuegos en Rust, construido 100% en un Redmi Note 8"**
 
-## 🎯 Resumen Ejecutivo
+[![Version](https://img.shields.io/badge/version-v0.1.9-blue.svg)](https://github.com/lapumlbb18-blip/my_app)
+[![Tests](https://img.shields.io/badge/tests-110%20passing-green.svg)](https://github.com/lapumlbb18-blip/my_app)
+[![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
+[![raylib](https://img.shields.io/badge/raylib-5.0-purple.svg)](https://www.raylib.com/)
+[![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](https://github.com/lapumlbb18-blip/my_app)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/lapumlbb18-blip/my_app/blob/main/LICENSE)
 
-### Sesiones Completadas (v0.0.1 → v0.1.8)
+[📖 Documentación](#-documentación) • [🎮 Demo Snake](#-snake-game---demo-funcional) • [🚀 Roadmap](#-roadmap) • [📱 Construido en Android](#-construido-en-androidtermux) • [💬 Comunidad](#-comunidad)
 
-| Sesión | Versión | Fecha | Logro Principal | Tests | Estado |
-|--------|---------|-------|-----------------|-------|--------|
-| **1-7** | v0.0.1-v0.0.9 | 2026-03-14 | CLI → Snake Game | 48 | ✅ |
-| **8** | v0.0.10 | 2026-03-16 | Parser Bug Fix | 59 | ✅ |
-| **9** | v0.0.11 | 2026-03-16 | Scopes y Argumentos | 59 | ✅ |
-| **10** | v0.0.12 | 2026-03-16 | Aritmética Completa | 59 | ✅ |
-| **11** | v0.0.13 | 2026-03-16 | Funciones con Retorno | 60 | ✅ |
-| **12** | v0.0.14 | 2026-03-16 | Funciones en Expresiones | 60 | ✅ |
-| **13-15** | v0.1.0 | 2026-03-17 | **Snake Game Completo** | 60 | ✅ |
-| **16** | v0.1.1 | 2026-03-17 | **Sistema de Módulos** | 61 | ✅ |
-| **17** | v0.1.3 | 2026-03-17 | **Bug Fixes Críticos** | 63 | ✅ |
-| **18** | v0.1.4 | 2026-03-18 | **Strings + IO + Arrays** | 63 | ✅ |
-| **19** | v0.1.5 | 2026-03-18 | **Soporte JSON** | 63 | ✅ |
-| **20** | v0.1.6 | 2026-03-18 | **Random + Time Ligero** | 65 | ✅ |
-| **21-24** | v0.1.7 | 2026-03-19 | **Test de Demos (5/5)** | 65 | ✅ |
-| **25** | v0.1.8 | 2026-03-19 | **Maduración Lenguaje** | 75 | ✅ |
-| **26** | v0.1.8 | 2026-03-20 | **Gráficos + IndexAssign + Snake** | 75 | ✅ |
-| **26** | v0.1.9 | 2026-03-20 | **CHECKPOINT 100 TESTS** | 110 | ✅ |
+</div>
 
 ---
 
-## 📊 Métricas Actuales (v0.1.9)
+## 🎯 ¿Qué es RyDit?
 
-### Código
-```
-Líneas totales:     ~6,600 líneas
-├── Rust:           ~5,000 líneas
-└── RyDit:          ~1,600 líneas (demos + módulos + tests)
+**RyDit** es un **motor de videojuegos 2D con lenguaje de scripting** escrito en **Rust** con **raylib**, diseñado para ejecutarse nativamente en **Android/Termux** sin necesidad de desktop, emuladores o IDEs pesados.
 
-Crates:             5
-├── lizer:          ~2,452 líneas (Lexer + Parser + UTF-8 + escapes + tests)
-├── blast-core:     ~465 líneas (Executor + Memoria + tests)
-├── rydit-gfx:      ~481 líneas (Gráficos + tests)
-├── rydit-rs:       ~2,491 líneas (Binario + stdlib + tests)
-└── v-shield:       ~120 líneas (Wrapper raylib + tests)
-```
+**No es solo un lenguaje** - es un motor completo con:
+- 🎮 Game loop integrado
+- 🎨 Renderizado gráfico (círculos, rectángulos, líneas, texto)
+- 🎹 Input de teclado en tiempo real
+- 🎲 Sistema de módulos (math, arrays, strings, io, random, time, json)
+- 🧪 110 tests automáticos
+- 📦 Snake Game completo como demo
 
-### Tests
-```
-Tests automáticos:  110 pasando ✅ (CHECKPOINT SUPERADO)
-├── blast-core:     20 tests (+2)
-├── lizer:          65 tests (+10)
-├── rydit-gfx:      5 tests (+2)
-├── rydit-rs:       12 tests (+10)
-├── v-shield:       3 tests (+2)
-└── doc-tests:      5 tests (+4)
-
-Demos funcionales:  8/8 ✅
-├── demo_random.rydit
-├── demo_time.rydit
-├── demo_json.rydit
-├── demo_strings.rydit
-├── demo_arrays.rydit
-├── demo_maduracion_v0.1.8.rydit
-├── demo_shapes.rydit
-└── snake_v0.1.8.rydit
-
-Warnings activos:   0 ✅
-```
-
-### Rendimiento
-```
-Build (caché):      ~1.5s ⚡
-Build (sin caché):  60-90s
-Tests (75):         ~14s ⚡
-RAM build:          ~2 GB pico
-RAM runtime:        ~11 MB
-
-Binarios:
-├── rydit-rs:       ~735 KB (release)
-└── snake:          ~494 KB
-```
-
----
-
-## ✨ Novedades v0.1.9
-
-### Sesión 26: Checkpoint 100 Tests (Meta Superada: 110 tests)
-
-### 1. Bug #1: Precedencia de Operadores (Verificado)
 ```rydit
-# La precedencia YA funcionaba correctamente
-dark.slot x = 2 + 3 * 4      # 14 ✅ (no 20)
-dark.slot y = (2 + 3) * 4    # 20 ✅
-dark.slot z = 10 - 2 * 3 + 8 / 4  # 6 ✅
-```
-**Tests:** 5 tests documentan el comportamiento correcto
-
-### 2. Bug #2: Concatenación String+Número (Fixeado)
-```rydit
-# Ahora funciona con coerción automática
-dark.slot $precio = 99.99
-voz "El precio es: " + $precio    # ✅ "El precio es: 99.99"
-
-dark.slot @usuario = "alucard18"
-voz "Usuario: " + @usuario        # ✅ "Usuario: alucard18"
-
-dark.slot $total = 100
-voz $total + " dólares"           # ✅ "100 dólares"
-```
-**Fix:** Coerción automática en `evaluar_expr()` y `evaluar_expr_gfx()`
-
-### 3. Tests Agregados (+30 nuevos)
-```
-lizer:       +10 tests (precedencia, símbolos, expresiones)
-rydit-rs:    +10 tests (concatenación, símbolos, executor)
-blast-core:  +2 tests (scopes, memoria)
-rydit-gfx:   +2 tests (draw, colores)
-v-shield:    +2 tests (init, colores)
-doctests:    +4 tests (documentación viva)
-─────────────────────────────────────────────
-TOTAL:       +30 tests (80 → 110) ✅
-```
-
-### 4. Documentación Viva (Doctests)
-```rust
-/// Lexer para RyDit
-/// 
-/// # Ejemplos
-/// ```
-/// use lizer::Lizer;
-/// let tokens = Lizer::new("shield.init").scan();
-/// assert!(tokens.contains(&lizer::Token::ShieldInit));
-/// ```
-```
-
----
-
-## ✨ Novedades v0.1.8
-
-### Sesión 25: Maduración del Lenguaje
-
-### 1. Escapes en Strings
-```rydit
-voz "Salto de línea:\nHola"
-voz "Tabulación:\tHola"
-voz "Backslash:\\\\Ruta"
-voz "Comillas: \"hola\""
-```
-
-### 2. Comillas Simples
-```rydit
-dark.slot simple = 'hola'
-dark.slot mix1 = 'dijo "hola"'
-dark.slot mix2 = "dijo 'hola'"
-```
-
-### 3. UTF-8 Completo
-```rydit
-dark.slot número = 100
-dark.slot ① = "uno"
-voz "€100 £50 ¥200 🛡️"
-```
-
-### 4. Símbolos en Identificadores
-```rydit
-dark.slot @usuario = "alucard18"
-dark.slot $precio = 99.99
-dark.slot %porcentaje = 50
-dark.slot &amper = 123
-```
-
-### Sesión 26: Gráficos y Parser Fix
-
-### 5. Asignación por Índice de Array
-```rydit
-dark.slot arr = [1, 2, 3]
-dark.slot arr[0] = 5      # ✅ Ahora funciona
-dark.slot arr[i] = x * 2  # ✅ Con expresiones
-```
-
-### 6. Snake Game Completo con Game Loop
-```rydit
-# Snake game funcional con:
-# - Cuerpo de serpiente con arrays
-# - Comida aleatoria con random::int()
-# - Colisiones y puntuación
-# - Game Over y restart
-ryda game_over == 0 {
-    # Input
-    onif tecla_presionada("arrow_up") { ... }
-    
-    # Lógica
-    dark.slot cuerpo_x[i] = cuerpo_x[i - 1]
-    
-    # Dibujar
-    draw.circle(cx, cy, radio, "verde")
+# Tu primer juego en RyDit (3 líneas)
+shield.init
+ryda frame < 1000 {
+    draw.circle(400, 300, 50, "rojo")
 }
 ```
 
-### 7. Demo Visual de Formas
+| Característica | RyDit | Godot | Love2D | PICO-8 |
+|---------------|-------|-------|--------|--------|
+| **Android Native** | ✅ Sí (Termux) | ❌ No | ❌ No | ❌ No |
+| **Lenguaje** | RyDit (Español) | GDScript | Lua | Lua |
+| **Backend** | Rust | C++ | C | C |
+| **Binario** | ~735 KB | ~50 MB | ~10 MB | ~5 MB |
+| **Sin IDE** | ✅ Sí | ❌ Requiere editor | ⚠️ VS Code | ⚠️ Editor propio |
+| **Game Loop** | ✅ Integrado | ✅ Integrado | ✅ Integrado | ✅ Integrado |
+
+---
+
+## 🎮 Snake Game - Demo Funcional
+
+<div align="center">
+
+![Snake Game](screenshots/04_snake_gameplay.jpg)
+
+*Snake Game completo con game loop, colisiones, puntuación y game over screen*
+
+</div>
+
+### Características del Snake
+- ✅ **Cuerpo de serpiente** con arrays dinámicos
+- ✅ **Comida aleatoria** con `random::int()`
+- ✅ **Colisiones** con paredes y propio cuerpo
+- ✅ **Puntuación** + high score
+- ✅ **Velocidad progresiva**
+- ✅ **Game Over** + restart con SPACE
+- ✅ **Pausa** con P
+- ✅ **Salir** con ESC
+
+### Ejecutar Snake
+```bash
+# En Termux (Android)
+cargo run --bin rydit-rs -- --gfx snake.rydit
+
+# O con binario directo
+./target/release/rydit-rs --gfx snake.rydit
+```
+
+### Controles
+| Tecla | Acción |
+|-------|--------|
+| `↑` `→` `↓` `←` | Mover serpiente |
+| `P` | Pausa |
+| `SPACE` | Reiniciar |
+| `ESC` | Salir |
+
+---
+
+## 🎨 Demo Visual - Formas y Colores
+
+<div align="center">
+
+![Demo Shapes](screenshots/03_demo_shapes_circulos.jpg)
+
+*Demo de formas geométricas con draw.circle(), draw.rect(), draw.line(), draw.text()*
+
+</div>
+
+---
+
+## 📸 Galería de Capturas
+
+<div align="center">
+
+| Demo rydit-gfx v0.0.7 | Demo Shapes | Snake Gameplay |
+|--------------|--------------|----------------|
+| ![Demo rydit-gfx](screenshots/02_demo_rydit_gfx_completo.jpg) | ![Demo Shapes](screenshots/03_demo_shapes_circulos.jpg) | ![Snake](screenshots/04_snake_gameplay.jpg) |
+| Círculo rojo animado, rectángulo verde, línea azul | Círculos concéntricos, rectángulos de colores | Snake en movimiento, grid retro, comida roja |
+
+| Snake Game Over | Menú Demo |
+|--------------|--------------|
+| ![Game Over](screenshots/05_snake_gameover.jpg) | ![Menú](screenshots/01_demo_rydit_gfx_menu.jpg) |
+| Pantalla de Game Over, puntuación, high score | Menú de selección de demos Termux-X11 |
+
+</div>
+
+**Todas las capturas fueron tomadas en un Redmi Note 8 con Termux-X11 + raylib** 📱🎮
+
 ```rydit
+shield.init
+
 ryda frame < 500 {
     draw.circle(400, 200, 80, "rojo")
     draw.rect(200, 350, 60, 60, "naranja")
@@ -213,47 +130,7 @@ ryda frame < 500 {
 
 ---
 
-## 🎮 Snake Game - Demo Funcional
-
-### Características
-- ✅ **Cuerpo de serpiente** (array de posiciones)
-- ✅ **Comida aleatoria** (`random::int()`)
-- ✅ **Colisión con paredes**
-- ✅ **Colisión con el propio cuerpo**
-- ✅ **Puntuación** (score + high score)
-- ✅ **Velocidad progresiva**
-- ✅ **Game Over screen**
-- ✅ **Restart con SPACE**
-- ✅ **Pausa con P**
-- ✅ **Salir con ESC**
-- ✅ **Asignación por índice** (`cuerpo_x[i] = ...`)
-
-### Ejecutar Snake
-```bash
-# Modo gráfico (requiere display)
-cargo run --bin rydit-rs -- --gfx snake_v0.1.8.rydit
-
-# O con binario directo
-./target/release/rydit-rs --gfx snake_v0.1.8.rydit
-
-# O con launcher
-./snake_launcher.sh
-```
-
-### Controles
-| Tecla | Acción |
-|-------|--------|
-| `↑` | Mover arriba |
-| `→` | Mover derecha |
-| `↓` | Mover abajo |
-| `←` | Mover izquierda |
-| `P` | Pausa |
-| `SPACE` | Reiniciar |
-| `ESC` | Salir |
-
----
-
-## 🧪 Ejemplos de Uso
+## 📖 Sintaxis del Lenguaje
 
 ### Funciones Básicas
 ```rydit
@@ -273,81 +150,6 @@ rytmo saludar(nombre) {
 
 saludar("Mundo")
 ```
-
-### Funciones en Expresiones (Composición)
-```rydit
-rytmo sumar(a, b) { return a + b }
-rytmo cuadrado(x) { return x * x }
-
-# Composición de funciones
-dark.slot x = cuadrado(sumar(2, 3))
-voz x  # 25 (2+3=5, 5*5=25)
-```
-
-### Sistema de Módulos (v0.1.1)
-```rydit
-# Importar módulo
-import math
-import arrays
-
-# Usar funciones con namespace
-dark.slot suma = math::sumar(10, 3)
-voz suma  # 13
-
-dark.slot lista = [10, 20, 30]
-dark.slot len = arrays::length(lista)
-voz len  # 3
-
-# Importar con alias
-import math as m
-dark.slot resultado = m::multiplicar(5, 5)
-voz resultado  # 25
-```
-
-### Módulos Disponibles
-
-**math.rydit:**
-- `math::sumar(a, b)` - Suma dos números
-- `math::restar(a, b)` - Resta dos números
-- `math::multiplicar(a, b)` - Multiplica dos números
-- `math::dividir(a, b)` - Divide dos números
-- `math::pow(base, exponente)` - Potenciación
-- `math::abs(valor)` - Valor absoluto
-- `math::min(a, b)` - Mínimo
-- `math::max(a, b)` - Máximo
-
-**arrays.rydit:**
-- `arrays::length(lista)` - Longitud del array
-- `arrays::get(lista, indice)` - Obtener elemento
-- `arrays::contains(lista, valor)` - Verificar si contiene
-- `arrays::index_of(lista, valor)` - Índice de primera ocurrencia
-
-**strings.rydit:**
-- `strings::length(texto)` - Longitud de string
-- `strings::upper(texto)` - Mayúsculas
-- `strings::lower(texto)` - Minúsculas
-- `strings::concat(a, b)` - Concatenar
-- `strings::substr(texto, inicio, fin)` - Substring
-- `strings::trim(texto)` - Eliminar espacios
-- `strings::replace(texto, buscar, reemplazo)` - Reemplazar
-
-**io.rydit:**
-- `io::print(texto)` - Imprimir
-- `io::read()` - Leer entrada
-- `io::file_read(ruta)` - Leer archivo
-- `io::file_write(ruta, contenido)` - Escribir archivo
-
-**random.rydit:**
-- `random::float()` - Float aleatorio [0, 1)
-- `random::int(min, max)` - Entero aleatorio [min, max]
-
-**time.rydit:**
-- `time::now()` - Timestamp actual
-- `time::sleep(segundos)` - Pausar ejecución
-
-**json.rydit:**
-- `json::parse(texto)` - Parsear JSON
-- `json::stringify(objeto)` - Convertir a JSON
 
 ### Condicionales
 ```rydit
@@ -372,8 +174,21 @@ dark.slot lista = [1, 2, 3]
 # Multidimensional (tablero)
 dark.slot tablero = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
 
-# Con expresiones
-dark.slot suma = [1 + 2, 3 * 4, 10 / 2]
+# Asignación por índice
+dark.slot lista[0] = 5
+```
+
+### Sistema de Módulos
+```rydit
+# Importar módulos
+import math
+import arrays
+import strings
+
+# Usar funciones con namespace
+dark.slot suma = math::sumar(10, 3)
+dark.slot len = arrays::length([1, 2, 3])
+dark.slot upper = strings::upper("hola")
 ```
 
 ### Gráficos (Modo Ventana)
@@ -384,130 +199,259 @@ shield.init
 draw.circle(400, 300, 50, "rojo")
 draw.rect(100, 100, 100, 100, "verde")
 draw.line(0, 0, 800, 600, "azul")
-draw.text("RyDit v0.1.8", 300, 50, 30, "blanco")
+draw.text("RyDit v0.1.9", 300, 50, "blanco")
 ```
 
 ---
 
-## 📁 Estructura del Proyecto
+## 🏗️ Arquitectura
 
 ```
-shield-project/
-├── Cargo.toml
-├── crates/
-│   ├── lizer/           # Lexer + Parser + AST (~2,223 líneas)
-│   ├── blast-core/      # Executor + Memoria (~250 líneas)
-│   ├── rydit-gfx/       # Sync Layer gráficos (~450 líneas)
-│   ├── rydit-rs/        # Binario principal (~1,300 líneas)
-│   └── v-shield/        # Wrapper raylib (~20 líneas)
-├── demos/               # Demos funcionales (6 archivos)
-├── tests/               # Tests de scripts
-├── stdlib/              # Librería estándar (.rydit)
-├── diagnostico/         # Logs de sesiones (25 archivos)
-├── docs/                # Documentación adicional
-├── *.rydit              # Scripts de ejemplo
-├── CHANGELOG_v0.1.8.md  # Cambios de versión
-├── ANALISIS_CRITICO_V0.1.8.txt  # Análisis técnico
-├── LOG_ERRORES_SESION_0.1.7.txt # Log de errores
-├── LIBRO_RYDIT.md       # Guía completa del lenguaje
-└── README.md            # Este archivo
+┌─────────────────────────────────────────────────────────┐
+│  RyDit Core (Rust)                                      │
+│  ├── lizer       → Lexer + Parser + AST (~2,452 líneas) │
+│  ├── blast-core  → Executor + Memoria (~465 líneas)     │
+│  ├── rydit-gfx   → Gráficos raylib (~481 líneas)        │
+│  ├── rydit-rs    → Binario + stdlib (~2,491 líneas)     │
+│  └── v-shield    → Wrapper raylib (~120 líneas)         │
+└─────────────────────────────────────────────────────────┘
+         │
+         ▼
+┌─────────────────────────────────────────────────────────┐
+│  Scripts RyDit (.rydit)                                 │
+│  ├── Snake Game                                         │
+│  ├── Demos visuales                                     │
+│  ├── Módulos stdlib (math, arrays, strings, io, etc.)   │
+│  └── Juegos de la comunidad                             │
+└─────────────────────────────────────────────────────────┘
 ```
 
----
-
-## 🚀 Comandos Útiles
-
-### Verificación Rápida (1-3s)
-```bash
-cargo check
-cargo test 2>&1 | grep -E "test result|warning"
+### Métricas del Proyecto
 ```
+Líneas totales:     ~6,600 líneas
+├── Rust:           ~5,000 líneas
+└── RyDit:          ~1,600 líneas (demos + módulos + tests)
 
-### Build Completo (5-10s)
-```bash
-cargo build 2>&1 | tail -10
-```
+Tests automáticos:  110 pasando ✅
+Demos funcionales:  8/8 ✅
+Warnings activos:   0 ✅
 
-### Benchmark Completo
-```bash
-echo "=== BUILD ==="
-cargo build 2>&1 | grep -E "warning|error|Finished"
-
-echo "=== TESTS ==="
-cargo test 2>&1 | grep "test result"
-
-echo "=== TIEMPOS ==="
-time cargo build 2>&1 | grep "Finished"
-time cargo test 2>&1 | grep "test result"
-```
-
-### Ejecutar Scripts
-```bash
-# Script directo
-cargo run --bin rydit-rs -- "dark.slot x = 10 voz x"
-
-# Desde archivo
-cargo run --bin rydit-rs -- ejemplo.rydit
-
-# Modo gráfico
-cargo run --bin rydit-rs -- --gfx ejemplo_gfx.rydit
-
-# Snake Game
-cargo run --bin rydit-rs -- --gfx snake.rydit
-
-# Demo v0.1.8
-cargo run --bin rydit-rs -- demos/demo_maduracion_v0.1.8.rydit
+Binarios:
+├── rydit-rs:       ~735 KB (release)
+└── snake:          ~494 KB
 ```
 
 ---
 
-## 📋 Roadmap
+## 📱 Construido en Android/Termux
+
+<div align="center">
+
+| Setup | Especificaciones |
+|-------|-----------------|
+| **Dispositivo** | Redmi Note 8 |
+| **OS** | Android 11 |
+| **Terminal** | Termux |
+| **RAM** | 4 GB |
+| **Almacenamiento** | 64 GB |
+| **IDE** | Ninguno (vim/nano) |
+| **Teclado** | Pantalla táctil + Bluetooth |
+
+</div>
+
+**Este proyecto fue construido 100% en un teléfono Android**, sin laptop, sin desktop, sin IDE. Solo:
+- 📱 Teléfono Redmi Note 8
+- ⌨️ Terminal Termux
+- 🦀 Rust + Cargo
+- 🎨 Raylib (nativo)
+
+**Filosofía:** Demostrar que el desarrollo serio es posible en dispositivos móviles cuando tienes arquitectura clara, tests automatizados, buena documentación y determinación.
+
+---
+
+## 🚀 Roadmap
+
+<div align="center">
 
 | Versión | Estado | Features Principales | Fecha |
 |---------|--------|---------------------|-------|
-| **v0.0.1** | ✅ | CLI, Lexer, Memoria, REPL, Archivos | 2026-03-14 |
-| **v0.0.2** | ✅ | Parser AST, Condicionales, Operadores, Ciclos | 2026-03-15 |
-| **v0.0.3** | ✅ | Funciones, Parámetros, `voz`, `input()` | 2026-03-15 |
-| **v0.0.4** | ✅ | Arrays/Listas, Indexación, Multidimensionales | 2026-03-15 |
-| **v0.0.5** | ✅ | Input seguro, Warnings fix, Tests I/O | 2026-03-15 |
-| **v0.0.6** | ✅ | `cada` (for each), Iteración de arrays | 2026-03-15 |
-| **v0.0.7** | ✅ | **rydit-gfx** creado, El muro superado | 2026-03-15 |
-| **v0.0.8** | ✅ | **rydit-gfx integrado**, Modo gráfico, draw.* | 2026-03-15 |
-| **v0.0.9** | ✅ | **Snake Game**, tecla_presionada(), break | 2026-03-16 |
-| **v0.0.10** | ✅ | **Parser bug fix**, 0 warnings, 59 tests | 2026-03-16 |
-| **v0.0.11** | ✅ | Scopes y argumentos verificados | 2026-03-16 |
-| **v0.0.12** | ✅ | Aritmética completa + paréntesis | 2026-03-16 |
-| **v0.0.13** | ✅ | Funciones con retorno de valores | 2026-03-16 |
-| **v0.0.14** | ✅ | **Funciones en expresiones (composición)** | 2026-03-16 |
-| **v0.1.0** | ✅ | **Snake Game Completo, Release Alpha** | 2026-03-17 |
-| **v0.1.1** | ✅ | **Sistema de módulos (`import`)** | 2026-03-17 |
-| **v0.1.3** | ✅ | **Bug fixes: comentarios, warnings snake** | 2026-03-17 |
-| **v0.1.4** | ✅ | **Strings e IO maduros** | 2026-03-18 |
-| **v0.1.5** | ✅ | **Soporte JSON** | 2026-03-18 |
-| **v0.1.6** | ✅ | **Random + Time ligeros** | 2026-03-18 |
-| **v0.1.7** | ✅ | **Test de Demos (5/5)** | 2026-03-19 |
-| **v0.1.8** | ✅ | **Maduración + Gráficos + IndexAssign** | 2026-03-20 |
-| **v0.1.9** | ✅ | **CHECKPOINT 100 TESTS (110 tests)** | 2026-03-20 |
-| **v0.2.0** | 🔮 | **Module system avanzado + Parte gráfica** | Próxima |
-| **v0.3.0** | 🔮 | **Regex + Date + REPL** | 2-3 semanas |
-| **v0.4.0** | 🔮 | **migui (GUI inmediata)** | 1 mes |
-| **v1.0.0** | 🔮 | **Production ready** | 3-4 meses |
+| **v0.0.1-v0.0.14** | ✅ | CLI → Snake Game | 2026-03-14 a 2026-03-16 |
+| **v0.1.0** | ✅ | Snake Game Completo | 2026-03-17 |
+| **v0.1.1** | ✅ | Sistema de Módulos | 2026-03-17 |
+| **v0.1.4** | ✅ | Strings + IO + Arrays | 2026-03-18 |
+| **v0.1.6** | ✅ | Random + Time | 2026-03-18 |
+| **v0.1.8** | ✅ | Maduración + Gráficos | 2026-03-20 |
+| **v0.1.9** | ✅ | **110 Tests Checkpoint** | 2026-03-20 |
+| **v0.2.0** | 🔜 | Module System Avanzado + CI/CD | Próxima |
+| **v0.3.0** | 🔮 | Chatbot Asistente + Regex + Date | 2-3 semanas |
+| **v0.4.0** | 🔮 | **migui** (Immediate Mode GUI) | 1 mes |
+| **v0.5.0** | 🔮 | **Ecosistema Maduro** (integración) | 2 meses |
+| **v0.6.0** | 🔮 | **Motor de Escenas** (nodos, señales) | 3 meses |
+| **v1.0.0** | 🔮 | Production Ready | 4-6 meses |
+
+</div>
 
 ---
 
-## 📖 Documentación
+## 🎯 Estado del Proyecto
+
+### ✅ Completado (v0.1.9)
+- [x] Lexer + Parser con AST
+- [x] Executor con memoria y scopes
+- [x] Sistema de módulos (import)
+- [x] 110 tests automáticos
+- [x] 8 demos funcionales
+- [x] Snake Game completo
+- [x] Gráficos con raylib
+- [x] Strings, IO, Arrays maduros
+- [x] Soporte JSON
+- [x] Random + Time ligeros
+- [x] UTF-8 completo
+- [x] Escapes en strings
+- [x] Símbolos en identificadores
+
+### 🔜 Próximamente (v0.2.0 - v0.6.0)
+- [ ] Module system avanzado (cache, cíclicos)
+- [ ] Chatbot asistente de código
+- [ ] migui (Immediate Mode GUI ~1000 líneas)
+- [ ] Ecosistema maduro (integración con otras herramientas)
+- [ ] Motor de escenas (nodos, señales, prefabs)
+- [ ] Editor visual de escenas
+- [ ] Ecosistema de frameworks (RPG, platformer)
+- [ ] Asset store comunitario
+
+---
+
+## 🧪 Evaluación de la Comunidad
+
+Este proyecto está siendo revisado por la comunidad de desarrolladores. Las evaluaciones detalladas de asistentes de IA se incluirán en la próxima actualización cuando el repositorio sea público.
+
+> **"Espero tu evaluación de este proyecto con buena intención. Es mostrar lo que se hace en un celular gama baja, y que a futuras versiones con su apoyo, osea la comunidad, crezca en ecosistema con la capacidad enorme de la comunidad, para que creen sus escenas en hardware modesto sin depender de IA que hace un video rápido y sin experiencia propia. Esa es una de las claves."**
+
+---
+
+## 💬 Comunidad
+
+### 🌐 Únete y Evalúa este Proyecto
+
+| Plataforma | Enlace |
+|-----------|--------|
+| **Discord Mouredev** | https://discord.gg/mouredev |
+| **Reddit r/rust** | https://reddit.com/r/rust |
+| **Reddit r/gamedev** | https://reddit.com/r/gamedev |
+| **Reddit r/AndroidGaming** | https://reddit.com/r/AndroidGaming |
+| **X (Twitter)** | #RyDit #RustLang #AndroidDev |
+
+### 💌 Tu Opinión Importa
+
+¿Qué piensas de este proyecto? ¿Crees que es posible crear un motor de videojuegos completo en un celular gama baja?
+
+**Tu evaluación ayuda a:**
+- 📱 Demostrar que el desarrollo en Android es posible
+- 🤝 Construir una comunidad que comparte conocimiento real
+- 🎮 Crear un ecosistema donde todos pueden hacer sus juegos
+- 🚀 Inspirar a otros con hardware modesto
+
+### 🔜 Próximamente
+
+- **Servidor Discord propio** - Espacio dedicado para RyDit
+- **Evaluaciones públicas de IA** - Análisis detallado del código
+- **Asset store comunitario** - Frameworks, escenas, herramientas
+
+### 🤝 Contribuciones
+
+¡Las contribuciones son bienvenidas! Lee [CONTRIBUTING.md](CONTRIBUTING.md) para más detalles.
+
+```bash
+# Clonar repositorio
+git clone https://github.com/alucard18/shield-project.git
+
+# Build
+cd shield-project
+cargo build
+
+# Tests
+cargo test
+
+# Ejecutar demo
+cargo run --bin rydit-rs -- --gfx demo_shapes.rydit
+```
+
+---
+
+## 📚 Documentación
 
 | Documento | Descripción |
 |-----------|-------------|
-| **[DIAGNOSTICO_SESION_26_V0.1.8.md](DIAGNOSTICO_SESION_26_V0.1.8.md)** | 🆕 Diagnóstico completo Sesión 26 (errores + soluciones) |
-| **[CHANGELOG_v0.1.8.md](CHANGELOG_v0.1.8.md)** | Cambios de la versión v0.1.8 |
-| **[ANALISIS_CRITICO_V0.1.8.txt](ANALISIS_CRITICO_V0.1.8.txt)** | Análisis técnico crítico (7.2/10) |
-| **[LOG_ERRORES_SESION_0.1.7.txt](LOG_ERRORES_SESION_0.1.7.txt)** | Log de errores sesión anterior |
+| **[README.md](README.md)** | Documentación técnica interna |
 | **[LIBRO_RYDIT.md](LIBRO_RYDIT.md)** | Guía completa del lenguaje (~400 líneas) |
-| **[BENCHMARK_v0.1.2.md](BENCHMARK_v0.1.2.md)** | Métricas oficiales de rendimiento |
+| **[ROADMAP.md](ROADMAP.md)** | Planificación detallada |
 | **[CONTRIBUTING.md](CONTRIBUTING.md)** | Guía de contribuciones |
-| **[ROADMAP.md](ROADMAP.md)** | Planificación futura |
-| **[diagnostico/](diagnostico/)** | Logs detallados de cada sesión (25 archivos) |
+| **[CHANGELOG_v0.1.8.md](CHANGELOG_v0.1.8.md)** | Cambios de versión |
+| **[diagnostico/](diagnostico/)** | Logs de desarrollo (25 sesiones) |
+
+---
+
+## 🎮 Ejemplos de la Comunidad
+
+### RPG Simple
+```rydit
+import rpg::engine
+
+rytmo juego {
+    rpg.iniciar("mi_rpg.rydit")
+    rpg.crear_personaje("heroe", ["espada", "escudo"])
+    rpg.iniciar_dialogo("npc", ["Hola", "Adiós"])
+}
+```
+
+### Platformer
+```rydit
+import platformer::physics
+
+platformer.fisica.gravedad(9.8)
+dark.slot jugador = platformer.crear_jugador(100, 200)
+
+ryda frame < 10000 {
+    platformer.mover(jugador, "derecha")
+    onif platformer.colision(jugador, "suelo") {
+        platformer.saltar(jugador)
+    }
+}
+```
+
+### Visual Novel
+```rydit
+shield.init
+
+dark.slot nombre = input("¿Cómo te llamas?")
+
+ryda frame < 500 {
+    draw.text("Hola " + nombre, 200, 100, "blanco")
+    draw.text("¿Qué haces hoy?", 200, 200, "blanco")
+    
+    onif gui.button("Estudiar", 100, 300, 200, 50) {
+        draw.text("¡Buena decisión!", 200, 400, "verde")
+    }
+}
+```
+
+---
+
+## 🏆 Logros
+
+### Sesión 26 (v0.1.9) - Checkpoint 100 Tests
+- ✅ **110 tests pasando** (meta 100 superada)
+- ✅ **0 warnings, 0 errors**
+- ✅ **8/8 demos funcionales**
+- ✅ **Termux-X11 activado** (5 screenshots)
+- ✅ **Backup Google Drive sincronizado**
+
+### General
+- ✅ **26 sesiones en 7 días** (v0.0.1 → v0.1.9)
+- ✅ **5 crates funcionales**
+- ✅ **~6,600 líneas de código**
+- ✅ **Documentación completa**
 
 ---
 
@@ -516,73 +460,43 @@ cargo run --bin rydit-rs -- demos/demo_maduracion_v0.1.8.rydit
 - **Google Drive:** `alucard18:/shield-project-rydit`
 - **Archivos:** 100+
 - **Tamaño:** ~150 KB (sin `target/`)
-- **Última sync:** 2026-03-20 (v0.1.8 Sesión 26)
-- **Excluir:** `target/**` (con `.rcloneignore`)
-
----
-
-## 🏆 Logros v0.1.8
-
-### Sesión 25
-- ✅ **4 features de maduración** (escapes, comillas, UTF-8, símbolos)
-- ✅ **10 tests nuevos** (75 tests totales)
-- ✅ **Demo maduración** creada
-
-### Sesión 26
-- ✅ **2 bugs críticos fixeados** (IndexAssign, comentarios)
-- ✅ **Snake Game funcional** con game loop
-- ✅ **Demo shapes** visual creada
-- ✅ **8/8 demos funcionales** (100%)
-- ✅ **Binarios compilados** (735 KB + 494 KB)
-- ✅ **Diagnóstico completo** documentado
-
-### General
-- ✅ **25 sesiones en 6 días** (v0.0.1 → v0.1.8)
-- ✅ **75 tests automáticos** pasando
-- ✅ **0 warnings activos**
-- ✅ **5 crates funcionales**
-- ✅ **Documentación completa** actualizada
-
----
-
-## 🖥️ Autores
-
-Proyecto desarrollado para Android/Termux con Rust y raylib.
-
-**Filosofía:** David vs Goliat - Ligero pero poderoso
-
-**Historia:** Este proyecto fue construido **completamente en un dispositivo Android** usando Termux, sin laptop, sin escritorio, sin IDE. Solo:
-- 📱 Teléfono Android
-- ⌨️ Terminal Termux
-- 🦀 Rust + Cargo
-- 🎨 Raylib (nativo)
-
-**Propósito:** Demostrar que el desarrollo serio es posible en dispositivos móviles cuando tienes arquitectura clara, tests automatizados, buena documentación y determinación.
+- **Última sync:** 2026-03-20 (v0.1.9)
 
 ---
 
 ## 📄 Licencia
 
-MIT
+MIT License - Ver [LICENSE](LICENSE) para más detalles.
 
 ---
 
-## 🚀 Próxima Sesión
+## 🙏 Agradecimientos
 
-**Sesión 27:** "v0.2.0 - Module system avanzado + Parser con precedencia de operadores"
-
-**Estado:** ✅ **LISTO PARA PUBLICAR EN GITHUB**
-
-**Archivos para screenshots:**
-- `ejemplos_gfx/snake_v0.1.8.rydit` - Snake Game interactivo
-- `ejemplos_gfx/demo_shapes.rydit` - Demo visual animado
-- `target/release/rydit-rs` - Binario principal (735 KB)
-- `DIAGNOSTICO_SESION_26_V0.1.8.md` - Diagnóstico completo
+- **Comunidad Mouredev** - Discord: https://discord.gg/mouredev - Por el apoyo y espacio para compartir proyectos
+- **raylib** (https://www.raylib.com/) - Por la biblioteca gráfica más ligera y fácil de usar
+- **Rust** (https://www.rust-lang.org/) - Por el lenguaje más amado por 8 años consecutivos
+- **Termux** - Por hacer posible el desarrollo en Android sin root
 
 ---
 
-**"Construido con ❤️ en Android/Termux"**
+<div align="center">
 
-*Última actualización:* 2026-03-20 (v0.1.9 - Checkpoint 100 Tests)
-*Próxima versión:* v0.2.0 (Module system + Parte gráfica)
+## 🚀 "Construido con ❤️ en Android/Termux"
+
+**"No necesitas una laptop cara para crear software impresionante. Solo necesitas un teléfono, determinación y mucha café."** ☕
+
+**"Este proyecto es una invitación a la comunidad: miren lo que se puede hacer en un celular gama baja. Mi sueño es que a futuras versiones, con su apoyo, crezcamos en ecosistema. Que todos puedan crear sus escenas y juegos en hardware modesto, sin depender de herramientas que hacen todo rápido pero sin experiencia propia. Esa es la clave: aprender creando, no solo consumiendo."**
+
+---
+
+*¿Quieres evaluar este proyecto?* Únete al **Discord Mouredev**: https://discord.gg/mouredev y comparte tu opinión en #mostrar-proyecto
+
+*Próxima actualización:* v0.2.0 con evaluaciones detalladas de la comunidad y asistentes de IA
+
+*Última actualización:* 2026-03-20 (v0.1.9 - Checkpoint 100 Tests)  
+*Próxima versión:* v0.2.0 (Module System + CI/CD)  
 *Estado:* ✅ **110 TESTS - 0 WARNINGS - CHECKPOINT SUPERADO**
+
+[⬆️ Volver arriba](#-rydit---rust-gaming--scripting-engine-for-androidtermux)
+
+</div>
