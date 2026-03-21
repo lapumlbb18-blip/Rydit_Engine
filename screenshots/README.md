@@ -106,13 +106,6 @@ export DRI3=1
 - **UI:** Score, High Score, Speed, Length
 - **Game Over:** Overlay negro + texto amarillo
 
----
-
-## 💾 Backup
-
-Todas las capturas están sincronizadas con Google Drive:
-```
-alucard18:/shield-project-rydit/screenshots/
 ```
 
 ---
