@@ -1,0 +1,361 @@
+================================================================================
+                    CONTEXTO PRÓXIMAS VERSIONES - v0.0.9 a v1.0.0
+                    Shield Project - RyDit Language
+================================================================================
+
+FECHA: 2026-03-16
+VERSIÓN ACTUAL: v0.0.8 (Integración Gráfica Completa)
+PRÓXIMA VERSIÓN: v0.0.9 (Snake Game)
+
+================================================================================
+                         📊 ESTADO ACTUAL (v0.0.8)
+================================================================================
+
+FEATURES COMPLETAS:
+-------------------
+✅ CLI para scripts
+✅ Lexer con AST
+✅ Parser con precedencia
+✅ Variables con memoria
+✅ Condicionales (onif/blelse)
+✅ Operadores (and, or, not, +, -, *, /, >, <, ==)
+✅ Ciclos (ryda) con bloques {}
+✅ Funciones (rytmo)
+✅ Parámetros y argumentos
+✅ voz (print)
+✅ input() (infraestructura lista)
+✅ Arrays [1, 2, 3]
+✅ Indexación lista[0]
+✅ Arrays multidimensionales tablero[3][3]
+✅ cada (for each)
+✅ rydit-gfx integrado
+✅ Modo gráfico (--gfx)
+✅ draw.circle, draw.rect, draw.line, draw.text
+
+MÉTRICAS:
+---------
+- Tests: 51 pasando
+- Crates: 5 (lizer, blast-core, v-shield, rydit-gfx, rydit-rs)
+- Líneas de código: ~2930
+- Build time (caché): 0.33s
+- RAM build: ~2 GB
+
+================================================================================
+                         🎯 v0.0.9 - SNAKE GAME
+================================================================================
+
+OBJETIVO: Juego Snake completo funcional
+TIEMPO ESTIMADO: 4-6 horas
+COMPLEJIDAD: Media-Alta
+
+TAREAS:
+-------
+1. Tablero 20x20 (array multidimensional)
+   dark.slot tablero = [
+     [0, 0, 0, ...],
+     [0, 0, 0, ...],
+     ...
+   ]
+
+2. Serpiente (array de posiciones)
+   dark.slot serpiente = [[10, 10], [10, 11], [10, 12]]
+
+3. Comida (posición aleatoria)
+   dark.slot comida = [random(20), random(20)]
+
+4. Input continuo (is_key_down)
+   onif tecla_presionada("arrow_up") { ... }
+
+5. Movimiento (actualizar array)
+   # Mover cabeza en dirección
+   # Eliminar cola
+
+6. Colisiones (detectar paredes/serpiente)
+   onif cabeza[0] < 0 || cabeza[0] >= 20 {
+       game_over()
+   }
+
+7. Puntuación (contador)
+   dark.slot score = 0
+   # Incrementar al comer
+
+8. Game over + restart
+   game_over() {
+       draw.text("Game Over!", 300, 300, 40, "rojo")
+       # Esperar input para restart
+   }
+
+CRITERIO DE ÉXITO:
+------------------
+```rydit
+# Ejecutar: cargo run -- --gfx snake.rydit
+shield.init
+
+# Inicializar juego
+dark.slot tablero = [[0, ...], ...]
+dark.slot serpiente = [[10, 10]]
+dark.slot direccion = "arriba"
+dark.slot score = 0
+
+# Game loop
+ryda true {
+    # Input
+    onif tecla_presionada("arrow_up") { direccion = "arriba" }
+    onif tecla_presionada("arrow_down") { direccion = "abajo" }
+    onif tecla_presionada("arrow_left") { direccion = "izquierda" }
+    onif tecla_presionada("arrow_right") { direccion = "derecha" }
+    
+    # Mover serpiente
+    # Verificar colisiones
+    # Verificar comida
+    # Dibujar todo
+    
+    onif game_over {
+        draw.text("Game Over!", 300, 300, 40, "rojo")
+    }
+}
+```
+
+================================================================================
+                         🎯 v0.0.10 - SONIDO (BLAST-CORE)
+================================================================================
+
+OBJETIVO: Integrar audio en modo gráfico
+TIEMPO ESTIMADO: 2-3 horas
+COMPLEJIDAD: Media
+
+TAREAS:
+-------
+1. Integrar blast-core en modo gráfico
+2. Comandos de sonido:
+   - sound.play("archivo.wav")
+   - sound.stop()
+   - sound.volume(0.5)
+3. Efectos para Snake:
+   - Sonido al comer
+   - Sonido de game over
+
+DEPENDENCIAS:
+-------------
+- blast-core ya existe ✅
+- Necesita integración con rydit-gfx
+
+================================================================================
+                         🎯 v0.1.0 - RELEASE ALPHA
+================================================================================
+
+OBJETIVO: Primera release estable
+TIEMPO ESTIMADO: 10-15 horas totales
+COMPLEJIDAD: Media
+
+FEATURES REQUERIDAS:
+--------------------
+- [ ] Snake game completo (v0.0.9)
+- [ ] Sonido integrado (v0.0.10)
+- [ ] 60+ tests automáticos
+- [ ] Documentación de usuario completa
+- [ ] 5+ ejemplos funcionales
+- [ ] Warnings críticos fixeados
+- [ ] README en inglés y español
+
+CRITERIOS DE CALIDAD:
+---------------------
+- 0 errores de compilación
+- 0 tests fallando
+- < 3 warnings (solo baja prioridad)
+- Build time < 1s (con caché)
+- RAM build < 2.5 GB
+
+================================================================================
+                         🎯 v0.2.0 - MEJORAS DE LENGUAJE
+================================================================================
+
+OBJETIVO: Mejorar sintaxis y capacidades
+TIEMPO ESTIMADO: 15-20 horas
+COMPLEJIDAD: Alta
+
+FEATURES POTENCIALES:
+---------------------
+1. Scope local real para funciones
+   - Actualmente: parámetros sobrescriben globales
+   - Futuro: stack de scopes en Executor
+
+2. Tipos de datos adicionales
+   - Tuplas: (1, 2, 3)
+   - Diccionarios: {"clave": valor}
+
+3. Funciones de primera clase
+   - Guardar funciones en variables
+   - Pasar funciones como argumentos
+
+4. Módulos imports
+   - import "archivo.rydit"
+   - Separar código en múltiples archivos
+
+5. Estructuras/Clases básicas
+   - struct Jugador { nombre, score }
+   - Métodos básicos
+
+================================================================================
+                         🎯 v1.0.0 - RELEASE ESTABLE
+================================================================================
+
+OBJETIVO: Lenguaje completo y estable
+TIEMPO ESTIMADO: 40-50 horas totales (desde v0.0.8)
+COMPLEJIDAD: Alta
+
+FEATURES COMPLETAS:
+-------------------
+- [ ] Todo lo de v0.1.0
+- [ ] Todo lo de v0.2.0
+- [ ] Sistema de módulos completo
+- [ ] Manejo de errores (try/catch)
+- [ ] Pattern matching básico
+- [ ] 100+ tests automáticos
+- [ ] Documentación tipo libro
+- [ ] 10+ ejemplos (juegos + utilidades)
+
+JUEGOS DE EJEMPLO:
+------------------
+- Snake ✅
+- Pong
+- Breakout
+- Tetris
+- Space Invaders (simple)
+
+================================================================================
+                         📅 TIMELINE ESTIMADO
+================================================================================
+
+SEMANA 1 (2026-03-16 a 2026-03-23):
+-----------------------------------
+- v0.0.9: Snake game (4-6h)
+- v0.0.10: Sonido (2-3h)
+Total: 6-9 horas
+
+SEMANA 2 (2026-03-23 a 2026-03-30):
+-----------------------------------
+- v0.1.0: Release Alpha (4-6h restantes)
+- v0.2.0: Mejoras lenguaje (inicio)
+Total: 8-10 horas
+
+SEMANA 3-4 (2026-03-30 a 2026-04-13):
+-------------------------------------
+- v0.2.0: Completar mejoras
+- v0.3.0: Features adicionales
+Total: 15-20 horas
+
+SEMANA 5-6 (2026-04-13 a 2026-04-27):
+-------------------------------------
+- v1.0.0: Release estable
+Total: 10-15 horas
+
+TOTAL GENERAL: 40-55 horas desde v0.0.8
+
+================================================================================
+                         🧪 PLAN DE TESTS
+================================================================================
+
+v0.0.9 (Snake):
+---------------
+- test_tablero_20x20
+- test_serpiente_movimiento
+- test_comida_aleatoria
+- test_colision_paredes
+- test_colision_serpiente
+- test_score_incremento
+- test_game_over
+
+v0.0.10 (Sonido):
+-----------------
+- test_sound_play
+- test_sound_stop
+- test_sound_volume
+
+v0.1.0 (Alpha):
+---------------
+- 60+ tests totales
+- Cobertura > 80%
+- Tests de integración gráfica
+
+================================================================================
+                         📚 DOCUMENTACIÓN PENDIENTE
+================================================================================
+
+v0.0.9:
+-------
+- [ ] GUIA_SNAKE.md - Tutorial de Snake
+- [ ] ejemplos/snake.rydit - Código completo
+- [ ] ejemplos/culebrita.rydit - Versión simple
+
+v0.1.0:
+-------
+- [ ] LIBRO_RYDIT.md - Documentación completa
+- [ ] API_REFERENCE.md - Referencia de comandos
+- [ ] ejemplos/*.rydit - 5+ ejemplos
+
+v1.0.0:
+-------
+- [ ] TUTORIAL_COMPLETO.md - Desde cero a experto
+- [ ] ejemplos/juegos/*.rydit - 10+ juegos
+- [ ] ejemplos/utilidades/*.rydit - Calculadoras, etc.
+
+================================================================================
+                         ⚠️ RIESGOS Y MITIGACIÓN
+================================================================================
+
+RIESGO #1: Complejidad de Snake
+-------------------------------
+PROBABILIDAD: 30%
+MITIGACIÓN: Empezar con versión simple (sin cola, solo cabeza)
+
+RIESGO #2: Audio en Termux
+--------------------------
+PROBABILIDAD: 40%
+MITIGACIÓN: blast-core ya existe, solo integrar
+
+RIESGO #3: Tiempo disponible
+----------------------------
+PROBABILIDAD: 50%
+MITIGACIÓN: Sesiones cortas (1-2h), familia primero
+
+RIESGO #4: Bug en game loop
+---------------------------
+PROBABILIDAD: 20%
+MITIGACIÓN: 51 tests dan seguridad, rollback fácil
+
+================================================================================
+                         💡 NOTAS PARA DESARROLLO FUTURO
+================================================================================
+
+1. MANTENER RITMO SOSTENIBLE
+   - 1-2 horas por sesión
+   - Familia primero
+   - Tests después de cada cambio
+
+2. SEGUIR FLUJO_TRABAJO.md
+   - cargo test (rápido) durante desarrollo
+   - cargo build (cada 3-4 cambios)
+   - build + tests + backup (antes de cerrar)
+
+3. DOCUMENTAR CADA VERSIÓN
+   - diagnostico/SESION_v*.txt
+   - Actualizar README.md
+   - Actualizar SESSION_STATE.md
+
+4. BACKUP FRECUENTE
+   - Después de cada feature
+   - rclone sync a Google Drive
+   - Excluir target/**
+
+================================================================================
+                         FIN DEL CONTEXTO PRÓXIMAS VERSIONES
+================================================================================
+
+PRÓXIMA META: v0.0.9 - Snake Game
+TIEMPO ESTIMADO: 4-6 horas
+PROBABILIDAD DE ÉXITO: 95%
+
+CUANDO REGRESES: "continuamos con snake"
+
+================================================================================

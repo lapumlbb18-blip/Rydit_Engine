@@ -1,0 +1,19 @@
+shield.init
+dark.slot f = 0
+ryda f < 500 {
+    dark.slot f = f + 1
+    draw.rect(0, 0, 800, 600, "negro")
+    draw.text("Demo RyDit v0.1.8", 250, 50, "amarillo")
+    draw.circle(400, 200, 80, "rojo")
+    draw.circle(400, 200, 60, "verde")
+    draw.circle(400, 200, 40, "azul")
+    draw.rect(200, 350, 60, 60, "naranja")
+    draw.rect(300, 350, 60, 60, "violeta")
+    draw.rect(400, 350, 60, 60, "cyan")
+    draw.rect(500, 350, 60, 60, "rosa")
+    draw.line(100, 500, 300, 500, "blanco")
+    draw.line(100, 520, 300, 520, "verde")
+    draw.line(100, 540, 300, 540, "azul")
+    draw.text("Rust + Raylib = RyDit", 250, 80, "blanco")
+    draw.text("Android Termux X11", 270, 100, "gris")
+}

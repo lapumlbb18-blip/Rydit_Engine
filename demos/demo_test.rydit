@@ -1,0 +1,10 @@
+shield.init
+
+dark.slot frame = 0
+
+ryda frame < 1000 {
+    dark.slot frame = frame + 1
+    draw.rect(0, 0, 800, 600, "negro")
+    draw.text("Demo Formas y Colores", 200, 20, "amarillo")
+    draw.circle(100, 100, 40, "rojo")
+    draw.text("rojo", 85, 150, "rojo")

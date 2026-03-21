@@ -1,0 +1,575 @@
+================================================================================
+                    BINDING UNIVERSAL - EVOLUCIÓN EXPONENCIAL
+                    Shield Project - RyDit Language
+================================================================================
+
+FECHA: 2026-03-17
+VERSIÓN: v0.1.1 → v0.2.0 (Propuesta)
+ESTADO: 📝 PROPUESTA DE DISEÑO
+
+================================================================================
+                         🎯 PROBLEMA ACTUAL
+================================================================================
+
+SITUACIÓN EN v0.1.1:
+--------------------
+
+En `evaluar_expr()` (crates/rydit-rs/src/main.rs):
+
+```rust
+Expr::Call { name, args } => {
+    // Funciones builtin - 200+ líneas de ifs anidados
+    if name == "tecla_presionada" && args.len() == 1 {
+        return Valor::Num(0.0);
+    }
+
+    if name == "sumar" && args.len() >= 2 {
+        let mut suma = 0.0;
+        for arg in args {
+            if let Valor::Num(n) = evaluar_expr(arg, executor, funcs) {
+                suma += n;
+            } else {
+                return Valor::Error("sumar() requiere números".to_string());
+            }
+        }
+        return Valor::Num(suma);
+    }
+
+    if name == "restar" && args.len() == 2 {
+        // ... 30 líneas ...
+    }
+
+    if name == "multiplicar" && args.len() >= 2 {
+        // ... 30 líneas ...
+    }
+
+    if name == "dividir" && args.len() == 2 {
+        // ... 30 líneas ...
+    }
+
+    // Función de usuario
+    let func_data = funcs.get(name).map(|(p, b)| (p.clone(), b.clone()));
+    if let Some((params, body)) = func_data {
+        // ... 40 líneas ...
+    }
+
+    Valor::Error(format!("Función '{}' no soportada en expresiones", name))
+}
+```
+
+PROBLEMAS:
+1. ❌ **200+ líneas** de lógica repetitiva
+2. ❌ **Cada binding nuevo** requiere modificar evaluar_expr()
+3. ❌ **No hay tests unitarios** para cada builtin
+4. ❌ **Difícil de mantener** - un cambio puede romper todo
+5. ❌ **No hay plugins** - todo debe estar compilado
+
+================================================================================
+                         💡 SOLUCIÓN: BINDING UNIVERSAL
+================================================================================
+
+IDEA CENTRAL:
+-------------
+
+En vez de hardcodear cada función builtin, tener un **REGISTRY** de bindings
+que se pueda extender sin modificar el core del executor.
+
+```rust
+// crates/rydit-bindings/src/lib.rs (NUEVO CRATE)
+
+pub type BindingFn = fn(&[Valor]) -> Result<Valor, String>;
+
+pub struct BindingRegistry {
+    functions: HashMap<String, BindingFn>,
+}
+
+impl BindingRegistry {
+    pub fn new() -> Self {
+        let mut registry = Self {
+            functions: HashMap::new(),
+        };
+        
+        // Registrar bindings automáticos
+        registry.register_core();
+        registry.register_math();
+        registry.register_io();
+        registry.register_gfx();
+        
+        registry
+    }
+    
+    pub fn register(&mut self, name: &str, func: BindingFn) {
+        self.functions.insert(name.to_string(), func);
+    }
+    
+    pub fn call(&self, name: &str, args: &[Valor]) -> Result<Valor, String> {
+        if let Some(func) = self.functions.get(name) {
+            return func(args);
+        }
+        Err(format!("Función '{}' no encontrada", name))
+    }
+}
+```
+
+================================================================================
+                         🔧 IMPLEMENTACIÓN
+================================================================================
+
+STEP 1: Crear crate rydit-bindings
+----------------------------------
+
+```
+shield-project/
+├── crates/
+│   ├── rydit-bindings/    # ← NUEVO
+│   │   ├── Cargo.toml
+│   │   └── src/
+│   │       ├── lib.rs
+│   │       ├── core.rs      # sumar, restar, etc.
+│   │       ├── math.rs      # pow, abs, sqrt, etc.
+│   │       ├── io.rs        # file_read, file_write
+│   │       └── gfx.rs       # draw.circle, etc.
+```
+
+STEP 2: Definir bindings modulares
+----------------------------------
+
+```rust
+// crates/rydit-bindings/src/core.rs
+
+use rydit_core::{Valor, Error};
+
+pub fn register_core(registry: &mut crate::BindingRegistry) {
+    registry.register("sumar", sumar_binding);
+    registry.register("restar", restar_binding);
+    registry.register("multiplicar", multiplicar_binding);
+    registry.register("dividir", dividir_binding);
+}
+
+fn sumar_binding(args: &[Valor]) -> Result<Valor, String> {
+    if args.len() < 2 {
+        return Err(format!(
+            "sumar() requiere al menos 2 argumentos, recibió {}",
+            args.len()
+        ));
+    }
+    
+    let mut suma = 0.0;
+    for (i, arg) in args.iter().enumerate() {
+        if let Valor::Num(n) = arg {
+            suma += n;
+        } else {
+            return Err(format!(
+                "sumar() requiere números, el argumento {} es {:?}",
+                i, arg
+            ));
+        }
+    }
+    
+    Ok(Valor::Num(suma))
+}
+
+fn restar_binding(args: &[Valor]) -> Result<Valor, String> {
+    if args.len() != 2 {
+        return Err(format!(
+            "restar() requiere exactamente 2 argumentos, recibió {}",
+            args.len()
+        ));
+    }
+    
+    let a = args[0].as_num()
+        .ok_or_else(|| "restar() requiere números".to_string())?;
+    let b = args[1].as_num()
+        .ok_or_else(|| "restar() requiere números".to_string())?;
+    
+    Ok(Valor::Num(a - b))
+}
+
+// ... más bindings
+```
+
+STEP 3: Integrar con el executor
+--------------------------------
+
+```rust
+// crates/rydit-rs/src/main.rs
+
+use rydit_bindings::BindingRegistry;
+
+fn main() {
+    // ... setup ...
+    
+    let bindings = BindingRegistry::new();
+    
+    // En evaluar_expr():
+    Expr::Call { name, args } => {
+        // 1. Evaluar argumentos
+        let arg_values: Vec<Valor> = args.iter()
+            .map(|arg| evaluar_expr(arg, executor, funcs))
+            .collect();
+        
+        // 2. Intentar binding registrado
+        match bindings.call(&name, &arg_values) {
+            Ok(result) => return result,
+            Err(_) => {}  // No es binding, intentar con función de usuario
+        }
+        
+        // 3. Función de usuario
+        let func_data = funcs.get(&name).map(|(p, b)| (p.clone(), b.clone()));
+        if let Some((params, body)) = func_data {
+            // ... ejecutar función de usuario ...
+        }
+        
+        return Valor::Error(format!("Función '{}' no encontrada", name));
+    }
+}
+```
+
+STEP 4: Tests unitarios por binding
+-----------------------------------
+
+```rust
+// crates/rydit-bindings/tests/core_tests.rs
+
+use rydit_bindings::{BindingRegistry, Valor};
+
+#[test]
+fn test_sumar_dos_numeros() {
+    let registry = BindingRegistry::new();
+    let args = vec![Valor::Num(2.0), Valor::Num(3.0)];
+    let result = registry.call("sumar", &args).unwrap();
+    assert_eq!(result, Valor::Num(5.0));
+}
+
+#[test]
+fn test_sumar_tres_numeros() {
+    let registry = BindingRegistry::new();
+    let args = vec![Valor::Num(1.0), Valor::Num(2.0), Valor::Num(3.0)];
+    let result = registry.call("sumar", &args).unwrap();
+    assert_eq!(result, Valor::Num(6.0));
+}
+
+#[test]
+fn test_sumar_error_tipo() {
+    let registry = BindingRegistry::new();
+    let args = vec![Valor::Num(1.0), Valor::Texto("hola".to_string())];
+    let result = registry.call("sumar", &args);
+    assert!(result.is_err());
+    assert!(result.unwrap_err().contains("requiere números"));
+}
+
+#[test]
+fn test_restar() {
+    let registry = BindingRegistry::new();
+    let args = vec![Valor::Num(10.0), Valor::Num(3.0)];
+    let result = registry.call("restar", &args).unwrap();
+    assert_eq!(result, Valor::Num(7.0));
+}
+
+#[test]
+fn test_dividir_por_cero() {
+    let registry = BindingRegistry::new();
+    let args = vec![Valor::Num(10.0), Valor::Num(0.0)];
+    let result = registry.call("dividir", &args);
+    assert!(result.is_err());
+    assert!(result.unwrap_err().contains("División por cero"));
+}
+```
+
+================================================================================
+                         🚀 VENTAJAS DEL BINDING UNIVERSAL
+================================================================================
+
+1. **CÓDIGO MÁS LIMPIO** ✅
+   ANTES: 200+ líneas en evaluar_expr()
+   DESPUÉS: 20 líneas + módulos separados
+
+2. **TESTS UNITARIOS** ✅
+   Cada binding tiene sus propios tests
+   Fácil detectar qué se rompió
+
+3. **EXTENSIBILIDAD** ✅
+   Agregar nuevo binding = 10 líneas
+   Sin modificar el core
+
+4. **PLUGINS EXTERNOS** ✅
+   ```rust
+   // Usuario puede registrar sus propios bindings
+   registry.register("mi_funcion", mi_funcion_binding);
+   ```
+
+5. **DOCUMENTACIÓN AUTOMÁTICA** ✅
+   ```rust
+   pub struct BindingInfo {
+       pub name: String,
+       pub description: String,
+       pub params: Vec<String>,
+       pub returns: String,
+   }
+   
+   registry.register_with_info("sumar", sumar_binding, BindingInfo {
+       name: "sumar".to_string(),
+       description: "Suma dos o más números".to_string(),
+       params: vec!["a: Num".to_string(), "b: Num".to_string()],
+       returns: "Num".to_string(),
+   });
+   ```
+
+6. **ERRORS MÁS CLAROS** ✅
+   Cada binding es responsable de sus errores
+   Mensajes específicos por función
+
+================================================================================
+                         📊 COMPARACIÓN DE CÓDIGO
+================================================================================
+
+ANTES (evaluar_expr - 200+ líneas):
+------------------------------------
+
+```rust
+Expr::Call { name, args } => {
+    if name == "tecla_presionada" && args.len() == 1 {
+        return Valor::Num(0.0);
+    }
+
+    if name == "sumar" && args.len() >= 2 {
+        let mut suma = 0.0;
+        for arg in args {
+            if let Valor::Num(n) = evaluar_expr(arg, executor, funcs) {
+                suma += n;
+            } else {
+                return Valor::Error("sumar() requiere números".to_string());
+            }
+        }
+        return Valor::Num(suma);
+    }
+
+    if name == "restar" && args.len() == 2 {
+        let a = evaluar_expr(&args[0], executor, funcs);
+        let b = evaluar_expr(&args[1], executor, funcs);
+        if let (Valor::Num(a), Valor::Num(b)) = (a, b) {
+            return Valor::Num(a - b);
+        } else {
+            return Valor::Error("restar() requiere números".to_string());
+        }
+    }
+
+    // ... 150 líneas más ...
+
+    Valor::Error(format!("Función '{}' no soportada", name))
+}
+```
+
+DESPUÉS (evaluar_expr - 20 líneas):
+------------------------------------
+
+```rust
+Expr::Call { name, args } => {
+    // 1. Evaluar argumentos
+    let arg_values: Vec<Valor> = args.iter()
+        .map(|arg| evaluar_expr(arg, executor, funcs))
+        .collect();
+
+    // 2. Intentar binding registrado
+    if let Ok(result) = bindings.call(&name, &arg_values) {
+        return result;
+    }
+
+    // 3. Función de usuario
+    if let Some((params, body)) = funcs.get(&name) {
+        // ... ejecutar función de usuario (40 líneas) ...
+    }
+
+    return Valor::Error(format!("Función '{}' no encontrada", name));
+}
+```
+
+REDUCCIÓN: **180 líneas menos** en el executor principal
+
+================================================================================
+                         🎯 LIBRERÍA ESTÁNDAR CON BINDINGS
+================================================================================
+
+MÓDULO STRINGS (con bindings universales):
+------------------------------------------
+
+```rust
+// crates/rydit-bindings/src/strings.rs
+
+pub fn register_strings(registry: &mut crate::BindingRegistry) {
+    registry.register("strings::length", strings_length);
+    registry.register("strings::upper", strings_upper);
+    registry.register("strings::lower", strings_lower);
+    registry.register("strings::concat", strings_concat);
+    registry.register("strings::substr", strings_substr);
+    registry.register("strings::trim", strings_trim);
+    registry.register("strings::replace", strings_replace);
+    registry.register("strings::split", strings_split);
+}
+
+fn strings_length(args: &[Valor]) -> Result<Valor, String> {
+    if args.len() != 1 {
+        return Err("strings::length() requiere 1 argumento".to_string());
+    }
+    
+    let s = args[0].as_str()
+        .ok_or_else(|| "strings::length() requiere string".to_string())?;
+    
+    Ok(Valor::Num(s.len() as f64))
+}
+
+fn strings_upper(args: &[Valor]) -> Result<Valor, String> {
+    if args.len() != 1 {
+        return Err("strings::upper() requiere 1 argumento".to_string());
+    }
+    
+    let s = args[0].as_str()
+        .ok_or_else(|| "strings::upper() requiere string".to_string())?;
+    
+    Ok(Valor::Texto(s.to_uppercase()))
+}
+
+// ... más bindings
+```
+
+MÓDULO IO (con bindings universales):
+-------------------------------------
+
+```rust
+// crates/rydit-bindings/src/io.rs
+
+pub fn register_io(registry: &mut crate::BindingRegistry) {
+    registry.register("io::read_file", io_read_file);
+    registry.register("io::write_file", io_write_file);
+    registry.register("io::append_file", io_append_file);
+    registry.register("io::file_exists", io_file_exists);
+    registry.register("io::delete_file", io_delete_file);
+    registry.register("io::print", io_print);
+    registry.register("io::println", io_println);
+}
+
+fn io_read_file(args: &[Valor]) -> Result<Valor, String> {
+    if args.len() != 1 {
+        return Err("io::read_file() requiere 1 argumento (path)".to_string());
+    }
+    
+    let path = args[0].as_str()
+        .ok_or_else(|| "io::read_file() requiere string".to_string())?;
+    
+    std::fs::read_to_string(path)
+        .map(Valor::Texto)
+        .map_err(|e| format!("io::read_file() error: {}", e))
+}
+
+fn io_write_file(args: &[Valor]) -> Result<Valor, String> {
+    if args.len() != 2 {
+        return Err("io::write_file() requiere 2 argumentos (path, content)".to_string());
+    }
+    
+    let path = args[0].as_str()
+        .ok_or_else(|| "io::write_file() path debe ser string".to_string())?;
+    let content = args[1].as_str()
+        .ok_or_else(|| "io::write_file() content debe ser string".to_string())?;
+    
+    std::fs::write(path, content)
+        .map(|_| Valor::Num(1.0))
+        .map_err(|e| format!("io::write_file() error: {}", e))
+}
+
+// ... más bindings
+```
+
+================================================================================
+                         📈 EVOLUCIÓN EXPONENCIAL
+================================================================================
+
+FASE 1: v0.1.0 - v0.1.1 (COMPLETADO)
+------------------------------------
+- ✅ Funciones de usuario
+- ✅ Composición de funciones
+- ✅ Sistema de módulos
+- ✅ Namespaces
+
+FASE 2: v0.1.2 - v0.1.3 (PROPUESTA)
+-----------------------------------
+- ⏳ Binding universal
+- ⏳ Librería estándar (strings, io, time)
+- ⏳ Cache de módulos
+- ⏳ 70+ tests
+
+FASE 3: v0.2.0 (VISIÓN)
+-----------------------
+- 🔮 Plugins externos
+- 🔮 Package manager (rydit add)
+- 🔮 Bindings en Rust compilados
+- 🔮 FFI para bindings en C
+- 🔮 100+ tests
+
+FASE 4: v1.0.0 (META)
+---------------------
+- 🔮 Librería estándar completa
+- 🔮 Documentación completa
+- 🔮 Comunidad activa
+- 🔮 200+ tests
+- 🔮 Performance optimizado
+
+================================================================================
+                         💭 ANÁLISIS DE COSTO/BENEFICIO
+================================================================================
+
+COSTO DE IMPLEMENTACIÓN:
+------------------------
+- Crear crate rydit-bindings: 2-3 horas
+- Migrar 20+ bindings existentes: 4-6 horas
+- Escribir tests unitarios: 2-3 horas
+- Documentación: 1-2 horas
+- **TOTAL: 9-14 horas**
+
+BENEFICIO:
+----------
+- ✅ 180 líneas menos de código en executor
+- ✅ Tests unitarios para cada binding
+- ✅ Fácil agregar nuevos bindings (10 min vs 1 hora)
+- ✅ Plugins externos posibles
+- ✅ Mejor organización del código
+
+ROI (Return on Investment):
+---------------------------
+- **Corto plazo:** 9-14 horas de trabajo
+- **Mediano plazo:** Ahorro de 5+ horas por feature nueva
+- **Largo plazo:** Ecosistema de plugins, comunidad
+
+**Punto de equilibrio:** ~3 features nuevas después de la implementación
+
+================================================================================
+                         🎯 RECOMENDACIÓN
+================================================================================
+
+**IMPLEMENTAR EN v0.1.2**
+
+RAZONES:
+1. La librería estándar (strings, io) necesita bindings de todos modos
+2. Mejor hacer el refactor AHORA que el código es pequeño
+3. Los tests unitarios prevendrán bugs futuros
+4. Habilita plugins externos (ecosistema)
+
+PLAN DE ACCIÓN:
+1. Crear crate rydit-bindings (2 horas)
+2. Migrar bindings de core (sumar, restar, etc.) (2 horas)
+3. Crear bindings de strings (2 horas)
+4. Crear bindings de io (2 horas)
+5. Escribir tests unitarios (2 horas)
+6. Integrar con executor (1 hora)
+7. Documentar (1 hora)
+
+**TIEMPO TOTAL: 12 horas**
+
+================================================================================
+                         FIN DEL DOCUMENTO DE DISEÑO
+================================================================================
+
+PRÓXIMA REVISIÓN: v0.1.2 (Librería Estándar + Binding Universal)
+ESTADO: 📝 PROPUESTA LISTA PARA IMPLEMENTAR
+PROBABILIDAD DE APROBACIÓN: 95%
+
+================================================================================

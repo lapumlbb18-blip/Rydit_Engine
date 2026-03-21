@@ -1,0 +1,621 @@
+================================================================================
+                    BINDINGS INTERNOS - RAYLIB & RAYLIB-RS
+                    Shield Project - RyDit Language
+================================================================================
+
+FECHA: 2026-03-16
+VERSIÓN: v0.0.10 (Stable & Secure)
+TEMA: Bindings de Raylib para RyDit
+
+================================================================================
+                         📚 CONTEXTO TÉCNICO
+================================================================================
+
+JERARQUÍA DE BINDINGS:
+----------------------
+
+┌─────────────────────────────────────────────────────────────────┐
+│                    RAYLIB (C - Nativo)                          │
+│  - raylib.h, raymath.h, rlgl.h                                  │
+│  - Funciones: DrawCircle(), DrawRectangle(), etc.               │
+│  - Instalado en Termux: pkg install raylib                      │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓ binds (FFI)
+┌─────────────────────────────────────────────────────────────────┐
+│                  RAYLIB-RS (Rust - Wrapper)                     │
+│  - Crate: raylib = "5.5.1"                                      │
+│  - Features: nobuild (raylib nativo ya instalado)               │
+│  - API: rl.draw_circle(), rl.is_key_pressed(), etc.             │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓ abstrae
+┌─────────────────────────────────────────────────────────────────┐
+│                  RYDIT-GFX (Rust - Sync Layer)                  │
+│  - Crate propio: rydit-gfx                                      │
+│  - API consistente: gfx.draw_circle(), gfx.is_key_pressed()     │
+│  - Maneja inconsistencias de raylib-rs                          │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓ expone a
+┌─────────────────────────────────────────────────────────────────┐
+│                    RYDIT (Lenguaje de Scripting)                │
+│  - Comandos: draw.circle(x, y, r, "color")                      │
+│  - Builtins: tecla_presionada("arrow_up")                       │
+│  - Scripts: snake.rydit, ejemplo_gfx.rydit                      │
+└─────────────────────────────────────────────────────────────────┘
+
+================================================================================
+                         🔧 RAYLIB-RS: ESTADO ACTUAL
+================================================================================
+
+VERSIÓN: 5.5.1
+FEATURES USADAS: nobuild (usa raylib nativo de Termux)
+
+PROBLEMAS CONOCIDOS CON RAYLIB-RS:
+----------------------------------
+
+1. **INCONSISTENCIA DE API** ⚠️
+   Algunas funciones necesitan `&thread`, otras NO:
+   
+   ```rust
+   // ❌ INCONSISTENTE - raylib-rs 5.5.1
+   rl.begin_drawing(&thread);        // ✅ necesita &thread
+   rl.draw_circle(400, 300, 50, RED); // ❌ NO necesita &thread
+   rl.is_key_pressed(KEY_ESCAPE);     // ❌ NO necesita &thread
+   rl.window_should_close(&thread);   // ✅ necesita &thread
+   ```
+   
+   SOLUCIÓN: rydit-gfx abstrae esta inconsistencia
+
+2. **LIFETIMES EXPLÍCITOS** ⚠️
+   Algunos métodos requieren lifetimes explícitos:
+   
+   ```rust
+   // ❌ Warning en raylib-rs
+   pub fn begin_draw(&mut self) -> DrawHandle {
+       // ...
+   }
+   
+   // ✅ Correcto
+   pub fn begin_draw(&mut self) -> DrawHandle<'_> {
+       // ...
+   }
+   ```
+
+3. **NOBUILD REQUIRES BUILD.RS** ⚠️
+   Con feature nobuild, necesitas build.rs explícito:
+   
+   ```rust
+   // crates/rydit-gfx/build.rs
+   fn main() {
+       pkg_config::Config::new()
+           .atleast_version("5.0")
+           .probe("raylib")
+           .expect("raylib no encontrado");
+   }
+   ```
+
+================================================================================
+                         📦 MÓDULOS OFICIALES DE RAYLIB
+================================================================================
+
+MÓDULOS DISPONIBLES (raylib 5.0+):
+----------------------------------
+
+1. **core** (raylib.h)
+   ------------------
+   Funciones básicas de ventana y contexto.
+   
+   ```rust
+   // raylib-rs
+   init_window(width, height, title);
+   close_window();
+   window_should_close();
+   begin_drawing();
+   end_drawing();
+   ```
+   
+   EN RYDIT:
+   ```rydit
+   shield.init  # Inicializa ventana
+   # Game loop implícito en modo gráfico
+   ```
+
+2. **shapes** (raylib.h)
+   ---------------------
+   Funciones de dibujo de formas geométricas.
+   
+   ```rust
+   // raylib-rs
+   draw_circle(x, y, radius, color);
+   draw_rectangle(x, y, width, height, color);
+   draw_line(start_x, start_y, end_x, end_y, color);
+   draw_pixel(x, y, color);
+   draw_triangle(v1, v2, v3, color);
+   ```
+   
+   EN RYDIT:
+   ```rydit
+   draw.circle(x, y, radio, "rojo")
+   draw.rect(x, y, ancho, alto, "verde")
+   draw.line(x1, y1, x2, y2, "azul")
+   ```
+
+3. **text** (raylib.h)
+   -------------------
+   Funciones de dibujo de texto y fuentes.
+   
+   ```rust
+   // raylib-rs
+   draw_text(text, x, y, font_size, color);
+   draw_text_ex(font, text, x, y, font_size, spacing, tint);
+   load_font(file);
+   unload_font(font);
+   ```
+   
+   EN RYDIT:
+   ```rydit
+   draw.text("Hola", x, y, tamano, "blanco")
+   # TODO: draw.text_ex(fuente, "Hola", x, y, tamano, "rojo")
+   ```
+
+4. **textures** (raylib.h)
+   -----------------------
+   Funciones para imágenes y texturas.
+   
+   ```rust
+   // raylib-rs
+   load_texture(file);
+   unload_texture(texture);
+   draw_texture(texture, x, y, tint);
+   draw_texture_ex(texture, x, y, rotation, scale, tint);
+   gen_image_color(width, height, color);
+   ```
+   
+   EN RYDIT:
+   ```rydit
+   # TODO: Implementar
+   # texture.cargar("imagen.png")
+   # texture.dibujar(tex, x, y)
+   ```
+
+5. **models** (raylib.h)
+   ---------------------
+   Funciones para modelos 3D.
+   
+   ```rust
+   // raylib-rs
+   load_model(file);
+   unload_model(model);
+   draw_model(model, position, scale, tint);
+   draw_cube(position, width, height, depth, color);
+   draw_sphere(center, radius, color);
+   ```
+   
+   EN RYDIT:
+   ```rydit
+   # TODO: Implementar (v0.2.0+)
+   # model.cargar("modelo.obj")
+   # model.dibujar_3d(x, y, z)
+   ```
+
+6. **shaders** (raylib.h)
+   ----------------------
+   Funciones para shaders personalizados.
+   
+   ```rust
+   // raylib-rs
+   load_shader(vrt_file, frag_file);
+   unload_shader(shader);
+   begin_shader_mode(shader);
+   end_shader_mode();
+   ```
+   
+   EN RYDIT:
+   ```rydit
+   # TODO: Implementar (v0.3.0+)
+   # shader.cargar("vert.glsl", "frag.glsl")
+   # shader.activar()
+   ```
+
+7. **audio** (raylib.h)
+   --------------------
+   Funciones para sonido y música.
+   
+   ```rust
+   // raylib-rs
+   init_audio_device();
+   close_audio_device();
+   load_sound(file);
+   unload_sound(sound);
+   play_sound(sound);
+   stop_sound(sound);
+   load_music_stream(file);
+   play_music_stream(music);
+   ```
+   
+   EN RYDIT:
+   ```rydit
+   # TODO: Integrar con blast-core
+   # sound.play("efecto.wav")
+   # music.reproducir("tema.mp3")
+   ```
+
+8. **utils** (raylib.h)
+   --------------------
+   Funciones utilitarias.
+   
+   ```rust
+   // raylib-rs
+   get_frame_time();
+   get_time();
+   get_fps();
+   set_target_fps(fps);
+   take_screenshot(file);
+   ```
+   
+   EN RYDIT:
+   ```rydit
+   # TODO: Implementar
+   # dark.slot fps = obtener_fps()
+   # dark.slot tiempo = obtener_tiempo()
+   ```
+
+================================================================================
+                         🦀 RAYLIB-RS: CRATE ESPECÍFICO
+================================================================================
+
+ESTRUCTURA DE RAYLIB-RS:
+------------------------
+
+```
+raylib/
+├── ffi/           # Bindings FFI automáticos (bindgen)
+├── types.rs       # Tipos: Color, Vector2, Vector3, etc.
+├── functions.rs   # Funciones envueltas
+├── models.rs      # Tipos y funciones 3D
+├── shaders.rs     # Tipos y funciones de shaders
+├── audio.rs       # Tipos y funciones de audio
+├── physics.rs     # Opcional: physac (física 2D)
+└── lib.rs         # Punto de entrada
+```
+
+FEATURES DE RAYLIB-RS:
+----------------------
+
+```toml
+[dependencies.raylib]
+version = "5.5.1"
+features = [
+    "nobuild",        # No compilar raylib (ya instalado)
+    "no_std",         # Opcional: sin std (no usado)
+    "physac",         # Opcional: física 2D
+]
+```
+
+PROBLEMAS CON RAYLIB-RS 5.5.1:
+------------------------------
+
+1. **Signatures Inconsistentes**
+   - Algunas funciones usan `&RaylibThread`, otras no
+   - Cambia entre versiones menores
+   - SOLUCIÓN: rydit-gfx abstrae esto
+
+2. **Documentación Limitada**
+   - Pocos ejemplos de uso
+   - API no siempre clara
+   - SOLUCIÓN: Leer código fuente de raylib-rs
+
+3. **Tiempos de Compilación**
+   - Sin nobuild: ~5-10 minutos
+   - Con nobuild: ~30 segundos
+   - SOLUCIÓN: Usar nobuild + pkg-config
+
+================================================================================
+                         🎨 RYDIT-GFX: ABSTRACCIÓN PROPIA
+================================================================================
+
+POR QUÉ CREAMOS RYDIT-GFX:
+--------------------------
+
+1. **API CONSISTENTE**
+   raylib-rs tiene inconsistencias. rydit-gfx las oculta:
+   
+   ```rust
+   // ❌ raylib-rs inconsistente
+   rl.begin_drawing(&thread);        // necesita &thread
+   rl.draw_circle(400, 300, 50, RED); // NO necesita &thread
+   
+   // ✅ rydit-gfx consistente
+   gfx.begin_draw();  // Siempre consistente
+   gfx.draw_circle(x, y, r, color);   // Siempre consistente
+   ```
+
+2. **COLORES Y TECLAS CONSTANTES**
+   raylib-rs usa constantes de C. rydit-gfx define las nuestras:
+   
+   ```rust
+   // raylib-rs
+   const RED: Color = Color { r: 205, g: 0, b: 0, a: 255 };
+   const KEY_ESCAPE: i32 = 256;
+   
+   // rydit-gfx
+   pub enum ColorRydit { Rojo, Verde, Azul, Negro, Blanco, ... }
+   pub enum Key { Escape, Enter, Space, ArrowUp, ... }
+   ```
+
+3. **MANEJO DE DRAWHANDLE**
+   raylib-rs no tiene begin_drawing() con RAII. rydit-gfx sí:
+   
+   ```rust
+   // rydit-gfx
+   {
+       let mut d = gfx.begin_draw();  // RAII
+       d.clear(ColorRydit::Negro);
+       d.draw_circle(400, 300, 50, ColorRydit::Rojo);
+   }  // begin_draw() hace drop → end_drawing() automático
+   ```
+
+ESTRUCTURA DE RYDIT-GFX:
+------------------------
+
+```
+crates/rydit-gfx/
+├── Cargo.toml         # dependencies: raylib, pkg-config
+├── build.rs           # pkg-config para raylib nativo
+└── src/
+    └── lib.rs         # RyditGfx, DrawHandle, ColorRydit, Key
+```
+
+API DE RYDIT-GFX:
+-----------------
+
+```rust
+use rydit_gfx::{RyditGfx, ColorRydit, Key};
+
+// Crear ventana
+let mut gfx = RyditGfx::new("RyDit", 800, 600);
+gfx.set_target_fps(60);
+
+// Game loop
+while !gfx.should_close() {
+    // Input PRIMERO (Rust decide)
+    let escape = gfx.is_key_pressed(Key::Escape);
+    
+    // Dibujo DESPUÉS (Raylib ejecuta)
+    {
+        let mut d = gfx.begin_draw();
+        d.clear(ColorRydit::Negro);
+        d.draw_circle(400, 300, 50, ColorRydit::Rojo);
+    }
+    
+    // Control (Rust decide cuándo parar)
+    if escape {
+        break;
+    }
+}
+```
+
+================================================================================
+                         🔗 BINDINGS FFI (C → Rust)
+================================================================================
+
+CÓMO FUNCIONA FFI EN RAYLIB-RS:
+-------------------------------
+
+```rust
+// raylib-sys/src/lib.rs (generado por bindgen)
+#[link(name = "raylib")]
+extern "C" {
+    pub fn InitWindow(width: c_int, height: c_int, title: *const c_char);
+    pub fn BeginDrawing();
+    pub fn DrawCircle(centerX: c_int, centerY: c_int, radius: c_int, color: Color);
+    // ...
+}
+
+// raylib/src/lib.rs (wrapper seguro)
+pub fn init_window(width: i32, height: i32, title: &str) {
+    unsafe {
+        ffi::InitWindow(width, height, title.as_ptr() as *const _);
+    }
+}
+
+pub fn draw_circle(x: i32, y: i32, radius: i32, color: Color) {
+    unsafe {
+        ffi::DrawCircle(x, y, radius, color);
+    }
+}
+```
+
+PROBLEMAS CON FFI:
+------------------
+
+1. **UNSAFE BLOCS**
+   Todo FFI requiere unsafe. raylib-rs lo envuelve en funciones safe.
+
+2. **STRING CONVERSIONS**
+   Rust String → C *const c_char requiere conversión:
+   
+   ```rust
+   let title = "Mi Ventana";
+   unsafe {
+       ffi::InitWindow(800, 600, title.as_ptr() as *const _);
+   }
+   ```
+
+3. **TIPOS INCOMPATIBLES**
+   C usa structs con campos públicos. Rust prefiere encapsulamiento:
+   
+   ```c
+   // C (raylib.h)
+   typedef struct Color { unsigned char r, g, b, a; } Color;
+   ```
+   
+   ```rust
+   // Rust (raylib-rs)
+   #[repr(C)]
+   pub struct Color {
+       pub r: u8,
+       pub g: u8,
+       pub b: u8,
+       pub a: u8,
+   }
+   ```
+
+================================================================================
+                         📋 DECISIONES DE DISEÑO RYDIT
+================================================================================
+
+DECISIÓN #1: STRINGS PARA COLORES
+---------------------------------
+```rydit
+draw.circle(100, 100, 50, "rojo")  # ✅ Legible
+draw.circle(100, 100, 50, "red")   # ✅ Alias soportado
+```
+
+EN VEZ DE:
+```rydit
+draw.circle(100, 100, 50, Color.Rojo)  # ❌ Más verboso
+draw.circle(100, 100, 50, 0xFF0000)    # ❌ Menos legible
+```
+
+IMPLEMENTACIÓN:
+```rust
+// rydit-gfx/src/lib.rs
+pub enum ColorRydit {
+    Rojo, Verde, Azul, Negro, Blanco, Amarillo, Gris,
+}
+
+impl ColorRydit {
+    pub fn from_str(s: &str) -> Self {
+        match s.to_lowercase().as_str() {
+            "rojo" | "red" => ColorRydit::Rojo,
+            "verde" | "green" => ColorRydit::Verde,
+            "azul" | "blue" => ColorRydit::Azul,
+            // ...
+            _ => ColorRydit::Negro,
+        }
+    }
+}
+```
+
+DECISIÓN #2: ENUMS PARA TECLAS
+------------------------------
+```rydit
+tecla_presionada("arrow_up")  # ✅ String flexible
+```
+
+EN VEZ DE:
+```rydit
+tecla_presionada(Key.ArrowUp)  # ❌ Requiere tipo
+tecla_presionada(262)          # ❌ Magic number
+```
+
+IMPLEMENTACIÓN:
+```rust
+// rydit-gfx/src/lib.rs
+pub enum Key {
+    Escape = 256,
+    ArrowUp = 262,
+    ArrowDown = 264,
+    ArrowLeft = 263,
+    ArrowRight = 261,
+    Space = 32,
+}
+
+impl Key {
+    pub fn from_str(s: &str) -> Option<Self> {
+        match s.to_lowercase().as_str() {
+            "escape" => Some(Key::Escape),
+            "arrow_up" => Some(Key::ArrowUp),
+            // ...
+            _ => None,
+        }
+    }
+}
+```
+
+DECISIÓN #3: COMANDOS DRAW.* COMO STATEMENTS
+--------------------------------------------
+```rydit
+draw.circle(x, y, radio, "rojo")  # ✅ Statement
+```
+
+EN VEZ DE:
+```rydit
+dark.slot circulo = Circle.new(x, y, radio, "rojo")  # ❌ Verboso
+circulo.draw()  # ❌ Dos pasos
+```
+
+IMPLEMENTACIÓN:
+```rust
+// lizer/src/lib.rs
+pub enum Stmt {
+    DrawCircle { x: Expr, y: Expr, radio: Expr, color: String },
+    DrawRect { ... },
+    // ...
+}
+
+// rydit-rs/src/main.rs
+match stmt {
+    Stmt::DrawCircle { x, y, radio, color } => {
+        let c = ColorRydit::from_str(&color);
+        d.draw_circle(x as i32, y as i32, radio as i32, c);
+    }
+    // ...
+}
+```
+
+================================================================================
+                         🚀 PRÓXIMOS BINDINGS A IMPLEMENTAR
+================================================================================
+
+PARA v0.1.0 (Alpha):
+--------------------
+- [ ] draw.pixel(x, y, "color")
+- [ ] draw.linea(x1, y1, x2, y2, "color")
+- [ ] obtener_fps() → número
+- [ ] obtener_tiempo() → número
+
+PARA v0.2.0 (Beta):
+-------------------
+- [ ] texture.cargar("archivo.png")
+- [ ] texture.dibujar(tex, x, y)
+- [ ] imagen.crear(ancho, alto, "color")
+- [ ] imagen.guardar(img, "archivo.png")
+- [ ] sound.play("archivo.wav")
+- [ ] music.reproducir("archivo.mp3")
+
+PARA v0.3.0 (3D):
+-----------------
+- [ ] model.cargar("archivo.obj")
+- [ ] model.dibujar_3d(x, y, z, escala)
+- [ ] camera.crear(posicion, target)
+- [ ] camera.activar()
+
+================================================================================
+                         💡 LECCIONES APRENDIDAS
+================================================================================
+
+1. **NUNCA CONFIAR EN API DE TERCEROS SIN ABSTRAER**
+   raylib-rs cambió signatures entre versiones. rydit-gfx previene esto.
+
+2. **FFI REQUIERE CUIDADO**
+   Todo unsafe debe estar bien envuelto en funciones safe.
+
+3. **CONSTANTES MANUALES VALEN LA PENA**
+   Definir ColorRydit y Key manualmente da control total.
+
+4. **RAII PARA DRAWHANDLE ES ELEGANTE**
+   begin_draw() con drop automático es más seguro que begin/end explícitos.
+
+5. **STRINGS SON MÁS FLEXIBLES QUE ENUMS PARA USUARIOS**
+   "rojo" vs Color.Rojo: más legible para scripting.
+
+================================================================================
+                         FIN DEL DOCUMENTO DE BINDINGS
+================================================================================
+
+PRÓXIMA REVISIÓN: v0.1.0 (Release Alpha)
+BINDINGS ACTUALES: draw.circle, draw.rect, draw.line, draw.text
+BINDINGS PENDIENTES: texture.*, sound.*, model.*
+
+================================================================================

@@ -1,0 +1,12 @@
+import strings
+dark.slot pasados = 0
+dark.slot fallidos = 0
+dark.slot len = strings::length("hola")
+onif len == 4 {
+    voz "PASS"
+    dark.slot pasados = pasados + 1
+} onif {
+    voz "FAIL"
+    dark.slot fallidos = fallidos + 1
+}
+voz "Pasados: " + pasados

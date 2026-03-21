@@ -1,0 +1,25 @@
+shield.init
+import time
+
+voz "=== time::now() ==="
+dark.slot ahora = time::now()
+voz "Timestamp: " + ahora
+voz ""
+
+voz "=== time::sleep() ==="
+voz "Esperando..."
+time::sleep(100)
+voz "Listo!"
+voz ""
+
+voz "=== Cronometro ==="
+dark.slot inicio = time::now()
+dark.slot i = 0
+ryda i < 100 {
+    dark.slot i = i + 1
+}
+dark.slot fin = time::now()
+voz "Iteraciones: " + (fin - inicio)
+voz ""
+
+voz "DEMO TIME OK"

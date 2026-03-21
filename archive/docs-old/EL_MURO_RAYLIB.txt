@@ -1,0 +1,262 @@
+================================================================================
+                    RYDIT - EL MURO DE RAYLIB
+                    El Paradigma: Rust = Arquitecto, Raylib = Pincel
+================================================================================
+
+FECHA: 2026-03-15
+ESTADO: 🔥 PUNTO DE INFLEXIÓN - LA CLAVE DEL LENGUAJE
+
+================================================================================
+                         🎯 LA VISIÓN CLARA
+================================================================================
+
+He construido RyDit en tiempo récord:
+- v0.0.1: CLI, Lexer, Memoria (19 tests)
+- v0.0.2: Parser AST, Condicionales, Operadores (26 tests)
+- v0.0.3: Funciones, Input (26 tests)
+- v0.0.4: Arrays, Indexación (36 tests)
+- v0.0.5: Input Seguro, Warnings (41 tests)
+- v0.0.6: Cada (for each) (45 tests)
+- v0.0.7: 🧱 EL MURO - Gráficos Raylib
+
+En GitHub intenté antes un editor con Rust + Raylib.
+Chocé contra este mismo muro.
+Ahora lo veo CLARO.
+
+================================================================================
+                         🧱 EL MURO TÉCNICO
+================================================================================
+
+PROBLEMA:
+---------
+La API de raylib-rs (5.5.1) es INCONSISTENTE:
+
+```rust
+// Algunos métodos SÍ requieren &thread:
+handle.window_should_close(&thread)  // ✅
+handle.begin_drawing(&thread)        // ✅
+
+// Otros métodos NO requieren &thread:
+handle.is_key_pressed(KEY_ESCAPE)           // ✅
+d.draw_circle(400, 300, 50, RED)           // ✅
+```
+
+Esta inconsistencia ROMPE la filosofía:
+> Rust = Arquitecto (controla)
+> Raylib = Pincel (ejecuta)
+
+INTENTO ACTUAL:
+---------------
+```rust
+let (mut handle, thread) = init_window("RyDit", 800, 600);
+
+while !handle.window_should_close(&thread) {  // SÍ necesita &thread
+    let mut d = handle.begin_drawing(&thread);  // SÍ necesita &thread
+    
+    d.draw_circle(400, 300, 50, RED);  // NO necesita &thread
+    d.draw_rectangle(100, 100, 100, 100, GREEN);
+    
+    if handle.is_key_pressed(KEY_ESCAPE) {  // NO necesita &thread
+        break;
+    }
+}
+```
+
+ERROR DE COMPILACIÓN:
+- `set_target_fps(&thread, 60)` ❌ (¿requiere o no &thread?)
+- `is_key_pressed(KEY_ESCAPE)` ❌ (¿requiere o no &thread?)
+- Signatures cambian entre versiones
+
+================================================================================
+                         💡 LA REVELACIÓN
+================================================================================
+
+ESTE MURO NO ES UN BUG - ES EL CAMINO.
+
+No se trata de "arreglar parámetros".
+Se trata de CREAR EL PUENTE entre Rust y RyDit.
+
+OPCIONES:
+
+1. **BINDING INTERNO** (Crear desde cero)
+   ```rust
+   // RyDit Graphics Layer
+   pub mod rydit_gfx {
+       pub fn circle(x: i32, y: i32, r: i32, color: &str);
+       pub fn rect(x: i32, y: i32, w: i32, h: i32, color: &str);
+       pub fn line(x1: i32, y1: i32, x2: i32, y2: i32, color: &str);
+   }
+   ```
+   
+   Ventaja: Control total, API consistente
+   Desventaja: Más código que mantener
+
+2. **SYNC LAYER** (Conector API)
+   ```rust
+   // RyDit-Rust Sync Connector
+   pub struct RyditSync {
+       rust_handle: RaylibHandle,
+       rust_thread: RaylibThread,
+   }
+   
+   impl RyditSync {
+       pub fn draw_circle(&mut self, x, y, r, color);
+       pub fn is_key_pressed(&self, key) -> bool;
+   }
+   ```
+   
+   Ventaja: Abstrae inconsistencias de raylib-rs
+   Desventaja: Capa adicional de complejidad
+
+3. **ADAPTADOR EXISTENTE** (Usar rust-raylib 4.x)
+   ```toml
+   [dependencies]
+   rust-raylib = "0.45"  # Raylib 4.5, API más estable
+   ```
+   
+   Ventaja: API más consistente
+   Desventaja: Versión antigua de raylib
+
+================================================================================
+                         🚀 LA SOLUCIÓN VISIÓN
+================================================================================
+
+CREAR: `rydit-gfx` - Capa de Sincronización Rust-RyDit
+
+```
+rydit-rs/
+├── crates/
+│   ├── lizer/           # Lexer + Parser
+│   ├── blast-core/      # Executor + Memoria
+│   ├── v-shield/        # Wrapper raylib (actual)
+│   └── rydit-gfx/       # ← NUEVO: Sync Layer
+│       └── src/
+│           └── lib.rs   # API consistente para RyDit
+```
+
+rydit-gfx/src/lib.rs:
+```rust
+//! RyDit Graphics Layer
+//! Sincroniza Rust (arquitecto) con Raylib (pincel)
+
+use raylib::prelude::*;
+
+pub struct RyditGfx {
+    handle: RaylibHandle,
+    thread: RaylibThread,
+}
+
+impl RyditGfx {
+    pub fn init(title: &str, w: i32, h: i32) -> Self {
+        let (h, t) = raylib::init()
+            .size(w, h)
+            .title(title)
+            .build();
+        Self { handle: h, thread: t }
+    }
+    
+    // API CONSISTENTE - Rust siempre controla
+    pub fn should_close(&self) -> bool {
+        self.handle.window_should_close(&self.thread)
+    }
+    
+    pub fn begin_draw(&mut self) -> DrawHandle {
+        self.handle.begin_drawing(&self.thread)
+    }
+    
+    pub fn is_key(&self, key: i32) -> bool {
+        self.handle.is_key_pressed(unsafe { std::mem::transmute(key) })
+    }
+    
+    // ... más métodos con API consistente
+}
+
+pub struct DrawHandle {
+    // Wrapper sobre RaylibDrawHandle
+    // API simplificada para RyDit
+}
+```
+
+VENTAJAS:
+---------
+✅ Rust SIEMPRE controla (arquitecto)
+✅ Raylib SIEMPRE ejecuta (pincel)
+✅ API CONSISTENTE para RyDit
+✅ Oculta inconsistencias de raylib-rs
+✅ Reutilizable para futuros proyectos
+
+================================================================================
+                         🎯 PRÓXIMOS PASOS
+================================================================================
+
+INMEDIATO (esta sesión):
+1. Crear `crates/rydit-gfx/`
+2. Implementar API consistente
+3. Probar con ejemplo simple
+4. Integrar con parser de RyDit
+
+MEDIANO PLAZO (v0.0.8):
+1. Snake game completo (300-500 líneas)
+2. Input teclado funcional
+3. Game loop 60 FPS estable
+
+LARGO PLAZO (v1.0.0):
+1. RyDit con gráficos completos
+2. Editor visual
+3. Librería de componentes
+
+================================================================================
+                         💭 NOTA PERSONAL
+================================================================================
+
+Este muro lo he visto antes.
+En GitHub, con otro editor.
+Lo intenté, no pude pasar.
+
+AHORA LO VEO CLARO:
+No es un problema técnico.
+Es una oportunidad de ARQUITECTURA.
+
+Crear el binding interno no es "más trabajo".
+Es LA pieza que falta para que RyDit sea REAL.
+
+Rust = Arquitecto
+Raylib = Pincel
+RyDit = El Lienzo
+
+La sync layer es el puente.
+El conector API es la clave.
+El binding interno es el camino.
+
+================================================================================
+                         🔥 DECISIÓN
+================================================================================
+
+[ ] Opción A: Binding interno (rydit-gfx)
+[ ] Opción B: Sync layer (conector API)
+[ ] Opción C: Adaptador (rust-raylib 4.x)
+[ ] Opción D: Combinación (A + B)
+
+MI INTUICIÓN: Opción D
+- Crear rydit-gfx (binding interno)
+- Que actúe como sync layer
+- API consistente para RyDit
+
+TIEMPO ESTIMADO: 2-3 horas
+IMPACTO: Desbloquea v0.0.7, v0.0.8, v1.0.0
+
+================================================================================
+                         FIN DEL DOCUMENTO
+================================================================================
+
+GUARDAR EN:
+- /home/shield-project/EL_MURO_RAYLIB.txt
+- /storage/downloads/EL_MURO_RAYLIB.txt
+
+PRÓXIMA ACCIÓN:
+Leer este documento, decidir, y CODIFICAR.
+
+El muro no es el fin.
+El muro es EL CAMINO.
+
+================================================================================

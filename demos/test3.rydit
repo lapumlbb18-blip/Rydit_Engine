@@ -1,0 +1,7 @@
+shield.init
+import random
+dark.slot x = 10
+dark.slot y = [1, 2, 3]
+rytmo func() {
+    return 1
+}

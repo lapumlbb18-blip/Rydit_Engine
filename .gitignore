@@ -1,0 +1,42 @@
+# Rust
+/target/
+**/target/
+*.rlib
+*.dylib
+*.so
+*.pdb
+
+# Cargo
+Cargo.lock
+**/Cargo.lock
+
+# Build artifacts
+*.o
+*.a
+*.out
+
+# Examples compiled
+examples/*-*.rs
+examples/*.d
+
+# Test files temporales
+test_*.rydit
+*.tmp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+
+# Screenshots (opcional - incluir o no según prefieras)
+# screenshots/*.jpg
+# screenshots/*.png

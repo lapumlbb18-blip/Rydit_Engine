@@ -1,0 +1,368 @@
+================================================================================
+                         SHIELD PROJECT - GUÍA DE USO
+================================================================================
+
+Versión: v0.0.1 (Pre-Alpha - Prueba de Concepto)
+Estado: Desarrollo inicial - Prueba de arquitectura
+Última actualización: 2026-03-14
+
+Esta guía contiene todos los comandos necesarios para trabajar con el proyecto.
+
+> Nota: Esta es una versión temprana. El lenguaje RyDit está en desarrollo inicial.
+
+================================================================================
+                              CONFIGURACIÓN INICIAL
+================================================================================
+
+1. INSTALAR SCCACHE (¡RECOMENDADO! - 12-17x más rápido)
+   ----------------------------------------------------------------------------
+   bash scripts/setup-sccache.sh
+   source ~/.bashrc
+   ----------------------------------------------------------------------------
+   Uso: Configurar caché de compilación para builds rápidos
+   Beneficio real medido:
+     - Primer build:  ~60-90 segundos
+     - Segundo build: ~3-5 segundos (¡17x más rápido!)
+
+2. VERIFICAR INSTALACIÓN DE RAYLIB
+   ----------------------------------------------------------------------------
+   pkg-config --libs --cflags raylib
+   ----------------------------------------------------------------------------
+   Salida esperada:
+     -I/data/data/com.termux/files/usr/include 
+     -L/data/data/com.termux/files/usr/lib -lraylib
+
+================================================================================
+                              COMANDOS BÁSICOS
+================================================================================
+
+1. VERIFICAR ERRORES DE COMPILACIÓN (RÁPIDO)
+   ----------------------------------------------------------------------------
+   cargo check
+   ----------------------------------------------------------------------------
+   Uso: Verificar sintaxis y errores sin compilar completamente
+   Tiempo: ~1-5 segundos
+   RAM: ~200-300 MB
+
+2. COMPILAR PROYECTO
+   ----------------------------------------------------------------------------
+   cargo build
+   ----------------------------------------------------------------------------
+   Uso: Compilar todo el proyecto en modo debug
+   Output: target/debug/rydit-rs
+   Tiempo (1ra vez): ~60-90 segundos
+   Tiempo (2da vez): ~3-5 segundos (con sccache)
+   RAM pico: ~2.0 GB
+
+3. COMPILAR EN MODO RELEASE (OPTIMIZADO)
+   ----------------------------------------------------------------------------
+   cargo build --release
+   ----------------------------------------------------------------------------
+   Uso: Compilar con optimizaciones máximas
+   Output: target/release/rydit-rs
+   Nota: Usa opt-level = "z" (tamaño), LTO activado
+   Tiempo: 2-5 minutos
+   RAM pico: ~2.5 GB
+
+4. EJECUTAR EL PROGRAMA
+   ----------------------------------------------------------------------------
+   cargo run --bin rydit-rs
+   ----------------------------------------------------------------------------
+   Uso: Compilar y ejecutar inmediatamente
+   Tiempo: 3-60 segundos (depende de caché)
+
+5. EJECUTAR BINARIO DIRECTAMENTE
+   ----------------------------------------------------------------------------
+   ./target/debug/rydit-rs
+   ----------------------------------------------------------------------------
+   Uso: Ejecutar binario ya compilado
+
+================================================================================
+                              COMANDOS DE MANTENIMIENTO
+================================================================================
+
+6. LIMPIAR PROYECTO
+   ----------------------------------------------------------------------------
+   cargo clean
+   ----------------------------------------------------------------------------
+   Uso: Eliminar carpeta target/ y artifacts de compilación
+   Nota: Libera ~140-200 MB de espacio
+
+7. ACTUALIZAR DEPENDENCIAS
+   ----------------------------------------------------------------------------
+   cargo update
+   ----------------------------------------------------------------------------
+   Uso: Actualizar Cargo.lock con últimas versiones compatibles
+
+8. VER DEPENDENCIAS
+   ----------------------------------------------------------------------------
+   cargo tree
+   ----------------------------------------------------------------------------
+   Uso: Ver árbol de dependencias del proyecto
+
+9. VERIFICAR FORMATEO
+   ----------------------------------------------------------------------------
+   cargo fmt --check
+   ----------------------------------------------------------------------------
+   Uso: Verificar si el código está formateado correctamente
+
+10. FORMATEAR CÓDIGO
+    ----------------------------------------------------------------------------
+    cargo fmt
+    ----------------------------------------------------------------------------
+    Uso: Formatear automáticamente todo el código Rust
+
+11. VER USO DE SCCACHE
+    ----------------------------------------------------------------------------
+    sccache --show-stats
+    ----------------------------------------------------------------------------
+    Uso: Ver estadísticas de caché de compilación
+
+12. LIMPIAR CACHE DE SCCACHE
+    ----------------------------------------------------------------------------
+    sccache --zero-stats
+    ----------------------------------------------------------------------------
+    Uso: Reiniciar estadísticas de caché
+
+================================================================================
+                              COMANDOS DE DEPURACIÓN
+================================================================================
+
+13. VER VARIABLES DE ENTORNO
+    ----------------------------------------------------------------------------
+    env | grep -i rust
+    ----------------------------------------------------------------------------
+    Uso: Ver variables relacionadas con Rust
+    Importante: RUSTC_WRAPPER=sccache debe estar presente
+
+14. VER INSTALACIÓN DE RAYLIB
+    ----------------------------------------------------------------------------
+    pkg-config --libs --cflags raylib
+    ----------------------------------------------------------------------------
+    Uso: Confirmar que raylib está disponible en el sistema
+
+15. VER ARCHIVOS DE RAYLIB
+    ----------------------------------------------------------------------------
+    ls -la /data/data/com.termux/files/usr/lib/libraylib*
+    ls -la /data/data/com.termux/files/usr/include/raylib.h
+    ----------------------------------------------------------------------------
+    Uso: Verificar instalación física de raylib
+
+16. VER VERSIÓN DE RUST
+    ----------------------------------------------------------------------------
+    rustc --version
+    cargo --version
+    ----------------------------------------------------------------------------
+    Uso: Confirmar versión del compilador
+
+17. LISTAR TARGETS DISPONIBLES
+    ----------------------------------------------------------------------------
+    rustup target list
+    ----------------------------------------------------------------------------
+    Uso: Ver targets disponibles para compilación cruzada
+
+18. VER USO DE RAM DURANTE BUILD
+    ----------------------------------------------------------------------------
+    free -h
+    ----------------------------------------------------------------------------
+    Uso: Monitorear uso de memoria
+
+================================================================================
+                              COMANDOS DE GIT
+================================================================================
+
+19. VER ESTADO DEL REPOSITORIO
+    ----------------------------------------------------------------------------
+    git status
+    ----------------------------------------------------------------------------
+    Uso: Ver archivos modificados/sin trackear
+
+20. VER DIFERENCIAS
+    ----------------------------------------------------------------------------
+    git diff
+    ----------------------------------------------------------------------------
+    Uso: Ver cambios no staged
+
+21. AGREGAR CAMBIOS
+    ----------------------------------------------------------------------------
+    git add .
+    ----------------------------------------------------------------------------
+    Uso: Staging de todos los cambios
+
+22. HACER COMMIT
+    ----------------------------------------------------------------------------
+    git commit -m "mensaje"
+    ----------------------------------------------------------------------------
+    Uso: Confirmar cambios
+
+================================================================================
+                              TABLA DE COMANDOS
+================================================================================
+
+COMANDO              | DESCRIPCIÓN                    | TIEMPO EST.
+---------------------|--------------------------------|------------------
+cargo check          | Verificar errores              | 1-5 seg
+cargo build (1ra vez)| Compilar debug (sin caché)     | 60-90 seg
+cargo build (2da vez)| Compilar debug (con caché)     | 3-5 seg ⚡
+cargo build --release| Compilar release               | 2-5 min
+cargo run            | Compilar + ejecutar            | 3-60 seg*
+cargo clean          | Limpiar build                  | 1-2 seg
+cargo test           | Ejecutar tests                 | Variable
+cargo fmt            | Formatear código               | 1-3 seg
+cargo clippy         | Linter avanzado                | 10-30 seg
+sccache --show-stats | Ver caché                      | <1 seg
+
+* Depende si usa caché de sccache
+
+================================================================================
+                              FLUJO DE TRABAJO RECOMENDADO
+================================================================================
+
+1. DESARROLLO DIARIO:
+   $ cargo check          # Verificar errores rápidamente
+   $ cargo fmt            # Formatear código
+   $ cargo build          # Compilar para probar
+
+2. ANTES DE COMMIT:
+   $ cargo check
+   $ cargo fmt
+   $ cargo clippy         # Si está instalado
+   $ cargo test           # Si hay tests
+
+3. PARA RELEASE:
+   $ cargo build --release
+   $ ./target/release/rydit-rs
+
+4. MONITOREO DE SCCACHE:
+   $ sccache --show-stats   # Ver efectividad de caché
+   $ sccache -s             # Alias corto
+
+================================================================================
+                              BENCHMARK REAL (Medido)
+================================================================================
+
+PRIMER BUILD (sin caché):
+  $ cargo clean && cargo build
+  Tiempo: 88 segundos
+  sccache: 35 compilaciones cacheadas (0% hit rate)
+  RAM pico: ~2.0 GB
+  Swap usada: ~898 MB
+
+SEGUNDO BUILD (con caché):
+  $ cargo build
+  Tiempo: 3.56 segundos
+  sccache: 1 cache hit (2.78% hit rate)
+  RAM pico: ~500 MB
+
+MEJORA OBTENIDA: 12-17x más rápido en builds subsecuentes ⚡
+
+================================================================================
+                              USO DE RECURSOS
+================================================================================
+
+RAM DURANTE BUILD:
+  Total sistema:     3.5 GiB
+  Usada (build):     ~2.0 GiB (pico)
+  Disponible:        ~1.5 GiB
+  Swap:              ~898 MB
+
+DISCO:
+  target/ size:      ~140 MB
+  Caché sccache:     ~26 MB (variable)
+  Código fuente:     ~50 KB
+
+PROCESOS:
+  sccache daemon:    ~108 MB constante
+  rustc (picos):     ~300-500 MB c/u
+  bindgen:           ~200-400 MB
+
+================================================================================
+                              SOLUCIÓN DE PROBLEMAS
+================================================================================
+
+PROBLEMA: Error de compilación con raylib
+SOLUCIÓN: Verificar que raylib esté instalado en Termux
+          $ pkg install raylib
+          $ pkg-config --libs --cflags raylib
+
+PROBLEMA: Error "edition 2024 not found"
+SOLUCIÓN: Usar edition = "2021" en Cargo.toml
+
+PROBLEMA: Warning de resolver
+SOLUCIÓN: Agregar resolver = "3" en el workspace Cargo.toml
+
+PROBLEMA: Variables no usadas
+SOLUCIÓN: Prefijar con underscore: _variable
+
+PROBLEMA: Build lento
+SOLUCIÓN: Instalar sccache: bash scripts/setup-sccache.sh
+
+PROBLEMA: Poco espacio en disco
+SOLUCIÓN: $ cargo clean && sccache --zero-stats
+
+PROBLEMA: Error de memoria insuficiente
+SOLUCIÓN: El proyecto ya usa codegen-units = 1 para reducir RAM
+          Cerrar otras aplicaciones durante el build
+
+PROBLEMA: sccache no funciona
+SOLUCIÓN: Verificar variable de entorno:
+          $ echo $RUSTC_WRAPPER
+          Debe mostrar: sccache
+          Si no: source ~/.bashrc
+
+================================================================================
+                              COMANDOS ÚTILES ADICIONALES
+================================================================================
+
+# Ver información detallada del build
+cargo build -v
+
+# Ver tiempo de compilación por crate
+cargo build --timings
+
+# Compilar solo un crate específico
+cargo build -p lizer
+cargo build -p v-shield
+
+# Compilar con backtrace habilitado
+RUST_BACKTRACE=1 cargo run --bin rydit-rs
+
+# Compilar con backtrace completo
+RUST_BACKTRACE=full cargo run --bin rydit-rs
+
+# Ver ayuda de cargo
+cargo --help
+
+# Ver ayuda de un comando específico
+cargo build --help
+
+# Detener servidor de sccache
+sccache --stop-server
+
+# Reiniciar servidor de sccache
+sccache --stop-server && sccache --start-server
+
+================================================================================
+                              REFERENCIAS RÁPIDAS
+================================================================================
+
+ARCHIVOS IMPORTANTES:
+  Cargo.toml          - Configuración del workspace
+  Cargo.lock          - Versiones bloqueadas de dependencias
+  README.md           - Documentación del proyecto
+  GUIA_USO.txt        - Esta guía
+
+DIRECTORIOS:
+  crates/             - Código fuente de cada crate
+  target/             - Build artifacts (se puede eliminar)
+  scripts/            - Scripts de utilidad
+
+COMANDOS MÁS USADOS:
+  cargo check         # Desarrollo rápido
+  cargo build         # Compilar
+  cargo run           # Ejecutar
+  cargo clean         # Limpiar
+
+================================================================================
+                              FIN DE LA GUÍA
+================================================================================

@@ -1,0 +1,10 @@
+Shell cargo run --quiet -- --repl 2>&1 << 'EOF' (ctrl+f to focus)                                                         │
+  │    voz "hola"                                                                                                                │
+  │    rytmo test(x) { voz x }                                                                                                   │
+  │    EOF                                                                                                                       │
+  │     (Probar parser en REPL)                                                                                                  │
+  │                                                                                                                              │
+  │    ... first 8402 lines hidden ...                                                                                           │
+  │    rydit> rydit> rydit> rydit> rydit> rydit> rydit> rydit> rydit> rydit> rydit> rydit> rydit> rydit> rydit> rydit> rydit>    │
+  │    rydit> rydit> rydit> rydit> rydit> rydit> rydit>
+en la sesion anterior ocurrio lo siguiente al realizar un test , cual calificaste sencillo ocurrio lonsiguiente , aparecio eso luego se relemtizo el celular, ocupando mucha memoria ram , 1er error en el proyecto de estas caracteristicas, revisa pizer y tokens

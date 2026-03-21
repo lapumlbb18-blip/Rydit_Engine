@@ -1,0 +1,53 @@
+# Demo JSON - RyDit v0.1.7
+# Mostrar funciones de JSON
+
+shield.init
+import json
+import arrays
+
+voz "========================================"
+voz "  DEMO JSON - RyDit v0.1.7"
+voz "========================================"
+voz ""
+
+# Parsear JSON simple
+voz "=== json::parse() ==="
+dark.slot json_array = "[1, 2, 3, 4, 5]"
+dark.slot parsed = json::parse(json_array)
+voz "JSON: " + json_array
+voz "Parseado: " + parsed
+voz ""
+
+# Parsear objeto
+dark.slot json_obj = "{\"nombre\": \"Juan\", \"edad\": 30}"
+voz "JSON objeto: " + json_obj
+dark.slot obj_parsed = json::parse(json_obj)
+voz "Parseado: " + obj_parsed
+voz ""
+
+# Stringify
+voz "=== json::stringify() ==="
+dark.slot mi_array = [10, 20, 30, 40]
+dark.slot json_str = json::stringify(mi_array)
+voz "Array: " + mi_array
+voz "JSON: " + json_str
+voz ""
+
+# Configuracion simulada
+voz "=== Configuracion ==="
+dark.slot config_json = "{\"debug\": true, \"version\": \"0.1.7\", \"max_items\": 100}"
+dark.slot config = json::parse(config_json)
+voz "Config cargada: " + config
+voz ""
+
+# Guardar datos simulado
+voz "=== Guardar datos ==="
+dark.slot datos = [1, 2, 3, 4, 5]
+dark.slot datos_json = json::stringify(datos)
+voz "Datos a guardar: " + datos
+voz "Como JSON: " + datos_json
+voz ""
+
+voz "========================================"
+voz "  DEMO JSON COMPLETADO"
+voz "========================================"

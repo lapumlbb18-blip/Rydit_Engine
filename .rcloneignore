@@ -1,0 +1,17 @@
+# Ignorar carpeta de build (se puede regenerar)
+target/**
+
+# Ignorar archivos temporales
+**/*.lock
+**/*.o
+**/*.rlib
+**/*.rmeta
+**/invoked.timestamp
+**/dep-graph.bin
+**/query-cache.bin
+**/work-products.bin
+**/.cargo-lock
+**/*.d
+
+# Ignorar archivos incrementales
+**/incremental/**

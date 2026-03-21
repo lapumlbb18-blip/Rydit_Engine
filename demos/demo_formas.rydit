@@ -1,0 +1,31 @@
+shield.init
+
+dark.slot frame = 0
+
+ryda frame < 1000 {
+    dark.slot frame = frame + 1
+    draw.rect(0, 0, 800, 600, "negro")
+    draw.text("Demo Formas y Colores", 200, 20, "amarillo")
+    draw.circle(100, 100, 40, "rojo")
+    draw.text("rojo", 85, 150, "rojo")
+    draw.circle(200, 100, 40, "verde")
+    draw.text("verde", 185, 150, "verde")
+    draw.circle(300, 100, 40, "azul")
+    draw.text("azul", 285, 150, "azul")
+    draw.circle(400, 100, 40, "amarillo")
+    draw.text("amarillo", 380, 150, "amarillo")
+    draw.rect(100, 200, 80, 60, "naranja")
+    draw.rect(200, 200, 80, 60, "violeta")
+    draw.rect(300, 200, 80, 60, "cyan")
+    draw.rect(400, 200, 80, 60, "rosa")
+    draw.line(50, 350, 200, 350, "blanco")
+    draw.line(50, 380, 200, 380, "verde")
+    draw.line(50, 410, 200, 410, "azul")
+    dark.slot radio = 20 + (frame % 50)
+    draw.circle(600, 300, radio, "amarillo")
+    draw.circle(600, 300, radio - 10, "rojo")
+    draw.circle(600, 300, radio - 20, "azul")
+    draw.text("RyDit = Rust + Raylib", 500, 450, "blanco")
+    draw.text("Android/Termux + X11", 520, 480, "gris")
+    draw.text("Frame: " + frame, 10, 570, "gris")
+}

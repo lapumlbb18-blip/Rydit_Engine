@@ -1,0 +1,7 @@
+shield.init
+import random
+dark.slot cols = 30
+rytmo func() {
+    dark.slot x = random::int(0, cols - 1)
+    return 1
+}

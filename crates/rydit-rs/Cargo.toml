@@ -1,0 +1,12 @@
+[package]
+name = "rydit-rs"
+version = "0.1.5"
+edition = "2021"
+
+[dependencies]
+lizer = { path = "../lizer" }
+v-shield = { path = "../v-shield" }
+blast-core = { path = "../blast-core" }
+rydit-gfx = { path = "../rydit-gfx" }
+serde_json = "1.0"
+serde = { version = "1.0", features = ["derive"] }

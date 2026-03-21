@@ -1,0 +1,78 @@
+// Tests del módulo io - v0.1.2
+// Ejecutar: cargo run --bin rydit-rs tests/stdlib/io.rydit
+
+import io
+
+dark.slot pasados = 0
+dark.slot fallidos = 0
+
+// Helper para assertions
+rytmo assert(condicion, mensaje) {
+    onif condicion == false {
+        voz "❌ FAIL: " + mensaje
+        dark.slot fallidos = fallidos + 1
+    } onif {
+        voz "✅ PASS: " + mensaje
+        dark.slot pasados = pasados + 1
+    }
+}
+
+voz "=== TESTS IO ==="
+voz ""
+
+// Test 1: file_exists (archivo que no existe)
+dark.slot existe_no = io::file_exists("archivo_no_existe.txt")
+assert(existe_no == false, "file_exists('archivo_no_existe.txt') == false")
+
+// Test 2: write_file
+dark.slot path_test = "test_temp.txt"
+dark.slot escrito = io::write_file(path_test, "hola mundo")
+assert(escrito == 1, "write_file() retorna 1 si éxito")
+
+// Test 3: file_exists (archivo que existe)
+dark.slot existe_si = io::file_exists(path_test)
+assert(existe_si == true, "file_exists('test_temp.txt') == true")
+
+// Test 4: read_file
+dark.slot contenido = io::read_file(path_test)
+assert(contenido == "hola mundo", "read_file() == 'hola mundo'")
+
+// Test 5: append_file
+dark.slot append_result = io::append_file(path_test, " adicional")
+dark.slot contenido2 = io::read_file(path_test)
+assert(contenido2 == "hola mundo adicional", "append_file() agrega contenido")
+
+// Test 6: write_file sobrescribe
+dark.slot sobrescrito = io::write_file(path_test, "nuevo contenido")
+dark.slot contenido3 = io::read_file(path_test)
+assert(contenido3 == "nuevo contenido", "write_file() sobrescribe")
+
+// Test 7: file_exists con path relativo
+dark.slot existe_rel = io::file_exists("./test_temp.txt")
+assert(existe_rel == true, "file_exists('./test_temp.txt') == true")
+
+// Test 8: print (solo verifica que no crashee)
+io::print("test ")
+voz ""
+assert(true, "io::print() no crashea")
+
+// Test 9: println (solo verifica que no crashee)
+io::println("test println")
+assert(true, "io::println() no crashea")
+
+// Limpieza: escribir archivo para próxima prueba
+io::write_file(path_test, "archivo limpio")
+
+voz ""
+voz "=== RESULTADOS ==="
+voz "✅ Pasados: " + pasados
+voz "❌ Fallidos: " + fallidos
+
+onif fallidos > 0 {
+    voz "⚠️  Algunos tests fallaron"
+} onif {
+    voz "🎉 Todos los tests pasaron!"
+}
+
+voz ""
+voz "Nota: El archivo 'test_temp.txt' fue creado para testing"

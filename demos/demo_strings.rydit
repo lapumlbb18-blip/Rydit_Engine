@@ -1,0 +1,72 @@
+# Demo Strings - RyDit v0.1.7
+# Mostrar funciones de strings
+
+shield.init
+import strings
+
+voz "========================================"
+voz "  DEMO STRINGS - RyDit v0.1.7"
+voz "========================================"
+voz ""
+
+# Length
+voz "=== strings::length() ==="
+dark.slot texto = "Hola Mundo"
+dark.slot len = strings::length(texto)
+voz "Texto: " + texto
+voz "Longitud: " + len
+voz ""
+
+# Upper
+voz "=== strings::upper() ==="
+dark.slot minuscula = "hola mundo"
+dark.slot mayuscula = strings::upper(minuscula)
+voz "Original: " + minuscula
+voz "Upper: " + mayuscula
+voz ""
+
+# Lower
+voz "=== strings::lower() ==="
+dark.slot mayuscula2 = "HOLA MUNDO"
+dark.slot minuscula2 = strings::lower(mayuscula2)
+voz "Original: " + mayuscula2
+voz "Lower: " + minuscula2
+voz ""
+
+# Concat
+voz "=== strings::concat() ==="
+dark.slot parte1 = "Hola"
+dark.slot parte2 = "Mundo"
+dark.slot resultado = strings::concat(parte1, parte2)
+voz "Parte1: " + parte1
+voz "Parte2: " + parte2
+voz "Concat: " + resultado
+voz ""
+
+# Substr
+voz "=== strings::substr() ==="
+dark.slot texto2 = "Hola Mundo"
+dark.slot sub = strings::substr(texto2, 0, 4)
+voz "Texto: " + texto2
+voz "Substr(0, 4): " + sub
+voz ""
+
+# Trim
+voz "=== strings::trim() ==="
+dark.slot con_espacios = "   hola mundo   "
+dark.slot sin_espacios = strings::trim(con_espacios)
+voz "Original: '" + con_espacios + "'"
+voz "Trim: '" + sin_espacios + "'"
+voz ""
+
+# Replace
+voz "=== strings::replace() ==="
+dark.slot original = "Hola Mundo"
+dark.slot reemplazo = strings::replace(original, "Mundo", "RyDit")
+voz "Original: " + original
+voz "Replace: " + reemplazo
+voz ""
+
+voz "========================================"
+voz "  DEMO STRINGS COMPLETADO"
+voz "========================================"

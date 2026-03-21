@@ -1,0 +1,26 @@
+# Ejemplo gráfico para RyDit v0.0.8
+# Rust = Arquitecto, Raylib = Pincel
+# Uso: cargo run -- --gfx ejemplo_gfx.rydit
+
+shield.init
+
+# Variables de posición
+dark.slot x = 400
+dark.slot y = 300
+dark.slot radio = 50
+
+# Dibujar formas básicas
+draw.circle(400, 300, 50, "rojo")
+draw.rect(100, 100, 100, 100, "verde")
+draw.line(0, 0, 800, 600, "azul")
+draw.text("RyDit v0.0.8", 300, 50, 30, "blanco")
+draw.text("Rust = Arquitecto", 280, 80, 20, "amarillo")
+draw.text("Raylib = Pincel", 280, 110, 20, "amarillo")
+
+# Ciclo para dibujar múltiples círculos
+dark.slot i = 0
+ryda i < 5 {
+    dark.slot cx = 100 + i * 150
+    draw.circle(cx, 500, 30, "naranja")
+    dark.slot i = i + 1
+}

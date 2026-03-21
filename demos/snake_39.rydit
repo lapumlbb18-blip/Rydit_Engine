@@ -1,0 +1,39 @@
+# Snake Game RyDit v0.1.8
+# Controles: Flechas, SPACE: Restart
+
+shield.init
+
+import random
+
+dark.slot ancho = 800
+dark.slot alto = 600
+dark.slot celda = 20
+dark.slot cols = 30
+dark.slot filas = 25
+dark.slot offset_x = 100
+dark.slot offset_y = 50
+dark.slot color_fondo = "negro"
+dark.slot color_serpiente = "verde"
+dark.slot color_comida = "rojo"
+dark.slot color_texto = "blanco"
+dark.slot snake_x = 15
+dark.slot snake_y = 12
+dark.slot direccion = 1
+dark.slot cuerpo_x = [15, 14, 13]
+dark.slot cuerpo_y = [12, 12, 12]
+dark.slot largo = 3
+dark.slot comida_x = 20
+dark.slot comida_y = 10
+dark.slot score = 0
+dark.slot high_score = 0
+dark.slot game_over = 0
+dark.slot frame = 0
+dark.slot speed = 8
+
+rytmo generar_comida() {
+    dark.slot cx = random::int(0, cols - 1)
+    dark.slot cy = random::int(0, filas - 1)
+    dark.slot comida_x = cx
+    dark.slot comida_y = cy
+    return 1
+}

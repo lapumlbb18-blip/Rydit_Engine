@@ -1,0 +1,41 @@
+# Ejemplo de `cada` (for each) en RyDit v0.0.6
+
+shield.init
+
+# Array básico
+dark.slot numeros = [10, 20, 30, 40, 50]
+
+# Iterar sobre array
+cada x en numeros {
+    voz x
+}
+
+# Array de strings
+dark.slot nombres = ["Ana", "Carlos", "Diana"]
+
+cada nombre en nombres {
+    voz "Hola " + nombre
+}
+
+# Array con expresiones
+dark.slot datos = [1 + 2, 3 * 4, 10 / 2]
+
+cada resultado en datos {
+    voz resultado
+}
+
+# Array multidimensional (filas)
+dark.slot filas = [[1, 2], [3, 4], [5, 6]]
+
+cada fila en filas {
+    voz fila
+}
+
+# Contador con cada
+dark.slot contador = 0
+cada x en [1, 2, 3, 4, 5] {
+    dark.slot contador = contador + 1
+}
+voz "Total: " + contador
+
+ryprime

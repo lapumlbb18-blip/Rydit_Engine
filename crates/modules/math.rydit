@@ -1,0 +1,49 @@
+rytmo sumar(a, b) {
+    return a + b
+}
+
+rytmo restar(a, b) {
+    return a - b
+}
+
+rytmo multiplicar(a, b) {
+    return a * b
+}
+
+rytmo dividir(a, b) {
+    onif b == 0 {
+        return 0
+    }
+    return a / b
+}
+
+rytmo pow(base, exponente) {
+    dark.slot resultado = 1
+    dark.slot i = 0
+    ryda i < exponente {
+        dark.slot resultado = resultado * base
+        dark.slot i = i + 1
+    }
+    return resultado
+}
+
+rytmo abs(valor) {
+    onif valor < 0 {
+        return 0 - valor
+    }
+    return valor
+}
+
+rytmo min(a, b) {
+    onif a < b {
+        return a
+    }
+    return b
+}
+
+rytmo max(a, b) {
+    onif a > b {
+        return a
+    }
+    return b
+}

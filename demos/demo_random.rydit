@@ -1,0 +1,88 @@
+# Demo Random - RyDit v0.1.7
+# Mostrar funciones basicas de random
+
+shield.init
+import random
+
+voz "========================================"
+voz "  DEMO RANDOM - RyDit v0.1.7"
+voz "========================================"
+voz ""
+
+# Dado de 6 caras
+voz "Dado de 6 caras (10 tiradas):"
+dark.slot i = 0
+ryda i < 10 {
+    dark.slot dado = random::int(1, 6)
+    voz "  Tirada " + (i + 1) + ": " + dado
+    dark.slot i = i + 1
+}
+voz ""
+
+# Dado de 20 caras
+voz "Dado de 20 caras:"
+dark.slot i = 0
+ryda i < 5 {
+    dark.slot d20 = random::int(1, 20)
+    voz "  Tirada: " + d20
+    dark.slot i = i + 1
+}
+voz ""
+
+# Flotantes
+voz "Numeros flotantes:"
+dark.slot i = 0
+ryda i < 5 {
+    dark.slot f = random::float()
+    voz "  " + f
+    dark.slot i = i + 1
+}
+voz ""
+
+# Eleccion de array
+voz "Colores aleatorios:"
+dark.slot colores = ["rojo", "verde", "azul", "amarillo"]
+dark.slot i = 0
+ryda i < 5 {
+    dark.slot color = random::choice(colores)
+    voz "  " + color
+    dark.slot i = i + 1
+}
+voz ""
+
+# RPG
+voz "Generador RPG:"
+dark.slot razas = ["humano", "elfo", "enano"]
+dark.slot clases = ["guerrero", "mago", "picaro"]
+
+dark.slot raza = random::choice(razas)
+dark.slot clase = random::choice(clases)
+dark.slot nivel = random::int(1, 10)
+
+voz "  Raza: " + raza
+voz "  Clase: " + clase
+voz "  Nivel: " + nivel
+voz ""
+
+# Moneda
+voz "Moneda (10 lanzamientos):"
+dark.slot caras = ["cara", "cruz"]
+dark.slot c_caras = 0
+dark.slot c_cruces = 0
+dark.slot i = 0
+ryda i < 10 {
+    dark.slot r = random::choice(caras)
+    onif r == "cara" {
+        dark.slot c_caras = c_caras + 1
+    } blelse {
+        dark.slot c_cruces = c_cruces + 1
+    }
+    dark.slot i = i + 1
+}
+voz "  Caras: " + c_caras
+voz "  Cruces: " + c_cruces
+voz ""
+
+voz "========================================"
+voz "  DEMO COMPLETADO"
+voz "========================================"

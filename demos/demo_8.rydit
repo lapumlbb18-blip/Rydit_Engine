@@ -1,0 +1,8 @@
+shield.init
+dark.slot f = 0
+ryda f < 500 {
+    dark.slot f = f + 1
+    draw.rect(0, 0, 800, 600, "negro")
+    draw.text("Demo RyDit", 300, 100, "amarillo")
+    draw.circle(400, 300, 50, "rojo")
+    draw.circle(400, 300, 40, "verde")

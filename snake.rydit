@@ -1,0 +1,388 @@
+# Snake Game para RyDit v0.1.8
+# ==============================================================================
+# Version unificada y mejorada con:
+# - Modulo random para comida aleatoria real
+# - Sistema de cuerpo de serpiente completo
+# - High score persistente por sesion
+# - Controles mejorados
+#
+# Ejecutar: cargo run --bin rydit-rs -- --gfx snake.rydit
+# Controles: Flechas direccionales, SPACE para restart, ESC para salir
+# ==============================================================================
+
+shield.init
+
+# ==============================================================================
+# IMPORTS
+# ==============================================================================
+import random
+
+# ==============================================================================
+# CONFIGURACIÓN DEL JUEGO
+# ==============================================================================
+
+dark.slot ancho_ventana = 800
+dark.slot alto_ventana = 600
+dark.slot celda_size = 20
+dark.slot tablero_x = 100
+dark.slot tablero_y = 50
+dark.slot tablero_cols = 30
+dark.slot tablero_filas = 25
+
+# Colores
+dark.slot color_fondo = "negro"
+dark.slot color_tablero = "verde"
+dark.slot color_serpiente = "verde"
+dark.slot color_comida = "rojo"
+dark.slot color_texto = "blanco"
+dark.slot color_ui = "amarillo"
+
+# ==============================================================================
+# VARIABLES DE ESTADO
+# ==============================================================================
+
+# Serpiente (cabeza)
+dark.slot snake_x = 15
+dark.slot snake_y = 12
+dark.slot direccion = 1  # 0:up, 1:right, 2:down, 3:left
+dark.slot siguiente_direccion = 1
+
+# Cuerpo de serpiente (arrays de posiciones)
+dark.slot cuerpo_x = [15, 14, 13]
+dark.slot cuerpo_y = [12, 12, 12]
+dark.slot largo_cuerpo = 3
+dark.slot crecer = 0
+
+# Comida
+dark.slot comida_x = 20
+dark.slot comida_y = 10
+
+# Puntuación
+dark.slot score = 0
+dark.slot high_score = 0
+
+# Estado del juego
+dark.slot game_over = 0
+dark.slot frame_counter = 0
+dark.slot speed = 8  # Frames por movimiento (menor = más rápido)
+dark.slot pausa = 0
+
+# ==============================================================================
+# FUNCIÓN: Generar posición aleatoria para comida
+# ==============================================================================
+
+rytmo generar_comida() {
+    dark.slot nuevo_x = random::int(0, tablero_cols - 1)
+    dark.slot nuevo_y = random::int(0, tablero_filas - 1)
+    
+    # Verificar que no esté en el cuerpo
+    dark.slot i = 0
+    ryda i < largo_cuerpo {
+        onif cuerpo_x[i] == nuevo_x {
+            onif cuerpo_y[i] == nuevo_y {
+                # Está en el cuerpo, intentar de nuevo
+                return generar_comida()
+            }
+        }
+        dark.slot i = i + 1
+    }
+    
+    # Posición válida
+    dark.slot comida_x = nuevo_x
+    dark.slot comida_y = nuevo_y
+    return 1
+}
+
+# ==============================================================================
+# FUNCIÓN: Dibujar tablero
+# ==============================================================================
+
+rytmo dibujar_tablero() {
+    # Borde del tablero
+    draw.rect(
+        tablero_x - 2, 
+        tablero_y - 2,
+        tablero_cols * celda_size + 4, 
+        tablero_filas * celda_size + 4, 
+        color_tablero
+    )
+}
+
+# ==============================================================================
+# FUNCIÓN: Dibujar comida
+# ==============================================================================
+
+rytmo dibujar_comida() {
+    draw.circle(
+        tablero_x + comida_x * celda_size + celda_size / 2,
+        tablero_y + comida_y * celda_size + celda_size / 2,
+        celda_size / 2 - 2, 
+        color_comida
+    )
+}
+
+# ==============================================================================
+# FUNCIÓN: Dibujar serpiente
+# ==============================================================================
+
+rytmo dibujar_serpiente() {
+    # Dibujar cuerpo
+    dark.slot i = 0
+    ryda i < largo_cuerpo {
+        dark.slot cx = tablero_x + cuerpo_x[i] * celda_size + celda_size / 2
+        dark.slot cy = tablero_y + cuerpo_y[i] * celda_size + celda_size / 2
+        
+        # Cabeza más grande y de diferente color
+        onif i == 0 {
+            draw.circle(cx, cy, celda_size / 2, color_serpiente)
+        } else {
+            draw.circle(cx, cy, celda_size / 2 - 1, "verde_oscuro")
+        }
+        
+        dark.slot i = i + 1
+    }
+}
+
+# ==============================================================================
+# FUNCIÓN: Dibujar UI
+# ==============================================================================
+
+rytmo dibujar_ui() {
+    # Score
+    draw.text("Score: " + score, 10, 10, 20, color_texto)
+    draw.text("High: " + high_score, 10, 35, 20, color_ui)
+    
+    # Speed
+    draw.text("Speed: " + (9 - speed), 10, 60, 20, color_texto)
+
+    # Titulo
+    draw.text("Snake v0.1.8", 600, 10, 20, color_ui)
+
+    # Controles
+    draw.text("Flechas: Mover | SPACE: Restart | P: Pausa", 200, 575, 16, "gris")
+}
+
+# ==============================================================================
+# FUNCIÓN: Resetear juego
+# ==============================================================================
+
+rytmo resetear_juego() {
+    # Serpiente
+    dark.slot snake_x = 15
+    dark.slot snake_y = 12
+    dark.slot direccion = 1
+    dark.slot siguiente_direccion = 1
+    
+    # Cuerpo
+    dark.slot cuerpo_x = [15, 14, 13]
+    dark.slot cuerpo_y = [12, 12, 12]
+    dark.slot largo_cuerpo = 3
+    dark.slot crecer = 0
+    
+    # Comida
+    generar_comida()
+    
+    # Estado
+    dark.slot score = 0
+    dark.slot game_over = 0
+    dark.slot frame_counter = 0
+    dark.slot speed = 8
+    dark.slot pausa = 0
+}
+
+# ==============================================================================
+# GAME LOOP PRINCIPAL
+# ==============================================================================
+
+ryda game_over == 0 {
+    # -------------------------------------------------------------------------
+    # INPUT
+    # -------------------------------------------------------------------------
+    
+    # Dirección (con buffer para evitar giros de 180°)
+    onif tecla_presionada("arrow_up") {
+        onif direccion != 2 { dark.slot siguiente_direccion = 0 }
+    }
+    onif tecla_presionada("arrow_right") {
+        onif direccion != 3 { dark.slot siguiente_direccion = 1 }
+    }
+    onif tecla_presionada("arrow_down") {
+        onif direccion != 0 { dark.slot siguiente_direccion = 2 }
+    }
+    onif tecla_presionada("arrow_left") {
+        onif direccion != 1 { dark.slot siguiente_direccion = 3 }
+    }
+    
+    # Pausa
+    onif tecla_presionada("p") {
+        dark.slot pausa = 1 - pausa
+    }
+    
+    # Restart
+    onif tecla_presionada("space") {
+        resetear_juego()
+    }
+    
+    # -------------------------------------------------------------------------
+    # LÓGICA (solo si no está en pausa)
+    # -------------------------------------------------------------------------
+    
+    onif pausa == 0 {
+        dark.slot frame_counter = frame_counter + 1
+        
+        onif frame_counter >= speed {
+            dark.slot frame_counter = 0
+            
+            # Actualizar dirección
+            dark.slot direccion = siguiente_direccion
+            
+            # Mover cabeza
+            onif direccion == 0 { dark.slot snake_y = snake_y - 1 }
+            onif direccion == 1 { dark.slot snake_x = snake_x + 1 }
+            onif direccion == 2 { dark.slot snake_y = snake_y + 1 }
+            onif direccion == 3 { dark.slot snake_x = snake_x - 1 }
+            
+            # -------------------------------------------------------------------------
+            # COLISIONES
+            # -------------------------------------------------------------------------
+            
+            # Paredes
+            onif snake_x < 0 { dark.slot game_over = 1 }
+            onif snake_x >= tablero_cols { dark.slot game_over = 1 }
+            onif snake_y < 0 { dark.slot game_over = 1 }
+            onif snake_y >= tablero_filas { dark.slot game_over = 1 }
+            
+            # Chocar con propio cuerpo (solo si hay cuerpo)
+            dark.slot i = 1  # Empezar en 1 para no chocar con la cabeza
+            ryda i < largo_cuerpo {
+                onif cuerpo_x[i] == snake_x {
+                    onif cuerpo_y[i] == snake_y {
+                        dark.slot game_over = 1
+                    }
+                }
+                dark.slot i = i + 1
+            }
+            
+            # -------------------------------------------------------------------------
+            # COMER
+            # -------------------------------------------------------------------------
+            
+            onif snake_x == comida_x {
+                onif snake_y == comida_y {
+                    # Comer comida
+                    dark.slot score = score + 10
+                    
+                    # Aumentar velocidad cada 50 puntos
+                    onif score % 50 == 0 {
+                        onif speed > 3 {
+                            dark.slot speed = speed - 1
+                        }
+                    }
+                    
+                    # Actualizar high score
+                    onif score > high_score {
+                        dark.slot high_score = score
+                    }
+                    
+                    # Crecer
+                    dark.slot crecer = 1
+                    
+                    # Nueva comida
+                    generar_comida()
+                }
+            }
+            
+            # -------------------------------------------------------------------------
+            # MOVER CUERPO
+            # -------------------------------------------------------------------------
+            
+            # Mover cuerpo: cada segmento sigue al anterior
+            dark.slot j = largo_cuerpo - 1
+            ryda j > 0 {
+                dark.slot cuerpo_x[j] = cuerpo_x[j - 1]
+                dark.slot cuerpo_y[j] = cuerpo_y[j - 1]
+                dark.slot j = j - 1
+            }
+            
+            # Mover primer segmento del cuerpo a la posición de la cabeza
+            dark.slot cuerpo_x[0] = snake_x
+            dark.slot cuerpo_y[0] = snake_y
+            
+            # Crecer si comió
+            onif crecer == 1 {
+                # Agregar nuevo segmento (duplicar el último)
+                dark.slot cuerpo_x[largo_cuerpo] = cuerpo_x[largo_cuerpo - 1]
+                dark.slot cuerpo_y[largo_cuerpo] = cuerpo_y[largo_cuerpo - 1]
+                dark.slot largo_cuerpo = largo_cuerpo + 1
+                dark.slot crecer = 0
+            }
+        }
+    }
+    
+    # -------------------------------------------------------------------------
+    # DIBUJAR
+    # -------------------------------------------------------------------------
+    
+    # Limpiar pantalla
+    draw.rect(0, 0, ancho_ventana, alto_ventana, color_fondo)
+    
+    # Dibujar elementos
+    dibujar_tablero()
+    dibujar_comida()
+    dibujar_serpiente()
+    dibujar_ui()
+    
+    # Mensaje de pausa
+    onif pausa == 1 {
+        draw.rect(250, 250, 300, 100, "negro")
+        draw.text("PAUSA", 350, 280, 40, color_ui)
+        draw.text("Presiona P para continuar", 230, 320, 18, "gris")
+    }
+}
+
+# ==============================================================================
+# PANTALLA GAME OVER
+# ==============================================================================
+
+onif game_over == 1 {
+    # Dibujar última frame detrás
+    dibujar_tablero()
+    dibujar_comida()
+    dibujar_serpiente()
+    
+    # Overlay semi-transparente
+    draw.rect(150, 100, 500, 400, "negro")
+    
+    # Game Over
+    draw.text("GAME OVER", 250, 180, 50, color_comida)
+    
+    # Score Final
+    draw.text("Score Final: " + score, 260, 260, 25, color_texto)
+    
+    # High Score
+    draw.text("High Score: " + high_score, 260, 310, 25, color_ui)
+    
+    # Instrucciones
+    draw.text("SPACE: Reiniciar", 260, 380, 22, color_tablero)
+    draw.text("ESC: Salir", 300, 420, 18, "gris")
+}
+
+# Loop para esperar restart
+ryda game_over == 1 {
+    # Input
+    onif tecla_presionada("space") {
+        resetear_juego()
+    }
+    
+    onif tecla_presionada("escape") {
+        break  # Salir del juego
+    }
+    
+    # Mantener dibujada la pantalla game over
+    draw.rect(150, 100, 500, 400, "negro")
+    draw.text("GAME OVER", 250, 180, 50, color_comida)
+    draw.text("Score Final: " + score, 260, 260, 25, color_texto)
+    draw.text("High Score: " + high_score, 260, 310, 25, color_ui)
+    draw.text("SPACE: Reiniciar", 260, 380, 22, color_tablero)
+    draw.text("ESC: Salir", 300, 420, 18, "gris")
+}

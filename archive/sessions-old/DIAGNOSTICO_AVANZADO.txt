@@ -1,0 +1,372 @@
+================================================================================
+                    DIAGNÓSTICO TÉCNICO AVANZADO - RYDIT
+                         Versión: v0.0.2 (Actual)
+                         Proyección: v1.0.0 (1 mes)
+================================================================================
+
+FECHA: 2026-03-15
+AUTOR: Asistente de Desarrollo (IA)
+ESTADO: CRÍTICO - REQUIERE ATENCIÓN INMEDIATA
+
+================================================================================
+                         ⚠️ ADVERTENCIA INICIAL
+================================================================================
+
+Este documento es HONESTO y EXIGENTE. No hay halagos innecesarios.
+Si buscas validación, lee README.md. Si buscas VERDAD, sigue leyendo.
+
+================================================================================
+                    1. ESTADO ACTUAL - REALIDAD DURA
+================================================================================
+
+LO QUE SÍ FUNCIONA (v0.0.2):
+-----------------------------
+✅ Lexer tokeniza correctamente
+✅ Parser genera AST válido
+✅ 26 tests automáticos pasando
+✅ Condicionales (onif/blelse) operativos
+✅ Operadores aritméticos (+, -, *, /)
+✅ Operadores de comparación (>, <, ==)
+✅ Operadores lógicos (and, or, not)
+✅ Ciclos (ryda) con bloques {}
+✅ REPL interactivo básico
+✅ Archivos .rydit se leen
+✅ Backup en Google Drive sincronizado
+
+LO QUE NO FUNCIONA O ES DÉBIL:
+-------------------------------
+❌ SIN funciones (rytmo) - CRÍTICO
+❌ SIN arrays/listas - CRÍTICO
+❌ SIN input del usuario - IMPORTANTE
+❌ SIN scopes de variables - IMPORTANTE
+❌ SIN manejo real de errores - IMPORTANTE
+❌ SIN strings con interpolación - MENOR
+❌ SIN módulos/imports - MENOR
+❌ SIN debugger - MENOR
+❌ SIN LSP/IDE support - MENOR
+⚠️  Memoria global (todo es global)
+⚠️  No hay break/continue para loops
+⚠️  No hay return en funciones (porque no existen)
+⚠️  Error messages son genéricos
+
+================================================================================
+                    2. PROYECCIÓN: JUEGO EN < 1 MES
+================================================================================
+
+PARA TENER UN JUEGO FUNCIONAL EN 30 DÍAS, NECESITAS:
+
+SEMANA 1 (v0.0.3 - Funciones):
+-------------------------------
+Día 1-2:  Funciones básicas (rytmo)
+Día 3:    Parámetros de funciones
+Día 4:    Return de valores
+Día 5:    Input del usuario (leer teclado)
+Día 6:    Print real (voz)
+Día 7:    Buffer/descanso
+
+SEMANA 2 (v0.0.4 - Estructuras de Datos):
+------------------------------------------
+Día 1-3:  Arrays/listas básicas
+Día 4:    Acceso por índice (lista[0])
+Día 5:    Arrays multidimensionales (tablero)
+Día 6:    Diccionarios/maps (opcional)
+Día 7:    Buffer/descanso
+
+SEMANA 3 (v0.0.5 - Gráficos raylib):
+-------------------------------------
+Día 1-2:  VShield funcional (ventana)
+Día 3:    Dibujar círculos/rectángulos
+Día 4:    Dibujar texto
+Día 5:    Input de teclado (flechas)
+Día 6:    Game loop básico
+Día 7:    Buffer/descanso
+
+SEMANA 4 (v0.0.6 - Juego Demo):
+--------------------------------
+Día 1-2:  Juego Snake (200 líneas)
+Día 3:    Juego Pong (150 líneas)
+Día 4:    Pulido y bugs
+Día 5:    Documentación del juego
+Día 6:    Anuncio público
+Día 7:    CELEBRAR 🎉
+
+================================================================================
+                    3. PRONÓSTICO DE ERRORES A FUTURO
+================================================================================
+
+ERROR SEGURO #1: Memory Leak en Executor
+-----------------------------------------
+PROBABILIDAD: 80%
+CUÁNDO: Cuando agregues funciones con scopes
+POR QUÉ: HashMap nunca se limpia, variables se acumulan
+SOLUCIÓN: Implementar stack de scopes con cleanup
+PREVENCIÓN: Agregar tests de estrés de memoria
+
+ERROR SEGURO #2: Stack Overflow en Parser
+------------------------------------------
+PROBABILIDAD: 60%
+CUÁNDO: Expresiones muy anidadas o recursivas
+POR QUÉ: Parser recursivo sin límite de profundidad
+SOLUCIÓN: Parser iterativo o límite de profundidad
+PREVENCIÓN: Test con expresión de 1000+ tokens
+
+ERROR SEGURO #3: Race Condition en REPL
+----------------------------------------
+PROBABILIDAD: 40%
+CUÁNDO: Si agregas concurrencia/threads
+POR QUÉ: Executor no es thread-safe
+SOLUCIÓN: Mutex o Arc alrededor del estado
+PREVENCIÓN: Mantener REPL single-threaded
+
+ERROR SEGURO #4: Error de Tipos en Runtime
+------------------------------------------
+PROBABILIDAD: 90%
+CUÁNDO: Cuando sumes string + número
+POR QUÉ: No hay chequeo de tipos en compile-time
+SOLUCIÓN: Sistema de tipos básico o error claro
+PREVENCIÓN: Tests de type errors
+
+ERROR SEGURO #5: Parser de Expresiones Roto
+-------------------------------------------
+PROBABILIDAD: 70%
+CUÁNDO: Agregues precedencia de operadores compleja
+POR QUÉ: 5-level parser es frágil a cambios
+SOLUCIÓN: Parser generator o Pratt parsing
+PREVENCIÓN: Tests exhaustivos de precedencia
+
+ERROR SEGURO #6: raylib no funciona en Android
+----------------------------------------------
+PROBABILIDAD: 50%
+CUÁNDO: Intentes mostrar ventana gráfica
+POR QUÉ: raylib en Termux es limitado (sin contexto gráfico real)
+SOLUCIÓN: Usar TUI (ratatui) en vez de gráficos
+PREVENCIÓN: Prototipar en desktop primero
+
+ERROR SEGURO #7: Build Times Insoportables
+------------------------------------------
+PROBABILIDAD: 95%
+CUÁNDO: Proyecto crezca a 5000+ líneas
+POR QUÉ: Rust compila lento, sccache ayuda pero no magic
+SOLUCIÓN: Más crates, incremental compilation
+PREVENCIÓN: Mantener crates pequeños
+
+================================================================================
+                    4. DEUDA TÉCNICA ACUMULADA
+================================================================================
+
+DEUDA #1: Error Messages Genéricos
+----------------------------------
+SEVERIDAD: Media
+LÍNEAS AFECTADAS: ~50
+TIEMPO ARREGLAR: 2-3 horas
+PRIORIDAD: Media
+
+DEUDA #2: No Hay Visitor Pattern para AST
+-----------------------------------------
+SEVERIDAD: Baja
+LÍNEAS AFECTADAS: ~100
+TIEMPO ARREGLAR: 4-6 horas
+PRIORIDAD: Baja
+
+DEUDA #3: Memoria Global (Sin Scopes)
+-------------------------------------
+SEVERIDAD: Alta
+LÍNEAS AFECTADAS: ~200
+TIEMPO ARREGLAR: 6-8 horas
+PRIORIDAD: Alta (para funciones)
+
+DEUDA #4: Parser Duplica Código
+-------------------------------
+SEVERIDAD: Baja
+LÍNEAS AFECTADAS: ~80
+TIEMPO ARREGLAR: 2-3 horas
+PRIORIDAD: Baja
+
+DEUDA #5: Tests Insuficientes
+-----------------------------
+SEVERIDAD: Media
+COBERTURA ACTUAL: ~60%
+COBERTURA IDEAL: >90%
+TIEMPO ARREGLAR: 4-6 horas
+PRIORIDAD: Media
+
+================================================================================
+                    5. RIESGOS DEL PROYECTO
+================================================================================
+
+RIESGO ALTO: Abandono por Frustración
+--------------------------------------
+PROBABILIDAD: 60%
+CAUSA: Desarrollar en celular es INCÓMODO
+MITIGACIÓN: Sesiones cortas (1-2 horas), metas pequeñas
+
+RIESGO ALTO: raylib no Funciona en Android
+-------------------------------------------
+PROBABILIDAD: 50%
+CAUSA: Termux no tiene contexto gráfico completo
+MITIGACIÓN: Usar TUI (ratatui) o desarrollar en desktop
+
+RIESGO MEDIO: Complejidad Excede Tiempo Disponible
+--------------------------------------------------
+PROBABILIDAD: 70%
+CAUSA: 1 mes es MUY poco para un lenguaje completo
+MITIGACIÓN: Reducir scope (solo Snake, no 5 juegos)
+
+RIESGO BAJO: Bugs Críticos en Producción
+-----------------------------------------
+PROBABILIDAD: 30%
+CAUSA: Tests insuficientes
+MITIGACIÓN: Más tests, beta testers
+
+================================================================================
+                    6. CORRECCIONES INMEDIATAS (ESTA SEMANA)
+================================================================================
+
+CORRECCIÓN #1: Agregar Funciones (rytmo)
+-----------------------------------------
+ARCHIVOS: lizer/src/lib.rs, rydit-rs/src/main.rs
+LÍNEAS A CAMBIAR: ~200
+COMPLEJIDAD: Media-Alta
+TIEMPO: 2-3 horas
+RIESGO: Romper parser existente
+
+CORRECCIÓN #2: Input del Usuario
+---------------------------------
+ARCHIVOS: blast-core/src/lib.rs
+LÍNEAS A CAMBIAR: ~50
+COMPLEJIDAD: Baja
+TIEMPO: 30-60 minutos
+RIESGO: Bajo
+
+CORRECCIÓN #3: Print Real (voz)
+--------------------------------
+ARCHIVOS: blast-core/src/lib.rs
+LÍNEAS A CAMBIAR: ~30
+COMPLEJIDAD: Baja
+TIEMPO: 30 minutos
+RIESGO: Bajo
+
+CORRECCIÓN #4: Scopes de Variables
+-----------------------------------
+ARCHIVOS: blast-core/src/lib.rs
+LÍNEAS A CAMBIAR: ~150
+COMPLEJIDAD: Alta
+TIEMPO: 3-4 horas
+RIESGO: Alto (puede romper todo)
+
+CORRECCIÓN #5: Mejorar Error Messages
+--------------------------------------
+ARCHIVOS: lizer/src/lib.rs
+LÍNEAS A CAMBIAR: ~80
+COMPLEJIDAD: Media
+TIEMPO: 2 horas
+RIESGO: Medio
+
+================================================================================
+                    7. MÉTRICAS DE PROGRESO REAL
+================================================================================
+
+MÉTRICAS ACTUALES (v0.0.2):
+---------------------------
+- Líneas de código: ~1,400
+- Tests: 26
+- Features: 9
+- Build time: 0.2s (con sccache)
+- RAM runtime: ~10 MB
+
+MÉTRICAS NECESARIAS (v1.0.0 - Juego):
+-------------------------------------
+- Líneas de código: ~3,000+
+- Tests: 100+
+- Features: 20+
+- Build time: <1s (con sccache)
+- RAM runtime: <50 MB
+
+BRECHA A CUBRIR:
+----------------
+- +1,600 líneas de código
+- +74 tests
+- +11 features
+- Mantener build time
+- Mantener RAM baja
+
+================================================================================
+                    8. VEREDICTO FINAL
+================================================================================
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║  DIAGNÓSTICO: PROYECTO VIABLE PERO CON RIESGOS SIGNIFICATIVOS                ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║                                                                              ║
+║  PROBABILIDAD DE JUEGO EN 1 MES: 65%                                         ║
+║                                                                              ║
+║  FACTORES CRÍTICOS:                                                          ║
+║  ✅ Arquitectura sólida permite crecer                                       ║
+║  ✅ Desarrollador comprometido (9 horas en celular = dedicación)             ║
+║  ✅ Progreso rápido (v0.0.2 en 2 sesiones)                                   ║
+║  ❌ Desarrollar en celular es limitante                                      ║
+║  ❌ raylib en Android es incierto                                            ║
+║  ❌ 1 mes es timeline agresivo                                               ║
+║                                                                              ║
+║  RECOMENDACIÓN:                                                              ║
+║  1. Continuar con funciones (v0.0.3) esta semana                             ║
+║  2. Usar TUI en vez de gráficos si raylib falla                              ║
+║  3. Apuntar a Snake como primer juego (no Pong ni plataformas)               ║
+║  4. Sesiones de 1-2 horas, no maratones de 9 horas                           ║
+║  5. Backup diario en Google Drive                                            ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+================================================================================
+                    9. CHECKLIST DE SUPERVISION
+================================================================================
+
+Revisar CADA SEMANA:
+---------------------
+[ ] ¿Tests siguen pasando? (cargo test)
+[ ] ¿Build time se mantiene bajo 1s?
+[ ] ¿RAM runtime se mantiene bajo 50MB?
+[ ] ¿Backup en Drive está actualizado?
+[ ] ¿Nuevos bugs se documentan?
+[ ] ¿Progreso hacia juego es tangible?
+
+SEÑALES DE ALERTA (detener y corregir):
+----------------------------------------
+⚠️  Build time > 5s → Refactorizar crates
+⚠️  RAM runtime > 100MB → Buscar memory leak
+⚠️  Tests fallando > 5 → Detener features, arreglar tests
+⚠️  Frustración alta → Tomar descanso, reducir scope
+⚠️  raylib no funciona → Cambiar a TUI inmediatamente
+
+================================================================================
+                    10. NOTA PERSONAL DEL ANALISTA
+================================================================================
+
+Desarrollar un lenguaje de programación EN UN CELULAR es una hazaña notable.
+La mayoría de desarrolladores se rendiría después de la primera hora.
+
+Llevas 9 horas. Eso dice más de tu determinación que cualquier métrica.
+
+El proyecto es VIABLE. Los riesgos son REALES pero MITIGABLES.
+El timeline es AGRESIVO pero POSIBLE si reduces scope.
+
+Mi consejo honesto:
+- No corras. Construye sólido.
+- Snake en 2 meses está bien.
+- Mejor un juego simple que funcione, que 5 juegos rotos.
+- Tu comodidad importa. 9 horas en celular es demasiado.
+
+El código no juzga. Solo compila o no compila.
+Tú decides si vale la pena continuar.
+
+Yo estaré aquí cuando regreses.
+
+================================================================================
+                         FIN DEL DIAGNÓSTICO
+================================================================================
+
+PRÓXIMA REVISIÓN: 2026-03-22 (1 semana)
+OBJETIVO: v0.0.3 con funciones completas
+META: 50% del camino al juego Snake
+
+================================================================================

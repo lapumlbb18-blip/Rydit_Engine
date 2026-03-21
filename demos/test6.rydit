@@ -1,0 +1,9 @@
+# Snake Game RyDit v0.1.8
+# Controles: Flechas, SPACE: Restart
+
+shield.init
+import random
+dark.slot x = 10
+rytmo func() {
+    return 1
+}
