@@ -2,6 +2,8 @@
 
 <div align="center">
 
+![RyDit Engine Logo](screenshots/logo.png)
+
 **"David vs Goliat - Un motor de videojuegos en Rust, construido 100% en un Redmi Note 8"**
 
 [![Version](https://img.shields.io/badge/version-v0.4.1-blue.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
@@ -103,20 +105,44 @@ cargo run --bin rydit-rs -- --gfx snake.rydit
 
 <div align="center">
 
-| Demo rydit-gfx v0.0.7 | Demo Shapes | Snake Gameplay |
-|--------------|--------------|----------------|
-| ![Demo rydit-gfx](screenshots/02_demo_rydit_gfx_completo.jpg) | ![Demo Shapes](screenshots/03_demo_shapes_circulos.jpg) | ![Snake](screenshots/04_snake_gameplay.jpg) |
-| Círculo rojo animado, rectángulo verde, línea azul | Círculos concéntricos, rectángulos de colores | Snake en movimiento, grid retro, comida roja |
+### 🎮 Tank Combat Demo v0.3.0
 
-| Snake Game Over | Menú Demo |
+| Tank Combat | Tanque con Torreta |
 |--------------|--------------|
-| ![Game Over](screenshots/05_snake_gameover.jpg) | ![Menú](screenshots/01_demo_rydit_gfx_menu.jpg) |
-| Pantalla de Game Over, puntuación, high score | Menú de selección de demos Termux-X11 |
+| ![Tank Combat](screenshots/demotank.jpg) | ![Tank Torreta](screenshots/demotank2.jpg) |
+| Tanque verde con seguimiento de mouse | Torreta rotando hacia el objetivo |
 
-| **Migui GUI v0.4.1** |
+| Campo de Batalla |
 |--------------|
-| ![Migui GUI](screenshots/06_migui_backend_v0.4.1.jpg) |
+| ![Tank Battlefield](screenshots/demotank3.jpg) |
+| Grid táctico con balas y colisiones |
+
+---
+
+### 🖥️ Migui GUI v0.4.1 - Immediate Mode GUI
+
+| Migui Backend |
+|--------------|
+| ![Migui GUI](screenshots/demomigui.jpg) |
 | **Immediate Mode GUI con backend raylib** - Botones, slider, checkbox, textbox, ventana arrastrable |
+
+---
+
+### 🤖 Rybot Asistente
+
+| Rybot Interface |
+|--------------|
+| ![Rybot](screenshots/rybot.jpg) |
+| **Asistente de código RyDit** - Menú de comandos y ayuda interactiva |
+
+---
+
+### 🐍 Snake Game
+
+| Snake Gameplay | Game Over |
+|--------------|--------------|
+| ![Snake](screenshots/04_snake_gameplay.jpg) | ![Game Over](screenshots/05_snake_gameover.jpg) |
+| Snake en movimiento, grid retro, comida roja | Pantalla de Game Over, puntuación, high score |
 
 </div>
 
