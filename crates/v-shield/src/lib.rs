@@ -219,5 +219,109 @@ mod tests {
         assert_eq!(MAROON.g, 0);
         assert_eq!(MAROON.b, 0);
     }
+
+    // ========================================================================
+    // TESTS V0.5.0 - CONVERSIÓN DE COLORES
+    // ========================================================================
+
+    #[test]
+    fn test_color_to_color() {
+        // Verificar que to_color() convierte correctamente
+        assert_eq!(ColorRyDit::Rojo.to_color().r, 230);
+        assert_eq!(ColorRyDit::Rojo.to_color().g, 41);
+        assert_eq!(ColorRyDit::Rojo.to_color().b, 55);
+
+        assert_eq!(ColorRyDit::Verde.to_color().r, 117);
+        assert_eq!(ColorRyDit::Verde.to_color().g, 203);
+        assert_eq!(ColorRyDit::Verde.to_color().b, 100);
+
+        assert_eq!(ColorRyDit::Azul.to_color().r, 51);
+        assert_eq!(ColorRyDit::Azul.to_color().g, 122);
+        assert_eq!(ColorRyDit::Azul.to_color().b, 206);
+
+        assert_eq!(ColorRyDit::Blanco.to_color().r, 255);
+        assert_eq!(ColorRyDit::Blanco.to_color().g, 255);
+        assert_eq!(ColorRyDit::Blanco.to_color().b, 255);
+
+        assert_eq!(ColorRyDit::Negro.to_color().r, 0);
+        assert_eq!(ColorRyDit::Negro.to_color().g, 0);
+        assert_eq!(ColorRyDit::Negro.to_color().b, 0);
+
+        // Tests v0.2.0+
+        assert_eq!(ColorRyDit::Cyan.to_color().r, 0);
+        assert_eq!(ColorRyDit::Cyan.to_color().g, 255);
+        assert_eq!(ColorRyDit::Cyan.to_color().b, 255);
+
+        assert_eq!(ColorRyDit::Magenta.to_color().r, 255);
+        assert_eq!(ColorRyDit::Magenta.to_color().g, 0);
+        assert_eq!(ColorRyDit::Magenta.to_color().b, 255);
+
+        assert_eq!(ColorRyDit::Lima.to_color().r, 0);
+        assert_eq!(ColorRyDit::Lima.to_color().g, 255);
+        assert_eq!(ColorRyDit::Lima.to_color().b, 0);
+    }
+
+    #[test]
+    fn test_color_from_str_variantes() {
+        // Probar múltiples formas de escribir colores
+        assert_eq!(ColorRyDit::from_str("rojo"), ColorRyDit::Rojo);
+        assert_eq!(ColorRyDit::from_str("RED"), ColorRyDit::Rojo);
+        assert_eq!(ColorRyDit::from_str("Red"), ColorRyDit::Rojo);
+        
+        assert_eq!(ColorRyDit::from_str("verde"), ColorRyDit::Verde);
+        assert_eq!(ColorRyDit::from_str("GREEN"), ColorRyDit::Verde);
+        
+        assert_eq!(ColorRyDit::from_str("azul"), ColorRyDit::Azul);
+        assert_eq!(ColorRyDit::from_str("BLUE"), ColorRyDit::Azul);
+        
+        assert_eq!(ColorRyDit::from_str("amarillo"), ColorRyDit::Amarillo);
+        assert_eq!(ColorRyDit::from_str("yellow"), ColorRyDit::Amarillo);
+        
+        assert_eq!(ColorRyDit::from_str("blanco"), ColorRyDit::Blanco);
+        assert_eq!(ColorRyDit::from_str("WHITE"), ColorRyDit::Blanco);
+        
+        assert_eq!(ColorRyDit::from_str("negro"), ColorRyDit::Negro);
+        assert_eq!(ColorRyDit::from_str("BLACK"), ColorRyDit::Negro);
+        
+        // Variantes con guiones y espacios
+        assert_eq!(ColorRyDit::from_str("azuloscuro"), ColorRyDit::AzulOscuro);
+        assert_eq!(ColorRyDit::from_str("azul oscuro"), ColorRyDit::AzulOscuro);
+        assert_eq!(ColorRyDit::from_str("navy"), ColorRyDit::AzulOscuro);
+    }
+
+    #[test]
+    fn test_color_desconocido_retorna_negro() {
+        // Colores desconocidos deben retornar Negro
+        assert_eq!(ColorRyDit::from_str("color_raro"), ColorRyDit::Negro);
+        assert_eq!(ColorRyDit::from_str(""), ColorRyDit::Negro);
+        assert_eq!(ColorRyDit::from_str("123"), ColorRyDit::Negro);
+        assert_eq!(ColorRyDit::from_str("transparente"), ColorRyDit::Negro);
+    }
+
+    #[test]
+    fn test_colores_v0_2_0_completos() {
+        // Verificar todos los colores añadidos en v0.2.0
+        let colores_extra = vec![
+            (ColorRyDit::Cyan, "cyan", 0, 255, 255),
+            (ColorRyDit::Magenta, "magenta", 255, 0, 255),
+            (ColorRyDit::Naranja, "naranja", 255, 165, 0),
+            (ColorRyDit::Rosa, "rosa", 255, 192, 203),
+            (ColorRyDit::Morado, "morado", 128, 0, 128),
+            (ColorRyDit::Cafe, "cafe", 165, 42, 42),
+            (ColorRyDit::Gris, "gris", 128, 128, 128),
+            (ColorRyDit::Lima, "lima", 0, 255, 0),
+            (ColorRyDit::AzulOscuro, "azuloscuro", 0, 0, 128),
+            (ColorRyDit::Oliva, "oliva", 128, 128, 0),
+            (ColorRyDit::Turquesa, "turquesa", 0, 128, 128),
+            (ColorRyDit::Vino, "vino", 128, 0, 0),
+        ];
+
+        for (color_enum, nombre, r, g, b) in colores_extra {
+            assert_eq!(color_enum.to_color().r, r, "Canal R de {}", nombre);
+            assert_eq!(color_enum.to_color().g, g, "Canal G de {}", nombre);
+            assert_eq!(color_enum.to_color().b, b, "Canal B de {}", nombre);
+            assert_eq!(color_enum.to_color().a, 255, "Canal A de {}", nombre);
+        }
+    }
 }
 

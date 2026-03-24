@@ -1,0 +1,119 @@
+# =============================================================================
+# DEMO MIGUI v0.5.0 - Dropdown + Progress Bar
+# =============================================================================
+# Versión: v0.5.0
+# Widgets nuevos: dropdown, progress_bar
+# =============================================================================
+
+shield.init
+
+# Variables de estado
+dark.slot selected_option = 0
+dark.slot progress_value = 0
+dark.slot progress_direction = 1
+dark.slot opciones = ["Opción 1", "Opción 2", "Opción 3", "Opción 4", "Opción 5"]
+
+# Variables para otros widgets
+dark.slot checkbox_estado = falso
+dark.slot slider_valor = 50.0
+dark.slot textbox_texto = ""
+dark.slot ventana_abierta = verdadero
+
+# Game loop
+cada frame en frames {
+    # Limpiar pantalla
+    gfx::clear("negro")
+    
+    # ========================================================================
+    # TÍTULO
+    # ========================================================================
+    migui::label("titulo", "=== RyDit migui v0.5.0 ===", 10, 10, 400, 30)
+    
+    # ========================================================================
+    # DROPDOWN WIDGET
+    # ========================================================================
+    migui::label("lbl_dropdown", "Dropdown (selecciona opción):", 10, 50, 300, 25)
+    cambio = migui::dropdown("dropdown1", opciones, selected_option, 10, 80, 250, 35)
+    
+    # Mostrar selección actual
+    migui::label("lbl_seleccion", "Opción seleccionada: " + selected_option, 10, 125, 300, 25)
+    
+    # ========================================================================
+    # PROGRESS BAR HORIZONTAL
+    # ========================================================================
+    migui::label("lbl_progress", "Progress Bar Horizontal:", 10, 165, 250, 25)
+    migui::progress_bar("progress_h", progress_value, 0, 100, 10, 195, 300, 25, falso)
+    
+    # ========================================================================
+    # PROGRESS BAR VERTICAL
+    # ========================================================================
+    migui::label("lbl_progress_v", "Progress Bar Vertical:", 330, 165, 200, 25)
+    migui::progress_bar("progress_v", progress_value, 0, 100, 330, 195, 30, 150, verdadero)
+    
+    # ========================================================================
+    # ANIMAR PROGRESS BAR
+    # ========================================================================
+    dark.slot progress_value = progress_value + (progress_direction * 1)
+    si progress_value >= 100 {
+        dark.slot progress_direction = -1
+    }
+    si progress_value <= 0 {
+        dark.slot progress_direction = 1
+    }
+    
+    # ========================================================================
+    # SLIDER
+    # ========================================================================
+    migui::label("lbl_slider", "Slider (valor):", 10, 360, 150, 25)
+    dark.slot slider_valor = migui::slider("slider1", slider_valor, 0, 100, 10, 390, 200, 25)
+    migui::label("lbl_slider_val", slider_valor, 220, 390, 50, 25)
+    
+    # ========================================================================
+    # CHECKBOX
+    # ========================================================================
+    migui::label("lbl_checkbox", "Checkbox:", 10, 430, 100, 25)
+    cambio = migui::checkbox("checkbox1", "Activar", checkbox_estado, 10, 460, 150, 30)
+    
+    # ========================================================================
+    # TEXTBOX
+    # ========================================================================
+    migui::label("lbl_textbox", "Textbox (escribe):", 10, 505, 150, 25)
+    dark.slot textbox_texto = migui::textbox("textbox1", 10, 535, 250, 30)
+    
+    # ========================================================================
+    # VENTANA
+    # ========================================================================
+    abierta = migui::window("ventana1", "Ventana de Demo", ventana_abierta, 400, 300, 300, 200)
+    
+    # Contenido de la ventana
+    si ventana_abierta {
+        migui::label("win_lbl", "¡Esta es una ventana!", 420, 340, 250, 30)
+        migui::label("win_lbl2", "Puedes arrastrarla", 420, 375, 250, 25)
+        migui::label("win_lbl3", "usando la barra de título", 420, 405, 250, 25)
+        
+        # Botón para cerrar ventana
+        si migui::button("win_btn", "Cerrar Ventana", 420, 450, 150, 35) {
+            dark.slot ventana_abierta = falso
+        }
+    }
+    
+    # ========================================================================
+    # BOTÓN DE SALIDA
+    # ========================================================================
+    si migui::button("btn_salir", "Salir", 10, 580, 150, 40) {
+        romper
+    }
+    
+    # ========================================================================
+    # INFO
+    # ========================================================================
+    migui::label("info", "FPS: 60 | Widgets: dropdown + progress_bar", 200, 585, 350, 30)
+    
+    # Input de mouse para migui
+    dark.slot mx = input::mouse_x()
+    dark.slot my = input::mouse_y()
+    dark.slot click = input::is_mouse_button_pressed()
+    
+    # Finalizar frame de migui
+    migui::end_frame()
+}

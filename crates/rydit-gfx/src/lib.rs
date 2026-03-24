@@ -1,16 +1,16 @@
 //! # RyDit Graphics Layer (rydit-gfx)
-//! 
+//!
 //! **Sincronización entre Rust (arquitecto) y Raylib (pincel)**
-//! 
+//!
 //! Esta capa abstrae las inconsistencias de la API de raylib-rs,
 //! proporcionando una interfaz consistente para RyDit.
-//! 
+//!
 //! ## Filosofía
-//! 
+//!
 //! - **Rust = Arquitecto**: Controla el game loop, input, decisiones
 //! - **Raylib = Pincel**: Solo ejecuta dibujos
 //! - **rydit-gfx = Puente**: Sincroniza ambos mundos
-//! 
+//!
 //! ## Ejemplo de Uso
 //!
 //! ```rust,no_run
@@ -35,11 +35,232 @@
 //! }
 //! ```
 
+// Módulo de partículas v0.5.3
+pub mod particles;
+
 use raylib::prelude::*;
 use raylib::consts::KeyboardKey;
 
 // Importar migui para implementar el backend
 use migui::{MiguiBackend, Color as MiguiColor, Rect as MiguiRect};
+
+// ============================================================================
+// AUDIO SYSTEM - v0.5.2
+// ============================================================================
+
+use std::collections::HashMap;
+use std::ffi::CString;
+
+/// Sistema de audio con raylib
+/// Nota: Sound y Music son structs FFI que contienen pointers internos
+pub struct AudioSystem {
+    initialized: bool,
+    sounds: HashMap<String, raylib::ffi::Sound>,
+    music: Option<raylib::ffi::Music>,
+}
+
+impl AudioSystem {
+    /// Inicializar sistema de audio
+    pub fn new() -> Self {
+        unsafe {
+            raylib::ffi::InitAudioDevice();
+            println!("[AUDIO] Dispositivo de audio inicializado");
+        }
+        Self {
+            initialized: true,
+            sounds: HashMap::new(),
+            music: None,
+        }
+    }
+
+    /// Cargar sonido desde archivo
+    pub fn load_sound(&mut self, id: &str, path: &str) -> Result<(), String> {
+        if !self.initialized {
+            return Err("Audio no inicializado".into());
+        }
+
+        let c_path = CString::new(path).map_err(|e| format!("Error en path: {}", e))?;
+        
+        unsafe {
+            let sound = raylib::ffi::LoadSound(c_path.as_ptr());
+            // Verificamos que el buffer sea válido
+            if !sound.stream.buffer.is_null() || sound.frameCount > 0 {
+                println!("[AUDIO] Sonido '{}' cargado: {}", id, path);
+                self.sounds.insert(id.to_string(), sound);
+                Ok(())
+            } else {
+                Err(format!("Error cargando sonido '{}'", path))
+            }
+        }
+    }
+
+    /// Reproducir sonido
+    pub fn play_sound(&self, id: &str) -> bool {
+        if let Some(sound) = self.sounds.get(id) {
+            unsafe {
+                raylib::ffi::PlaySound(*sound);
+            }
+            true
+        } else {
+            false
+        }
+    }
+
+    /// Detener sonido
+    pub fn stop_sound(&self, id: &str) -> bool {
+        if let Some(sound) = self.sounds.get(id) {
+            unsafe {
+                raylib::ffi::StopSound(*sound);
+            }
+            true
+        } else {
+            false
+        }
+    }
+
+    /// Configurar volumen de sonido (0.0 - 1.0)
+    pub fn set_sound_volume(&self, id: &str, volume: f32) -> bool {
+        if let Some(sound) = self.sounds.get(id) {
+            unsafe {
+                raylib::ffi::SetSoundVolume(*sound, volume);
+            }
+            true
+        } else {
+            false
+        }
+    }
+
+    /// Cargar música desde archivo
+    pub fn load_music(&mut self, path: &str) -> Result<(), String> {
+        if !self.initialized {
+            return Err("Audio no inicializado".into());
+        }
+
+        let c_path = CString::new(path).map_err(|e| format!("Error en path: {}", e))?;
+        
+        unsafe {
+            let music = raylib::ffi::LoadMusicStream(c_path.as_ptr());
+            // Verificamos que el buffer sea válido
+            if !music.stream.buffer.is_null() || music.frameCount > 0 {
+                println!("[AUDIO] Música cargada: {}", path);
+                self.music = Some(music);
+                Ok(())
+            } else {
+                Err(format!("Error cargando música '{}'", path))
+            }
+        }
+    }
+
+    /// Reproducir música
+    pub fn play_music(&mut self) {
+        if let Some(ref music) = self.music {
+            unsafe {
+                raylib::ffi::PlayMusicStream(*music);
+            }
+            println!("[AUDIO] Reproduciendo música");
+        }
+    }
+
+    /// Detener música
+    pub fn stop_music(&mut self) {
+        if let Some(ref music) = self.music {
+            unsafe {
+                raylib::ffi::StopMusicStream(*music);
+            }
+            println!("[AUDIO] Música detenida");
+        }
+    }
+
+    /// Actualizar música (llamar en cada frame)
+    pub fn update_music(&mut self) {
+        if let Some(ref music) = self.music {
+            unsafe {
+                raylib::ffi::UpdateMusicStream(*music);
+            }
+        }
+    }
+
+    /// Configurar volumen de música (0.0 - 1.0)
+    pub fn set_music_volume(&mut self, volume: f32) {
+        if let Some(ref music) = self.music {
+            unsafe {
+                raylib::ffi::SetMusicVolume(*music, volume);
+            }
+        }
+    }
+
+    /// Verificar si la música está reproduciendo
+    pub fn is_music_playing(&self) -> bool {
+        if let Some(ref music) = self.music {
+            unsafe {
+                raylib::ffi::IsMusicStreamPlaying(*music)
+            }
+        } else {
+            false
+        }
+    }
+
+    /// Descargar sonido y liberar memoria
+    pub fn unload_sound(&mut self, id: &str) {
+        if let Some(sound) = self.sounds.remove(id) {
+            unsafe {
+                raylib::ffi::UnloadSound(sound);
+            }
+            println!("[AUDIO] Sonido '{}' descargado", id);
+        }
+    }
+
+    /// Descargar música y liberar memoria
+    pub fn unload_music(&mut self) {
+        if let Some(music) = self.music.take() {
+            unsafe {
+                raylib::ffi::UnloadMusicStream(music);
+            }
+            println!("[AUDIO] Música descargada");
+        }
+    }
+
+    /// Verificar si existe un sonido
+    pub fn has_sound(&self, id: &str) -> bool {
+        self.sounds.contains_key(id)
+    }
+
+    /// Cantidad de sonidos cargados
+    pub fn sound_count(&self) -> usize {
+        self.sounds.len()
+    }
+}
+
+impl Default for AudioSystem {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl Drop for AudioSystem {
+    fn drop(&mut self) {
+        println!("[AUDIO] Cerrando sistema de audio...");
+        // Descargar todos los sonidos
+        for (_, sound) in self.sounds.drain() {
+            unsafe {
+                raylib::ffi::UnloadSound(sound);
+            }
+        }
+        // Descargar música
+        if let Some(music) = self.music.take() {
+            unsafe {
+                raylib::ffi::UnloadMusicStream(music);
+            }
+        }
+        // Cerrar dispositivo
+        if self.initialized {
+            unsafe {
+                raylib::ffi::CloseAudioDevice();
+            }
+            println!("[AUDIO] Dispositivo cerrado");
+        }
+    }
+}
 
 // Colores manuales (raylib nobuild no incluye colors::prelude)
 pub const RED: Color = Color { r: 230, g: 41, b: 55, a: 255 };
@@ -350,6 +571,16 @@ impl RyditGfx {
         self.handle.set_target_fps(fps as u32);
     }
 
+    /// Obtener FPS objetivo
+    pub fn get_target_fps(&self) -> i32 {
+        self.fps
+    }
+
+    /// Obtener FPS reales
+    pub fn get_fps(&self) -> i32 {
+        self.handle.get_fps() as i32
+    }
+
     /// Verificar si la ventana debe cerrarse
     pub fn should_close(&self) -> bool {
         self.handle.window_should_close()
@@ -477,11 +708,11 @@ impl Drop for RyditGfx {
 // ============================================================================
 
 /// Handle de dibujo (Raylib = Pincel)
-/// 
+///
 /// Se obtiene de `RyditGfx::begin_draw()` y se usa para dibujar.
 /// Al salir de scope, automáticamente finaliza el dibujo.
 pub struct DrawHandle<'a> {
-    draw: RaylibDrawHandle<'a>,
+    pub draw: RaylibDrawHandle<'a>,
 }
 
 impl<'a> DrawHandle<'a> {
@@ -568,12 +799,132 @@ impl<'a> DrawHandle<'a> {
         let rect = Rectangle::new(x as f32, y as f32, width as f32, height as f32);
         self.draw.draw_rectangle_pro(rect, origin, angle, color.to_color());
     }
+
+    // ========================================================================
+    // FUNCIONES DRAW V0.5.1 - TEXTURAS
+    // ========================================================================
+
+    /// Dibujar textura en pantalla
+    pub fn draw_texture_ex(&mut self, texture: &Texture2D, position: Vector2, rotation: f32, scale: f32, color: Color) {
+        self.draw.draw_texture_ex(texture, position, rotation, scale, color);
+    }
 }
 
 impl<'a> Drop for DrawHandle<'a> {
     fn drop(&mut self) {
         // Finalizar dibujo automáticamente
         // (RaylibDrawHandle lo hace en su Drop)
+    }
+}
+
+// ============================================================================
+// ASSETS MANAGER - v0.5.0 (Sprites)
+// ============================================================================
+
+/// Gestor de assets (texturas)
+/// Nota: La carga de texturas se hace desde RyDit usando raylib directamente
+pub struct Assets {
+    textures: HashMap<String, Texture2D>,
+}
+
+impl Assets {
+    pub fn new() -> Self {
+        Self {
+            textures: HashMap::new(),
+        }
+    }
+
+    /// Cargar textura desde archivo (función estática usando FFI)
+    pub fn load_texture_from_path(path: &str) -> Result<Texture2D, String> {
+        use std::path::Path;
+        use std::ffi::CString;
+        
+        if Path::new(path).exists() {
+            // Usar FFI para cargar textura sin handle
+            unsafe {
+                let c_path = CString::new(path).map_err(|e| format!("Error convirtiendo path: {}", e))?;
+                let ffi_texture = raylib::ffi::LoadTexture(c_path.as_ptr());
+                if ffi_texture.id != 0 {
+                    // Usar from_raw para crear Texture2D desde FFI
+                    Ok(Texture2D::from_raw(ffi_texture))
+                } else {
+                    Err(format!("Error cargando textura '{}'", path))
+                }
+            }
+        } else {
+            Err(format!("Archivo '{}' no encontrado", path))
+        }
+    }
+
+    // ==================== TEXTURAS ====================
+
+    /// Insertar textura cargada desde RyDit
+    pub fn insert_texture(&mut self, id: String, texture: Texture2D) {
+        self.textures.insert(id, texture);
+    }
+
+    /// Obtener textura por ID
+    pub fn get_texture(&self, id: &str) -> Option<&Texture2D> {
+        self.textures.get(id)
+    }
+
+    /// Descargar textura y liberar memoria
+    pub fn unload_texture(&mut self, id: &str) -> bool {
+        self.textures.remove(id).is_some()
+    }
+
+    /// Dibujar textura en pantalla
+    pub fn draw_texture(&self, d: &mut RaylibDrawHandle, id: &str, x: f32, y: f32, _w: f32, _h: f32, color: Color) {
+        if let Some(texture) = self.textures.get(id) {
+            d.draw_texture_ex(
+                texture,
+                Vector2::new(x, y),
+                0.0,
+                1.0,
+                color,
+            );
+        }
+    }
+
+    /// Dibujar textura escalada
+    pub fn draw_texture_scaled(&self, d: &mut RaylibDrawHandle, id: &str, x: f32, y: f32, scale: f32, color: Color) {
+        if let Some(texture) = self.textures.get(id) {
+            d.draw_texture_ex(
+                texture,
+                Vector2::new(x, y),
+                0.0,
+                scale,
+                color,
+            );
+        }
+    }
+
+    /// Dibujar rectángulo de textura (para tilesets)
+    pub fn draw_texture_rec(&self, d: &mut RaylibDrawHandle, id: &str, source: Rectangle, dest: Rectangle, color: Color) {
+        if let Some(texture) = self.textures.get(id) {
+            d.draw_texture_rec(texture, source, Vector2::new(dest.x, dest.y), color);
+        }
+    }
+
+    /// Verificar si existe una textura
+    pub fn has_texture(&self, id: &str) -> bool {
+        self.textures.contains_key(id)
+    }
+
+    /// Cantidad de texturas cargadas
+    pub fn texture_count(&self) -> usize {
+        self.textures.len()
+    }
+
+    /// Limpiar todas las texturas
+    pub fn clear(&mut self) {
+        self.textures.clear();
+    }
+}
+
+impl Default for Assets {
+    fn default() -> Self {
+        Self::new()
     }
 }
 

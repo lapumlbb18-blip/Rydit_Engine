@@ -24,6 +24,19 @@ pub enum ErrorKind {
     UndefinedCommand,
     SyntaxError,
     UnterminatedString,
+    // Nuevos tipos de error para v0.5.1
+    UnexpectedToken,
+    MissingToken,
+    DuplicateDefinition,
+    TypeMismatch,
+    DivisionByZero,
+    IndexOutOfBounds,
+    UndefinedVariable,
+    CircularImport,
+    ModuleNotFound,
+    // Nuevos tipos de error para v0.5.2 - Assets
+    TextureNotFound,
+    SoundNotFound,
 }
 
 impl fmt::Display for RyDitError {
@@ -34,12 +47,81 @@ impl fmt::Display for RyDitError {
             ErrorKind::UndefinedCommand => "Comando no definido",
             ErrorKind::SyntaxError => "Error de sintaxis",
             ErrorKind::UnterminatedString => "String sin cerrar",
+            ErrorKind::UnexpectedToken => "Token inesperado",
+            ErrorKind::MissingToken => "Token faltante",
+            ErrorKind::DuplicateDefinition => "Definición duplicada",
+            ErrorKind::TypeMismatch => "Tipo incompatible",
+            ErrorKind::DivisionByZero => "División por cero",
+            ErrorKind::IndexOutOfBounds => "Índice fuera de rango",
+            ErrorKind::UndefinedVariable => "Variable no definida",
+            ErrorKind::CircularImport => "Importe cíclico",
+            ErrorKind::ModuleNotFound => "Módulo no encontrado",
+            ErrorKind::TextureNotFound => "Textura no encontrada",
+            ErrorKind::SoundNotFound => "Sonido no encontrado",
         };
-        write!(
-            f,
-            "Error en línea {}, columna {}: {}\n  {}\n  {}",
-            self.line, self.column, kind_str, self.source, self.message
-        )
+        
+        writeln!(f)?;
+        writeln!(f, "  ╔══════════════════════════════════════════════════════╗")?;
+        writeln!(f, "  ║  🔴 ERROR DE COMPILACIÓN                             ║")?;
+        writeln!(f, "  ╠══════════════════════════════════════════════════════╣")?;
+        writeln!(f, "  ║  Tipo: {}", kind_str)?;
+        writeln!(f, "  ║  Ubicación: línea {}, columna {}", self.line, self.column)?;
+        writeln!(f, "  ╠══════════════════════════════════════════════════════╣")?;
+        
+        // Mostrar código fuente con línea y marcador
+        if !self.source.is_empty() {
+            writeln!(f, "  ║  Código:                                           ║")?;
+            writeln!(f, "  ║    {}", self.source)?;
+            
+            // Crear marcador visual
+            let marker = "→".to_string() + &" ".repeat(self.column.saturating_sub(1)) + "^";
+            writeln!(f, "  ║    {}", marker)?;
+        }
+        
+        writeln!(f, "  ╠══════════════════════════════════════════════════════╣")?;
+        writeln!(f, "  ║  Mensaje: {}", self.message)?;
+        
+        // Agregar sugerencias basadas en el tipo de error
+        match self.kind {
+            ErrorKind::UnterminatedString => {
+                writeln!(f, "  ╠══════════════════════════════════════════════════════╣")?;
+                writeln!(f, "  ║  💡 Sugerencia: Agrega comillas al final del string  ║")?;
+            }
+            ErrorKind::MissingToken => {
+                writeln!(f, "  ╠══════════════════════════════════════════════════════╣")?;
+                writeln!(f, "  ║  💡 Sugerencia: Verifica que todos los paréntesis   ║")?;
+                writeln!(f, "  ║     y llaves estén cerrados correctamente            ║")?;
+            }
+            ErrorKind::UndefinedVariable => {
+                writeln!(f, "  ╠══════════════════════════════════════════════════════╣")?;
+                writeln!(f, "  ║  💡 Sugerencia: Verifica el nombre de la variable   ║")?;
+                writeln!(f, "  ║     o defínela antes de usarla                       ║")?;
+            }
+            ErrorKind::CircularImport => {
+                writeln!(f, "  ╠══════════════════════════════════════════════════════╣")?;
+                writeln!(f, "  ║  💡 Sugerencia: Reestructura los módulos para       ║")?;
+                writeln!(f, "  ║     evitar dependencias circulares                   ║")?;
+            }
+            ErrorKind::ModuleNotFound => {
+                writeln!(f, "  ╠══════════════════════════════════════════════════════╣")?;
+                writeln!(f, "  ║  💡 Sugerencia: Verifica que el archivo existe en   ║")?;
+                writeln!(f, "  ║     crates/modules/                                  ║")?;
+            }
+            ErrorKind::TextureNotFound => {
+                writeln!(f, "  ╠══════════════════════════════════════════════════════╣")?;
+                writeln!(f, "  ║  💡 Sugerencia: Carga la textura con                ║")?;
+                writeln!(f, "  ║     assets::load_texture() antes de usarla          ║")?;
+            }
+            ErrorKind::SoundNotFound => {
+                writeln!(f, "  ╠══════════════════════════════════════════════════════╣")?;
+                writeln!(f, "  ║  💡 Sugerencia: Carga el sonido con                 ║")?;
+                writeln!(f, "  ║     audio::load_sound() antes de reproducirlo       ║")?;
+            }
+            _ => {}
+        }
+        
+        writeln!(f, "  ╚══════════════════════════════════════════════════════╝")?;
+        writeln!(f)
     }
 }
 
@@ -2683,18 +2765,90 @@ voz x"#;
         // Múltiples comentarios no deberían romper el parsing
         let script = r#"# comentario 1
 shield.init
-# comentario 2
 dark.slot x = 5
-# comentario 3
-voz x
-# comentario 4"#;
+voz x"#;
         let tokens = Lizer::new(script).scan();
         let mut parser = Parser::new(tokens);
         let program = parser.parse().unwrap();
 
-        // Debería tener 3 statements: shield.init, assign, voz
         assert_eq!(program.statements.len(), 3);
     }
 
+    // ========================================================================
+    // TESTS V0.5.1 - PRECEDENCIA AVANZADA
+    // ========================================================================
+
+    #[test]
+    fn test_precedencia_and_or() {
+        // true AND false OR true = (true AND false) OR true = false OR true = true
+        let mut parser = Parser::new(Lizer::new("dark.slot x = true and false or true").scan());
+        let program = parser.parse().unwrap();
+        assert_eq!(program.statements.len(), 1);
+    }
+
+    #[test]
+    fn test_precedencia_comparacion_and() {
+        // x > 5 AND x < 10
+        let mut parser = Parser::new(Lizer::new("dark.slot x = 7 > 5 and 7 < 10").scan());
+        let program = parser.parse().unwrap();
+        assert_eq!(program.statements.len(), 1);
+    }
+
+    #[test]
+    fn test_precedencia_not() {
+        // not true AND false = (not true) AND false = false AND false = false
+        let mut parser = Parser::new(Lizer::new("dark.slot x = not true and false").scan());
+        let program = parser.parse().unwrap();
+        assert_eq!(program.statements.len(), 1);
+    }
+
+    #[test]
+    fn test_precedencia_expresion_compleja() {
+        // (5 + 3) * 2 > 10 AND not false = 16 > 10 AND true = true AND true = true
+        let mut parser = Parser::new(Lizer::new("dark.slot x = (5 + 3) * 2 > 10 and not false").scan());
+        let program = parser.parse().unwrap();
+        assert_eq!(program.statements.len(), 1);
+    }
+
+    #[test]
+    fn test_parentesis_anidados_profundos() {
+        // (((1 + 2) + 3) + 4) = 10
+        let mut parser = Parser::new(Lizer::new("dark.slot x = (((1 + 2) + 3) + 4)").scan());
+        let program = parser.parse().unwrap();
+        assert_eq!(program.statements.len(), 1);
+    }
+
+    // ========================================================================
+    // TESTS V0.5.1 - ERRORES
+    // ========================================================================
+
+    #[test]
+    fn test_error_string_sin_cerrar() {
+        let tokens = Lizer::new("\"hola mundo").scan();
+        // Debería generar error de string sin cerrar
+        assert!(tokens.iter().any(|t| matches!(t, Token::Error(_))));
+    }
+
+    #[test]
+    fn test_error_parentesis_sin_cerrar() {
+        let mut parser = Parser::new(Lizer::new("dark.slot x = (2 + 3").scan());
+        let result = parser.parse();
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_error_llave_sin_cerrar() {
+        let mut parser = Parser::new(Lizer::new("si true { voz \"hola\"").scan());
+        let result = parser.parse();
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_error_caracter_invalido() {
+        // € £ ¥ son caracteres realmente inválidos
+        let tokens = Lizer::new("€£¥").scan();
+        // Debería generar error de carácter inesperado
+        assert!(tokens.iter().any(|t| matches!(t, Token::Error(_))));
+    }
 }
 

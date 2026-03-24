@@ -1,0 +1,25 @@
+idess a evaluar o revisar , como subtateas, madursr o saldar deudss 	
+embeber stdlib binario 
+funciones de asstes manager 
+regresiones tsst para buscar deudss acumulqdas
+rydit esta en español, pero que tan complejo es cambiar a ingles 
+Cargo.toml raíz sigue diciendo v0.0.1 en comentarios
+testeamos audio y texturss 
+REPL interactivo naturql , usen otros tipo de qrchuvos no solo .rydit
+migui sin abstraccion de plataforma verificada auditar antes del croos compilqtion path syscall
+listbox  + layout automatico guia de instalacion por plataforma 
+licencia dependencia zlinñb 
+lizer tipo resulta revision pub tyoe result 
+cargo clippy y carho fmt
+cuellos de botella
+bytcode basico switch + dispath instrucciones basicas 
+
+bindings internos (arrays, JSON, GUI 
+el binding universal que hablamos podria ser de python en 3 modulos indeoendientes actibables por sepsrsdo 
+ry_py.core
+ry_py.api
+ry_py.graphics 
+manteniendo runtime bajo 
+
+pyo3 funciones pequeñaas y accsesibles especificas 
+pylind11 luego 

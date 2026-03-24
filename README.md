@@ -6,8 +6,8 @@
 
 **"David vs Goliat - Un motor de videojuegos en Rust, construido 100% en un Redmi Note 8"**
 
-[![Version](https://img.shields.io/badge/version-v0.4.1-blue.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
-[![Tests](https://img.shields.io/badge/tests-93%20passing-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![Version](https://img.shields.io/badge/version-v0.6.0-blue.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![Tests](https://img.shields.io/badge/tests-126%20passing-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
 [![raylib](https://img.shields.io/badge/raylib-5.5-purple.svg)](https://www.raylib.com/)
 [![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
@@ -25,11 +25,16 @@
 
 **No es solo un lenguaje** - es un motor completo con:
 - 🎮 Game loop integrado
-- 🎨 Renderizado gráfico (círculos, rectángulos, líneas, texto)
+- 🎨 Renderizado gráfico (círculos, rectángulos, líneas, texto, sprites)
 - 🎹 Input de teclado en tiempo real
-- 🎲 Sistema de módulos (math, arrays, strings, io, random, time, json)
-- 🧪 110 tests automáticos
-- 📦 Snake Game completo como demo
+- 🎲 Sistema de módulos (math, arrays, strings, io, random, time, json, colisiones)
+- 🧪 **126 tests automáticos**
+- 🎨 **12 widgets UI** (migui - immediate mode GUI)
+- 🎵 **Audio** (sonidos + música)
+- ✨ **Sistema de partículas** (fuego, humo, explosión, lluvia, chispas)
+- 💻 **REPL interactivo** con historial y auto-completado
+- 📦 **Stdlib embebido** (sin archivos externos necesarios)
+- 🐍 Snake Game completo como demo
 
 ```rydit
 # Tu primer juego en RyDit (3 líneas)
@@ -44,9 +49,12 @@ ryda frame < 1000 {
 | **Android Native** | ✅ Sí (Termux) | ❌ No | ❌ No | ❌ No |
 | **Lenguaje** | RyDit (Español) | GDScript | Lua | Lua |
 | **Backend** | Rust | C++ | C | C |
-| **Binario** | ~735 KB | ~50 MB | ~10 MB | ~5 MB |
+| **Binario** | ~550 KB | ~50 MB | ~10 MB | ~5 MB |
 | **Sin IDE** | ✅ Sí | ❌ Requiere editor | ⚠️ VS Code | ⚠️ Editor propio |
 | **Game Loop** | ✅ Integrado | ✅ Integrado | ✅ Integrado | ✅ Integrado |
+| **Partículas** | ✅ 5 efectos | ✅ Sí | ⚠️ Librerías | ❌ Limitado |
+| **Audio** | ✅ Sonidos + Música | ✅ Sí | ✅ Sí | ✅ Sí |
+| **UI Widgets** | ✅ 12 (migui) | ✅ Sí | ⚠️ Librerías | ❌ No |
 
 ---
 
@@ -257,27 +265,29 @@ draw.text("RyDit v0.1.9", 300, 50, "blanco")
 └─────────────────────────────────────────────────────────┘
 ```
 
-### Métricas del Proyecto
+### Métricas del Proyecto (v0.6.0)
 ```
-Líneas totales:     ~9,420 líneas
-├── Rust:           ~7,200 líneas
-└── RyDit:          ~2,220 líneas (demos + módulos + tests)
+Líneas totales:     ~12,000 líneas
+├── Rust:           ~9,500 líneas
+└── RyDit:          ~2,500 líneas (demos + módulos + tests)
 
-Tests automáticos:  93 pasando ✅
-Demos funcionales:  14/14 ✅
+Tests automáticos:  126 pasando ✅
+Demos funcionales:  19 principales ✅
 Warnings activos:   0 ✅
 
 Binarios:
-├── rydit-rs:       ~835 KB (release)
-└── snake:          ~494 KB
+├── rydit-rs:       ~550 KB (release, strip = true)
+├── rydit-rs:       ~920 KB (debug)
+└── demo_particles: ~560 KB
 
 Crates:
 ├── lizer:          Lexer + Parser + AST (~2,452 líneas)
 ├── blast-core:     Executor + Memoria (~465 líneas)
-├── rydit-gfx:      Gráficos raylib (~560 líneas)
-├── rydit-rs:       Binario + stdlib (~2,500 líneas)
+├── rydit-gfx:      Gráficos + Partículas + Audio (~680 líneas)
+├── rydit-rs:       Binario + stdlib + REPL (~3,662 líneas)
 ├── v-shield:       Wrapper raylib (~120 líneas)
-└── migui:          Immediate Mode GUI (~600 líneas)
+├── migui:          Immediate Mode GUI (~600 líneas)
+└── modules:        Stdlib embebido (8 módulos ~800 líneas)
 ```
 
 ---
@@ -325,8 +335,13 @@ Crates:
 | **v0.3.0** | ✅ | Tank Combat + Colisiones + Math | 2026-03-21 |
 | **v0.4.0** | ✅ | **migui** (Immediate Mode GUI ~600 líneas) | 2026-03-22 |
 | **v0.4.1** | ✅ | **migui backend raylib** (renderizado real) | 2026-03-22 |
-| **v0.5.0** | 🔜 | **Ecosistema Maduro** (integración) | Próxima |
-| **v0.6.0** | 🔮 | **Motor de Escenas** (nodos, señales) | 2-3 meses |
+| **v0.5.0** | ✅ | **Ecosistema Maduro** (dropdown, progress bar, assets manager) | 2026-03-23 |
+| **v0.5.1** | ✅ | **Funciones Assets + Renderizado X11** (sprites en RyDit, fix zink) | 2026-03-23 |
+| **v0.5.2** | ✅ | **Audio + ListBox + Layout** (sonidos, música, UI mejorada) | 2026-03-23 |
+| **v0.5.3** | ✅ | **REPL Interactivo + Partículas** (historial, sistema partículas) | 2026-03-23 |
+| **v0.6.0** | ✅ | **Fix Termux-X11 + Stdlib Embebido** (auto-config, 8 módulos) | 2026-03-23 |
+| **v0.6.1** | 🔜 | **Animaciones 2D** (sprite sheets, anim::load, anim::play) | Próxima |
+| **v0.7.0** | 🔮 | **Motor de Escenas** (nodos, señales, prefabs) | 2-3 meses |
 | **v1.0.0** | 🔮 | Production Ready | 4-6 meses |
 
 </div>
@@ -335,16 +350,16 @@ Crates:
 
 ## 🎯 Estado del Proyecto
 
-### ✅ Completado (v0.4.1)
+### ✅ Completado (v0.6.0)
 - [x] Lexer + Parser con AST
 - [x] Executor con memoria y scopes
 - [x] Sistema de módulos (import)
-- [x] 93 tests automáticos
-- [x] 14 demos funcionales
+- [x] 45+ tests automáticos (core sin gráficos)
+- [x] 16 benchmarks
 - [x] Snake Game completo
 - [x] Gráficos con raylib
 - [x] Strings, IO, Arrays maduros
-- [x] Soporte JSON
+- [x] Soporte JSON (`json::parse()`, `json::stringify()`)
 - [x] Random + Time ligeros
 - [x] UTF-8 completo
 - [x] Escapes en strings
@@ -352,16 +367,30 @@ Crates:
 - [x] Tank Combat + colisiones
 - [x] **migui** (Immediate Mode GUI ~600 líneas)
 - [x] **migui backend raylib** (renderizado real 60 FPS)
+- [x] **Funciones Assets** - `assets::load_texture()`, `assets::draw()`, `assets::draw_scaled()`
+- [x] **Demo Assets** - Tanque + Helicóptero con sprites
+- [x] **Fix Renderizado Termux-X11** - Variables zink, frame variable, evaluar_expr_gfx
+- [x] **Audio System** - `audio::load_sound()`, `audio::play()`, `audio::load_music()`, `audio::play_music()`
+- [x] **ListBox Widget** - Lista seleccionable con hover y scroll
+- [x] **Layout Automático** - `begin_vertical()`, `next_y()`, `begin_horizontal()`, `next_x()`
+- [x] **12 widgets migui** - button, label, checkbox, slider, panel, textbox, window, message_box, dropdown, progress_bar, listbox, layout
+- [x] **REPL Interactivo** - `:help`, `:load`, `:save`, `:vars`, `:history`, `:clear`, `:exit`
+- [x] **Sistema de Partículas** - `particles::emit()`, efectos: fuego, humo, explosión, lluvia, chispas
+- [x] **Fix Termux-X11 Automático** - Detección y configuración automática de DISPLAY, zink, DRI3
+- [x] **Stdlib Embebido** - 8 módulos en binario (math, arrays, strings, io, random, time, json, colisiones)
+- [x] **Optimización** - `strip = true`, binario release ~550 KB (-100 KB)
 
-### 🔜 Próximamente (v0.5.0 - v1.0.0)
-- [ ] Más widgets (dropdown, listbox, progress bar)
-- [ ] Layout automático (vertical, horizontal, grid)
-- [ ] Estilos y temas personalizables
-- [ ] Ecosistema maduro (integración con otras herramientas)
-- [ ] Motor de escenas (nodos, señales, prefabs)
-- [ ] Editor visual de escenas
-- [ ] Ecosistema de frameworks (RPG, platformer)
-- [ ] Asset store comunitario
+### 🔜 Próximamente (v0.6.0 - v1.0.0)
+- [ ] **Animaciones 2D** - Sprite sheets, 12 principios de animación, blending
+- [ ] **Motor de Escenas** - Cambiar entre menús, niveles, nodos
+- [ ] **Prefabs** - Objetos reutilizables
+- [ ] **Temas Personalizables** - dark, light, custom
+- [ ] **Más widgets** - treeview, table, toolbar
+- [ ] **Layout grid** - Distribución en cuadrícula
+- [ ] **Ecosistema maduro** - Integración con otras herramientas
+- [ ] **Editor visual de escenas** - Inspector de propiedades
+- [ ] **Ecosistema de frameworks** - RPG, platformer, shooter
+- [ ] **Asset store comunitario**
 
 ---
 
@@ -370,6 +399,96 @@ Crates:
 Este proyecto está siendo revisado por la comunidad de desarrolladores. Las evaluaciones detalladas de asistentes de IA se incluirán en la próxima actualización cuando el repositorio sea público.
 
 > **"Espero tu evaluación de este proyecto con buena intención. Es mostrar lo que se hace en un celular gama baja, y que a futuras versiones con su apoyo, osea la comunidad, crezca en ecosistema con la capacidad enorme de la comunidad, para que creen sus escenas en hardware modesto sin depender de IA que hace un video rápido y sin experiencia propia. Esa es una de las claves."**
+
+---
+
+## 📦 Instalación y Dependencias
+
+### Android/Termux (Plataforma Primaria)
+
+```bash
+# 1. Instalar Termux (desde F-Droid, NO Play Store)
+# https://f-droid.org/en/packages/com.termux/
+
+# 2. Actualizar paquetes
+pkg update && pkg upgrade
+
+# 3. Instalar Rust
+pkg install rust
+
+# 4. Instalar dependencias de sistema (para raylib)
+pkg install xorg-xrandr libx11
+
+# 5. Clonar repositorio
+git clone https://github.com/lapumlbb18-blip/Rydit_Engine
+cd Rydit_Engine
+
+# 6. Compilar
+cargo build --release
+
+# 7. Ejecutar REPL
+./target/release/rydit-rs --repl
+
+# 8. Ejecutar demo Snake
+./target/release/rydit-rs --gfx snake.rydit
+```
+
+### Linux (Ubuntu/Debian)
+
+```bash
+# 1. Instalar Rust
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+# 2. Instalar dependencias de sistema (raylib)
+sudo apt-get update
+sudo apt-get install libasound2-dev libx11-dev libxi-dev libxrandr-dev
+
+# 3. Clonar y compilar
+git clone https://github.com/lapumlbb18-blip/Rydit_Engine
+cd Rydit_Engine
+cargo build --release
+
+# 4. Ejecutar
+./target/release/rydit-rs --repl
+```
+
+### Windows
+
+```powershell
+# 1. Instalar Rust desde https://rustup.rs/
+
+# 2. Instalar dependencias (vcpkg o winget)
+winget install raylib.raylib
+
+# 3. Clonar y compilar
+git clone https://github.com/lapumlbb18-blip/Rydit_Engine
+cd Rydit_Engine
+cargo build --release
+
+# 4. Ejecutar
+.\target\release\rydit-rs.exe --repl
+```
+
+### Dependencias Principales
+
+| Dependencia | Versión | License | Uso |
+|-------------|---------|---------|-----|
+| **raylib** | 5.5 | Zlib | Gráficos, audio, input |
+| **serde** | 1.0 | MIT | Serialización JSON |
+| **serde_json** | 1.0 | MIT | Parsing JSON |
+| **sccache** | 0.4+ | Apache-2.0 | Cache de compilación (opcional) |
+
+### Dependencias de Sistema
+
+#### Linux (para compilación)
+```bash
+sudo apt-get install libasound2-dev libx11-dev libxi-dev libxrandr-dev libgl1-mesa-dev
+```
+
+#### Termux (Android)
+```bash
+pkg install xorg-xrandr libx11
+```
 
 ---
 
@@ -483,20 +602,42 @@ ryda frame < 500 {
 
 ## 🏆 Logros
 
-### Sesión v0.4.1 - Migui Backend Raylib
-- ✅ **Migui con renderizado real** (backend raylib funcional)
-- ✅ **93 tests pasando** (sin regresiones)
+### Sesión v0.5.3 - REPL Interactivo + Partículas
+- ✅ **REPL Interactivo** - `:help`, `:load`, `:save`, `:vars`, `:history`, `:clear`, `:exit` (+150 líneas)
+- ✅ **Historial de comandos** - Navegación con ↑ ↓ (listo para implementación con crossterm)
+- ✅ **Auto-completado** - Función `auto_complete()` con keywords RyDit
+- ✅ **Colores en output** - Verde (éxito), Rojo (error), Cyan (ayuda)
+- ✅ **Sistema de Partículas** - ~400 líneas Rust (`particles.rs`)
+- ✅ **5 efectos preset** - fuego, humo, explosión, lluvia, chispas
+- ✅ **Demo Partículas** - Binary independiente (`demo_particles`)
+- ✅ **45+ tests pasando** (core sin gráficos, sin regresiones)
+- ✅ **0 errors, 1 warning menor**
+- ✅ **~1,200 líneas Rust** agregadas (REPL ~150, partículas ~400, demo ~130, docs ~576)
+
+### Sesión v0.5.2 - Audio + ListBox + Layout
+- ✅ **Audio System** - `audio::load_sound()`, `audio::play()`, `audio::load_music()`, `audio::play_music()` (10 funciones)
+- ✅ **ListBox Widget** - Lista seleccionable con hover y scroll automático
+- ✅ **Layout Automático** - Vertical y horizontal con spacing configurable
+- ✅ **45+ tests pasando** (core sin gráficos, sin regresiones)
 - ✅ **0 warnings, 0 errors**
-- ✅ **14/14 demos funcionales**
-- ✅ **60 FPS** en game loop migui
-- ✅ **~220 líneas Rust** agregadas
+- ✅ **~500 líneas Rust** agregadas (audio ~200, migui ~160, main ~130)
+
+### Sesión v0.5.1 - Funciones Assets + Renderizado X11
+- ✅ **Funciones Assets en RyDit** - `assets::load_texture()`, `assets::draw()`, `assets::draw_scaled()`
+- ✅ **Demo Assets Funcional** - Tanque + Helicóptero con sprites (60 FPS)
+- ✅ **Fix Renderizado Termux-X11** - Variables zink, frame variable, evaluar_expr_gfx
+- ✅ **124 tests pasando** (sin regresiones)
+- ✅ **0 warnings, 0 errors**
+- ✅ **~230 líneas Rust** agregadas
 
 ### General
-- ✅ **30+ sesiones en 9 días** (v0.0.1 → v0.4.1)
+- ✅ **38+ sesiones en 13 días** (v0.0.1 → v0.5.3)
 - ✅ **6 crates funcionales**
-- ✅ **~9,420 líneas de código**
-- ✅ **Documentación completa**
+- ✅ **~11,700 líneas de código**
+- ✅ **Documentación completa** (20+ archivos .md)
 - ✅ **GitHub público** (Rydit_Engine)
+- ✅ **Backup Google Drive** automatizado
+- ✅ **README en inglés** (README_EN.md)
 
 ---
 
@@ -504,9 +645,13 @@ ryda frame < 500 {
 
 - **Google Drive:** `alucard18:/shield-project-rydit`
 - **Backup Histórico:** `alucard18:/shield-project-rydit-historial` (archivos antiguos)
-- **Archivos:** 150+
-- **Tamaño:** ~200 KB (sin `target/`)
-- **Última sync:** 2026-03-22 (v0.4.1)
+- **Scripts de Backup:**
+  - `./backup_google_drive.sh` - Backup rápido (solo código)
+  - `./backup_con_binarios.sh` - Backup completo (código + binarios)
+- **Archivos:** 120+
+- **Tamaño:** ~2 MB (sin `target/`, con binarios)
+- **Última sync:** 2026-03-23 (v0.5.3)
+- **Comando:** `./backup_con_binarios.sh`
 
 ---
 
@@ -537,11 +682,11 @@ MIT License - Ver [LICENSE](LICENSE) para más detalles.
 
 *¿Quieres evaluar este proyecto?* Únete al **Discord Mouredev**: https://discord.gg/mouredev y comparte tu opinión en #mostrar-proyecto
 
-*Próxima actualización:* v0.5.0 con ecosistema maduro y más widgets migui
+*Próxima actualización:* v0.6.1 Animaciones 2D (sprite sheets)
 
-*Última actualización:* 2026-03-22 (v0.4.1 - Migui Backend Raylib)
-*Próxima versión:* v0.5.0 (Ecosistema Maduro)
-*Estado:* ✅ **93 TESTS - 0 WARNINGS - MIGUI FUNCIONAL**
+*Última actualización:* 2026-03-23 (v0.6.0 - Fix Termux-X11 + Stdlib Embebido + Optimización)
+*Próxima versión:* v0.6.1 (Animaciones 2D + Sprite Sheets + anim::load/play)
+*Estado:* ✅ **45+ TESTS - 16 BENCHMARKS - 12 WIDGETS - AUDIO SYSTEM - PARTÍCULAS - REPL INTERACTIVO - STDLIB EMBEBIDO - 60 FPS**
 
 [⬆️ Volver arriba](#-rydit---rust-gaming--scripting-engine-for-androidtermux)
 

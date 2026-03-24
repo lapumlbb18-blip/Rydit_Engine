@@ -1,0 +1,287 @@
+================================================================================
+                    RUTA v0.5.0 → v0.9.9 - ESTILO FÚTBOL
+================================================================================
+
+"Del ecosistema maduro a la producción élite - Paso a paso, victoria a victoria"
+
+================================================================================
+                           v0.5.0 - SESIÓN 1
+================================================================================
+
+TAREA PRINCIPAL: Dropdown + Progress Bar
+-----------------------------------------
+
+SUBTAREAS:
+  [ ] 1. Implementar migui::dropdown() en crates/migui/src/lib.rs
+      - API: dropdown(id, options[], selected, x, y, w, h) -> bool
+      - Estado: cerrado/abierto con click
+      - Scroll si hay muchas opciones
+      - ~80 líneas Rust
+
+  [ ] 2. Implementar migui::progress_bar() en crates/migui/src/lib.rs
+      - API: progress_bar(id, value, min, max, x, y, w, h, vertical)
+      - Horizontal y vertical
+      - Colores personalizables (barra, fondo, borde)
+      - ~40 líneas Rust
+
+  [ ] 3. Agregar funciones a RyDit en crates/rydit-rs/src/main.rs
+      - migui::dropdown("id", ["Opción 1", "Opción 2"], indice, x, y, w, h)
+      - migui::progress_bar("id", valor, 0, 100, x, y, w, h, falso)
+      - ~50 líneas Rust
+
+  [ ] 4. Crear demo demos/demo_migui_v0.5.0.rydit
+      - Mostrar dropdown con 5+ opciones
+      - Mostrar progress bar animado (0-100)
+      - Integrar con widgets existentes
+      - ~100 líneas RyDit
+
+  [ ] 5. TEST SUIT COMPLETO
+      - [ ] test_dropdown_open_close()
+      - [ ] test_dropdown_select_option()
+      - [ ] test_dropdown_keyboard_navigation()
+      - [ ] test_progress_bar_horizontal()
+      - [ ] test_progress_bar_vertical()
+      - [ ] test_progress_bar_colors()
+      - [ ] test_progress_bar_bounds() (min/max)
+      - [ ] test_widget_integration() (dropdown + otros widgets)
+      - ~150 líneas Rust tests
+
+  [ ] 6. BENCHMARK PLUS
+      - [ ] benchmark_dropdown_render_time()
+      - [ ] benchmark_progress_bar_render_time()
+      - [ ] benchmark_dropdown_memory()
+      - [ ] benchmark_progress_bar_memory()
+      - [ ] benchmark_60fps_stress_test() (100 dropdowns + 100 progress bars)
+      - [ ] Comparativa v0.4.1 vs v0.5.0 (binario size, RAM, FPS)
+      - ~100 líneas Rust benchmark
+
+  [ ] 7. Documentación
+      - [ ] Actualizar CHANGELOG_v0.5.0.md
+      - [ ] Actualizar README.md con nuevos widgets
+      - [ ] Agregar ejemplos en demos/
+      - [ ] Actualizar QWEN.md con sesión v0.5.0
+
+================================================================================
+                           v0.5.0 - SESIÓN 2
+================================================================================
+
+TAREA PRINCIPAL: Listbox + Layout Automático (Vertical/Horizontal)
+-----------------------------------------
+
+SUBTAREAS:
+  [ ] 1. Implementar migui::listbox()
+      - API: listbox(id, options[], selected, x, y, w, h) -> bool
+      - Scroll automático si hay muchos items
+      - Selección con click o teclado
+      - ~100 líneas Rust
+
+  [ ] 2. Implementar layout automático
+      - begin_horizontal(id, x, y, w, h, spacing)
+      - end_horizontal()
+      - begin_vertical(id, x, y, w, h, spacing)
+      - end_vertical()
+      - ~150 líneas Rust
+
+  [ ] 3. TEST SUIT COMPLETO
+      - [ ] test_listbox_select()
+      - [ ] test_listbox_scroll()
+      - [ ] test_layout_horizontal()
+      - [ ] test_layout_vertical()
+      - [ ] test_layout_nested()
+      - [ ] test_layout_spacing()
+      - ~150 líneas Rust tests
+
+  [ ] 4. BENCHMARK PLUS
+      - [ ] benchmark_listbox_1000_items()
+      - [ ] benchmark_layout_performance()
+      - [ ] benchmark_layout_memory()
+      - ~80 líneas Rust benchmark
+
+================================================================================
+                           v0.5.0 - SESIÓN 3
+================================================================================
+
+TAREA PRINCIPAL: Layout Grid + Temas Personalizables
+-----------------------------------------
+
+SUBTAREAS:
+  [ ] 1. Implementar layout grid
+      - begin_grid(id, x, y, w, h, cols, rows, spacing)
+      - end_grid()
+      - Auto-align widgets en celdas
+      - ~150 líneas Rust
+
+  [ ] 2. Sistema de temas
+      - Theme struct (bg_color, panel_color, button_color, etc.)
+      - set_theme("dark"), set_theme("light"), set_theme("custom")
+      - 3+ temas predefinidos
+      - ~100 líneas Rust
+
+  [ ] 3. TEST SUIT COMPLETO
+      - [ ] test_grid_layout()
+      - [ ] test_grid_span()
+      - [ ] test_theme_dark()
+      - [ ] test_theme_light()
+      - [ ] test_theme_custom()
+      - [ ] test_theme_switch()
+      - ~120 líneas Rust tests
+
+  [ ] 4. BENCHMARK PLUS
+      - [ ] benchmark_grid_performance()
+      - [ ] benchmark_theme_switch_time()
+      - ~60 líneas Rust benchmark
+
+================================================================================
+                           v0.5.0 - SESIÓN 4
+================================================================================
+
+TAREA PRINCIPAL: Imágenes en Widgets
+-----------------------------------------
+
+SUBTAREAS:
+  [ ] 1. Soporte para iconos en widgets
+      - button_with_icon(id, label, icon_texture, x, y, w, h)
+      - panel_with_texture(id, texture, x, y, w, h)
+      - ~120 líneas Rust
+
+  [ ] 2. TEST SUIT COMPLETO
+      - [ ] test_button_icon_render()
+      - [ ] test_panel_texture_render()
+      - [ ] test_icon_scaling()
+      - [ ] test_texture_memory()
+      - ~100 líneas Rust tests
+
+  [ ] 3. BENCHMARK PLUS
+      - [ ] benchmark_texture_render_time()
+      - [ ] benchmark_texture_memory_usage()
+      - ~60 líneas Rust benchmark
+
+================================================================================
+                           v0.5.0 - SESIÓN 5
+================================================================================
+
+TAREA PRINCIPAL: Assets Manager (Sprites)
+-----------------------------------------
+
+SUBTAREAS:
+  [ ] 1. Assets manager para sprites
+      - assets::load_sprite("id", "path/to/sprite.png")
+      - assets::get_sprite("id") -> Texture2D
+      - assets::unload_sprite("id")
+      - assets::load_tileset("id", "path", tile_w, tile_h)
+      - ~200 líneas Rust
+
+  [ ] 2. TEST SUIT COMPLETO
+      - [ ] test_load_sprite()
+      - [ ] test_unload_sprite()
+      - [ ] test_load_tileset()
+      - [ ] test_get_tile()
+      - [ ] test_asset_cache()
+      - [ ] test_asset_memory_limit()
+      - ~150 líneas Rust tests
+
+  [ ] 3. BENCHMARK PLUS
+      - [ ] benchmark_sprite_load_time()
+      - [ ] benchmark_sprite_memory()
+      - [ ] benchmark_tileset_performance()
+      - ~80 líneas Rust benchmark
+
+================================================================================
+                           v0.5.0 - SESIÓN 6
+================================================================================
+
+TAREA PRINCIPAL: Assets Manager (Sonidos) + REPL Maduro
+-----------------------------------------
+
+SUBTAREAS:
+  [ ] 1. Assets manager para sonidos
+      - assets::load_sound("id", "path/to/sound.wav")
+      - assets::play_sound("id")
+      - assets::stop_sound("id")
+      - assets::set_sound_volume("id", volume)
+      - ~150 líneas Rust
+
+  [ ] 2. REPL MADURO
+      - [ ] Autocompletado de comandos
+      - [ ] Historial de comandos (flechas arriba/abajo)
+      - [ ] Syntax highlighting básico
+      - [ ] Multi-línea en REPL
+      - [ ] Ayuda contextual (help comando)
+      - ~200 líneas Rust
+
+  [ ] 3. EVALUAR STDLIB + TOOLING
+      - [ ] Revisar módulos actuales (math, arrays, strings, io, random, time, json)
+      - [ ] Identificar funciones faltantes
+      - [ ] Proponer nuevos módulos (date, regex, http?)
+      - [ ] Documentar stdlib completo
+      - ~100 líneas Rust + documentación
+
+  [ ] 4. TEST SUIT COMPLETO
+      - [ ] test_load_sound()
+      - [ ] test_play_sound()
+      - [ ] test_sound_volume()
+      - [ ] test_repl_autocomplete()
+      - [ ] test_repl_history()
+      - [ ] test_repl_multiline()
+      - [ ] test_stdlib_functions()
+      - ~200 líneas Rust tests
+
+  [ ] 5. BENCHMARK PLUS
+      - [ ] benchmark_sound_load_time()
+      - [ ] benchmark_sound_memory()
+      - [ ] benchmark_repl_response_time()
+      - ~80 líneas Rust benchmark
+
+================================================================================
+                      EVALUACIÓN FINAL v0.9.9
+================================================================================
+
+CRITERIOS DE PROMOCIÓN A v0.9.9:
+  [ ] ✅ 15+ widgets funcionales (8 actuales + 7 nuevos)
+  [ ] ✅ Layout automático completo (vertical, horizontal, grid)
+  [ ] ✅ 3+ temas predefinidos
+  [ ] ✅ Imágenes en widgets (iconos, textures)
+  [ ] ✅ Assets manager (sprites + sonidos)
+  [ ] ✅ REPL maduro (autocomplete, history, multiline)
+  [ ] ✅ STDLIB evaluado y documentado
+  [ ] ✅ 120+ tests pasando (93 actuales + 27+ nuevos)
+  [ ] ✅ 0 warnings, 0 errors
+  [ ] ✅ Binario <950 KB (835 KB actuales + <115 KB)
+  [ ] ✅ 60 FPS mantenidos con todos los widgets
+  [ ] ✅ Documentación completa (README, CHANGELOG, QWEN, stdlib)
+
+MÉTRICAS PROYECTADAS v0.9.9:
+  - Líneas Rust: ~10,500 (7,200 actuales + ~3,300 nuevas)
+  - Widgets: 15+ (8 actuales + 7 nuevos)
+  - Tests: 120+ (93 actuales + 27+ nuevos)
+  - Binario: ~950 KB (835 KB actuales + ~115 KB)
+  - Sesiones: 6 sesiones v0.5.0 + evaluación final
+
+================================================================================
+                         COMANDOS ÚTILES
+================================================================================
+
+# Compilar
+cargo build --release --bin rydit-rs
+
+# Tests
+cargo test
+
+# Benchmark
+cargo bench
+
+# Ejecutar demo
+./target/release/rydit-rs --migui demos/demo_migui_v0.5.0.rydit
+
+# Ver progreso
+cat ruta_v0.5.0_v0.9.9/subtareas_v0.5.0.txt | grep "\[x\]" | wc -l
+
+================================================================================
+                    "PASO A PASO, VICTORIA A VICTORIA"
+================================================================================
+
+Fecha inicio: 2026-03-22
+Fecha estimada fin: 2026-03-28 (6 sesiones, ~15-20 horas)
+Estado actual: v0.4.1 ✅ → En camino a v0.5.0 🔜 → Meta v0.9.9 🎯
+
+================================================================================

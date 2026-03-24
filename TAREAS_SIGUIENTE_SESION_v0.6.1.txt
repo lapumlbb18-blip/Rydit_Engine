@@ -1,0 +1,215 @@
+================================================================================
+              RYDIT ENGINE — TAREAS SIGUIENTE SESIÓN v0.6.1
+                     Fecha: 2026-03-23 | Post v0.6.0
+================================================================================
+
+ESTADO ACTUAL: v0.6.0 completada | 12,000 líneas | ~550 KB release
+OBJETIVO SESIÓN: Animaciones 2D + Git Push completo + Runners cross-platform
+
+================================================================================
+                        🔴 CRÍTICAS — HACER PRIMERO
+================================================================================
+
+1. FIX: 1 warning activo
+   - Archivo: crates/rydit-gfx/src/particles.rs
+   - Causa: parámetro `width` sin usar en rain()
+   - Fix: agregar _ o usar el valor
+   - Verificar: cargo build 2>&1 | grep warning → debe ser 0
+
+2. FIX: Verificar configurar_entorno_termux() está siendo llamada
+   - Riesgo: fue definida pero posiblemente no insertada completa
+   - Verificar: grep -n "configurar_entorno_termux" crates/rydit-rs/src/main.rs
+   - Debe aparecer: definición + llamada en main()
+
+3. FIX: Tests bajaron de 124 a 45+
+   - Al agregar audio/partículas/REPL se perdió cobertura
+   - Agregar tests para: audio, listbox, layout, partículas, REPL
+   - Meta mínima: volver a 100+ tests antes del push
+
+4. GIT PUSH COMPLETO
+   - Hacer commit de TODO: v0.5.0 → v0.5.1 → v0.5.2 → v0.5.3 → v0.6.0
+   - Mensaje de commit claro por versión (no un solo commit gigante)
+   - Incluir screenshots del demo partículas y demo tanque
+   - Verificar .gitignore excluye target/ (431 MB)
+   - Tags: git tag v0.5.0, v0.5.1... v0.6.0
+ 
+===================================================000000=============================
+                    🟡 IMPORTANTES — OBJETIVO PRINCIPAL SESIÓN
+================================================================================
+
+5. SPRITE SHEETS — anim::load() + anim::play()
+   - Struct Animation: frames, frame_time, current_frame, loop
+   - Struct AnimationPlayer: animations HashMap, current, timer
+   - Funciones RyDit:
+       anim::load(id, path, frame_w, frame_h, frames)
+       anim::play(id, anim_name)
+       anim::stop(id)
+       anim::set_fps(id, fps)
+       anim::is_playing(id) -> bool
+       anim::current_frame(id) -> int
+   - Prerequisito para demo tanque y helicóptero
+
+6. EASING FUNCTIONS — base de los 12 principios
+   - Sin esto los sprites se mueven mecánicamente
+   - Implementar en rydit-gfx o módulo propio:
+       ease::linear(t)
+       ease::in_quad(t)
+       ease::out_quad(t)
+       ease::in_out_quad(t)
+       ease::bounce(t)
+       ease::elastic(t)
+   - t = valor 0.0 a 1.0 (progreso de animación)
+
+7. DEMO TANQUE ANIMADO
+   - Usar sprites reales (RyBoy ya funciona como referencia)
+   - Tanque: movimiento + cañón rotando + disparo con partículas
+   - Helicóptero: rotor animado con spritesheet
+   - Este demo es la carta de presentación para el push
+
+8. 12 PRINCIPIOS DE ANIMACIÓN 2D — implementación gradual
+   Prioridad alta (implementar en v0.6.1):
+   - Squash & Stretch: escalar sprite en movimiento
+   - Anticipation: frame de anticipación antes de acción
+   - Ease In / Ease Out: velocidad variable (depende de easing)
+   - Follow Through: inercia al detenerse
+   Prioridad media (v0.7.0):
+   - Staging, Overlapping, Secondary Action
+   - Arcs (movimiento en curva)
+   Prioridad baja (v0.8.0+):
+   - Appeal, Exaggeration, Solid Drawing, Timing
+
+================================================================================
+                    🟠 NO OBVIAS — LAS QUE SE ESCAPAN EN SESIÓN
+================================================================================
+
+9. main.rs tiene 3,800 líneas — planear split
+   - No hacer el split ahora (riesgo alto en medio de features)
+   - Pero sí crear archivo: DEUDA_TECNICA.md con plan de split
+   - Módulos candidatos a separar:
+       audio_bindings.rs
+       particle_bindings.rs
+       migui_bindings.rs
+       repl.rs
+   - Hacer el split en v0.7.0 ANTES de agregar más bindings
+
+10. Refactor de bindings (__audio_play vs audio::play)
+    - Documentar en DEUDA_TECNICA.md
+    - No tocar ahora, pero no agregar más con el patrón __
+    - Todo binding nuevo debe usar namespace::funcion()
+
+11. cargo bloat — medir antes de que suba con animaciones
+    - Instalar: cargo install cargo-bloat
+    - Ejecutar: cargo bloat --release --crates
+    - Objetivo: binario <500 KB para v1.0.0 (ahora en 550 KB)
+    - Con sprites/animaciones va a subir, mejor saber desde dónde
+
+12. MANIFIESTO.md — identidad pública del proyecto
+    Contenido mínimo:
+    - Qué es RyDit (filosofía, por qué existe)
+    - Por qué Android/Termux como plataforma primera
+    - Diferencias con otros motores (Godot, Unity, Raylib puro)
+    - Valores: ligero, portable, educativo, mobile-first
+    - Hoja de ruta pública (v1.0.0)
+    - Cómo contribuir
+
+================================================================================
+                    🔵 INFRAESTRUCTURA — GIT + RUNNERS
+================================================================================
+
+13. README_EN.md — ya creado, verificar que esté actualizado
+    - Reflejar v0.6.0 (partículas, audio, REPL, stdlib embebido)
+    - Agregar capturas del demo partículas
+    - Sección de instalación Termux verificada
+
+14. DEPENDENCIAS — listar en README antes del push
+    Actuales conocidas:
+    - raylib 5.x (zlib license)
+    - serde / serde_json (MIT)
+    - Verificar con: cargo tree | grep -v "^[|]"
+    - Formato SPDX para cada una
+
+15. GitHub Actions — setup básico (mínimo viable)
+    Archivo: .github/workflows/ci.yml
+    Paso 1 (esta sesión):
+    - trigger: push a main
+    - job: cargo test en ubuntu-latest
+    - job: cargo build --release en ubuntu-latest
+    Paso 2 (siguiente sesión):
+    - Matrix: Linux x86_64 + Windows x64
+    - Dependencias de sistema para Linux:
+        sudo apt-get install libasound2-dev libx11-dev libxi-dev
+    Paso 3 (v0.7.0):
+    - Android ARM64 via cross
+    - Release automático con binarios adjuntos
+
+16. Instalación Termux — comando sencillo a probar
+    Verificar que este flujo funciona limpio:
+        pkg install rust
+        git clone https://github.com/lapumlbb18-blip/Rydit_Engine
+        cd Rydit_Engine
+        cargo build --release
+        ./target/release/rydit-rs --repl
+    Documentar errores si aparecen
+
+================================================================================
+                        📋 ORDEN RECOMENDADO DE EJECUCIÓN
+================================================================================
+
+BLOQUE 1 — Fixes (30 min):
+  → Fix warning width en rain
+  → Verificar configurar_entorno_termux() llamada
+  → cargo build → 0 warnings confirmado
+
+BLOQUE 2 — Tests (45 min):
+  → Agregar tests audio/partículas/REPL
+  → cargo test → meta 100+ tests
+  → 0 regresiones
+
+BLOQUE 3 — Animaciones (2-3 horas):
+  → Easing functions
+  → anim::load + anim::play
+  → Demo tanque + helicóptero funcionando
+
+BLOQUE 4 — Git Push (45 min):
+  → Crear MANIFIESTO.md
+  → Crear DEUDA_TECNICA.md
+  → Actualizar README_EN con capturas v0.6.0
+  → Listar dependencias
+  → Commits por versión + tags
+  → Push
+
+BLOQUE 5 — Actions (30 min):
+  → .github/workflows/ci.yml básico
+  → Verificar que pasa en GitHub
+
+================================================================================
+                        ⚡ MÉTRICAS OBJETIVO v0.6.1
+================================================================================
+
+| Métrica          | Actual v0.6.0 | Objetivo v0.6.1 |
+|------------------|---------------|-----------------|
+| Tests            | 45+           | 120+            |
+| Warnings         | 1             | 0               |
+| Binario release  | ~550 KB       | <600 KB         |
+| Widgets migui    | 12            | 12 (estable)    |
+| Versión GitHub   | v0.1.9        | v0.6.1          |
+| CI/CD            | No existe     | básico (Linux)  |
+| Animaciones      | 0             | spritesheet + easing |
+| Principios anim  | 0             | 4 implementados |
+
+================================================================================
+                        🧠 LECCIONES A RECORDAR
+================================================================================
+
+- Si la API se corta: verificar con grep que la función fue insertada Y llamada
+- Refactor en recta final = riesgo. Lista separada "para vNext"
+- Demo ejecutable > tests automáticos para validar UX
+- 0 warnings es la regla de oro — no pasar a siguiente feature con warnings
+- main.rs a 3,800 líneas: no agregar más sin plan de split documentado
+- El push al repo es tan importante como el código — el mundo ve lo que está en GitHub
+
+================================================================================
+                    
+
+— RyDit v0.6.0 🛡️
+================================================================================

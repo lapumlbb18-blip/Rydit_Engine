@@ -13,6 +13,75 @@ use std::io::{self, Write};
 use std::collections::{HashMap, HashSet};
 
 // =============================================================================
+// CONFIGURACIÓN AUTOMÁTICA DE ENTORNO (v0.6.0)
+// =============================================================================
+/// Configurar variables de entorno para Termux-X11 automáticamente
+fn configurar_entorno_termux() {
+    // Detectar si estamos en Termux
+    let es_termux = std::env::var("TERMUX_VERSION").is_ok() || 
+                    std::path::Path::new("/data/data/com.termux").exists();
+    
+    if es_termux {
+        println!("[RYDIT] Termux detectado - Configurando entorno gráfico...");
+        
+        // Configurar DISPLAY si no está establecido
+        if std::env::var("DISPLAY").is_err() {
+            std::env::set_var("DISPLAY", ":0");
+            println!("[RYDIT] DISPLAY=:0 configurado automáticamente");
+        }
+        
+        // Configurar driver zink si no está establecido
+        if std::env::var("MESA_LOADER_DRIVER_OVERRIDE").is_err() {
+            std::env::set_var("MESA_LOADER_DRIVER_OVERRIDE", "zink");
+            println!("[RYDIT] zink GPU driver configurado automáticamente");
+        }
+        
+        // Configurar DRI3 si no está establecido
+        if std::env::var("DRI3").is_err() {
+            std::env::set_var("DRI3", "1");
+            println!("[RYDIT] DRI3=1 configurado automáticamente");
+        }
+        
+        println!("[RYDIT] ✅ Entorno gráfico listo para Termux-X11");
+    }
+}
+
+// =============================================================================
+// MÓDULOS STDLIB EMBEBIDOS (v0.6.0)
+// =============================================================================
+const MATH_MODULE: &str = include_str!("../../modules/math.rydit");
+const ARRAYS_MODULE: &str = include_str!("../../modules/arrays.rydit");
+const STRINGS_MODULE: &str = include_str!("../../modules/strings.rydit");
+const IO_MODULE: &str = include_str!("../../modules/io.rydit");
+const RANDOM_MODULE: &str = include_str!("../../modules/random.rydit");
+const TIME_MODULE: &str = include_str!("../../modules/time.rydit");
+const JSON_MODULE: &str = include_str!("../../modules/json.rydit");
+const COLISIONES_MODULE: &str = include_str!("../../modules/colisiones.rydit");
+
+/// Cargar módulo (archivo local o embebido)
+fn cargar_modulo(nombre: &str) -> Result<String, String> {
+    // 1. Intentar archivo local
+    let ruta_local = format!("modules/{}.rydit", nombre);
+    if std::path::Path::new(&ruta_local).exists() {
+        std::fs::read_to_string(&ruta_local)
+            .map_err(|e| format!("Error leyendo '{}': {}", nombre, e))
+    } else {
+        // 2. Fallback embebido
+        match nombre {
+            "math" => Ok(MATH_MODULE.to_string()),
+            "arrays" => Ok(ARRAYS_MODULE.to_string()),
+            "strings" => Ok(STRINGS_MODULE.to_string()),
+            "io" => Ok(IO_MODULE.to_string()),
+            "random" => Ok(RANDOM_MODULE.to_string()),
+            "time" => Ok(TIME_MODULE.to_string()),
+            "json" => Ok(JSON_MODULE.to_string()),
+            "colisiones" => Ok(COLISIONES_MODULE.to_string()),
+            _ => Err(format!("Módulo '{}' no encontrado", nombre)),
+        }
+    }
+}
+
+// =============================================================================
 // FUNCIONES AUXILIARES PARA JSON (serde_json)
 // =============================================================================
 
@@ -61,6 +130,9 @@ fn valor_rydit_a_serde(val: &Valor) -> Result<serde_json::Value, String> {
 }
 
 fn main() {
+    // Configurar entorno automáticamente (Termux-X11)
+    configurar_entorno_termux();
+    
     let args: Vec<String> = env::args().collect();
 
     // Verificar si es modo REPL
@@ -516,13 +588,12 @@ fn ejecutar_stmt(stmt: &Stmt, executor: &mut Executor, funcs: &mut HashMap<Strin
         }
         Stmt::Import { module, alias } => {
             // Importar módulo: import <modulo> [as <alias>]
-            // Buscar archivo del módulo en crates/modules/
-            let module_path = format!("crates/modules/{}.rydit", module);
+            // Cargar desde archivo local o embebido
 
             // DEUDA #2 FIX: Detectar import cíclico
             if importing_stack.contains(&module) {
                 println!("[ERROR] Importe cíclico detectado: '{}'", module);
-                println!("[ERROR] Stack de imports: {} -> {}", 
+                println!("[ERROR] Stack de imports: {} -> {}",
                     importing_stack.join(" -> "), module);
                 return (None, None);
             }
@@ -538,10 +609,8 @@ fn ejecutar_stmt(stmt: &Stmt, executor: &mut Executor, funcs: &mut HashMap<Strin
                 };
 
                 // Copiar funciones con nuevo nombre desde el cache
-                // Buscar funciones del módulo original (module::func)
                 let mut funcs_to_copy: Vec<(String, String)> = Vec::new();
                 for (func_name, _) in funcs.iter() {
-                    // Solo copiar desde el nombre original del módulo, no desde aliases
                     if func_name.starts_with(&format!("{}::", module)) {
                         let orig_name = func_name.strip_prefix(&format!("{}::", module)).unwrap();
                         let new_name = format!("{}::{}", prefix, orig_name);
@@ -554,21 +623,30 @@ fn ejecutar_stmt(stmt: &Stmt, executor: &mut Executor, funcs: &mut HashMap<Strin
                         funcs.insert(new_name, func_data.clone());
                     }
                 }
-
+                
                 if let Some(alias_name) = alias {
                     println!("[IMPORT] Módulo '{}' disponible como '{}'", module, alias_name);
                 }
                 return (None, None);
             }
 
-            if let Ok(content) = std::fs::read_to_string(&module_path) {
-                println!("[IMPORT] Cargando módulo '{}' desde '{}'", module, module_path);
+            // Cargar módulo (archivo local o embebido)
+            let module_content = match cargar_modulo(&module) {
+                Ok(content) => {
+                    println!("[IMPORT] Módulo '{}' cargado", module);
+                    content
+                },
+                Err(e) => {
+                    println!("[ERROR] {}", e);
+                    return (None, None);
+                }
+            };
 
                 // Agregar al stack de imports en progreso
                 importing_stack.push(module.clone());
 
                 // Lexer + Parser
-                let tokens = Lizer::new(&content).scan();
+                let tokens = Lizer::new(&module_content).scan();
                 let mut parser = Parser::new(tokens);
 
                 let program = match parser.parse() {
@@ -641,9 +719,6 @@ fn ejecutar_stmt(stmt: &Stmt, executor: &mut Executor, funcs: &mut HashMap<Strin
                 } else {
                     println!("[IMPORT] Módulo '{}' disponible", module);
                 }
-            } else {
-                println!("[ERROR] Módulo '{}' no encontrado en '{}'", module, module_path);
-            }
         }
         Stmt::DrawCircle { x, y, radio, color } => {
             let x_val = evaluar_expr(x, executor, funcs);

@@ -28,4 +28,5 @@ codegen-units = 1      # Menos paralelismo = menos RAM
 opt-level = "z"
 lto = true
 panic = "abort"
+strip = true  # Eliminar símbolos de debug (reduce ~100 KB)
  

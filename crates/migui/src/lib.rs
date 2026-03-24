@@ -143,6 +143,53 @@ impl Default for TextboxState {
     fn default() -> Self { Self { text: String::new(), cursor_pos: 0, selected: false } }
 }
 
+/// Estado para ListBox - v0.5.2
+#[derive(Debug, Clone)]
+pub struct ListboxState {
+    pub items: Vec<String>,
+    pub selected: Option<usize>,
+    pub scroll_offset: usize,
+    pub item_height: f32,
+}
+
+impl Default for ListboxState {
+    fn default() -> Self {
+        Self {
+            items: Vec::new(),
+            selected: None,
+            scroll_offset: 0,
+            item_height: 25.0,
+        }
+    }
+}
+
+/// Estado para Layout - v0.5.2
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum LayoutDir {
+    Vertical,
+    Horizontal,
+}
+
+/// Estado para contenedor Layout - v0.5.2
+#[derive(Debug, Clone)]
+pub struct LayoutState {
+    pub direction: LayoutDir,
+    pub spacing: f32,
+    pub padding: f32,
+    pub current_pos: f32,
+}
+
+impl Default for LayoutState {
+    fn default() -> Self {
+        Self {
+            direction: LayoutDir::Vertical,
+            spacing: 5.0,
+            padding: 10.0,
+            current_pos: 0.0,
+        }
+    }
+}
+
 // ============================================================================
 // COMANDOS DE DIBUJO (para el backend)
 // ============================================================================
@@ -206,11 +253,13 @@ pub struct Migui {
     mouse_down: bool,
     mouse_pressed: bool,
     mouse_released: bool,
-    
+
     pub widget_states: std::collections::HashMap<String, WidgetState>,
     pub window_states: std::collections::HashMap<String, WindowState>,
     pub textbox_states: std::collections::HashMap<String, TextboxState>,
-    
+    pub listbox_states: std::collections::HashMap<String, ListboxState>,
+    pub layout_states: std::collections::HashMap<String, LayoutState>,
+
     draw_commands: Vec<DrawCommand>,
     frame_count: u64,
 }
@@ -223,6 +272,8 @@ impl Migui {
             widget_states: std::collections::HashMap::new(),
             window_states: std::collections::HashMap::new(),
             textbox_states: std::collections::HashMap::new(),
+            listbox_states: std::collections::HashMap::new(),
+            layout_states: std::collections::HashMap::new(),
             draw_commands: Vec::new(),
             frame_count: 0,
         }
@@ -539,7 +590,176 @@ impl Migui {
         if close_hovered && self.mouse_pressed { *open = false; }
         true
     }
-    
+
+    /// Dropdown - lista desplegable, retorna true si se seleccionó una opción
+    /// API: dropdown(id, options[], selected_index, x, y, w, h) -> bool (cambió selección)
+    pub fn dropdown(&mut self, id: WidgetId, options: &[&str], selected: &mut usize, rect: Rect) -> bool {
+        let state = self.widget_states.entry(id.0.clone()).or_insert_with(WidgetState::default);
+        
+        // Verificar si está abierto
+        let is_open = state.active;
+        
+        // Hover detection
+        state.hovered = rect.contains(self.mouse_x, self.mouse_y);
+        
+        // Click para abrir/cerrar
+        if state.hovered && self.mouse_pressed {
+            state.active = !state.active;
+            return false;
+        }
+        
+        // Si está abierto y click fuera, cerrar
+        if is_open && self.mouse_pressed && !state.hovered {
+            state.active = false;
+            return false;
+        }
+        
+        // Dibujar botón principal
+        let btn_color = if state.hovered { Color::BUTTON_HOVER } else { Color::BUTTON };
+        self.draw_commands.push(DrawCommand::DrawRect { rect, color: btn_color });
+        
+        // Borde
+        self.draw_commands.push(DrawCommand::DrawLine {
+            x1: rect.x, y1: rect.y, x2: rect.x + rect.w, y2: rect.y,
+            color: Color::BORDER, thickness: 2.0,
+        });
+        
+        // Texto seleccionado
+        let selected_text = if *selected < options.len() { options[*selected] } else { "Seleccionar" };
+        self.draw_commands.push(DrawCommand::DrawText {
+            text: selected_text.to_string(),
+            x: rect.x + 8.0,
+            y: rect.y + rect.h / 4.0,
+            size: 16,
+            color: Color::TEXT,
+        });
+        
+        // Flecha
+        let arrow_x = rect.x + rect.w - 20.0;
+        let arrow_y = rect.y + rect.h / 3.0;
+        self.draw_commands.push(DrawCommand::DrawLine {
+            x1: arrow_x, y1: arrow_y,
+            x2: arrow_x + 10.0, y2: arrow_y,
+            color: Color::TEXT, thickness: 2.0,
+        });
+        
+        let mut changed = false;
+        
+        // Si está abierto, dibujar lista desplegada
+        if is_open {
+            let item_h = 30.0f32;
+            let list_h = options.len() as f32 * item_h;
+            let list_rect = Rect::new(rect.x, rect.y + rect.h, rect.w, list_h);
+            
+            // Fondo de lista
+            self.draw_commands.push(DrawCommand::DrawRect {
+                rect: list_rect,
+                color: Color::PANEL,
+            });
+            
+            // Borde de lista
+            self.draw_commands.push(DrawCommand::DrawLine {
+                x1: list_rect.x, y1: list_rect.y,
+                x2: list_rect.x + list_rect.w, y2: list_rect.y,
+                color: Color::BORDER, thickness: 2.0,
+            });
+            
+            // Items
+            for (i, option) in options.iter().enumerate() {
+                let item_rect = Rect::new(rect.x, rect.y + rect.h + i as f32 * item_h, rect.w, item_h);
+                let item_hovered = item_rect.contains(self.mouse_x, self.mouse_y);
+                
+                // Hover en item
+                if item_hovered {
+                    self.draw_commands.push(DrawCommand::DrawRect {
+                        rect: item_rect,
+                        color: Color::BUTTON_HOVER,
+                    });
+                }
+                
+                // Texto del item
+                self.draw_commands.push(DrawCommand::DrawText {
+                    text: option.to_string(),
+                    x: rect.x + 8.0,
+                    y: item_rect.y + item_rect.h / 4.0,
+                    size: 16,
+                    color: Color::TEXT,
+                });
+                
+                // Click en item
+                if item_hovered && self.mouse_pressed {
+                    *selected = i;
+                    changed = true;
+                    state.active = false;
+                }
+            }
+        }
+        
+        changed
+    }
+
+    /// Progress Bar - barra de progreso, vertical u horizontal
+    /// API: progress_bar(id, value, min, max, x, y, w, h, vertical) -> ()
+    pub fn progress_bar(&mut self, _id: WidgetId, value: f32, min: f32, max: f32, rect: Rect, vertical: bool) {
+        // Normalizar valor
+        let range = max - min;
+        let norm = if range > 0.0 { (value - min) / range } else { 0.0 };
+        let norm = norm.clamp(0.0, 1.0);
+        
+        // Fondo (track)
+        self.draw_commands.push(DrawCommand::DrawRect {
+            rect,
+            color: Color::BUTTON,
+        });
+        
+        // Borde
+        self.draw_commands.push(DrawCommand::DrawLine {
+            x1: rect.x, y1: rect.y,
+            x2: rect.x + rect.w, y2: rect.y,
+            color: Color::BORDER, thickness: 2.0,
+        });
+        
+        // Barra de progreso
+        if vertical {
+            // Vertical: llena de abajo hacia arriba
+            let fill_h = norm * rect.h;
+            let fill_rect = Rect::new(
+                rect.x + 4.0,
+                rect.y + rect.h - fill_h,
+                rect.w - 8.0,
+                fill_h,
+            );
+            self.draw_commands.push(DrawCommand::DrawRect {
+                rect: fill_rect,
+                color: Color::ACCENT,
+            });
+        } else {
+            // Horizontal: llena de izquierda a derecha
+            let fill_w = norm * rect.w;
+            let fill_rect = Rect::new(
+                rect.x + 4.0,
+                rect.y + 4.0,
+                fill_w,
+                rect.h - 8.0,
+            );
+            self.draw_commands.push(DrawCommand::DrawRect {
+                rect: fill_rect,
+                color: Color::GREEN,
+            });
+        }
+        
+        // Texto de porcentaje
+        let percent = (norm * 100.0) as i32;
+        let text = format!("{}%", percent);
+        self.draw_commands.push(DrawCommand::DrawText {
+            text,
+            x: rect.x + (rect.w - 40.0) / 2.0,
+            y: rect.y + rect.h / 4.0,
+            size: 14,
+            color: Color::TEXT,
+        });
+    }
+
     /// Message box - retorna índice del botón presionado
     pub fn message_box(&mut self, title: &str, message: &str, buttons: &[&str], rect: Rect) -> i32 {
         // Fondo
@@ -580,6 +800,164 @@ impl Migui {
         
         -1
     }
+
+    // ========================================================================
+    // LISTBOX - v0.5.2
+    // ========================================================================
+
+    /// ListBox - lista de items seleccionables
+    /// Retorna el índice seleccionado o None si no hay selección
+    pub fn listbox(&mut self, id: WidgetId, items: &[String], rect: Rect) -> Option<usize> {
+        let state = self.listbox_states.entry(id.0.clone())
+            .or_insert_with(|| ListboxState {
+                items: items.to_vec(),
+                selected: None,
+                scroll_offset: 0,
+                item_height: 25.0,
+            });
+
+        // Actualizar items si cambiaron
+        if state.items.len() != items.len() {
+            state.items = items.to_vec();
+        }
+
+        // Fondo
+        self.draw_commands.push(DrawCommand::DrawRect { rect, color: Color::BUTTON });
+
+        // Borde
+        self.draw_commands.push(DrawCommand::DrawLine {
+            x1: rect.x, y1: rect.y, x2: rect.x + rect.w, y2: rect.y,
+            color: Color::BORDER, thickness: 2.0,
+        });
+        self.draw_commands.push(DrawCommand::DrawLine {
+            x1: rect.x + rect.w, y1: rect.y, x2: rect.x + rect.w, y2: rect.y + rect.h,
+            color: Color::BORDER, thickness: 2.0,
+        });
+        self.draw_commands.push(DrawCommand::DrawLine {
+            x1: rect.x + rect.w, y1: rect.y + rect.h, x2: rect.x, y2: rect.y + rect.h,
+            color: Color::BORDER, thickness: 2.0,
+        });
+        self.draw_commands.push(DrawCommand::DrawLine {
+            x1: rect.x, y1: rect.y + rect.h, x2: rect.x, y2: rect.y,
+            color: Color::BORDER, thickness: 2.0,
+        });
+
+        // Items visibles
+        let visible_items = ((rect.h - 10.0) / state.item_height) as usize;
+        let _max_scroll = state.items.len().saturating_sub(visible_items);
+        
+        for i in 0..visible_items.min(state.items.len().saturating_sub(state.scroll_offset)) {
+            let item_idx = i + state.scroll_offset;
+            let y = rect.y + 5.0 + (i as f32 * state.item_height);
+            let item_rect = Rect::new(rect.x + 5.0, y, rect.w - 10.0, state.item_height - 2.0);
+
+            let hovered = item_rect.contains(self.mouse_x, self.mouse_y);
+            
+            // Fondo del item
+            let bg_color = if Some(item_idx) == state.selected {
+                Color::ACCENT
+            } else if hovered {
+                Color::BUTTON_HOVER
+            } else {
+                Color::BUTTON
+            };
+
+            self.draw_commands.push(DrawCommand::DrawRect {
+                rect: item_rect,
+                color: bg_color,
+            });
+
+            // Texto del item
+            self.draw_commands.push(DrawCommand::DrawText {
+                text: state.items[item_idx].clone(),
+                x: item_rect.x + 5.0,
+                y: y + 5.0,
+                size: 16,
+                color: Color::TEXT,
+            });
+
+            // Click en item
+            if hovered && self.mouse_pressed {
+                state.selected = Some(item_idx);
+            }
+        }
+
+        // Scroll simple con rueda del mouse (futuro: scrollbar)
+        if rect.contains(self.mouse_x, self.mouse_y) && state.items.len() > visible_items {
+            // Se puede agregar scroll con rueda aquí
+        }
+
+        state.selected
+    }
+
+    // ========================================================================
+    // LAYOUTS - v0.5.2
+    // ========================================================================
+
+    /// Layout vertical - organiza widgets en columna
+    pub fn begin_vertical(&mut self, id: WidgetId, rect: Rect, spacing: f32) {
+        let state = self.layout_states.entry(id.0.clone())
+            .or_insert_with(|| LayoutState {
+                direction: LayoutDir::Vertical,
+                spacing,
+                padding: 5.0,
+                current_pos: rect.y + 5.0,
+            });
+        
+        state.current_pos = rect.y + state.padding;
+        state.direction = LayoutDir::Vertical;
+        state.spacing = spacing;
+
+        // Fondo opcional (descomentar para debug)
+        // self.draw_commands.push(DrawCommand::DrawRect { rect, color: Color::new(40, 40, 40, 255) });
+    }
+
+    /// Obtener posición Y para siguiente widget en layout vertical
+    pub fn next_y(&mut self, id: WidgetId, height: f32) -> f32 {
+        if let Some(state) = self.layout_states.get_mut(&id.0) {
+            let y = state.current_pos;
+            state.current_pos += height + state.spacing;
+            y
+        } else {
+            0.0
+        }
+    }
+
+    /// Finalizar layout vertical
+    pub fn end_vertical(&mut self, _id: WidgetId) {
+        // Limpieza opcional
+    }
+
+    /// Layout horizontal - organiza widgets en fila
+    pub fn begin_horizontal(&mut self, id: WidgetId, rect: Rect, spacing: f32) {
+        let state = self.layout_states.entry(id.0.clone())
+            .or_insert_with(|| LayoutState {
+                direction: LayoutDir::Horizontal,
+                spacing,
+                padding: 5.0,
+                current_pos: rect.x + 5.0,
+            });
+        
+        state.current_pos = rect.x + state.padding;
+        state.direction = LayoutDir::Horizontal;
+        state.spacing = spacing;
+    }
+
+    /// Obtener posición X para siguiente widget en layout horizontal
+    pub fn next_x(&mut self, id: WidgetId, width: f32) -> f32 {
+        if let Some(state) = self.layout_states.get_mut(&id.0) {
+            let x = state.current_pos;
+            state.current_pos += width + state.spacing;
+            x
+        } else {
+            0.0
+        }
+    }
+
+    /// Finalizar layout horizontal
+    pub fn end_horizontal(&mut self, _id: WidgetId) {
+        // Limpieza opcional
+    }
 }
 
 impl Default for Migui {
@@ -619,8 +997,75 @@ mod tests {
         gui.begin_frame();
         gui.handle_event(Event::MouseMove { x: 150.0, y: 50.0 });
         gui.handle_event(Event::MouseDown { button: MouseButton::Left, x: 150.0, y: 50.0 });
-        
+
         let value = gui.slider(WidgetId::new("sld"), 0.5, 0.0, 1.0, Rect::new(100.0, 40.0, 200.0, 20.0));
         assert!(value >= 0.0 && value <= 1.0);
+    }
+
+    #[test]
+    fn test_dropdown_select() {
+        let mut gui = Migui::new();
+        let mut selected = 0usize;
+        let options = ["Opción 1", "Opción 2", "Opción 3"];
+        
+        gui.begin_frame();
+        // Renderizar dropdown cerrado
+        let changed = gui.dropdown(WidgetId::new("dd"), &options, &mut selected, Rect::new(0.0, 0.0, 200.0, 40.0));
+        
+        assert!(!changed);
+        assert_eq!(selected, 0);
+        // Debería haber comandos de dibujo (botón, borde, texto)
+        assert!(gui.draw_commands().len() >= 3);
+    }
+
+    #[test]
+    fn test_dropdown_closed() {
+        let mut gui = Migui::new();
+        let mut selected = 0usize;
+        let options = ["Opción 1", "Opción 2", "Opción 3"];
+        
+        gui.begin_frame();
+        // No hacer click, solo renderizar
+        let changed = gui.dropdown(WidgetId::new("dd"), &options, &mut selected, Rect::new(0.0, 0.0, 200.0, 40.0));
+        
+        assert!(!changed);
+        assert_eq!(selected, 0);
+    }
+
+    #[test]
+    fn test_progress_bar_horizontal() {
+        let mut gui = Migui::new();
+        gui.begin_frame();
+        
+        gui.progress_bar(WidgetId::new("pb"), 50.0, 0.0, 100.0, Rect::new(0.0, 0.0, 200.0, 30.0), false);
+        
+        // Verificar que se generaron comandos de dibujo
+        assert!(!gui.draw_commands().is_empty());
+    }
+
+    #[test]
+    fn test_progress_bar_vertical() {
+        let mut gui = Migui::new();
+        gui.begin_frame();
+        
+        gui.progress_bar(WidgetId::new("pb"), 75.0, 0.0, 100.0, Rect::new(0.0, 0.0, 30.0, 200.0), true);
+        
+        // Verificar que se generaron comandos de dibujo
+        assert!(!gui.draw_commands().is_empty());
+    }
+
+    #[test]
+    fn test_progress_bar_bounds() {
+        let mut gui = Migui::new();
+        gui.begin_frame();
+        
+        // Valor fuera de rango (debería clampear)
+        gui.progress_bar(WidgetId::new("pb"), 150.0, 0.0, 100.0, Rect::new(0.0, 0.0, 200.0, 30.0), false);
+        assert!(!gui.draw_commands().is_empty());
+        
+        gui.begin_frame();
+        // Valor negativo
+        gui.progress_bar(WidgetId::new("pb"), -10.0, 0.0, 100.0, Rect::new(0.0, 0.0, 200.0, 30.0), false);
+        assert!(!gui.draw_commands().is_empty());
     }
 }
