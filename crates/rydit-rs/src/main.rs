@@ -24,7 +24,6 @@ use rydit_gfx::{ColorRydit, Key, RyditGfx};
 use std::collections::{HashMap, HashSet};
 use std::env;
 use std::fs;
-use std::io::{self, Write};
 
 // =============================================================================
 // CONFIGURACIÓN AUTOMÁTICA DE ENTORNO (v0.6.0)

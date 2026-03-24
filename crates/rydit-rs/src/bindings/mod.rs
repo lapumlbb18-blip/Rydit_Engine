@@ -5,6 +5,7 @@
 // Este archivo es placeholder para futura extracción
 
 /// Registrar todos los bindings en el evaluador
+#[allow(dead_code)]
 pub fn registrar_todos() {
     // Placeholder - los bindings se registran en eval::evaluar_expr
     // Futura refactorización moverá esto aquí
