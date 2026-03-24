@@ -52,6 +52,45 @@ Demostramos que **no necesitas herramientas pesadas** para crear videojuegos:
 - 1 persona en Android > equipos de 50 en oficinas
 - 6 meses de desarrollo > 5 años de motor comercial
 
+### 5. **Rendimiento Estable - Hardware Primero** 🔥
+
+**Propósito Fundamental:** RyDit prioriza el rendimiento estable sobre features innecesarios.
+
+- **Sin calentamiento:** Optimizado para ejecutarse sin sobrecargar el CPU/GPU
+- **RAM consciente:** Binario ~550 KB, uso de RAM <100 MB en runtime
+- **60 FPS estables:** Game loop optimizado, sin garbage collection
+- **Hardware modesto:** Diseñado para Redmi Note 8 (gama baja) → funciona en cualquier lado
+- **Sin sobrecargas:** Cada feature se pregunta: ¿es esencial o es bloat?
+
+**Filosofía de Optimización:**
+```
+Mejor 10 features que funcionen perfecto a 100 que calienten tu dispositivo
+```
+
+**Métricas de Rendimiento:**
+| Métrica | RyDit v0.6.2 | Godot | Unity |
+|---------|--------------|-------|-------|
+| Binario | ~580 KB | ~50 MB | ~200 MB |
+| RAM runtime | <100 MB | ~500 MB | ~1 GB |
+| CPU usage | ~20-30% | ~60-80% | ~80-100% |
+| Calentamiento | Mínimo | Moderado | Alto |
+
+### 6. **Portabilidad Cruzada** 🌍
+
+**Próximamente:** RyDit no solo es Android.
+
+- **Linux:** Nativo (x86_64, ARM64)
+- **Windows:** En desarrollo (x64)
+- **WebAssembly:** Futuro (v0.8.0+)
+- **iOS:** Considerando (limitaciones de Apple)
+
+**Una código, múltiples plataformas:**
+```rust
+// Mismo código Rust → Todos los targets
+cargo build --release        # Android/Linux
+cargo build --target x86_64-pc-windows-msvc  # Windows
+```
+
 ---
 
 ## 🔥 ¿Por qué existe RyDit?

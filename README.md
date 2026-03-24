@@ -68,6 +68,8 @@ ryda frame < 1000 {
 2. **Ligero y Portable** - Binario de ~550 KB (no 50 MB como Godot)
 3. **Educativo** - Código 100% abierto, lenguaje en español, sin magia
 4. **David vs Goliat** - 12,000 líneas de Rust bien escritas > 500,000 líneas de C++
+5. **Rendimiento Estable** - Sin calentamiento, RAM <100 MB, 60 FPS estables
+6. **Portabilidad** - Próximamente Linux + Windows + WebAssembly
 
 ### ¿Por qué existe RyDit?
 

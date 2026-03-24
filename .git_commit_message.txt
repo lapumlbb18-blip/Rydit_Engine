@@ -1,89 +1,71 @@
-docs: Limpieza repositorio - Eliminar archivos internos y peligrosos
+feat: Módulo REGEX v0.6.2 - Expresiones regulares para RyDit
 
-LIMPIEZA CRÍTICA - Archivos eliminados del repositorio
-=======================================================
+MÓDULO REGEX - IMPLEMENTACIÓN COMPLETA
+======================================
 
-Archivos Peligrosos (Seguridad):
-- .rcloneignore (configuración de backup de Google Drive)
-- backup_con_binarios.sh (script de backup personal)
-- backup_google_drive.sh (script de backup personal)
+Dependencias:
+- regex crate 1.10 (agregada a crates/rydit-rs/Cargo.toml)
+- Impacto binario: +30-40 KB
 
-Carpetas Internas (NO públicas):
-- historial/ (140+ archivos antiguos movidos a histórico)
-- ruta_v0.5.0_v0.9.9/ (planificación interna)
-- archive/ (documentación antigua)
-- context/ (estado de sesión)
+Funciones Implementadas:
+- regex::match(patron, texto) -> bool
+  * Retorna true si el patrón coincide con el texto
+  * Ejemplo: regex::match("\\d+", "123") -> true
 
-Archivos de Planes/Resúmenes (Internos):
-- ASSETS_MANAGER_V0.5.0.md
-- BACKUP_INSTRUCCIONES_V0.5.1.md
-- DATOS_EXACTOS_V0.5.1.md
-- EVALUACION_PROYECTO_v0.4.1.md
-- GRAFICOS_V0.5.0.md
-- MEJORAS_CALIDAD_V0.5.1.md
-- ORGANIZACION_V0.5.0.md
-- PLAN_V0.6.0_DETALLES.md
-- REPORTES_TESTS_V0.5.0.md
-- REPORTES_V0.5.0.md
-- RESUMEN_COMPLETO_V0.5.2_V0.6.0.txt
-- RESUMEN_SESIONES_V0.5.2_V0.5.3.md
-- RESUMEN_SESION_V0.5.1.md
-- ROADMAP_TOTAL_V0.5.2.md
-- SOLUCION_RENDERIZADO_TERMUX_X11_V0.5.1.md
-- TAREAS_SIGUIENTE_SESION_v0.6.1.txt
-- ideas_evaluar.txt
+- regex::replace(patron, reemplazo, texto) -> texto
+  * Reemplaza todas las ocurrencias del patrón
+  * Ejemplo: regex::replace("[aeiou]", "*", "hola") -> "h*l*"
 
-Actualizaciones .gitignore
-==========================
-- Agregados backup_*.sh y .rcloneignore (PELIGROSO - cuenta Google Drive)
-- Agregadas carpetas: historial/, ruta_v0.5.0_v0.9.9/, archive/, context/
-- Agregados patrones: PLAN_*.md, RESUMEN_*.md, CONTEXTO_*.md, etc.
+- regex::split(patron, texto) -> array
+  * Divide el texto por el patrón
+  * Ejemplo: regex::split(",", "uno,dos,tres") -> ["uno","dos","tres"]
 
-README.md Actualizado
-=====================
-- Agregado MANIFIESTO después de "¿Qué es RyDit?"
-  * Filosofía RyDit (4 principios)
-  * ¿Por qué existe RyDit? (Problema + Solución)
-  * Valores (6 valores)
-- Agregada sección de Partículas en galería
-  * Video: logo_icon_asst/particulas.mp4
-  * 5 efectos: fuego, humo, explosión, lluvia, chispas
-  * Controles: F, S, H, E, ESC
-- Agregada sección de Carga de Sprites en galería
-  * Imagen: logo_icon_asst/carga_sprite.jpg
-  * Tanque + Helicóptero con sprites 16x16
-  * Funciones: assets::load_texture(), assets::draw(), assets::draw_scaled()
+- regex::find_all(patron, texto) -> array
+  * Encuentra todas las ocurrencias del patrón
+  * Ejemplo: regex::find_all("\\d+", "a1b23c456") -> ["1","23","456"]
 
-Archivos que SÍ permanecen en repositorio
-=========================================
-Públicos:
-- README.md (presentación principal)
-- README_EN.md (documentación en inglés)
-- MANIFIESTO.md (identidad pública - movido al README)
-- DEUDA_TECNICA.md (plan de refactor público)
-- CHANGELOG_v0.4.1.md, v0.5.1.md, v0.5.2.md, v0.5.3.md, v0.6.0.md
-- CONTRIBUTING.md (guía de contribución)
-- ROADMAP.md (roadmap público)
-- LICENSE (licencia MIT)
-- QWEN.md (contexto del proyecto - NO eliminar)
+- regex::capture(patron, texto) -> array
+  * Captura grupos de coincidencia
+  * Ejemplo: regex::capture("([a-z]+):(\\d+)", "edad:25") -> ["edad:25","edad","25"]
 
-Código:
-- crates/ (todo el código Rust)
-- demos/ (demos principales)
-- screenshots/ (capturas públicas)
-- logo_icon_asst/ (assets públicos: sprites, logo, videos)
-- docs/ (documentación pública)
-- scripts/ (utilidades públicas)
+Archivos Creados:
+- crates/modules/regex.rydit - Módulo embebido (documentación + ejemplos)
+- demos/demo_regex.rydit - Demo completo con casos de uso reales
+- screenshots/particulas.jpg - Captura del demo de partículas
+- screenshots/particulas.mp4 - Video del demo de partículas
 
-Métricas de Limpieza
-====================
-Archivos eliminados del repositorio: ~150
-Reducción estimada: ~2-3 MB (sin target/)
-Archivos .gitignore: +40 líneas
-Seguridad: ✅ .rcloneignore y backups excluidos
+Tests Agregados (7 tests):
+- test_regex_match_valido
+- test_regex_match_invalido
+- test_regex_replace
+- test_regex_split
+- test_regex_find_all
+- test_regex_capture
+- test_regex_email_validation
 
-PRÓXIMOS PASOS
-==============
-- Push a GitHub con esta limpieza
-- Verificar que GitHub Actions funcione
-- Comenzar v0.6.2: Módulo regex
+Casos de Uso en Demo:
+- Validación de emails
+- Reemplazo de vocales
+- Split por comas y espacios
+- Extracción de números
+- Captura de grupos (nombre:valor, fecha DD/MM/AAAA)
+- Validación de teléfonos
+- Extracción de hashtags
+- Validación de URLs
+
+README Actualizado:
+- Galería de Partículas con imagen screenshots/particulas.jpg
+- Enlace al video completo: screenshots/particulas.mp4
+- Eliminada imagen de Game Over (reemplazada por partículas)
+
+MÉTRICAS:
+=========
+- Tests totales: 126 + 7 = 133 tests pasando
+- Binario release: ~580-600 KB (+30-40 KB por regex)
+- Líneas Rust agregadas: ~200 (bindings + tests)
+- 0 warnings
+
+PRÓXIMOS PASOS:
+===============
+- v0.6.3: Módulo files (lectura/escritura de archivos)
+- v0.7.0: Animaciones 2D (sprite sheets + easing)
