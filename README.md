@@ -184,24 +184,21 @@ cargo run --bin rydit-rs -- --gfx snake.rydit
 
 ### 🐍 Snake Game
 
-| Snake Gameplay | Game Over |
-|--------------|--------------|
-| ![Snake](screenshots/04_snake_gameplay.jpg) | ![Game Over](screenshots/05_snake_gameover.jpg) |
-| Snake en movimiento, grid retro, comida roja | Pantalla de Game Over, puntuación, high score |
+| Snake Gameplay |
+|--------------|
+| ![Snake](screenshots/04_snake_gameplay.jpg) |
+| Snake en movimiento, grid retro, comida roja |
 
 ---
 
 ### ✨ Sistema de Partículas v0.5.3
 
-<div align="center">
+| Demo Partículas |
+|--------------|
+| ![Partículas Demo](screenshots/particulas.jpg) |
+| **5 efectos: fuego, humo, explosión, lluvia, chispas** - 60 FPS con 500+ partículas |
 
-**Video Demo:** [Ver video de partículas](logo_icon_asst/particulas.mp4)
-
-<video src="logo_icon_asst/particulas.mp4" width="640" controls></video>
-
-</div>
-
-**5 efectos: fuego, humo, explosión, lluvia, chispas** - 60 FPS con 500+ partículas
+**Video completo:** [Ver video de partículas](screenshots/particulas.mp4)
 
 **Controles del Demo:**
 - `F` - Fuego

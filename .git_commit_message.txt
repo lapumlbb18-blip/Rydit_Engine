@@ -1,135 +1,89 @@
-v0.5.0-v0.6.0: Release completo - Ecosistema maduro + Fix Termux-X11 + Stdlib Embebido
+docs: Limpieza repositorio - Eliminar archivos internos y peligrosos
 
-RELEASE v0.5.0 - Ecosistema Maduro (2026-03-23)
-===============================================
-- migui: Dropdown + Progress Bar widgets (~160 líneas)
-- Assets Manager: load_texture(), draw(), draw_scaled()
-- 5 sprites disponibles (tank, helicopter, platform, crate, cube)
-- Error messages mejorados (9 tipos nuevos, 18 total)
-- Module system maduro (cache, detección cíclicos)
-- 124 tests pasando (+29), 16 benchmarks
-- Organización: 89 demos antiguos archivados en historial/
+LIMPIEZA CRÍTICA - Archivos eliminados del repositorio
+=======================================================
 
-RELEASE v0.5.1 - Funciones Assets + Fix Termux-X11 (2026-03-23)
-===============================================================
-- assets::load_texture() en RyDit
-- assets::draw() y assets::draw_scaled() en RyDit
-- Demo Assets: Tanque + Helicóptero con sprites
-- Fix Renderizado Termux-X11:
-  * Variables: DISPLAY=:0, MESA_LOADER_DRIVER_OVERRIDE=zink, DRI3=1
-  * Variable `frame` en game loop (frame_count)
-  * evaluar_expr_gfx en statements de dibujo
-  * Texturas cargadas UNA vez (no en cada frame)
-- Backup scripts: backup_google_drive.sh, backup_con_binarios.sh
+Archivos Peligrosos (Seguridad):
+- .rcloneignore (configuración de backup de Google Drive)
+- backup_con_binarios.sh (script de backup personal)
+- backup_google_drive.sh (script de backup personal)
 
-RELEASE v0.5.2 - Audio + ListBox + Layout (2026-03-23)
-======================================================
-- AudioSystem en rydit-gfx (~200 líneas Rust FFI)
-  * audio::load_sound(), audio::play(), audio::stop()
-  * audio::load_music(), audio::play_music(), audio::stop_music()
-  * audio::set_volume(), audio::set_music_volume()
-- ListBox widget (~80 líneas)
-  * migui::listbox() con hover, selección, scroll
-- Layout Automático (~100 líneas)
-  * begin_vertical(), next_y(), end_vertical()
-  * begin_horizontal(), next_x(), end_horizontal()
-- Bindings verificados: serde_json, arrays (6 funciones)
+Carpetas Internas (NO públicas):
+- historial/ (140+ archivos antiguos movidos a histórico)
+- ruta_v0.5.0_v0.9.9/ (planificación interna)
+- archive/ (documentación antigua)
+- context/ (estado de sesión)
 
-RELEASE v0.5.3 - REPL Interactivo + Partículas (2026-03-23)
-===========================================================
-- REPL Interactivo mejorado (~300 líneas)
-  * Comandos: :help, :load, :save, :vars, :history, :clear, :exit
-  * Historial de comandos (↑ ↓)
-  * Auto-completado con TAB
-  * Colores en output (verde, rojo, cyan)
-  * Guardar sesión en JSON
-- Sistema de Partículas (~400 líneas)
-  * Particle struct: posición, velocidad, vida, color, gravedad, fricción
-  * ParticleEmitter: tasa, dispersión, velocidad, tamaño, colores
-  * ParticleSystem: múltiples emisores, gravedad/viento global
-  * Alpha dinámico (fade in/out)
-  * 5 efectos preset: fire(), smoke(), explosion(), rain(), sparks()
-- Demo Partículas (~130 líneas)
-  * Binario independiente: cargo run --bin demo_particles
-  * Controles: F (fuego), S (chispas), H (humo), E (explosión)
-  * UI en tiempo real: FPS, contador de partículas
-- README_EN.md: Documentación completa en inglés (~576 líneas)
+Archivos de Planes/Resúmenes (Internos):
+- ASSETS_MANAGER_V0.5.0.md
+- BACKUP_INSTRUCCIONES_V0.5.1.md
+- DATOS_EXACTOS_V0.5.1.md
+- EVALUACION_PROYECTO_v0.4.1.md
+- GRAFICOS_V0.5.0.md
+- MEJORAS_CALIDAD_V0.5.1.md
+- ORGANIZACION_V0.5.0.md
+- PLAN_V0.6.0_DETALLES.md
+- REPORTES_TESTS_V0.5.0.md
+- REPORTES_V0.5.0.md
+- RESUMEN_COMPLETO_V0.5.2_V0.6.0.txt
+- RESUMEN_SESIONES_V0.5.2_V0.5.3.md
+- RESUMEN_SESION_V0.5.1.md
+- ROADMAP_TOTAL_V0.5.2.md
+- SOLUCION_RENDERIZADO_TERMUX_X11_V0.5.1.md
+- TAREAS_SIGUIENTE_SESION_v0.6.1.txt
+- ideas_evaluar.txt
 
-RELEASE v0.6.0 - Fix Termux-X11 Automático + Stdlib Embebido (2026-03-23)
-=========================================================================
-- Optimización de Binario:
-  * strip = true en Cargo.toml profile.release
-  * Reducción: ~100 KB menos (de ~650 KB a ~550 KB)
-  * Sin impacto en runtime
-- Stdlib Embebido:
-  * 8 módulos en binario con include_str!()
-  * Función cargar_modulo() con fallback automático
-  * Usuario puede hacer override con archivos locales
-  * Módulos: math, arrays, strings, io, random, time, json, colisiones
-  * Aliases soportados: listas, cadenas, aleatorio, tiempo
-  * Aumento binario: ~15 KB (compensado por strip)
-- Fix Termux-X11 Automático:
-  * Función configurar_entorno_termux() (~75 líneas)
-  * Detección automática: TERMUX_VERSION o path /data/data/com.termux
-  * Configuración automática: DISPLAY=:0, zink, DRI3=1
-  * Mensajes informativos al usuario
-  * Elimina necesidad de script manual o variables externas
-- Demo Partículas probado exitosamente:
-  * Reporte: "Funcionó de marvelilla"
-  * 60 FPS estables, controles respondiendo
-  * Efectos: fuego, chispas, humo, explosión
+Actualizaciones .gitignore
+==========================
+- Agregados backup_*.sh y .rcloneignore (PELIGROSO - cuenta Google Drive)
+- Agregadas carpetas: historial/, ruta_v0.5.0_v0.9.9/, archive/, context/
+- Agregados patrones: PLAN_*.md, RESUMEN_*.md, CONTEXTO_*.md, etc.
 
-ARCHIVOS CREADOS (v0.5.0 - v0.6.0)
-==================================
-Documentación:
-- MANIFIESTO.md (296 líneas) - Identidad pública del proyecto
-- DEUDA_TECNICA.md (318 líneas) - Plan de refactor v0.7.0
-- CHANGELOG_v0.5.0.md, v0.5.1.md, v0.5.2.md, v0.5.3.md, v0.6.0.md
-- README_EN.md (411 líneas) - Documentación en inglés
-- ASSETS_MANAGER_V0.5.0.md, GRAFICOS_V0.5.0.md, MEJORAS_CALIDAD_V0.5.1.md
-- ORGANIZACION_V0.5.0.md, PLAN_V0.6.0_DETALLES.md
-- REPORTES_TESTS_V0.5.0.md, DATOS_EXACTOS_V0.5.1.md
-- BACKUP_INSTRUCCIONES_V0.5.1.md, RESUMEN_SESIONES_*.md
+README.md Actualizado
+=====================
+- Agregado MANIFIESTO después de "¿Qué es RyDit?"
+  * Filosofía RyDit (4 principios)
+  * ¿Por qué existe RyDit? (Problema + Solución)
+  * Valores (6 valores)
+- Agregada sección de Partículas en galería
+  * Video: logo_icon_asst/particulas.mp4
+  * 5 efectos: fuego, humo, explosión, lluvia, chispas
+  * Controles: F, S, H, E, ESC
+- Agregada sección de Carga de Sprites en galería
+  * Imagen: logo_icon_asst/carga_sprite.jpg
+  * Tanque + Helicóptero con sprites 16x16
+  * Funciones: assets::load_texture(), assets::draw(), assets::draw_scaled()
+
+Archivos que SÍ permanecen en repositorio
+=========================================
+Públicos:
+- README.md (presentación principal)
+- README_EN.md (documentación en inglés)
+- MANIFIESTO.md (identidad pública - movido al README)
+- DEUDA_TECNICA.md (plan de refactor público)
+- CHANGELOG_v0.4.1.md, v0.5.1.md, v0.5.2.md, v0.5.3.md, v0.6.0.md
+- CONTRIBUTING.md (guía de contribución)
+- ROADMAP.md (roadmap público)
+- LICENSE (licencia MIT)
+- QWEN.md (contexto del proyecto - NO eliminar)
 
 Código:
-- crates/rydit-gfx/src/particles.rs (~400 líneas)
-- crates/rydit-rs/src/bin/demo_particles.rs (~130 líneas)
-- .github/workflows/ci.yml - CI/CD básico (Linux)
-- backup_google_drive.sh, backup_con_binarios.sh
-- crates/lizer/benches/bench_lizer.rs (16 benchmarks)
-- scripts/benchmark_v0.5.0.sh
+- crates/ (todo el código Rust)
+- demos/ (demos principales)
+- screenshots/ (capturas públicas)
+- logo_icon_asst/ (assets públicos: sprites, logo, videos)
+- docs/ (documentación pública)
+- scripts/ (utilidades públicas)
 
-Demos:
-- demos/demo_migui_v0.5.0.rydit (dropdown + progress bar)
-- demos/demo_assets_v0.5.1.rydit (tanque + helicóptero)
-- demos/demo_v0.5_2.rydit (audio + listbox + layout)
+Métricas de Limpieza
+====================
+Archivos eliminados del repositorio: ~150
+Reducción estimada: ~2-3 MB (sin target/)
+Archivos .gitignore: +40 líneas
+Seguridad: ✅ .rcloneignore y backups excluidos
 
-MÉTRICAS TOTALES
-================
-- Líneas totales: ~12,000 (+2,800 desde v0.4.1)
-- Tests: 126 pasando (74 lizer + 20 blast-core + 7 v-shield + 8 migui + 12 rydit-rs + 5 doc)
-- Binario release: ~550 KB (-100 KB por strip)
-- Binario debug: ~920 KB
-- Crates: 6 funcionales (lizer, blast-core, rydit-gfx, rydit-rs, v-shield, migui)
-- Widgets migui: 12 (button, label, checkbox, slider, panel, textbox, window,
-  message_box, dropdown, progress_bar, listbox, layout)
-- Módulos stdlib: 8 embebidos (math, arrays, strings, io, random, time, json, colisiones)
-- Demos principales: 19
-- Warnings: 0
-
-FIX APLICADOS EN ESTA SESIÓN v0.6.1
-===================================
-- Warning width en particles.rs::rain() - prefijo _ agregado
-- README.md actualizado con:
-  * Tests: 45+ → 126
-  * Binario: ~735 KB → ~550 KB
-  * Features: partículas, audio, REPL, stdlib embebido, migui 12 widgets
-  * Sección Instalación y Dependencias (Termux, Linux, Windows)
-  * Tabla de dependencias (raylib, serde, serde_json, sccache)
-
-PRÓXIMA SESIÓN: v0.6.1 Animaciones 2D
-=====================================
-- Sprite sheets básicos: anim::load(), anim::play()
-- Easing functions: linear, in_quad, out_quad, in_out_quad, bounce, elastic
-- Demo tanque animado
-- MANIFIESTO.md completado
+PRÓXIMOS PASOS
+==============
+- Push a GitHub con esta limpieza
+- Verificar que GitHub Actions funcione
+- Comenzar v0.6.2: Módulo regex

@@ -57,6 +57,7 @@ const RANDOM_MODULE: &str = include_str!("../../modules/random.rydit");
 const TIME_MODULE: &str = include_str!("../../modules/time.rydit");
 const JSON_MODULE: &str = include_str!("../../modules/json.rydit");
 const COLISIONES_MODULE: &str = include_str!("../../modules/colisiones.rydit");
+const REGEX_MODULE: &str = include_str!("../../modules/regex.rydit");
 
 /// Cargar módulo (archivo local o embebido)
 fn cargar_modulo(nombre: &str) -> Result<String, String> {
@@ -76,6 +77,7 @@ fn cargar_modulo(nombre: &str) -> Result<String, String> {
             "time" => Ok(TIME_MODULE.to_string()),
             "json" => Ok(JSON_MODULE.to_string()),
             "colisiones" => Ok(COLISIONES_MODULE.to_string()),
+            "regex" => Ok(REGEX_MODULE.to_string()),
             _ => Err(format!("Módulo '{}' no encontrado", nombre)),
         }
     }
@@ -1868,6 +1870,90 @@ fn evaluar_expr(expr: &Expr, executor: &mut Executor, funcs: &mut HashMap<String
                 }
             }
 
+            // ========== FUNCIONES REGEX (v0.6.2) ==========
+            if (name == "__regex_match" || name == "regex::match") && args.len() == 2 {
+                if let (Valor::Texto(pattern), Valor::Texto(text)) = (&evaluar_expr(&args[0], executor, funcs), &evaluar_expr(&args[1], executor, funcs)) {
+                    match regex::Regex::new(pattern) {
+                        Ok(re) => return Valor::Bool(re.is_match(text)),
+                        Err(e) => return Valor::Error(format!("regex::match(): {}", e)),
+                    }
+                } else {
+                    return Valor::Error("regex::match() requiere (patrón, texto)".to_string());
+                }
+            }
+
+            if (name == "__regex_replace" || name == "regex::replace") && args.len() == 3 {
+                if let (Valor::Texto(pattern), Valor::Texto(replacement), Valor::Texto(text)) = (
+                    &evaluar_expr(&args[0], executor, funcs),
+                    &evaluar_expr(&args[1], executor, funcs),
+                    &evaluar_expr(&args[2], executor, funcs)
+                ) {
+                    match regex::Regex::new(pattern) {
+                        Ok(re) => return Valor::Texto(re.replace_all(text, replacement.as_str()).to_string()),
+                        Err(e) => return Valor::Error(format!("regex::replace(): {}", e)),
+                    }
+                } else {
+                    return Valor::Error("regex::replace() requiere (patrón, reemplazo, texto)".to_string());
+                }
+            }
+
+            if (name == "__regex_split" || name == "regex::split") && args.len() == 2 {
+                if let (Valor::Texto(pattern), Valor::Texto(text)) = (&evaluar_expr(&args[0], executor, funcs), &evaluar_expr(&args[1], executor, funcs)) {
+                    match regex::Regex::new(pattern) {
+                        Ok(re) => {
+                            let parts: Vec<Valor> = re.split(text).map(|s| Valor::Texto(s.to_string())).collect();
+                            return Valor::Array(parts);
+                        }
+                        Err(e) => return Valor::Error(format!("regex::split(): {}", e)),
+                    }
+                } else {
+                    return Valor::Error("regex::split() requiere (patrón, texto)".to_string());
+                }
+            }
+
+            if (name == "__regex_find_all" || name == "regex::find_all") && args.len() == 2 {
+                if let (Valor::Texto(pattern), Valor::Texto(text)) = (&evaluar_expr(&args[0], executor, funcs), &evaluar_expr(&args[1], executor, funcs)) {
+                    match regex::Regex::new(pattern) {
+                        Ok(re) => {
+                            let matches: Vec<Valor> = re.find_iter(text).map(|m| Valor::Texto(m.as_str().to_string())).collect();
+                            return Valor::Array(matches);
+                        }
+                        Err(e) => return Valor::Error(format!("regex::find_all(): {}", e)),
+                    }
+                } else {
+                    return Valor::Error("regex::find_all() requiere (patrón, texto)".to_string());
+                }
+            }
+
+            if (name == "__regex_capture" || name == "regex::capture") && args.len() == 2 {
+                if let (Valor::Texto(pattern), Valor::Texto(text)) = (&evaluar_expr(&args[0], executor, funcs), &evaluar_expr(&args[1], executor, funcs)) {
+                    match regex::Regex::new(pattern) {
+                        Ok(re) => {
+                            if let Some(caps) = re.captures(text) {
+                                // Retornar array: [match completo, grupo1, grupo2, ...]
+                                let mut result: Vec<Valor> = Vec::new();
+                                // Match completo
+                                result.push(Valor::Texto(caps.get(0).unwrap().as_str().to_string()));
+                                // Grupos de captura
+                                for i in 1..caps.len() {
+                                    if let Some(m) = caps.get(i) {
+                                        result.push(Valor::Texto(m.as_str().to_string()));
+                                    } else {
+                                        result.push(Valor::Vacio);
+                                    }
+                                }
+                                return Valor::Array(result);
+                            } else {
+                                return Valor::Array(vec![]); // No match
+                            }
+                        }
+                        Err(e) => return Valor::Error(format!("regex::capture(): {}", e)),
+                    }
+                } else {
+                    return Valor::Error("regex::capture() requiere (patrón, texto)".to_string());
+                }
+            }
+
             // Función de usuario - ejecutar y capturar retorno
             // Ahora tenemos &mut Executor, podemos ejecutar la función
             // Clonar datos para evitar borrow checker issues
@@ -2604,6 +2690,87 @@ fn evaluar_expr_gfx(expr: &Expr, executor: &mut Executor, input: &InputEstado, f
                     return Valor::Vacio;
                 } else {
                     return Valor::Error("time::sleep() requiere milisegundos (número)".to_string());
+                }
+            }
+
+            // ========== FUNCIONES REGEX (v0.6.2) ==========
+            if (name == "__regex_match" || name == "regex::match") && args.len() == 2 {
+                if let (Valor::Texto(pattern), Valor::Texto(text)) = (&evaluar_expr_gfx(&args[0], executor, input, funcs), &evaluar_expr_gfx(&args[1], executor, input, funcs)) {
+                    match regex::Regex::new(pattern) {
+                        Ok(re) => return Valor::Bool(re.is_match(text)),
+                        Err(e) => return Valor::Error(format!("regex::match(): {}", e)),
+                    }
+                } else {
+                    return Valor::Error("regex::match() requiere (patrón, texto)".to_string());
+                }
+            }
+
+            if (name == "__regex_replace" || name == "regex::replace") && args.len() == 3 {
+                if let (Valor::Texto(pattern), Valor::Texto(replacement), Valor::Texto(text)) = (
+                    &evaluar_expr_gfx(&args[0], executor, input, funcs),
+                    &evaluar_expr_gfx(&args[1], executor, input, funcs),
+                    &evaluar_expr_gfx(&args[2], executor, input, funcs)
+                ) {
+                    match regex::Regex::new(pattern) {
+                        Ok(re) => return Valor::Texto(re.replace_all(text, replacement.as_str()).to_string()),
+                        Err(e) => return Valor::Error(format!("regex::replace(): {}", e)),
+                    }
+                } else {
+                    return Valor::Error("regex::replace() requiere (patrón, reemplazo, texto)".to_string());
+                }
+            }
+
+            if (name == "__regex_split" || name == "regex::split") && args.len() == 2 {
+                if let (Valor::Texto(pattern), Valor::Texto(text)) = (&evaluar_expr_gfx(&args[0], executor, input, funcs), &evaluar_expr_gfx(&args[1], executor, input, funcs)) {
+                    match regex::Regex::new(pattern) {
+                        Ok(re) => {
+                            let parts: Vec<Valor> = re.split(text).map(|s| Valor::Texto(s.to_string())).collect();
+                            return Valor::Array(parts);
+                        }
+                        Err(e) => return Valor::Error(format!("regex::split(): {}", e)),
+                    }
+                } else {
+                    return Valor::Error("regex::split() requiere (patrón, texto)".to_string());
+                }
+            }
+
+            if (name == "__regex_find_all" || name == "regex::find_all") && args.len() == 2 {
+                if let (Valor::Texto(pattern), Valor::Texto(text)) = (&evaluar_expr_gfx(&args[0], executor, input, funcs), &evaluar_expr_gfx(&args[1], executor, input, funcs)) {
+                    match regex::Regex::new(pattern) {
+                        Ok(re) => {
+                            let matches: Vec<Valor> = re.find_iter(text).map(|m| Valor::Texto(m.as_str().to_string())).collect();
+                            return Valor::Array(matches);
+                        }
+                        Err(e) => return Valor::Error(format!("regex::find_all(): {}", e)),
+                    }
+                } else {
+                    return Valor::Error("regex::find_all() requiere (patrón, texto)".to_string());
+                }
+            }
+
+            if (name == "__regex_capture" || name == "regex::capture") && args.len() == 2 {
+                if let (Valor::Texto(pattern), Valor::Texto(text)) = (&evaluar_expr_gfx(&args[0], executor, input, funcs), &evaluar_expr_gfx(&args[1], executor, input, funcs)) {
+                    match regex::Regex::new(pattern) {
+                        Ok(re) => {
+                            if let Some(caps) = re.captures(text) {
+                                let mut result: Vec<Valor> = Vec::new();
+                                result.push(Valor::Texto(caps.get(0).unwrap().as_str().to_string()));
+                                for i in 1..caps.len() {
+                                    if let Some(m) = caps.get(i) {
+                                        result.push(Valor::Texto(m.as_str().to_string()));
+                                    } else {
+                                        result.push(Valor::Vacio);
+                                    }
+                                }
+                                return Valor::Array(result);
+                            } else {
+                                return Valor::Array(vec![]);
+                            }
+                        }
+                        Err(e) => return Valor::Error(format!("regex::capture(): {}", e)),
+                    }
+                } else {
+                    return Valor::Error("regex::capture() requiere (patrón, texto)".to_string());
                 }
             }
 
@@ -3658,5 +3825,157 @@ mod warning_tests {
 
         let result = evaluar_expr(&expr, &mut executor, &mut funcs);
         assert_eq!(result, Valor::Num(5.0));
+    }
+
+    // ========================================================================
+    // TESTS V0.6.2 - MÓDULO REGEX
+    // ========================================================================
+
+    #[test]
+    fn test_regex_match_valido() {
+        // regex::match("[a-z]+", "hola") -> true
+        let mut executor = Executor::nuevo();
+        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
+        let args = vec![
+            Expr::Texto("[a-z]+".to_string()),
+            Expr::Texto("hola".to_string()),
+        ];
+        let expr = Expr::Call {
+            name: "regex::match".to_string(),
+            args,
+        };
+
+        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
+        assert_eq!(result, Valor::Bool(true));
+    }
+
+    #[test]
+    fn test_regex_match_invalido() {
+        // regex::match("\\d+", "abc") -> false
+        let mut executor = Executor::nuevo();
+        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
+        let args = vec![
+            Expr::Texto("\\d+".to_string()),
+            Expr::Texto("abc".to_string()),
+        ];
+        let expr = Expr::Call {
+            name: "regex::match".to_string(),
+            args,
+        };
+
+        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
+        assert_eq!(result, Valor::Bool(false));
+    }
+
+    #[test]
+    fn test_regex_replace() {
+        // regex::replace("[aeiou]", "*", "hola") -> "h*l*"
+        let mut executor = Executor::nuevo();
+        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
+        let args = vec![
+            Expr::Texto("[aeiou]".to_string()),
+            Expr::Texto("*".to_string()),
+            Expr::Texto("hola".to_string()),
+        ];
+        let expr = Expr::Call {
+            name: "regex::replace".to_string(),
+            args,
+        };
+
+        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
+        assert_eq!(result, Valor::Texto("h*l*".to_string()));
+    }
+
+    #[test]
+    fn test_regex_split() {
+        // regex::split(",", "uno,dos,tres") -> ["uno", "dos", "tres"]
+        let mut executor = Executor::nuevo();
+        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
+        let args = vec![
+            Expr::Texto(",".to_string()),
+            Expr::Texto("uno,dos,tres".to_string()),
+        ];
+        let expr = Expr::Call {
+            name: "regex::split".to_string(),
+            args,
+        };
+
+        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
+        if let Valor::Array(arr) = result {
+            assert_eq!(arr.len(), 3);
+            assert_eq!(arr[0], Valor::Texto("uno".to_string()));
+            assert_eq!(arr[1], Valor::Texto("dos".to_string()));
+            assert_eq!(arr[2], Valor::Texto("tres".to_string()));
+        } else {
+            panic!("Expected Array, got {:?}", result);
+        }
+    }
+
+    #[test]
+    fn test_regex_find_all() {
+        // regex::find_all("\\d+", "a1b23c456") -> ["1", "23", "456"]
+        let mut executor = Executor::nuevo();
+        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
+        let args = vec![
+            Expr::Texto("\\d+".to_string()),
+            Expr::Texto("a1b23c456".to_string()),
+        ];
+        let expr = Expr::Call {
+            name: "regex::find_all".to_string(),
+            args,
+        };
+
+        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
+        if let Valor::Array(arr) = result {
+            assert_eq!(arr.len(), 3);
+            assert_eq!(arr[0], Valor::Texto("1".to_string()));
+            assert_eq!(arr[1], Valor::Texto("23".to_string()));
+            assert_eq!(arr[2], Valor::Texto("456".to_string()));
+        } else {
+            panic!("Expected Array, got {:?}", result);
+        }
+    }
+
+    #[test]
+    fn test_regex_capture() {
+        // regex::capture("([a-z]+):(\\d+)", "edad:25") -> ["edad:25", "edad", "25"]
+        let mut executor = Executor::nuevo();
+        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
+        let args = vec![
+            Expr::Texto("([a-z]+):(\\d+)".to_string()),
+            Expr::Texto("edad:25".to_string()),
+        ];
+        let expr = Expr::Call {
+            name: "regex::capture".to_string(),
+            args,
+        };
+
+        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
+        if let Valor::Array(arr) = result {
+            assert_eq!(arr.len(), 3);
+            assert_eq!(arr[0], Valor::Texto("edad:25".to_string()));
+            assert_eq!(arr[1], Valor::Texto("edad".to_string()));
+            assert_eq!(arr[2], Valor::Texto("25".to_string()));
+        } else {
+            panic!("Expected Array, got {:?}", result);
+        }
+    }
+
+    #[test]
+    fn test_regex_email_validation() {
+        // Validar email real
+        let mut executor = Executor::nuevo();
+        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
+        let args = vec![
+            Expr::Texto("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}".to_string()),
+            Expr::Texto("usuario@ejemplo.com".to_string()),
+        ];
+        let expr = Expr::Call {
+            name: "regex::match".to_string(),
+            args,
+        };
+
+        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
+        assert_eq!(result, Valor::Bool(true));
     }
 }
