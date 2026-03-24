@@ -1092,7 +1092,8 @@ pub fn ejecutar_stmt(
 use rydit_gfx::DrawHandle;
 
 // Estado del input para Snake y juegos
-struct InputEstado {
+/// Estado del input (público para game_loop)
+pub struct InputEstado {
     arrow_up: bool,
     arrow_down: bool,
     arrow_left: bool,
@@ -1154,6 +1155,7 @@ impl InputEstado {
     }
 }
 
+/// Ejecutar statement en modo gráfico
 fn ejecutar_stmt_gfx(
     stmt: &Stmt,
     executor: &mut Executor,
@@ -3667,7 +3669,8 @@ fn evaluar_expr_migui(
 // EJECUTAR STATEMENT MODO MIGUI
 // ============================================================================
 
-fn ejecutar_stmt_migui(
+/// Ejecutar statement en modo migui
+pub fn ejecutar_stmt_migui(
     stmt: &Stmt,
     executor: &mut Executor,
     funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
