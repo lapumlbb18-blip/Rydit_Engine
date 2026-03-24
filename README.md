@@ -6,8 +6,8 @@
 
 **"David vs Goliat - Un motor de videojuegos en Rust, construido 100% en un Redmi Note 8"**
 
-[![Version](https://img.shields.io/badge/version-v0.6.3-blue.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
-[![Tests](https://img.shields.io/badge/tests-137%20passing-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![Version](https://img.shields.io/badge/version-v0.7.0-blue.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![Tests](https://img.shields.io/badge/tests-102%20passing-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
 [![raylib](https://img.shields.io/badge/raylib-5.5-purple.svg)](https://www.raylib.com/)
 [![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
@@ -27,13 +27,14 @@
 - 🎮 Game loop integrado
 - 🎨 Renderizado gráfico (círculos, rectángulos, líneas, texto, sprites)
 - 🎹 Input de teclado en tiempo real
-- 🎲 Sistema de módulos (math, arrays, strings, io, random, time, json, colisiones, **regex**, **files**)
-- 🧪 **137 tests automáticos**
+- 🎲 Sistema de módulos (math, arrays, strings, io, random, time, json, colisiones, regex, files)
+- 🧪 **102 tests automáticos**
 - 🎨 **12 widgets UI** (migui - immediate mode GUI)
 - 🎵 **Audio** (sonidos + música)
 - ✨ **Sistema de partículas** (fuego, humo, explosión, lluvia, chispas)
 - 💻 **REPL interactivo** con historial y auto-completado
 - 📦 **Stdlib embebido** (sin archivos externos necesarios)
+- 🔌 **Arquitectura modular** (v0.8.0+: ciencia, animación, red, datos)
 - 🐍 Snake Game completo como demo
 
 ```rydit
@@ -94,6 +95,41 @@ ryda frame < 1000 {
 - **Abierto** - MIT license. 100% transparente
 - **Educativo** - Enseñamos, no solo damos herramientas
 - **Comunidad** - Hispanohablantes, mobile developers, hobbyists
+
+---
+
+## 🔌 Arquitectura Modular (v0.8.0+)
+
+**Filosofía:** Núcleo estable + módulos extensibles.
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  RYDIT - ARQUITECTURA POR CAPAS                          │
+├─────────────────────────────────────────────────────────┤
+│  ┌─────────────────────────────────────────────────┐   │
+│  │  CAPA 1: NÚCLEO ESTABLE (NO TOCAR)               │   │
+│  │  - main.rs (game loop, rydit-gfx FFI)            │   │
+│  │  - eval/mod.rs (evaluar_expr)                    │   │
+│  │  - repl.rs (REPL interactivo)                    │   │
+│  │  Tamaño: ~4,500 líneas (ESTABLE)                 │   │
+│  └─────────────────────────────────────────────────┘   │
+│                         │                               │
+│  ┌──────────────────────▼──────────────────────────┐   │
+│  │  CAPA 2: MÓDULOS EXTENSORES (INDEPENDIENTES)     │   │
+│  │  - crates/rydit-mod-science/  (física, química) │   │
+│  │  - crates/rydit-mod-anim/     (sprite sheets)   │   │
+│  │  - crates/rydit-mod-network/  (HTTP, WebSocket) │   │
+│  │  - crates/rydit-mod-data/     (CSV, HDF5, JSON) │   │
+│  │  Cada módulo: ~500-1000 líneas                   │   │
+│  └─────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────┘
+```
+
+**Ventajas:**
+- ✅ Núcleo estable (no se rompe)
+- ✅ Módulos independientes (testing fácil)
+- ✅ Comunidad puede crear módulos
+- ✅ Publicables a crates.io
 
 ---
 
@@ -417,9 +453,12 @@ Crates:
 | **v0.6.2** | ✅ | **Módulo REGEX** (match, replace, split, find_all, capture) | 2026-03-24 |
 | **v0.6.3** | ✅ | **Módulo FILES** (read, write, append, exists, delete) | 2026-03-24 |
 | **v0.6.4** | ✅ | **cargo fmt + Evaluación Split** (código consistente) | 2026-03-24 |
-| **v0.7.0** | 🔜 | **Split de main.rs** (4,200 → 10 módulos) | Próxima |
-| **v0.7.1** | 🔮 | **Animaciones 2D** (sprite sheets, easing functions) | 2-3 meses |
-| **v1.0.0** | 🔮 | Production Ready | 4-6 meses |
+| **v0.7.0** | ✅ | **Split PARCIAL** (REPL + eval extraídos, -17% main.rs) | 2026-03-24 |
+| **v0.8.0** | 🔜 | **Arquitectura Modular** (ciencia, animación, red, datos) | Próxima |
+| **v0.8.1** | 🔮 | **Módulo Ciencia** (física, química, biología simulaciones) | 2-3 meses |
+| **v0.8.2** | 🔮 | **Módulo Animación** (sprite sheets, 12 principios, easing) | 3-4 meses |
+| **v0.9.0** | 🔮 | **Módulo Red** (HTTP, WebSocket, TCP/UDP) | 4-5 meses |
+| **v1.0.0** | 🔮 | Production Ready | 6-8 meses |
 
 </div>
 
