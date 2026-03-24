@@ -193,14 +193,19 @@ cargo run --bin rydit-rs -- --gfx snake.rydit
 
 ### ✨ Sistema de Partículas v0.5.3
 
-| Demo Partículas |
-|--------------|
-| ![Partículas Demo](logo_icon_asst/particulas.mp4) |
-| **5 efectos: fuego, humo, explosión, lluvia, chispas** - 60 FPS con 500+ partículas |
+<div align="center">
+
+**Video Demo:** [Ver video de partículas](logo_icon_asst/particulas.mp4)
+
+<video src="logo_icon_asst/particulas.mp4" width="640" controls></video>
+
+</div>
+
+**5 efectos: fuego, humo, explosión, lluvia, chispas** - 60 FPS con 500+ partículas
 
 **Controles del Demo:**
 - `F` - Fuego
-- `S` - Chispas  
+- `S` - Chispas
 - `H` - Humo
 - `E` - Explosión
 - `ESC` - Salir
