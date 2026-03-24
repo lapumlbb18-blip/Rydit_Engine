@@ -98,14 +98,19 @@ ryda frame < 1000 {
 
 ---
 
-## 🔌 Arquitectura Modular (v0.8.0+)
+## 🔌 Arquitectura Modular (v0.7.1.x+)
 
-**Filosofía:** Núcleo estable + módulos extensibles.
+**Filosofía:** Núcleo estable + módulos extensibles (Manim + Bevy style).
+
+**Arquitectura de Referencia:**
+- 🎬 **Manim** (3Blue1Brown) - Escenas matemáticas, animaciones científicas
+- 🎮 **Bevy** (Rust) - ECS moderno, components, systems
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│  RYDIT - ARQUITECTURA POR CAPAS                          │
+│  RYDIT - ARQUITECTURA MANIM + BEVY                      │
 ├─────────────────────────────────────────────────────────┤
+│                                                         │
 │  ┌─────────────────────────────────────────────────┐   │
 │  │  CAPA 1: NÚCLEO ESTABLE (NO TOCAR)               │   │
 │  │  - main.rs (game loop, rydit-gfx FFI)            │   │
@@ -115,13 +120,46 @@ ryda frame < 1000 {
 │  └─────────────────────────────────────────────────┘   │
 │                         │                               │
 │  ┌──────────────────────▼──────────────────────────┐   │
-│  │  CAPA 2: MÓDULOS EXTENSORES (INDEPENDIENTES)     │   │
-│  │  - crates/rydit-mod-science/  (física, química) │   │
-│  │  - crates/rydit-mod-anim/     (sprite sheets)   │   │
-│  │  - crates/rydit-mod-network/  (HTTP, WebSocket) │   │
-│  │  - crates/rydit-mod-data/     (CSV, HDF5, JSON) │   │
+│  │  CAPA 2: MÓDULOS INDEPENDIENTES (CRATES)         │   │
+│  │                                                   │   │
+│  │  v0.7.1.0 🔬 crates/rydit-mod-scene/             │   │
+│  │     ├── Scene (contexto animación)               │   │
+│  │     ├── Camera (viewpoint, zoom, pan)            │   │
+│  │     ├── Timeline (keyframes, duration)           │   │
+│  │     └── MObject (Mathematical Object)            │   │
+│  │                                                   │   │
+│  │  v0.7.1.0 🔬 crates/rydit-mod-physics/           │   │
+│  │     ├── Projectile (proyectiles)                 │   │
+│  │     ├── NBody (órbitas, gravedad)                │   │
+│  │     ├── Wave (ondas, sonido)                     │   │
+│  │     └── Particle (sistemas)                      │   │
+│  │                                                   │   │
+│  │  v0.7.1.1 🎨 crates/rydit-mod-anim/              │   │
+│  │     ├── Easing (12 funciones)                    │   │
+│  │     ├── Transform (scale, rotate, translate)     │   │
+│  │     └── Principles (12 principios animación)     │   │
+│  │                                                   │   │
+│  │  v0.7.1.2 🌐 crates/rydit-mod-network/           │   │
+│  │     ├── HTTP (GET, POST, PUT, DELETE)            │   │
+│  │     ├── WebSocket (connect, send, recv)          │   │
+│  │     └── TCP/UDP (sockets)                        │   │
+│  │                                                   │   │
+│  │  v0.7.1.3 📊 crates/rydit-mod-data/              │   │
+│  │     ├── CSV (load, save, parse)                  │   │
+│  │     ├── HDF5 (scientific data)                   │   │
+│  │     ├── Stats (mean, std, regression)            │   │
+│  │     └── Plot (2D/3D graphs)                      │   │
+│  │                                                   │   │
+│  │  v0.7.2.0 🎬 crates/rydit-mod-nodes/             │   │
+│  │     ├── Node (base class)                        │   │
+│  │     ├── SceneNode (container)                    │   │
+│  │     ├── TransformNode (position, rotation)       │   │
+│  │     └── ComponentNode (custom data)              │   │
+│  │                                                   │   │
 │  │  Cada módulo: ~500-1000 líneas                   │   │
+│  │  Independiente, testeable, publicable crates.io  │   │
 │  └─────────────────────────────────────────────────┘   │
+│                                                         │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -130,6 +168,18 @@ ryda frame < 1000 {
 - ✅ Módulos independientes (testing fácil)
 - ✅ Comunidad puede crear módulos
 - ✅ Publicables a crates.io
+- ✅ Manim + Bevy = Arquitectura probada
+
+**Versionamiento Granular:**
+```
+v0.MAJOR.MINOR.PATCH
+v0.7.1.0 → Módulo Ciencia
+v0.7.1.1 → Módulo Animación
+v0.7.1.2 → Módulo Red
+v0.7.1.3 → Módulo Datos
+v0.7.2.0 → Sistema Nodos
+v0.8.0.0 → Integración Completa
+```
 
 ---
 
@@ -454,10 +504,12 @@ Crates:
 | **v0.6.3** | ✅ | **Módulo FILES** (read, write, append, exists, delete) | 2026-03-24 |
 | **v0.6.4** | ✅ | **cargo fmt + Evaluación Split** (código consistente) | 2026-03-24 |
 | **v0.7.0** | ✅ | **Split PARCIAL** (REPL + eval extraídos, -17% main.rs) | 2026-03-24 |
-| **v0.8.0** | 🔜 | **Arquitectura Modular** (ciencia, animación, red, datos) | Próxima |
-| **v0.8.1** | 🔮 | **Módulo Ciencia** (física, química, biología simulaciones) | 2-3 meses |
-| **v0.8.2** | 🔮 | **Módulo Animación** (sprite sheets, 12 principios, easing) | 3-4 meses |
-| **v0.9.0** | 🔮 | **Módulo Red** (HTTP, WebSocket, TCP/UDP) | 4-5 meses |
+| **v0.7.1.0** | 🔜 | **Módulo CIENCIA** (Manim-style: scenes, physics, MObjects) | 2-3 semanas |
+| **v0.7.1.1** | 🔮 | **Módulo ANIMACIÓN** (12 principios, sprite sheets, easing) | 3-4 semanas |
+| **v0.7.1.2** | 🔮 | **Módulo RED** (HTTP, WebSocket, TCP/UDP) | 4-5 semanas |
+| **v0.7.1.3** | 🔮 | **Módulo DATOS** (CSV, HDF5, plots, statistics) | 5-6 semanas |
+| **v0.7.2.0** | 🔮 | **Sistema NODOS/ESCENAS** (árbol de nodos, transforms) | 6-8 semanas |
+| **v0.8.0.0** | 🔮 | **Integración COMPLETA** (Manim + Bevy architecture) | 8-12 semanas |
 | **v1.0.0** | 🔮 | Production Ready | 6-8 meses |
 
 </div>
