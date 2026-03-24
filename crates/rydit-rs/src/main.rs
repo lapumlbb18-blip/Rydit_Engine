@@ -58,6 +58,7 @@ const TIME_MODULE: &str = include_str!("../../modules/time.rydit");
 const JSON_MODULE: &str = include_str!("../../modules/json.rydit");
 const COLISIONES_MODULE: &str = include_str!("../../modules/colisiones.rydit");
 const REGEX_MODULE: &str = include_str!("../../modules/regex.rydit");
+const FILES_MODULE: &str = include_str!("../../modules/files.rydit");
 
 /// Cargar módulo (archivo local o embebido)
 fn cargar_modulo(nombre: &str) -> Result<String, String> {
@@ -78,6 +79,7 @@ fn cargar_modulo(nombre: &str) -> Result<String, String> {
             "json" => Ok(JSON_MODULE.to_string()),
             "colisiones" => Ok(COLISIONES_MODULE.to_string()),
             "regex" => Ok(REGEX_MODULE.to_string()),
+            "files" => Ok(FILES_MODULE.to_string()),
             _ => Err(format!("Módulo '{}' no encontrado", nombre)),
         }
     }
@@ -1954,6 +1956,72 @@ fn evaluar_expr(expr: &Expr, executor: &mut Executor, funcs: &mut HashMap<String
                 }
             }
 
+            // ========== FUNCIONES FILES (v0.6.3) ==========
+            if (name == "__files_read" || name == "files::read") && args.len() == 1 {
+                if let Valor::Texto(path) = evaluar_expr(&args[0], executor, funcs) {
+                    match std::fs::read_to_string(&path) {
+                        Ok(content) => return Valor::Texto(content),
+                        Err(e) => return Valor::Error(format!("files::read(): {}", e)),
+                    }
+                } else {
+                    return Valor::Error("files::read() requiere ruta (string)".to_string());
+                }
+            }
+
+            if (name == "__files_write" || name == "files::write") && args.len() == 2 {
+                if let (Valor::Texto(path), Valor::Texto(content)) = (
+                    &evaluar_expr(&args[0], executor, funcs),
+                    &evaluar_expr(&args[1], executor, funcs)
+                ) {
+                    match std::fs::write(path, content) {
+                        Ok(_) => return Valor::Bool(true),
+                        Err(e) => return Valor::Error(format!("files::write(): {}", e)),
+                    }
+                } else {
+                    return Valor::Error("files::write() requiere (ruta, contenido)".to_string());
+                }
+            }
+
+            if (name == "__files_append" || name == "files::append") && args.len() == 2 {
+                if let (Valor::Texto(path), Valor::Texto(content)) = (
+                    &evaluar_expr(&args[0], executor, funcs),
+                    &evaluar_expr(&args[1], executor, funcs)
+                ) {
+                    use std::io::Write;
+                    match std::fs::OpenOptions::new().create(true).append(true).open(path) {
+                        Ok(mut file) => {
+                            match file.write_all(content.as_bytes()) {
+                                Ok(_) => return Valor::Bool(true),
+                                Err(e) => return Valor::Error(format!("files::append(): {}", e)),
+                            }
+                        }
+                        Err(e) => return Valor::Error(format!("files::append(): {}", e)),
+                    }
+                } else {
+                    return Valor::Error("files::append() requiere (ruta, contenido)".to_string());
+                }
+            }
+
+            if (name == "__files_exists" || name == "files::exists") && args.len() == 1 {
+                if let Valor::Texto(path) = evaluar_expr(&args[0], executor, funcs) {
+                    let exists = std::path::Path::new(&path).exists();
+                    return Valor::Bool(exists);
+                } else {
+                    return Valor::Error("files::exists() requiere ruta (string)".to_string());
+                }
+            }
+
+            if (name == "__files_delete" || name == "files::delete") && args.len() == 1 {
+                if let Valor::Texto(path) = evaluar_expr(&args[0], executor, funcs) {
+                    match std::fs::remove_file(&path) {
+                        Ok(_) => return Valor::Bool(true),
+                        Err(e) => return Valor::Error(format!("files::delete(): {}", e)),
+                    }
+                } else {
+                    return Valor::Error("files::delete() requiere ruta (string)".to_string());
+                }
+            }
+
             // Función de usuario - ejecutar y capturar retorno
             // Ahora tenemos &mut Executor, podemos ejecutar la función
             // Clonar datos para evitar borrow checker issues
@@ -2771,6 +2839,72 @@ fn evaluar_expr_gfx(expr: &Expr, executor: &mut Executor, input: &InputEstado, f
                     }
                 } else {
                     return Valor::Error("regex::capture() requiere (patrón, texto)".to_string());
+                }
+            }
+
+            // ========== FUNCIONES FILES (v0.6.3) ==========
+            if (name == "__files_read" || name == "files::read") && args.len() == 1 {
+                if let Valor::Texto(path) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
+                    match std::fs::read_to_string(&path) {
+                        Ok(content) => return Valor::Texto(content),
+                        Err(e) => return Valor::Error(format!("files::read(): {}", e)),
+                    }
+                } else {
+                    return Valor::Error("files::read() requiere ruta (string)".to_string());
+                }
+            }
+
+            if (name == "__files_write" || name == "files::write") && args.len() == 2 {
+                if let (Valor::Texto(path), Valor::Texto(content)) = (
+                    &evaluar_expr_gfx(&args[0], executor, input, funcs),
+                    &evaluar_expr_gfx(&args[1], executor, input, funcs)
+                ) {
+                    match std::fs::write(path, content) {
+                        Ok(_) => return Valor::Bool(true),
+                        Err(e) => return Valor::Error(format!("files::write(): {}", e)),
+                    }
+                } else {
+                    return Valor::Error("files::write() requiere (ruta, contenido)".to_string());
+                }
+            }
+
+            if (name == "__files_append" || name == "files::append") && args.len() == 2 {
+                if let (Valor::Texto(path), Valor::Texto(content)) = (
+                    &evaluar_expr_gfx(&args[0], executor, input, funcs),
+                    &evaluar_expr_gfx(&args[1], executor, input, funcs)
+                ) {
+                    use std::io::Write;
+                    match std::fs::OpenOptions::new().create(true).append(true).open(path) {
+                        Ok(mut file) => {
+                            match file.write_all(content.as_bytes()) {
+                                Ok(_) => return Valor::Bool(true),
+                                Err(e) => return Valor::Error(format!("files::append(): {}", e)),
+                            }
+                        }
+                        Err(e) => return Valor::Error(format!("files::append(): {}", e)),
+                    }
+                } else {
+                    return Valor::Error("files::append() requiere (ruta, contenido)".to_string());
+                }
+            }
+
+            if (name == "__files_exists" || name == "files::exists") && args.len() == 1 {
+                if let Valor::Texto(path) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
+                    let exists = std::path::Path::new(&path).exists();
+                    return Valor::Bool(exists);
+                } else {
+                    return Valor::Error("files::exists() requiere ruta (string)".to_string());
+                }
+            }
+
+            if (name == "__files_delete" || name == "files::delete") && args.len() == 1 {
+                if let Valor::Texto(path) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
+                    match std::fs::remove_file(&path) {
+                        Ok(_) => return Valor::Bool(true),
+                        Err(e) => return Valor::Error(format!("files::delete(): {}", e)),
+                    }
+                } else {
+                    return Valor::Error("files::delete() requiere ruta (string)".to_string());
                 }
             }
 
@@ -3977,5 +4111,122 @@ mod warning_tests {
 
         let result = evaluar_expr(&expr, &mut executor, &mut funcs);
         assert_eq!(result, Valor::Bool(true));
+    }
+
+    // ========================================================================
+    // TESTS V0.6.3 - MÓDULO FILES
+    // ========================================================================
+
+    #[test]
+    fn test_files_write_and_read() {
+        // Escribir y leer archivo
+        let mut executor = Executor::nuevo();
+        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
+        
+        // Write
+        let write_args = vec![
+            Expr::Texto("test_rydit.txt".to_string()),
+            Expr::Texto("Hola RyDit".to_string()),
+        ];
+        let write_expr = Expr::Call {
+            name: "files::write".to_string(),
+            args: write_args,
+        };
+        let write_result = evaluar_expr(&write_expr, &mut executor, &mut funcs);
+        assert_eq!(write_result, Valor::Bool(true));
+
+        // Read
+        let read_args = vec![Expr::Texto("test_rydit.txt".to_string())];
+        let read_expr = Expr::Call {
+            name: "files::read".to_string(),
+            args: read_args,
+        };
+        let read_result = evaluar_expr(&read_expr, &mut executor, &mut funcs);
+        assert_eq!(read_result, Valor::Texto("Hola RyDit".to_string()));
+
+        // Cleanup
+        std::fs::remove_file("test_rydit.txt").ok();
+    }
+
+    #[test]
+    fn test_files_append() {
+        // Append a archivo
+        let mut executor = Executor::nuevo();
+        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
+        
+        // Write inicial
+        std::fs::write("test_append.txt", "Linea 1");
+        
+        // Append
+        let append_args = vec![
+            Expr::Texto("test_append.txt".to_string()),
+            Expr::Texto("\nLinea 2".to_string()),
+        ];
+        let append_expr = Expr::Call {
+            name: "files::append".to_string(),
+            args: append_args,
+        };
+        let append_result = evaluar_expr(&append_expr, &mut executor, &mut funcs);
+        assert_eq!(append_result, Valor::Bool(true));
+
+        // Verify
+        let content = std::fs::read_to_string("test_append.txt").unwrap();
+        assert_eq!(content, "Linea 1\nLinea 2");
+
+        // Cleanup
+        std::fs::remove_file("test_append.txt").ok();
+    }
+
+    #[test]
+    fn test_files_exists() {
+        // Verificar existencia
+        let mut executor = Executor::nuevo();
+        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
+        
+        // Crear archivo
+        std::fs::write("test_exists.txt", "test");
+        
+        // Exists - true
+        let exists_args = vec![Expr::Texto("test_exists.txt".to_string())];
+        let exists_expr = Expr::Call {
+            name: "files::exists".to_string(),
+            args: exists_args,
+        };
+        let exists_result = evaluar_expr(&exists_expr, &mut executor, &mut funcs);
+        assert_eq!(exists_result, Valor::Bool(true));
+
+        // Exists - false
+        let not_exists_args = vec![Expr::Texto("no_existe.txt".to_string())];
+        let not_exists_expr = Expr::Call {
+            name: "files::exists".to_string(),
+            args: not_exists_args,
+        };
+        let not_exists_result = evaluar_expr(&not_exists_expr, &mut executor, &mut funcs);
+        assert_eq!(not_exists_result, Valor::Bool(false));
+
+        // Cleanup
+        std::fs::remove_file("test_exists.txt").ok();
+    }
+
+    #[test]
+    fn test_files_delete() {
+        // Eliminar archivo
+        let mut executor = Executor::nuevo();
+        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
+        
+        // Crear archivo
+        std::fs::write("test_delete.txt", "para eliminar");
+        
+        // Delete
+        let delete_args = vec![Expr::Texto("test_delete.txt".to_string())];
+        let delete_expr = Expr::Call {
+            name: "files::delete".to_string(),
+            args: delete_args,
+        };
+        let delete_result = evaluar_expr(&delete_expr, &mut executor, &mut funcs);
+        assert_eq!(delete_result, Valor::Bool(true));
+
+        // Verify deleted
+        assert!(!std::path::Path::new("test_delete.txt").exists());
     }
 }
