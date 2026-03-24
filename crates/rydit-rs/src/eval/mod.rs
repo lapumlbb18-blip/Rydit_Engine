@@ -44,19 +44,19 @@ pub fn evaluar_expr(
                 if let Valor::Num(i) = index_val {
                     let idx = i as usize;
                     if idx < arr.len() {
-                        return arr[idx].clone();
+                        arr[idx].clone()
                     } else {
-                        return Valor::Error(format!(
+                        Valor::Error(format!(
                             "Índice {} fuera de rango (len={})",
                             idx,
                             arr.len()
-                        ));
+                        ))
                     }
                 } else {
-                    return Valor::Error("El índice debe ser un número".to_string());
+                    Valor::Error("El índice debe ser un número".to_string())
                 }
             } else {
-                return Valor::Error("Solo se puede indexar arrays".to_string());
+                Valor::Error("Solo se puede indexar arrays".to_string())
             }
         }
         Expr::Call { name, args } => {
@@ -543,7 +543,7 @@ pub fn evaluar_expr(
                 }
             }
 
-            if (name == "__random_float" || name == "random::float") && args.len() == 0 {
+            if (name == "__random_float" || name == "random::float") && args.is_empty() {
                 let seed = executor
                     .leer("__random_seed")
                     .unwrap_or(Valor::Num(12345.0));
@@ -613,7 +613,7 @@ pub fn evaluar_expr(
             }
 
             // ========== FUNCIONES TIME (v0.1.6) ==========
-            if (name == "__time_now" || name == "time::now") && args.len() == 0 {
+            if (name == "__time_now" || name == "time::now") && args.is_empty() {
                 use std::time::{SystemTime, UNIX_EPOCH};
                 match SystemTime::now().duration_since(UNIX_EPOCH) {
                     Ok(duration) => return Valor::Num(duration.as_secs_f64()),
@@ -823,7 +823,7 @@ pub fn evaluar_expr(
                     name.clone()
                 } else {
                     // Extraer nombre después de ::
-                    name.split("::").last().unwrap_or(&name).to_string()
+                    name.split("::").last().unwrap_or(name).to_string()
                 }
             } else {
                 name.clone()

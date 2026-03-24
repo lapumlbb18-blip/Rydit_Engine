@@ -193,21 +193,13 @@ pub struct WindowState {
 }
 
 #[derive(Debug, Clone)]
+#[derive(Default)]
 pub struct TextboxState {
     pub text: String,
     pub cursor_pos: usize,
     pub selected: bool,
 }
 
-impl Default for TextboxState {
-    fn default() -> Self {
-        Self {
-            text: String::new(),
-            cursor_pos: 0,
-            selected: false,
-        }
-    }
-}
 
 /// Estado para ListBox - v0.5.2
 #[derive(Debug, Clone)]
@@ -472,7 +464,7 @@ impl Migui {
         let state = self
             .widget_states
             .entry(id.0)
-            .or_insert_with(WidgetState::default);
+            .or_default();
 
         state.hovered = rect.contains(self.mouse_x, self.mouse_y);
         if state.hovered && self.mouse_pressed {
@@ -532,7 +524,7 @@ impl Migui {
         let state = self
             .widget_states
             .entry(id.0.clone())
-            .or_insert_with(WidgetState::default);
+            .or_default();
 
         let cb_rect = Rect::new(rect.x + 4.0, rect.y + 4.0, rect.h - 8.0, rect.h - 8.0);
         state.hovered = cb_rect.contains(self.mouse_x, self.mouse_y);
@@ -597,7 +589,7 @@ impl Migui {
         let state = self
             .widget_states
             .entry(id.0)
-            .or_insert_with(WidgetState::default);
+            .or_default();
 
         let track_h = 8.0f32;
         let track_y = rect.y + (rect.h - track_h) / 2.0;
@@ -675,11 +667,11 @@ impl Migui {
         let state = self
             .widget_states
             .entry(id.0.clone())
-            .or_insert_with(WidgetState::default);
+            .or_default();
         let ts = self
             .textbox_states
             .entry(id.0)
-            .or_insert_with(TextboxState::default);
+            .or_default();
 
         state.hovered = rect.contains(self.mouse_x, self.mouse_y);
         if state.hovered && self.mouse_pressed {
@@ -816,7 +808,7 @@ impl Migui {
         let state = self
             .widget_states
             .entry(id.0.clone())
-            .or_insert_with(WidgetState::default);
+            .or_default();
 
         // Verificar si está abierto
         let is_open = state.active;

@@ -2009,7 +2009,7 @@ impl Parser {
             self.pos += 1;
         }
 
-        return Ok(Some(Stmt::Call { name, args }));
+        Ok(Some(Stmt::Call { name, args }))
     }
 
     fn parse_return(&mut self) -> Result<Option<Stmt>> {
@@ -2017,12 +2017,11 @@ impl Parser {
         self.pos += 1; // consumir return
 
         // Si hay una expresión después, la parseamos
-        if self.pos < self.tokens.len() {
-            if !matches!(self.tokens[self.pos], Token::LlaveDer) {
+        if self.pos < self.tokens.len()
+            && !matches!(self.tokens[self.pos], Token::LlaveDer) {
                 let expr = self.parse_expression()?;
                 return Ok(Some(Stmt::Return(Some(expr))));
             }
-        }
 
         Ok(Some(Stmt::Return(None)))
     }

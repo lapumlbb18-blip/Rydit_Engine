@@ -1,5 +1,5 @@
 // ============================================================================
-// RYDIT-RS v0.7.0 - SPLIT EDITION
+// RYDIT-RS v0.7.0.bis - SPLIT EDITION
 // ============================================================================
 // Main.rs dividido en módulos para mejor mantenibilidad
 // ============================================================================
@@ -8,9 +8,16 @@
 mod repl;
 mod bindings;
 mod eval;
+mod config;
+mod json_helpers;
+mod tests;
 
 // Re-exportar funciones del módulo eval
 pub use eval::evaluar_expr;
+
+// Re-exportar helpers de config y json
+pub use config::{configurar_entorno_termux, cargar_modulo};
+pub use json_helpers::{valor_serde_a_rydit, valor_rydit_a_serde};
 
 use blast_core::Executor;
 use blast_core::Valor;
@@ -24,131 +31,6 @@ use rydit_gfx::{ColorRydit, Key, RyditGfx};
 use std::collections::{HashMap, HashSet};
 use std::env;
 use std::fs;
-
-// =============================================================================
-// CONFIGURACIÓN AUTOMÁTICA DE ENTORNO (v0.6.0)
-// =============================================================================
-/// Configurar variables de entorno para Termux-X11 automáticamente
-fn configurar_entorno_termux() {
-    // Detectar si estamos en Termux
-    let es_termux = std::env::var("TERMUX_VERSION").is_ok()
-        || std::path::Path::new("/data/data/com.termux").exists();
-
-    if es_termux {
-        println!("[RYDIT] Termux detectado - Configurando entorno gráfico...");
-
-        // Configurar DISPLAY si no está establecido
-        if std::env::var("DISPLAY").is_err() {
-            std::env::set_var("DISPLAY", ":0");
-            println!("[RYDIT] DISPLAY=:0 configurado automáticamente");
-        }
-
-        // Configurar driver zink si no está establecido
-        if std::env::var("MESA_LOADER_DRIVER_OVERRIDE").is_err() {
-            std::env::set_var("MESA_LOADER_DRIVER_OVERRIDE", "zink");
-            println!("[RYDIT] zink GPU driver configurado automáticamente");
-        }
-
-        // Configurar DRI3 si no está establecido
-        if std::env::var("DRI3").is_err() {
-            std::env::set_var("DRI3", "1");
-            println!("[RYDIT] DRI3=1 configurado automáticamente");
-        }
-
-        println!("[RYDIT] ✅ Entorno gráfico listo para Termux-X11");
-    }
-}
-
-// =============================================================================
-// MÓDULOS STDLIB EMBEBIDOS (v0.6.0)
-// =============================================================================
-const MATH_MODULE: &str = include_str!("../../modules/math.rydit");
-const ARRAYS_MODULE: &str = include_str!("../../modules/arrays.rydit");
-const STRINGS_MODULE: &str = include_str!("../../modules/strings.rydit");
-const IO_MODULE: &str = include_str!("../../modules/io.rydit");
-const RANDOM_MODULE: &str = include_str!("../../modules/random.rydit");
-const TIME_MODULE: &str = include_str!("../../modules/time.rydit");
-const JSON_MODULE: &str = include_str!("../../modules/json.rydit");
-const COLISIONES_MODULE: &str = include_str!("../../modules/colisiones.rydit");
-const REGEX_MODULE: &str = include_str!("../../modules/regex.rydit");
-const FILES_MODULE: &str = include_str!("../../modules/files.rydit");
-
-/// Cargar módulo (archivo local o embebido)
-fn cargar_modulo(nombre: &str) -> Result<String, String> {
-    // 1. Intentar archivo local
-    let ruta_local = format!("modules/{}.rydit", nombre);
-    if std::path::Path::new(&ruta_local).exists() {
-        std::fs::read_to_string(&ruta_local)
-            .map_err(|e| format!("Error leyendo '{}': {}", nombre, e))
-    } else {
-        // 2. Fallback embebido
-        match nombre {
-            "math" => Ok(MATH_MODULE.to_string()),
-            "arrays" => Ok(ARRAYS_MODULE.to_string()),
-            "strings" => Ok(STRINGS_MODULE.to_string()),
-            "io" => Ok(IO_MODULE.to_string()),
-            "random" => Ok(RANDOM_MODULE.to_string()),
-            "time" => Ok(TIME_MODULE.to_string()),
-            "json" => Ok(JSON_MODULE.to_string()),
-            "colisiones" => Ok(COLISIONES_MODULE.to_string()),
-            "regex" => Ok(REGEX_MODULE.to_string()),
-            "files" => Ok(FILES_MODULE.to_string()),
-            _ => Err(format!("Módulo '{}' no encontrado", nombre)),
-        }
-    }
-}
-
-// =============================================================================
-// FUNCIONES AUXILIARES PARA JSON (serde_json)
-// =============================================================================
-
-/// Convertir serde_json::Value a Valor (Rydit) - PÚBLICA para eval
-pub fn valor_serde_a_rydit(val: &serde_json::Value) -> Valor {
-    match val {
-        serde_json::Value::Null => Valor::Vacio,
-        serde_json::Value::Bool(b) => Valor::Bool(*b),
-        serde_json::Value::Number(n) => {
-            if let Some(i) = n.as_i64() {
-                Valor::Num(i as f64)
-            } else if let Some(f) = n.as_f64() {
-                Valor::Num(f)
-            } else {
-                Valor::Num(0.0)
-            }
-        }
-        serde_json::Value::String(s) => Valor::Texto(s.clone()),
-        serde_json::Value::Array(arr) => {
-            let valores: Vec<Valor> = arr.iter().map(|v| valor_serde_a_rydit(v)).collect();
-            Valor::Array(valores)
-        }
-        serde_json::Value::Object(obj) => {
-            // Los objetos JSON los convertimos a array de pares [key, value]
-            let pares: Vec<Valor> = obj
-                .iter()
-                .map(|(k, v)| Valor::Array(vec![Valor::Texto(k.clone()), valor_serde_a_rydit(v)]))
-                .collect();
-            Valor::Array(pares)
-        }
-    }
-}
-
-/// Convertir Valor (Rydit) a serde_json::Value - PÚBLICA para eval
-pub fn valor_rydit_a_serde(val: &Valor) -> Result<serde_json::Value, String> {
-    match val {
-        Valor::Num(n) => Ok(serde_json::Value::Number(
-            serde_json::Number::from_f64(*n).unwrap_or(serde_json::Number::from(0)),
-        )),
-        Valor::Texto(s) => Ok(serde_json::Value::String(s.clone())),
-        Valor::Bool(b) => Ok(serde_json::Value::Bool(*b)),
-        Valor::Array(arr) => {
-            let valores: Result<Vec<serde_json::Value>, _> =
-                arr.iter().map(|v| valor_rydit_a_serde(v)).collect();
-            Ok(serde_json::Value::Array(valores?))
-        }
-        Valor::Vacio => Ok(serde_json::Value::Null),
-        Valor::Error(msg) => Err(format!("Valor de error: {}", msg)),
-    }
-}
 
 fn main() {
     // Configurar entorno automáticamente (Termux-X11)
@@ -441,7 +323,7 @@ fn ejecutar_programa_migui(
                 y: my as f32,
             });
         }
-        if gfx.is_mouse_button_pressed(0) == false && gui.is_mouse_down() {
+        if !gfx.is_mouse_button_pressed(0) && gui.is_mouse_down() {
             gui.handle_event(Event::MouseUp {
                 button: MouseButton::Left,
                 x: mx as f32,
@@ -471,7 +353,7 @@ fn ejecutar_programa_migui(
         gui.end_frame();
 
         // Debug: mostrar comandos generados
-        if gui.draw_commands().len() > 0 {
+        if !gui.draw_commands().is_empty() {
             println!("[MIGUI] {} comandos generados", gui.draw_commands().len());
         }
 
@@ -720,7 +602,7 @@ pub fn ejecutar_stmt(
             // Cargar desde archivo local o embebido
 
             // DEUDA #2 FIX: Detectar import cíclico
-            if importing_stack.contains(&module) {
+            if importing_stack.contains(module) {
                 println!("[ERROR] Importe cíclico detectado: '{}'", module);
                 println!(
                     "[ERROR] Stack de imports: {} -> {}",
@@ -766,7 +648,7 @@ pub fn ejecutar_stmt(
             }
 
             // Cargar módulo (archivo local o embebido)
-            let module_content = match cargar_modulo(&module) {
+            let module_content = match cargar_modulo(module) {
                 Ok(content) => {
                     println!("[IMPORT] Módulo '{}' cargado", module);
                     content
@@ -1370,7 +1252,7 @@ fn ejecutar_stmt_gfx(
             let module_path = format!("crates/modules/{}.rydit", module);
 
             // DEUDA #2 FIX: Detectar import cíclico
-            if importing_stack.contains(&module) {
+            if importing_stack.contains(module) {
                 println!("[ERROR] Importe cíclico detectado: '{}'", module);
                 println!(
                     "[ERROR] Stack de imports: {} -> {}",
@@ -1742,19 +1624,19 @@ fn evaluar_expr_gfx(
                 if let Valor::Num(i) = index_val {
                     let idx = i as usize;
                     if idx < arr.len() {
-                        return arr[idx].clone();
+                        arr[idx].clone()
                     } else {
-                        return Valor::Error(format!(
+                        Valor::Error(format!(
                             "Índice {} fuera de rango (len={})",
                             idx,
                             arr.len()
-                        ));
+                        ))
                     }
                 } else {
-                    return Valor::Error("El índice debe ser un número".to_string());
+                    Valor::Error("El índice debe ser un número".to_string())
                 }
             } else {
-                return Valor::Error("Solo se puede indexar arrays".to_string());
+                Valor::Error("Solo se puede indexar arrays".to_string())
             }
         }
         Expr::Call { name, args } => {
@@ -2270,7 +2152,7 @@ fn evaluar_expr_gfx(
                 }
             }
 
-            if (name == "__random_float" || name == "random::float") && args.len() == 0 {
+            if (name == "__random_float" || name == "random::float") && args.is_empty() {
                 let seed = executor
                     .leer("__random_seed")
                     .unwrap_or(Valor::Num(12345.0));
@@ -2337,7 +2219,7 @@ fn evaluar_expr_gfx(
             }
 
             // ========== FUNCIONES TIME (v0.1.6) ==========
-            if (name == "__time_now" || name == "time::now") && args.len() == 0 {
+            if (name == "__time_now" || name == "time::now") && args.is_empty() {
                 use std::time::{SystemTime, UNIX_EPOCH};
                 match SystemTime::now().duration_since(UNIX_EPOCH) {
                     Ok(duration) => return Valor::Num(duration.as_secs_f64()),
@@ -2683,19 +2565,19 @@ fn evaluar_expr_migui(
                 if let Valor::Num(i) = index_val {
                     let idx = i as usize;
                     if idx < arr.len() {
-                        return arr[idx].clone();
+                        arr[idx].clone()
                     } else {
-                        return Valor::Error(format!(
+                        Valor::Error(format!(
                             "Índice {} fuera de rango (len={})",
                             idx,
                             arr.len()
-                        ));
+                        ))
                     }
                 } else {
-                    return Valor::Error("El índice debe ser un número".to_string());
+                    Valor::Error("El índice debe ser un número".to_string())
                 }
             } else {
-                return Valor::Error("Solo se puede indexar arrays".to_string());
+                Valor::Error("Solo se puede indexar arrays".to_string())
             }
         }
         Expr::Call { name, args } => {
@@ -3470,7 +3352,7 @@ fn evaluar_expr_migui(
                 if funcs.contains_key(name) {
                     name.clone()
                 } else {
-                    name.split("::").last().unwrap_or(&name).to_string()
+                    name.split("::").last().unwrap_or(name).to_string()
                 }
             } else {
                 name.clone()
@@ -3650,14 +3532,14 @@ fn evaluar_expr_migui(
             match op {
                 lizer::UnaryOp::Neg => {
                     if let Valor::Num(n) = val {
-                        return Valor::Num(-n);
+                        Valor::Num(-n)
                     } else {
-                        return Valor::Error("Unary - requires number".to_string());
+                        Valor::Error("Unary - requires number".to_string())
                     }
                 }
                 lizer::UnaryOp::Not => {
                     let b = valor_a_bool(&val);
-                    return Valor::Bool(!b);
+                    Valor::Bool(!b)
                 }
             }
         }
@@ -3934,7 +3816,7 @@ pub fn ejecutar_stmt_migui(
         Stmt::Import { module, alias } => {
             let module_path = format!("crates/modules/{}.rydit", module);
 
-            if importing_stack.contains(&module) {
+            if importing_stack.contains(module) {
                 println!("[ERROR] Importe cíclico detectado: '{}'", module);
                 return (None, None);
             }
@@ -4065,508 +3947,5 @@ pub fn ejecutar_stmt_migui(
     (None, None)
 }
 
-// ==================== TESTS DE WARNINGS ====================
-
-#[cfg(test)]
-mod warning_tests {
-    use super::*;
-
-    #[test]
-    fn test_division_por_cero() {
-        // Verificar que división por cero retorna Error, no panic
-        let mut executor = Executor::nuevo();
-        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
-        let left = Expr::Num(10.0);
-        let right = Expr::Num(0.0);
-        let expr = Expr::BinOp {
-            left: Box::new(left),
-            op: lizer::BinOp::Div,
-            right: Box::new(right),
-        };
-
-        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
-        assert!(matches!(result, Valor::Error(_)));
-    }
-
-    #[test]
-    fn test_division_normal() {
-        // Verificar que división normal funciona
-        let mut executor = Executor::nuevo();
-        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
-        let left = Expr::Num(10.0);
-        let right = Expr::Num(2.0);
-        let expr = Expr::BinOp {
-            left: Box::new(left),
-            op: lizer::BinOp::Div,
-            right: Box::new(right),
-        };
-
-        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
-        assert!(matches!(result, Valor::Num(5.0)));
-    }
-
-    // ========================================================================
-    // TESTS V0.1.9 - CONCATENACIÓN Y SÍMBOLOS
-    // ========================================================================
-
-    #[test]
-    fn test_concatenacion_string_numero() {
-        // "x=" + 42 -> "x=42"
-        let mut executor = Executor::nuevo();
-        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
-        let left = Expr::Texto("x=".to_string());
-        let right = Expr::Num(42.0);
-        let expr = Expr::BinOp {
-            left: Box::new(left),
-            op: lizer::BinOp::Suma,
-            right: Box::new(right),
-        };
-
-        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
-        assert_eq!(result, Valor::Texto("x=42".to_string()));
-    }
-
-    #[test]
-    fn test_concatenacion_numero_string() {
-        // 42 + "x" -> "42x"
-        let mut executor = Executor::nuevo();
-        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
-        let left = Expr::Num(42.0);
-        let right = Expr::Texto("x".to_string());
-        let expr = Expr::BinOp {
-            left: Box::new(left),
-            op: lizer::BinOp::Suma,
-            right: Box::new(right),
-        };
-
-        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
-        assert_eq!(result, Valor::Texto("42x".to_string()));
-    }
-
-    #[test]
-    fn test_concatenacion_multiple() {
-        // "a"+1+"b"+2 -> "a1b2"
-        let mut executor = Executor::nuevo();
-        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
-
-        // "a" + 1 -> "a1"
-        let expr1 = Expr::BinOp {
-            left: Box::new(Expr::Texto("a".to_string())),
-            op: lizer::BinOp::Suma,
-            right: Box::new(Expr::Num(1.0)),
-        };
-        let result1 = evaluar_expr(&expr1, &mut executor, &mut funcs);
-        assert_eq!(result1, Valor::Texto("a1".to_string()));
-
-        // "a1" + "b" -> "a1b"
-        let expr2 = Expr::BinOp {
-            left: Box::new(Expr::Texto("a1".to_string())),
-            op: lizer::BinOp::Suma,
-            right: Box::new(Expr::Texto("b".to_string())),
-        };
-        let result2 = evaluar_expr(&expr2, &mut executor, &mut funcs);
-        assert_eq!(result2, Valor::Texto("a1b".to_string()));
-
-        // "a1b" + 2 -> "a1b2"
-        let expr3 = Expr::BinOp {
-            left: Box::new(Expr::Texto("a1b".to_string())),
-            op: lizer::BinOp::Suma,
-            right: Box::new(Expr::Num(2.0)),
-        };
-        let result3 = evaluar_expr(&expr3, &mut executor, &mut funcs);
-        assert_eq!(result3, Valor::Texto("a1b2".to_string()));
-    }
-
-    #[test]
-    fn test_concatenacion_con_expresion() {
-        // "total: " + (2+3)*4 -> "total: 20"
-        let mut executor = Executor::nuevo();
-        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
-
-        // (2+3)*4 = 20
-        let inner = Expr::BinOp {
-            left: Box::new(Expr::Num(2.0)),
-            op: lizer::BinOp::Suma,
-            right: Box::new(Expr::Num(3.0)),
-        };
-        let expr_mult = Expr::BinOp {
-            left: Box::new(inner),
-            op: lizer::BinOp::Mult,
-            right: Box::new(Expr::Num(4.0)),
-        };
-
-        // "total: " + 20
-        let expr = Expr::BinOp {
-            left: Box::new(Expr::Texto("total: ".to_string())),
-            op: lizer::BinOp::Suma,
-            right: Box::new(expr_mult),
-        };
-
-        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
-        assert_eq!(result, Valor::Texto("total: 20".to_string()));
-    }
-
-    #[test]
-    fn test_variable_dolar_asignacion() {
-        // $x = 10 debe guardarse correctamente
-        let mut executor = Executor::nuevo();
-        executor.guardar("$x", Valor::Num(10.0));
-        let result = executor.leer("$x");
-        assert_eq!(result, Some(Valor::Num(10.0)));
-    }
-
-    #[test]
-    fn test_variable_arroba_lectura() {
-        // @user debe leerse correctamente
-        let mut executor = Executor::nuevo();
-        executor.guardar("@user", Valor::Texto("alucard18".to_string()));
-        let result = executor.leer("@user");
-        assert_eq!(result, Some(Valor::Texto("alucard18".to_string())));
-    }
-
-    #[test]
-    fn test_variable_porcentaje_expresion() {
-        // %p = 50 + 25 -> 75
-        let mut executor = Executor::nuevo();
-        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
-
-        let expr = Expr::BinOp {
-            left: Box::new(Expr::Num(50.0)),
-            op: lizer::BinOp::Suma,
-            right: Box::new(Expr::Num(25.0)),
-        };
-
-        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
-        executor.guardar("%p", result);
-
-        assert_eq!(executor.leer("%p"), Some(Valor::Num(75.0)));
-    }
-
-    #[test]
-    fn test_simbolos_en_array() {
-        // [$a, $b] debe evaluarse como array
-        let mut executor = Executor::nuevo();
-        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
-
-        executor.guardar("$a", Valor::Num(1.0));
-        executor.guardar("$b", Valor::Num(2.0));
-
-        let expr = Expr::Array(vec![
-            Expr::Var("$a".to_string()),
-            Expr::Var("$b".to_string()),
-        ]);
-
-        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
-
-        if let Valor::Array(arr) = result {
-            assert_eq!(arr.len(), 2);
-            assert_eq!(arr[0], Valor::Num(1.0));
-            assert_eq!(arr[1], Valor::Num(2.0));
-        } else {
-            panic!("Expected Array, got {:?}", result);
-        }
-    }
-
-    #[test]
-    fn test_concatenacion_string_string() {
-        // "hello" + "world" -> "helloworld"
-        let mut executor = Executor::nuevo();
-        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
-        let left = Expr::Texto("hello".to_string());
-        let right = Expr::Texto("world".to_string());
-        let expr = Expr::BinOp {
-            left: Box::new(left),
-            op: lizer::BinOp::Suma,
-            right: Box::new(right),
-        };
-
-        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
-        assert_eq!(result, Valor::Texto("helloworld".to_string()));
-    }
-
-    #[test]
-    fn test_suma_aritmetica_no_se_afecta() {
-        // 2 + 3 debe seguir siendo 5 (no concatenación)
-        let mut executor = Executor::nuevo();
-        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
-        let left = Expr::Num(2.0);
-        let right = Expr::Num(3.0);
-        let expr = Expr::BinOp {
-            left: Box::new(left),
-            op: lizer::BinOp::Suma,
-            right: Box::new(right),
-        };
-
-        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
-        assert_eq!(result, Valor::Num(5.0));
-    }
-
-    // ========================================================================
-    // TESTS V0.6.2 - MÓDULO REGEX
-    // ========================================================================
-
-    #[test]
-    fn test_regex_match_valido() {
-        // regex::match("[a-z]+", "hola") -> true
-        let mut executor = Executor::nuevo();
-        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
-        let args = vec![
-            Expr::Texto("[a-z]+".to_string()),
-            Expr::Texto("hola".to_string()),
-        ];
-        let expr = Expr::Call {
-            name: "regex::match".to_string(),
-            args,
-        };
-
-        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
-        assert_eq!(result, Valor::Bool(true));
-    }
-
-    #[test]
-    fn test_regex_match_invalido() {
-        // regex::match("\\d+", "abc") -> false
-        let mut executor = Executor::nuevo();
-        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
-        let args = vec![
-            Expr::Texto("\\d+".to_string()),
-            Expr::Texto("abc".to_string()),
-        ];
-        let expr = Expr::Call {
-            name: "regex::match".to_string(),
-            args,
-        };
-
-        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
-        assert_eq!(result, Valor::Bool(false));
-    }
-
-    #[test]
-    fn test_regex_replace() {
-        // regex::replace("[aeiou]", "*", "hola") -> "h*l*"
-        let mut executor = Executor::nuevo();
-        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
-        let args = vec![
-            Expr::Texto("[aeiou]".to_string()),
-            Expr::Texto("*".to_string()),
-            Expr::Texto("hola".to_string()),
-        ];
-        let expr = Expr::Call {
-            name: "regex::replace".to_string(),
-            args,
-        };
-
-        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
-        assert_eq!(result, Valor::Texto("h*l*".to_string()));
-    }
-
-    #[test]
-    fn test_regex_split() {
-        // regex::split(",", "uno,dos,tres") -> ["uno", "dos", "tres"]
-        let mut executor = Executor::nuevo();
-        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
-        let args = vec![
-            Expr::Texto(",".to_string()),
-            Expr::Texto("uno,dos,tres".to_string()),
-        ];
-        let expr = Expr::Call {
-            name: "regex::split".to_string(),
-            args,
-        };
-
-        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
-        if let Valor::Array(arr) = result {
-            assert_eq!(arr.len(), 3);
-            assert_eq!(arr[0], Valor::Texto("uno".to_string()));
-            assert_eq!(arr[1], Valor::Texto("dos".to_string()));
-            assert_eq!(arr[2], Valor::Texto("tres".to_string()));
-        } else {
-            panic!("Expected Array, got {:?}", result);
-        }
-    }
-
-    #[test]
-    fn test_regex_find_all() {
-        // regex::find_all("\\d+", "a1b23c456") -> ["1", "23", "456"]
-        let mut executor = Executor::nuevo();
-        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
-        let args = vec![
-            Expr::Texto("\\d+".to_string()),
-            Expr::Texto("a1b23c456".to_string()),
-        ];
-        let expr = Expr::Call {
-            name: "regex::find_all".to_string(),
-            args,
-        };
-
-        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
-        if let Valor::Array(arr) = result {
-            assert_eq!(arr.len(), 3);
-            assert_eq!(arr[0], Valor::Texto("1".to_string()));
-            assert_eq!(arr[1], Valor::Texto("23".to_string()));
-            assert_eq!(arr[2], Valor::Texto("456".to_string()));
-        } else {
-            panic!("Expected Array, got {:?}", result);
-        }
-    }
-
-    #[test]
-    fn test_regex_capture() {
-        // regex::capture("([a-z]+):(\\d+)", "edad:25") -> ["edad:25", "edad", "25"]
-        let mut executor = Executor::nuevo();
-        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
-        let args = vec![
-            Expr::Texto("([a-z]+):(\\d+)".to_string()),
-            Expr::Texto("edad:25".to_string()),
-        ];
-        let expr = Expr::Call {
-            name: "regex::capture".to_string(),
-            args,
-        };
-
-        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
-        if let Valor::Array(arr) = result {
-            assert_eq!(arr.len(), 3);
-            assert_eq!(arr[0], Valor::Texto("edad:25".to_string()));
-            assert_eq!(arr[1], Valor::Texto("edad".to_string()));
-            assert_eq!(arr[2], Valor::Texto("25".to_string()));
-        } else {
-            panic!("Expected Array, got {:?}", result);
-        }
-    }
-
-    #[test]
-    fn test_regex_email_validation() {
-        // Validar email real
-        let mut executor = Executor::nuevo();
-        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
-        let args = vec![
-            Expr::Texto("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}".to_string()),
-            Expr::Texto("usuario@ejemplo.com".to_string()),
-        ];
-        let expr = Expr::Call {
-            name: "regex::match".to_string(),
-            args,
-        };
-
-        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
-        assert_eq!(result, Valor::Bool(true));
-    }
-
-    // ========================================================================
-    // TESTS V0.6.3 - MÓDULO FILES
-    // ========================================================================
-
-    #[test]
-    fn test_files_write_and_read() {
-        // Escribir y leer archivo
-        let mut executor = Executor::nuevo();
-        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
-
-        // Write
-        let write_args = vec![
-            Expr::Texto("test_rydit.txt".to_string()),
-            Expr::Texto("Hola RyDit".to_string()),
-        ];
-        let write_expr = Expr::Call {
-            name: "files::write".to_string(),
-            args: write_args,
-        };
-        let write_result = evaluar_expr(&write_expr, &mut executor, &mut funcs);
-        assert_eq!(write_result, Valor::Bool(true));
-
-        // Read
-        let read_args = vec![Expr::Texto("test_rydit.txt".to_string())];
-        let read_expr = Expr::Call {
-            name: "files::read".to_string(),
-            args: read_args,
-        };
-        let read_result = evaluar_expr(&read_expr, &mut executor, &mut funcs);
-        assert_eq!(read_result, Valor::Texto("Hola RyDit".to_string()));
-
-        // Cleanup
-        std::fs::remove_file("test_rydit.txt").ok();
-    }
-
-    #[test]
-    fn test_files_append() {
-        // Append a archivo
-        let mut executor = Executor::nuevo();
-        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
-
-        // Write inicial
-        std::fs::write("test_append.txt", "Linea 1");
-
-        // Append
-        let append_args = vec![
-            Expr::Texto("test_append.txt".to_string()),
-            Expr::Texto("\nLinea 2".to_string()),
-        ];
-        let append_expr = Expr::Call {
-            name: "files::append".to_string(),
-            args: append_args,
-        };
-        let append_result = evaluar_expr(&append_expr, &mut executor, &mut funcs);
-        assert_eq!(append_result, Valor::Bool(true));
-
-        // Verify
-        let content = std::fs::read_to_string("test_append.txt").unwrap();
-        assert_eq!(content, "Linea 1\nLinea 2");
-
-        // Cleanup
-        std::fs::remove_file("test_append.txt").ok();
-    }
-
-    #[test]
-    fn test_files_exists() {
-        // Verificar existencia
-        let mut executor = Executor::nuevo();
-        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
-
-        // Crear archivo
-        std::fs::write("test_exists.txt", "test");
-
-        // Exists - true
-        let exists_args = vec![Expr::Texto("test_exists.txt".to_string())];
-        let exists_expr = Expr::Call {
-            name: "files::exists".to_string(),
-            args: exists_args,
-        };
-        let exists_result = evaluar_expr(&exists_expr, &mut executor, &mut funcs);
-        assert_eq!(exists_result, Valor::Bool(true));
-
-        // Exists - false
-        let not_exists_args = vec![Expr::Texto("no_existe.txt".to_string())];
-        let not_exists_expr = Expr::Call {
-            name: "files::exists".to_string(),
-            args: not_exists_args,
-        };
-        let not_exists_result = evaluar_expr(&not_exists_expr, &mut executor, &mut funcs);
-        assert_eq!(not_exists_result, Valor::Bool(false));
-
-        // Cleanup
-        std::fs::remove_file("test_exists.txt").ok();
-    }
-
-    #[test]
-    fn test_files_delete() {
-        // Eliminar archivo
-        let mut executor = Executor::nuevo();
-        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
-
-        // Crear archivo
-        std::fs::write("test_delete.txt", "para eliminar");
-
-        // Delete
-        let delete_args = vec![Expr::Texto("test_delete.txt".to_string())];
-        let delete_expr = Expr::Call {
-            name: "files::delete".to_string(),
-            args: delete_args,
-        };
-        let delete_result = evaluar_expr(&delete_expr, &mut executor, &mut funcs);
-        assert_eq!(delete_result, Valor::Bool(true));
-
-        // Verify deleted
-        assert!(!std::path::Path::new("test_delete.txt").exists());
-    }
-}
+// ==================== FIN DE main.rs ====================
+// Tests movidos a: crates/rydit-rs/src/tests/mod.rs

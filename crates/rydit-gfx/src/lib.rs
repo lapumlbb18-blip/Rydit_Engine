@@ -768,12 +768,12 @@ impl RyditGfx {
 
     /// Obtener posición X del mouse
     pub fn get_mouse_x(&self) -> i32 {
-        self.handle.get_mouse_x() as i32
+        self.handle.get_mouse_x()
     }
 
     /// Obtener posición Y del mouse
     pub fn get_mouse_y(&self) -> i32 {
-        self.handle.get_mouse_y() as i32
+        self.handle.get_mouse_y()
     }
 
     // ========================================================================
@@ -783,8 +783,8 @@ impl RyditGfx {
     /// Obtener posición del mouse como (x, y)
     pub fn get_mouse_position(&self) -> (i32, i32) {
         (
-            self.handle.get_mouse_x() as i32,
-            self.handle.get_mouse_y() as i32,
+            self.handle.get_mouse_x(),
+            self.handle.get_mouse_y(),
         )
     }
 

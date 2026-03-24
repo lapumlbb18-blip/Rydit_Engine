@@ -91,7 +91,7 @@ impl Particle {
         d.draw_circle(
             self.x as i32,
             self.y as i32,
-            self.size as f32,
+            self.size,
             color_with_alpha,
         );
     }
@@ -278,7 +278,7 @@ impl ParticleSystem {
 
     /// Actualizar todos los emisores
     pub fn update(&mut self, dt: f32) {
-        for (_, emitter) in &mut self.emitters {
+        for emitter in self.emitters.values_mut() {
             emitter.update(
                 dt,
                 self.global_gravity,
@@ -293,7 +293,7 @@ impl ParticleSystem {
 
     /// Dibujar todas las partículas
     pub fn draw(&self, d: &mut RaylibDrawHandle) {
-        for (_, emitter) in &self.emitters {
+        for emitter in self.emitters.values() {
             emitter.draw(d);
         }
     }
