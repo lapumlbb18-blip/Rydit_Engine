@@ -1,0 +1,120 @@
+# demo_ilusiones_minimo.rydit
+# Demo mínimo que funciona seguro
+
+shield.init
+
+dark.slot frame = 0
+dark.slot ilusion = 0
+
+ryda frame < 10000 {
+    # Limpiar pantalla
+    draw.rect(0, 0, 800, 600, "negro")
+    
+    # Título
+    draw.text("ILUSIONES OPTICAS - RyDit v0.7.1.1", 180, 20, "amarillo")
+    
+    # ========================================================================
+    # MULLER-LYER
+    # ========================================================================
+    onif ilusion == 0 {
+        draw.text("1. Muller-Lyer - Flechas", 280, 60, "verde")
+        
+        # Línea 1: Flechas adentro (parece mas larga)
+        draw.line(200, 150, 600, 150, "blanco")
+        draw.line(200, 150, 230, 130, "rojo")
+        draw.line(200, 150, 230, 170, "rojo")
+        draw.line(600, 150, 570, 130, "rojo")
+        draw.line(600, 150, 570, 170, "rojo")
+        
+        # Línea 2: Flechas afuera (parece mas corta)
+        draw.line(200, 300, 600, 300, "blanco")
+        draw.line(200, 300, 170, 280, "verde")
+        draw.line(200, 300, 170, 320, "verde")
+        draw.line(600, 300, 630, 280, "verde")
+        draw.line(600, 300, 630, 320, "verde")
+        
+        draw.text("Ambas miden 400px - ¡Igual!", 250, 450, "amarillo")
+    }
+    
+    # ========================================================================
+    # PONZO
+    # ========================================================================
+    onif ilusion == 1 {
+        draw.text("2. Ponzo - Perspectiva", 280, 60, "verde")
+        
+        # Líneas perspectiva
+        draw.line(200, 100, 300, 500, "gris")
+        draw.line(600, 100, 500, 500, "gris")
+        
+        # Barra 1
+        draw.line(280, 200, 520, 200, "rojo")
+        draw.text("Barra roja", 350, 170, "rojo")
+        
+        # Barra 2
+        draw.line(330, 400, 470, 400, "verde")
+        draw.text("Barra verde", 340, 420, "verde")
+        
+        draw.text("¡Ambas miden 240px!", 280, 500, "amarillo")
+    }
+    
+    # ========================================================================
+    # PHI EFFECT
+    # ========================================================================
+    onif ilusion == 2 {
+        draw.text("3. Phi Effect - Cine", 300, 60, "verde")
+        
+        # Trayectoria
+        draw.line(100, 300, 700, 300, "gris")
+        
+        # Círculo que se mueve
+        dark.slot x = math::sumar(100, frame)
+        onif x > 700 {
+            dark.slot x = 100
+        }
+        draw.circle(x, 300, 30, "rojo")
+        draw.circle(x, 300, 15, "blanco")
+        
+        draw.text("Movimiento aparente", 280, 450, "amarillo")
+    }
+    
+    # ========================================================================
+    # FRASER
+    # ========================================================================
+    onif ilusion == 3 {
+        draw.text("4. Fraser - Falsa Espiral", 250, 60, "verde")
+        
+        # Círculos
+        draw.circle(400, 300, 30, "blanco")
+        draw.circle(400, 300, 50, "blanco")
+        draw.circle(400, 300, 70, "blanco")
+        draw.circle(400, 300, 90, "blanco")
+        draw.circle(400, 300, 110, "blanco")
+        
+        # Líneas
+        draw.line(250, 200, 550, 400, "negro")
+        draw.line(250, 400, 550, 200, "negro")
+        
+        draw.text("Son circulos, NO espiral", 260, 500, "amarillo")
+    }
+    
+    # ========================================================================
+    # INPUT - Cambiar con flechas
+    # ========================================================================
+    onif tecla_presionada("ArrowRight") {
+        dark.slot ilusion = ilusion + 1
+        onif ilusion > 3 {
+            dark.slot ilusion = 0
+        }
+    }
+    
+    onif tecla_presionada("ArrowLeft") {
+        dark.slot ilusion = ilusion - 1
+        onif ilusion < 0 {
+            dark.slot ilusion = 3
+        }
+    }
+    
+    # Indicador
+    draw.text("Usa flechas izquierda/derecha para cambiar", 180, 560, "cyan")
+    draw.text("ESC para salir", 350, 580, "blanco")
+}

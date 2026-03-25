@@ -1,0 +1,121 @@
+# demo_ilusiones_simple.rydit
+# Demo simplificado de ilusiones ópticas
+
+shield.init
+
+dark.slot frame = 0
+dark.slot selected = 0
+
+ryda frame < 5000 {
+    # Limpiar
+    draw.rect(0, 0, 800, 600, "negro")
+    
+    # Título
+    draw.text("ILUSIONES OPTICAS - RyDit", 200, 20, "amarillo")
+    
+    # ========================================================================
+    # MULLER-LYER
+    # ========================================================================
+    onif selected == 0 {
+        draw.text("1. Muller-Lyer", 300, 60, "verde")
+        
+        # Línea 1: Flechas adentro
+        draw.line(200, 150, 600, 150, "blanco")
+        draw.line(200, 150, 230, 130, "rojo")
+        draw.line(200, 150, 230, 170, "rojo")
+        draw.line(600, 150, 570, 130, "rojo")
+        draw.line(600, 150, 570, 170, "rojo")
+        
+        # Línea 2: Flechas afuera
+        draw.line(200, 300, 600, 300, "blanco")
+        draw.line(200, 300, 170, 280, "verde")
+        draw.line(200, 300, 170, 320, "verde")
+        draw.line(600, 300, 630, 280, "verde")
+        draw.line(600, 300, 630, 320, "verde")
+        
+        draw.text("Ambas miden igual", 300, 450, "amarillo")
+    }
+    
+    # ========================================================================
+    # PONZO
+    # ========================================================================
+    onif selected == 1 {
+        draw.text("2. Ponzo - Perspectiva", 280, 60, "verde")
+        
+        # Perspectiva
+        draw.line(200, 100, 300, 500, "gris")
+        draw.line(600, 100, 500, 500, "gris")
+        
+        # Líneas
+        draw.line(280, 200, 520, 200, "rojo")
+        draw.line(330, 400, 470, 400, "verde")
+        
+        draw.text("Ambas miden 240px", 280, 500, "amarillo")
+    }
+    
+    # ========================================================================
+    # PHI EFFECT
+    # ========================================================================
+    onif selected == 2 {
+        draw.text("3. Phi Effect - Movimiento", 260, 60, "verde")
+        
+        # Trayectoria
+        draw.line(100, 300, 700, 300, "gris")
+        
+        # Círculo móvil
+        dark.slot x = 100 + frame * 2
+        onif x > 700 {
+            dark.slot x = 100
+        }
+        draw.circle(x, 300, 30, "rojo")
+        draw.circle(x, 300, 15, "blanco")
+        
+        draw.text("Movimiento aparente", 280, 450, "amarillo")
+    }
+    
+    # ========================================================================
+    # FRASER SPIRAL
+    # ========================================================================
+    onif selected == 3 {
+        draw.text("4. Fraser Spiral", 280, 60, "verde")
+        
+        # Círculos concéntricos
+        draw.circle(400, 300, 30, "blanco")
+        draw.circle(400, 300, 50, "blanco")
+        draw.circle(400, 300, 70, "blanco")
+        draw.circle(400, 300, 90, "blanco")
+        draw.circle(400, 300, 110, "blanco")
+        draw.circle(400, 300, 130, "blanco")
+        
+        # Líneas diagonales (crean ilusión)
+        draw.line(250, 200, 550, 400, "negro")
+        draw.line(250, 400, 550, 200, "negro")
+        
+        draw.text("Son circulos, NO espiral", 240, 500, "amarillo")
+    }
+    
+    # ========================================================================
+    # INPUT
+    # ========================================================================
+    
+    # Flecha derecha
+    onif tecla_presionada("ArrowRight") {
+        dark.slot selected = sumar(selected, 1)
+        onif selected > 3 {
+            dark.slot selected = 0
+        }
+    }
+    
+    # Flecha izquierda
+    onif tecla_presionada("ArrowLeft") {
+        dark.slot selected = selected - 1
+        onif selected < 0 {
+            dark.slot selected = 3
+        }
+    }
+    
+    # Indicador
+    draw.text("Ilusion: " + (sumar(selected, 1)), 350, 550, "cyan")
+    draw.text("Frame: " + frame, 10, 580, "verde")
+    draw.text("Flechas: Cambiar | ESC: Salir", 250, 575, "blanco")
+}
