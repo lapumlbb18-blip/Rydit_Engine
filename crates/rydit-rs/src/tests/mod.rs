@@ -719,4 +719,505 @@ mod warning_tests {
             panic!("phi_effect debería retornar Array, fue {:?}", result);
         }
     }
+
+    // ========================================================================
+    // TESTS V0.7.1.2 - FÍSICA
+    // ========================================================================
+
+    #[test]
+    fn test_physics_projectile() {
+        // physics::projectile(0, 0, 50, 45)
+        let mut executor = Executor::nuevo();
+        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
+
+        let args = vec![
+            Expr::Num(0.0),   // x0
+            Expr::Num(0.0),   // y0
+            Expr::Num(50.0),  // v0
+            Expr::Num(45.0),  // angle
+        ];
+        let expr = Expr::Call {
+            name: "physics::projectile".to_string(),
+            args,
+        };
+
+        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
+
+        if let Valor::Array(arr) = result {
+            assert_eq!(arr.len(), 5, "projectile debería retornar 5 elementos");
+            // Verificar que todos sean números
+            for val in &arr {
+                assert!(matches!(val, Valor::Num(_)), "Todos los elementos deberían ser números");
+            }
+        } else {
+            panic!("projectile debería retornar Array, fue {:?}", result);
+        }
+    }
+
+    #[test]
+    fn test_physics_projectile_at() {
+        // physics::projectile_at(0, 0, 50, 45, 2)
+        let mut executor = Executor::nuevo();
+        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
+
+        let args = vec![
+            Expr::Num(0.0),   // x0
+            Expr::Num(0.0),   // y0
+            Expr::Num(50.0),  // v0
+            Expr::Num(45.0),  // angle
+            Expr::Num(2.0),   // t
+        ];
+        let expr = Expr::Call {
+            name: "physics::projectile_at".to_string(),
+            args,
+        };
+
+        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
+
+        if let Valor::Array(arr) = result {
+            assert_eq!(arr.len(), 4, "projectile_at debería retornar 4 elementos [x, y, vx, vy]");
+        } else {
+            panic!("projectile_at debería retornar Array, fue {:?}", result);
+        }
+    }
+
+    #[test]
+    fn test_physics_nbody_2() {
+        // physics::nbody_2(m1, m2, x1, y1, x2, y2, G)
+        let mut executor = Executor::nuevo();
+        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
+
+        let args = vec![
+            Expr::Num(5.97e24), // m1 (Tierra)
+            Expr::Num(7.35e22), // m2 (Luna)
+            Expr::Num(0.0),     // x1
+            Expr::Num(0.0),     // y1
+            Expr::Num(3.844e8), // x2
+            Expr::Num(0.0),     // y2
+            Expr::Num(6.674e-11), // G
+        ];
+        let expr = Expr::Call {
+            name: "physics::nbody_2".to_string(),
+            args,
+        };
+
+        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
+
+        if let Valor::Array(arr) = result {
+            assert_eq!(arr.len(), 5, "nbody_2 debería retornar 5 elementos [fx1, fy1, fx2, fy2, dist]");
+            // La fuerza debería ser positiva (atracción)
+            if let Valor::Num(fx) = arr[0] {
+                assert!(fx > 0.0, "La fuerza en x debería ser positiva");
+            }
+        } else {
+            panic!("nbody_2 debería retornar Array, fue {:?}", result);
+        }
+    }
+
+    #[test]
+    fn test_physics_wave_1d() {
+        // physics::wave_1d(x, t, lambda, freq)
+        let mut executor = Executor::nuevo();
+        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
+
+        let args = vec![
+            Expr::Num(1.0), // x
+            Expr::Num(0.5), // t
+            Expr::Num(2.0), // lambda
+            Expr::Num(1.0), // freq
+        ];
+        let expr = Expr::Call {
+            name: "physics::wave_1d".to_string(),
+            args,
+        };
+
+        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
+
+        if let Valor::Num(amp) = result {
+            // La amplitud debería estar entre -1 y 1
+            assert!(amp >= -1.0 && amp <= 1.0, "La amplitud debería estar entre -1 y 1, fue {}", amp);
+        } else {
+            panic!("wave_1d debería retornar Num, fue {:?}", result);
+        }
+    }
+
+    #[test]
+    fn test_physics_pendulum() {
+        // physics::pendulum(length, angle0, t)
+        let mut executor = Executor::nuevo();
+        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
+
+        let args = vec![
+            Expr::Num(1.0),  // longitud
+            Expr::Num(10.0), // ang0
+            Expr::Num(1.0),  // t
+        ];
+        let expr = Expr::Call {
+            name: "physics::pendulum".to_string(),
+            args,
+        };
+
+        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
+
+        if let Valor::Array(arr) = result {
+            assert_eq!(arr.len(), 3, "pendulum debería retornar 3 elementos [angle, angular_vel, period]");
+        } else {
+            panic!("pendulum debería retornar Array, fue {:?}", result);
+        }
+    }
+
+    // ========================================================================
+    // TESTS V0.7.1.3 - CIENCIA DE DATOS
+    // ========================================================================
+
+    #[test]
+    fn test_stats_mean() {
+        // stats::mean([1, 2, 3, 4, 5])
+        let mut executor = Executor::nuevo();
+        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
+
+        let args = vec![
+            Expr::Array(vec![
+                Expr::Num(1.0),
+                Expr::Num(2.0),
+                Expr::Num(3.0),
+                Expr::Num(4.0),
+                Expr::Num(5.0),
+            ])
+        ];
+        let expr = Expr::Call {
+            name: "stats::mean".to_string(),
+            args,
+        };
+
+        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
+
+        if let Valor::Num(mean) = result {
+            assert!((mean - 3.0).abs() < 0.001, "mean([1,2,3,4,5]) debería ser 3.0, fue {}", mean);
+        } else {
+            panic!("mean debería retornar Num, fue {:?}", result);
+        }
+    }
+
+    #[test]
+    fn test_stats_median_odd() {
+        // stats::median([1, 2, 3, 4, 5])
+        let mut executor = Executor::nuevo();
+        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
+
+        let args = vec![
+            Expr::Array(vec![
+                Expr::Num(1.0),
+                Expr::Num(2.0),
+                Expr::Num(3.0),
+                Expr::Num(4.0),
+                Expr::Num(5.0),
+            ])
+        ];
+        let expr = Expr::Call {
+            name: "stats::median".to_string(),
+            args,
+        };
+
+        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
+
+        if let Valor::Num(median) = result {
+            assert!((median - 3.0).abs() < 0.001, "median([1,2,3,4,5]) debería ser 3.0, fue {}", median);
+        } else {
+            panic!("median debería retornar Num, fue {:?}", result);
+        }
+    }
+
+    #[test]
+    fn test_stats_median_even() {
+        // stats::median([1, 2, 3, 4])
+        let mut executor = Executor::nuevo();
+        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
+
+        let args = vec![
+            Expr::Array(vec![
+                Expr::Num(1.0),
+                Expr::Num(2.0),
+                Expr::Num(3.0),
+                Expr::Num(4.0),
+            ])
+        ];
+        let expr = Expr::Call {
+            name: "stats::median".to_string(),
+            args,
+        };
+
+        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
+
+        if let Valor::Num(median) = result {
+            assert!((median - 2.5).abs() < 0.001, "median([1,2,3,4]) debería ser 2.5, fue {}", median);
+        } else {
+            panic!("median debería retornar Num, fue {:?}", result);
+        }
+    }
+
+    #[test]
+    fn test_stats_min_max() {
+        // stats::min y stats::max
+        let mut executor = Executor::nuevo();
+        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
+
+        let arr = Expr::Array(vec![
+            Expr::Num(5.0),
+            Expr::Num(2.0),
+            Expr::Num(8.0),
+            Expr::Num(1.0),
+            Expr::Num(9.0),
+        ]);
+
+        // Test min
+        let expr_min = Expr::Call {
+            name: "stats::min".to_string(),
+            args: vec![arr.clone()],
+        };
+        let result_min = evaluar_expr(&expr_min, &mut executor, &mut funcs);
+        if let Valor::Num(min) = result_min {
+            assert!((min - 1.0).abs() < 0.001, "min debería ser 1.0, fue {}", min);
+        } else {
+            panic!("min debería retornar Num, fue {:?}", result_min);
+        }
+
+        // Test max
+        let expr_max = Expr::Call {
+            name: "stats::max".to_string(),
+            args: vec![arr],
+        };
+        let result_max = evaluar_expr(&expr_max, &mut executor, &mut funcs);
+        if let Valor::Num(max) = result_max {
+            assert!((max - 9.0).abs() < 0.001, "max debería ser 9.0, fue {}", max);
+        } else {
+            panic!("max debería retornar Num, fue {:?}", result_max);
+        }
+    }
+
+    #[test]
+    fn test_csv_parse() {
+        // csv::parse("a,b\n1,2")
+        let mut executor = Executor::nuevo();
+        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
+
+        let args = vec![
+            Expr::Texto("nombre,edad\nJuan,25\nMaria,30".to_string())
+        ];
+        let expr = Expr::Call {
+            name: "csv::parse".to_string(),
+            args,
+        };
+
+        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
+
+        if let Valor::Array(rows) = result {
+            assert_eq!(rows.len(), 2, "Debería parsear 2 filas (sin headers)");
+            if let Valor::Array(first_row) = &rows[0] {
+                assert_eq!(first_row.len(), 2, "Cada fila debería tener 2 columnas");
+            }
+        } else {
+            panic!("csv::parse debería retornar Array, fue {:?}", result);
+        }
+    }
+
+    #[test]
+    fn test_plot_ascii_chart() {
+        // plot::ascii_chart([1, 2, 3, 4, 5], 20)
+        let mut executor = Executor::nuevo();
+        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
+
+        let args = vec![
+            Expr::Array(vec![
+                Expr::Num(1.0),
+                Expr::Num(2.0),
+                Expr::Num(3.0),
+                Expr::Num(4.0),
+                Expr::Num(5.0),
+            ]),
+            Expr::Num(20.0),
+        ];
+        let expr = Expr::Call {
+            name: "plot::ascii_chart".to_string(),
+            args,
+        };
+
+        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
+
+        if let Valor::Texto(chart) = result {
+            assert!(chart.contains('*'), "El gráfico debería contener '*'");
+            assert!(chart.len() > 10, "El gráfico debería tener contenido");
+        } else {
+            panic!("ascii_chart debería retornar Texto, fue {:?}", result);
+        }
+    }
+
+    // ========================================================================
+    // TESTS V0.7.1.4 - BEZIER
+    // ========================================================================
+
+    #[test]
+    fn test_bezier_linear() {
+        // bezier::linear(p0_x, p0_y, p1_x, p1_y, t)
+        let mut executor = Executor::nuevo();
+        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
+
+        let args = vec![
+            Expr::Num(0.0),   // p0_x
+            Expr::Num(0.0),   // p0_y
+            Expr::Num(100.0), // p1_x
+            Expr::Num(100.0), // p1_y
+            Expr::Num(0.5),   // t
+        ];
+        let expr = Expr::Call {
+            name: "bezier::linear".to_string(),
+            args,
+        };
+
+        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
+
+        if let Valor::Array(arr) = result {
+            assert_eq!(arr.len(), 2, "linear debería retornar [x, y]");
+            if let (Valor::Num(x), Valor::Num(y)) = (&arr[0], &arr[1]) {
+                assert!((x - 50.0).abs() < 0.01, "x debería ser 50, fue {}", x);
+                assert!((y - 50.0).abs() < 0.01, "y debería ser 50, fue {}", y);
+            }
+        } else {
+            panic!("linear debería retornar Array, fue {:?}", result);
+        }
+    }
+
+    #[test]
+    fn test_bezier_quadratic() {
+        // bezier::quadratic con 3 puntos de control
+        let mut executor = Executor::nuevo();
+        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
+
+        let args = vec![
+            Expr::Num(0.0),   // p0_x
+            Expr::Num(0.0),   // p0_y
+            Expr::Num(50.0),  // p1_x (control)
+            Expr::Num(100.0), // p1_y (control)
+            Expr::Num(100.0), // p2_x
+            Expr::Num(0.0),   // p2_y
+            Expr::Num(0.5),   // t
+        ];
+        let expr = Expr::Call {
+            name: "bezier::quadratic".to_string(),
+            args,
+        };
+
+        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
+
+        if let Valor::Array(arr) = result {
+            assert_eq!(arr.len(), 2, "quadratic debería retornar [x, y]");
+        } else {
+            panic!("quadratic debería retornar Array, fue {:?}", result);
+        }
+    }
+
+    #[test]
+    fn test_bezier_cubic() {
+        // bezier::cubic con 4 puntos de control
+        let mut executor = Executor::nuevo();
+        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
+
+        let args = vec![
+            Expr::Num(0.0),   // p0_x
+            Expr::Num(0.0),   // p0_y
+            Expr::Num(30.0),  // p1_x
+            Expr::Num(100.0), // p1_y
+            Expr::Num(70.0),  // p2_x
+            Expr::Num(100.0), // p2_y
+            Expr::Num(100.0), // p3_x
+            Expr::Num(0.0),   // p3_y
+            Expr::Num(0.5),   // t
+        ];
+        let expr = Expr::Call {
+            name: "bezier::cubic".to_string(),
+            args,
+        };
+
+        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
+
+        if let Valor::Array(arr) = result {
+            assert_eq!(arr.len(), 2, "cubic debería retornar [x, y]");
+        } else {
+            panic!("cubic debería retornar Array, fue {:?}", result);
+        }
+    }
+
+    #[test]
+    fn test_bezier_cubic_derivative() {
+        // bezier::cubic_derivative - tangente en t=0.5
+        let mut executor = Executor::nuevo();
+        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
+
+        let args = vec![
+            Expr::Num(0.0),   // p0_x
+            Expr::Num(0.0),   // p0_y
+            Expr::Num(30.0),  // p1_x
+            Expr::Num(100.0), // p1_y
+            Expr::Num(70.0),  // p2_x
+            Expr::Num(100.0), // p2_y
+            Expr::Num(100.0), // p3_x
+            Expr::Num(0.0),   // p3_y
+            Expr::Num(0.5),   // t
+        ];
+        let expr = Expr::Call {
+            name: "bezier::cubic_derivative".to_string(),
+            args,
+        };
+
+        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
+
+        if let Valor::Array(arr) = result {
+            assert_eq!(arr.len(), 2, "cubic_derivative debería retornar [dx, dy]");
+        } else {
+            panic!("cubic_derivative debería retornar Array, fue {:?}", result);
+        }
+    }
+
+    #[test]
+    fn test_bezier_generate_points() {
+        // bezier::generate_points - generar 5 puntos de una curva
+        let mut executor = Executor::nuevo();
+        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
+
+        // Puntos de control: [[0,0], [30,100], [70,100], [100,0]]
+        let control_points = Expr::Array(vec![
+            Expr::Array(vec![Expr::Num(0.0), Expr::Num(0.0)]),
+            Expr::Array(vec![Expr::Num(30.0), Expr::Num(100.0)]),
+            Expr::Array(vec![Expr::Num(70.0), Expr::Num(100.0)]),
+            Expr::Array(vec![Expr::Num(100.0), Expr::Num(0.0)]),
+        ]);
+
+        let args = vec![control_points, Expr::Num(5.0)];
+        let expr = Expr::Call {
+            name: "bezier::generate_points".to_string(),
+            args,
+        };
+
+        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
+
+        if let Valor::Array(points) = result {
+            assert_eq!(points.len(), 5, "Debería generar 5 puntos");
+            // Primer punto debería ser (0, 0)
+            if let Valor::Array(first) = &points[0] {
+                if let (Valor::Num(x), Valor::Num(y)) = (&first[0], &first[1]) {
+                    assert!((x - 0.0).abs() < 0.01, "Primer punto x debería ser 0");
+                    assert!((y - 0.0).abs() < 0.01, "Primer punto y debería ser 0");
+                }
+            }
+            // Último punto debería ser (100, 0)
+            if let Valor::Array(last) = &points[4] {
+                if let (Valor::Num(x), Valor::Num(y)) = (&last[0], &last[1]) {
+                    assert!((x - 100.0).abs() < 0.01, "Último punto x debería ser 100");
+                    assert!((y - 0.0).abs() < 0.01, "Último punto y debería ser 0");
+                }
+            }
+        } else {
+            panic!("generate_points debería retornar Array, fue {:?}", result);
+        }
+    }
 }

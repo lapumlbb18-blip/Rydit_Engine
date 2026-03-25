@@ -6,8 +6,8 @@
 
 **"David vs Goliat - Un motor de videojuegos en Rust, construido 100% en un Redmi Note 8"**
 
-[![Version](https://img.shields.io/badge/version-v0.7.1.1-blue.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
-[![Tests](https://img.shields.io/badge/tests-147%20passing-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![Version](https://img.shields.io/badge/version-v0.7.1.4-blue.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![Tests](https://img.shields.io/badge/tests-163%20passing-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
 [![raylib](https://img.shields.io/badge/raylib-5.5-purple.svg)](https://www.raylib.com/)
 [![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
@@ -28,13 +28,16 @@
 - 🎨 Renderizado gráfico (círculos, rectángulos, líneas, texto, sprites)
 - 🎹 Input de teclado en tiempo real
 - 🎲 Sistema de módulos (math, arrays, strings, io, random, time, json, colisiones, regex, files)
-- 🧪 **147 tests automáticos**
+- 🧪 **163 tests automáticos**
 - 🎨 **12 widgets UI** (migui - immediate mode GUI)
 - 🎵 **Audio** (sonidos + música)
 - ✨ **Sistema de partículas** (fuego, humo, explosión, lluvia, chispas)
 - 💻 **REPL interactivo** con historial y auto-completado
 - 📦 **Stdlib embebido** (sin archivos externos necesarios)
 - 🎨 **Animación 2D** (10 funciones, 12 principios de Disney - 3 implementados)
+- 📐 **Curvas de Bezier** (6 funciones, algoritmo de De Casteljau)
+- ⚛️ **Física 2D** (proyectiles, gravedad, ondas, péndulo)
+- 📊 **Ciencia de Datos** (CSV, estadísticas, gráficos ASCII/SVG)
 - 🔌 **Arquitectura modular** (v0.8.0+: ciencia, animación, red, datos)
 - 🐍 Snake Game completo como demo
 

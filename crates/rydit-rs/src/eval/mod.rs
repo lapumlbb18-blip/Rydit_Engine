@@ -8,6 +8,28 @@ use std::collections::{HashMap, HashSet};
 // Importar funciones auxiliares desde main.rs
 use crate::{ejecutar_stmt, valor_a_bool, valor_rydit_a_serde, valor_serde_a_rydit};
 
+/// Algoritmo de De Casteljau para evaluar curvas de Bezier
+fn de_casteljau(points: &[(f64, f64)], t: f64) -> (f64, f64) {
+    let n = points.len();
+    if n == 0 {
+        return (0.0, 0.0);
+    }
+    if n == 1 {
+        return points[0];
+    }
+    
+    // Iterativamente interpolar entre puntos
+    let mut current_points = points.to_vec();
+    for r in 1..n {
+        for i in 0..(n - r) {
+            let x = (1.0 - t) * current_points[i].0 + t * current_points[i + 1].0;
+            let y = (1.0 - t) * current_points[i].1 + t * current_points[i + 1].1;
+            current_points[i] = (x, y);
+        }
+    }
+    current_points[0]
+}
+
 /// Evaluar una expresión RyDit
 pub fn evaluar_expr(
     expr: &Expr,
@@ -1010,6 +1032,581 @@ pub fn evaluar_expr(
                 }
                 return Valor::Error("illusion::fraser_spiral() requiere 5 números".to_string());
             }
+
+            // ========================================================================
+            // FÍSICA 2D (v0.7.1.2)
+            // ========================================================================
+
+            // --- PROJECTILE MOTION ---
+            if name == "physics::projectile" && args.len() == 4 {
+                let vals: Vec<Valor> = args
+                    .iter()
+                    .map(|a| evaluar_expr(a, executor, funcs))
+                    .collect();
+                if let [Valor::Num(x0), Valor::Num(y0), Valor::Num(v0), Valor::Num(angle)] =
+                    vals.as_slice()
+                {
+                    let rad = angle.to_radians();
+                    let vx = v0 * rad.cos();
+                    let vy = v0 * rad.sin();
+                    let g = 9.81; // m/s²
+                    let flight_time = 2.0 * vy / g;
+                    let max_height = (vy * vy) / (2.0 * g);
+                    let range = vx * flight_time;
+                    return Valor::Array(vec![
+                        Valor::Num(x0 + vx * flight_time), // x final
+                        Valor::Num(*y0),                    // y final (asume suelo)
+                        Valor::Num(flight_time),           // tiempo vuelo
+                        Valor::Num(max_height),            // altura máxima
+                        Valor::Num(range),                 // alcance horizontal
+                    ]);
+                }
+                return Valor::Error(
+                    "physics::projectile() requiere (x0, y0, v0, angle_grados)".to_string(),
+                );
+            }
+
+            // --- PROJECTILE AT TIME ---
+            if name == "physics::projectile_at" && args.len() == 5 {
+                let vals: Vec<Valor> = args
+                    .iter()
+                    .map(|a| evaluar_expr(a, executor, funcs))
+                    .collect();
+                if let [Valor::Num(x0), Valor::Num(y0), Valor::Num(v0), Valor::Num(angle), Valor::Num(t)] =
+                    vals.as_slice()
+                {
+                    let rad = angle.to_radians();
+                    let vx = v0 * rad.cos();
+                    let vy = v0 * rad.sin();
+                    let g = 9.81;
+                    let x = x0 + vx * t;
+                    let y = y0 + vy * t - 0.5 * g * t * t;
+                    let vy_t = vy - g * t;
+                    return Valor::Array(vec![
+                        Valor::Num(x),
+                        Valor::Num(y),
+                        Valor::Num(vx),
+                        Valor::Num(vy_t),
+                    ]);
+                }
+                return Valor::Error(
+                    "physics::projectile_at() requiere (x0, y0, v0, angle, t)".to_string(),
+                );
+            }
+
+            // --- N-BODY GRAVITY (2 cuerpos) ---
+            if name == "physics::nbody_2" && args.len() == 7 {
+                let vals: Vec<Valor> = args
+                    .iter()
+                    .map(|a| evaluar_expr(a, executor, funcs))
+                    .collect();
+                if let [Valor::Num(m1), Valor::Num(m2), Valor::Num(x1), Valor::Num(y1), Valor::Num(x2), Valor::Num(y2), Valor::Num(g)] =
+                    vals.as_slice()
+                {
+                    let dx = x2 - x1;
+                    let dy = y2 - y1;
+                    let dist = (dx * dx + dy * dy).sqrt();
+                    if dist > 0.001 {
+                        let force = g * m1 * m2 / (dist * dist);
+                        let fx = force * dx / dist;
+                        let fy = force * dy / dist;
+                        return Valor::Array(vec![
+                            Valor::Num(fx),
+                            Valor::Num(fy),
+                            Valor::Num(-fx),
+                            Valor::Num(-fy),
+                            Valor::Num(dist),
+                        ]);
+                    }
+                    return Valor::Array(vec![
+                        Valor::Num(0.0),
+                        Valor::Num(0.0),
+                        Valor::Num(0.0),
+                        Valor::Num(0.0),
+                        Valor::Num(dist),
+                    ]);
+                }
+                return Valor::Error(
+                    "physics::nbody_2() requiere (m1, m2, x1, y1, x2, y2, G)".to_string(),
+                );
+            }
+
+            // --- WAVE EQUATION (1D) ---
+            if name == "physics::wave_1d" && args.len() == 4 {
+                let vals: Vec<Valor> = args
+                    .iter()
+                    .map(|a| evaluar_expr(a, executor, funcs))
+                    .collect();
+                if let [Valor::Num(x), Valor::Num(t), Valor::Num(lambda), Valor::Num(freq)] =
+                    vals.as_slice()
+                {
+                    let k = 2.0 * std::f64::consts::PI / lambda;
+                    let omega = 2.0 * std::f64::consts::PI * freq;
+                    let amplitude = (k * x - omega * t).sin();
+                    return Valor::Num(amplitude);
+                }
+                return Valor::Error(
+                    "physics::wave_1d() requiere (x, t, lambda, frecuencia)".to_string(),
+                );
+            }
+
+            // --- WAVE 2D CIRCULAR ---
+            if name == "physics::wave_2d" && args.len() == 5 {
+                let vals: Vec<Valor> = args
+                    .iter()
+                    .map(|a| evaluar_expr(a, executor, funcs))
+                    .collect();
+                if let [Valor::Num(x), Valor::Num(y), Valor::Num(t), Valor::Num(lambda), Valor::Num(freq)] =
+                    vals.as_slice()
+                {
+                    let r = (x * x + y * y).sqrt();
+                    let k = 2.0 * std::f64::consts::PI / lambda;
+                    let omega = 2.0 * std::f64::consts::PI * freq;
+                    let amplitude = if r > 0.01 {
+                        (k * r - omega * t).sin() / r.sqrt()
+                    } else {
+                        0.0
+                    };
+                    return Valor::Num(amplitude);
+                }
+                return Valor::Error(
+                    "physics::wave_2d() requiere (x, y, t, lambda, frecuencia)".to_string(),
+                );
+            }
+
+            // --- PENDULUM ---
+            if name == "physics::pendulum" && args.len() == 3 {
+                let vals: Vec<Valor> = args
+                    .iter()
+                    .map(|a| evaluar_expr(a, executor, funcs))
+                    .collect();
+                if let [Valor::Num(length), Valor::Num(angle0), Valor::Num(t)] = vals.as_slice() {
+                    let g = 9.81;
+                    let omega = (g / length).sqrt();
+                    let angle = angle0 * (omega * t).cos();
+                    let angular_vel = -angle0 * omega * (omega * t).sin();
+                    return Valor::Array(vec![
+                        Valor::Num(angle),
+                        Valor::Num(angular_vel),
+                        Valor::Num(2.0 * std::f64::consts::PI / omega),
+                    ]);
+                }
+                return Valor::Error("physics::pendulum() requiere (longitud, ang0, t)".to_string());
+            }
+
+            // ========================================================================
+            // CIENCIA DE DATOS (v0.7.1.3)
+            // ========================================================================
+
+            // --- CSV PARSE ---
+            if name == "csv::parse" && args.len() == 1 {
+                if let Valor::Texto(csv_content) = evaluar_expr(&args[0], executor, funcs) {
+                    let mut reader = csv::ReaderBuilder::new()
+                        .has_headers(true)
+                        .from_reader(csv_content.as_bytes());
+                    let mut rows = Vec::new();
+                    for result in reader.records() {
+                        match result {
+                            Ok(record) => {
+                                let mut row = Vec::new();
+                                for field in record.iter() {
+                                    row.push(Valor::Texto(field.to_string()));
+                                }
+                                rows.push(Valor::Array(row));
+                            }
+                            Err(e) => {
+                                return Valor::Error(format!("Error parseando CSV: {}", e));
+                            }
+                        }
+                    }
+                    return Valor::Array(rows);
+                }
+                return Valor::Error("csv::parse() requiere CSV (texto)".to_string());
+            }
+
+            // --- CSV PARSE NO HEADERS ---
+            if name == "csv::parse_no_headers" && args.len() == 1 {
+                if let Valor::Texto(csv_content) = evaluar_expr(&args[0], executor, funcs) {
+                    let mut reader = csv::ReaderBuilder::new()
+                        .has_headers(false)
+                        .from_reader(csv_content.as_bytes());
+                    let mut rows = Vec::new();
+                    for result in reader.records() {
+                        match result {
+                            Ok(record) => {
+                                let mut row = Vec::new();
+                                for field in record.iter() {
+                                    row.push(Valor::Texto(field.to_string()));
+                                }
+                                rows.push(Valor::Array(row));
+                            }
+                            Err(e) => {
+                                return Valor::Error(format!("Error parseando CSV: {}", e));
+                            }
+                        }
+                    }
+                    return Valor::Array(rows);
+                }
+                return Valor::Error("csv::parse_no_headers() requiere CSV (texto)".to_string());
+            }
+
+            // --- STATISTICS: MEAN ---
+            if name == "stats::mean" && args.len() == 1 {
+                if let Valor::Array(arr) = evaluar_expr(&args[0], executor, funcs) {
+                    if arr.is_empty() {
+                        return Valor::Error("stats::mean() array vacío".to_string());
+                    }
+                    let mut sum = 0.0;
+                    let mut count = 0;
+                    for val in arr {
+                        if let Valor::Num(n) = val {
+                            sum += n;
+                            count += 1;
+                        }
+                    }
+                    if count > 0 {
+                        return Valor::Num(sum / count as f64);
+                    }
+                    return Valor::Error("stats::mean() requiere array de números".to_string());
+                }
+                return Valor::Error("stats::mean() requiere array".to_string());
+            }
+
+            // --- STATISTICS: MEDIAN ---
+            if name == "stats::median" && args.len() == 1 {
+                if let Valor::Array(arr) = evaluar_expr(&args[0], executor, funcs) {
+                    if arr.is_empty() {
+                        return Valor::Error("stats::median() array vacío".to_string());
+                    }
+                    let mut nums: Vec<f64> = Vec::new();
+                    for val in arr {
+                        if let Valor::Num(n) = val {
+                            nums.push(n);
+                        }
+                    }
+                    if nums.is_empty() {
+                        return Valor::Error("stats::median() requiere array de números".to_string());
+                    }
+                    nums.sort_by(|a, b| a.partial_cmp(b).unwrap());
+                    let mid = nums.len() / 2;
+                    let median = if nums.len() % 2 == 0 {
+                        (nums[mid - 1] + nums[mid]) / 2.0
+                    } else {
+                        nums[mid]
+                    };
+                    return Valor::Num(median);
+                }
+                return Valor::Error("stats::median() requiere array".to_string());
+            }
+
+            // --- STATISTICS: STD DEV ---
+            if name == "stats::std_dev" && args.len() == 1 {
+                if let Valor::Array(arr) = evaluar_expr(&args[0], executor, funcs) {
+                    if arr.is_empty() {
+                        return Valor::Error("stats::std_dev() array vacío".to_string());
+                    }
+                    let mut sum = 0.0;
+                    let mut count = 0;
+                    let mut nums: Vec<f64> = Vec::new();
+                    for val in arr {
+                        if let Valor::Num(n) = val {
+                            sum += n;
+                            count += 1;
+                            nums.push(n);
+                        }
+                    }
+                    if count > 1 {
+                        let mean = sum / count as f64;
+                        let variance: f64 = nums
+                            .iter()
+                            .map(|x| (x - mean).powi(2))
+                            .sum::<f64>()
+                            / (count - 1) as f64;
+                        return Valor::Num(variance.sqrt());
+                    }
+                    return Valor::Num(0.0);
+                }
+                return Valor::Error("stats::std_dev() requiere array".to_string());
+            }
+
+            // --- STATISTICS: MIN ---
+            if name == "stats::min" && args.len() == 1 {
+                if let Valor::Array(arr) = evaluar_expr(&args[0], executor, funcs) {
+                    if arr.is_empty() {
+                        return Valor::Error("stats::min() array vacío".to_string());
+                    }
+                    let mut min_val = f64::MAX;
+                    let mut found = false;
+                    for val in arr {
+                        if let Valor::Num(n) = val {
+                            if n < min_val {
+                                min_val = n;
+                            }
+                            found = true;
+                        }
+                    }
+                    if found {
+                        return Valor::Num(min_val);
+                    }
+                    return Valor::Error("stats::min() requiere array de números".to_string());
+                }
+                return Valor::Error("stats::min() requiere array".to_string());
+            }
+
+            // --- STATISTICS: MAX ---
+            if name == "stats::max" && args.len() == 1 {
+                if let Valor::Array(arr) = evaluar_expr(&args[0], executor, funcs) {
+                    if arr.is_empty() {
+                        return Valor::Error("stats::max() array vacío".to_string());
+                    }
+                    let mut max_val = f64::MIN;
+                    let mut found = false;
+                    for val in arr {
+                        if let Valor::Num(n) = val {
+                            if n > max_val {
+                                max_val = n;
+                            }
+                            found = true;
+                        }
+                    }
+                    if found {
+                        return Valor::Num(max_val);
+                    }
+                    return Valor::Error("stats::max() requiere array de números".to_string());
+                }
+                return Valor::Error("stats::max() requiere array".to_string());
+            }
+
+            // --- PLOT: GENERATE ASCII CHART ---
+            if name == "plot::ascii_chart" && args.len() == 2 {
+                if let (Valor::Array(data), Valor::Num(width)) = (
+                    evaluar_expr(&args[0], executor, funcs),
+                    evaluar_expr(&args[1], executor, funcs),
+                ) {
+                    let height = 20.0;
+                    let mut nums: Vec<f64> = Vec::new();
+                    for val in data {
+                        if let Valor::Num(n) = val {
+                            nums.push(n);
+                        }
+                    }
+                    if nums.is_empty() {
+                        return Valor::Texto("[]".to_string());
+                    }
+                    let min_val = nums.iter().cloned().fold(f64::MAX, f64::min);
+                    let max_val = nums.iter().cloned().fold(f64::MIN, f64::max);
+                    let range = if max_val > min_val {
+                        max_val - min_val
+                    } else {
+                        1.0
+                    };
+                    let w = width as usize;
+                    let h = height as usize;
+                    let mut chart = vec![vec![' '; w]; h];
+                    for (i, &val) in nums.iter().enumerate() {
+                        let x = (i as f64 / (nums.len() - 1) as f64 * (w - 1) as f64) as usize;
+                        let y = ((val - min_val) / range * (h - 1) as f64) as usize;
+                        let y = h - 1 - y;
+                        if x < w && y < h {
+                            chart[y][x] = '*';
+                        }
+                    }
+                    let mut result = String::new();
+                    for row in chart {
+                        result.push_str(&row.iter().collect::<String>());
+                        result.push('\n');
+                    }
+                    return Valor::Texto(result);
+                }
+                return Valor::Error("plot::ascii_chart() requiere [datos], ancho".to_string());
+            }
+
+            // --- PLOT: GENERATE SVG CHART (simple line chart) ---
+            if name == "plot::svg_chart" && args.len() == 3 {
+                if let (Valor::Array(data), Valor::Num(width), Valor::Num(height)) = (
+                    evaluar_expr(&args[0], executor, funcs),
+                    evaluar_expr(&args[1], executor, funcs),
+                    evaluar_expr(&args[2], executor, funcs),
+                ) {
+                    let mut nums: Vec<f64> = Vec::new();
+                    for val in data {
+                        if let Valor::Num(n) = val {
+                            nums.push(n);
+                        }
+                    }
+                    if nums.is_empty() {
+                        return Valor::Texto("<svg></svg>".to_string());
+                    }
+                    let min_val = nums.iter().cloned().fold(f64::MAX, f64::min);
+                    let max_val = nums.iter().cloned().fold(f64::MIN, f64::max);
+                    let range = if max_val > min_val {
+                        max_val - min_val
+                    } else {
+                        1.0
+                    };
+                    let w = width as i32;
+                    let h = height as i32;
+                    let padding = 10;
+                    let mut svg = format!(
+                        "<svg width='{}' height='{}' xmlns='http://www.w3.org/2000/svg'>",
+                        w, h
+                    );
+                    svg.push_str(&format!(
+                        "<rect width='{}' height='{}' fill='white'/>",
+                        w, h
+                    ));
+                    let mut path = format!(
+                        "<polyline points='{}' fill='none' stroke='blue' stroke-width='2'/>",
+                        format!(
+                            "{},{}",
+                            padding,
+                            h - padding - ((nums[0] - min_val) / range * (h - 2 * padding) as f64)
+                                as i32
+                        )
+                    );
+                    for (i, &val) in nums.iter().enumerate().skip(1) {
+                        let x = padding
+                            + (i as f64 / (nums.len() - 1) as f64 * (w - 2 * padding) as f64)
+                                as i32;
+                        let y = h - padding
+                            - ((val - min_val) / range * (h - 2 * padding) as f64) as i32;
+                        path.push_str(&format!(",{},{}", x, y));
+                    }
+                    svg.push_str(&path);
+                    svg.push_str("</svg>");
+                    return Valor::Texto(svg);
+                }
+                return Valor::Error("plot::svg_chart() requiere [datos], ancho, alto".to_string());
+            }
+
+            // ========================================================================
+            // CURVAS DE BEZIER (v0.7.1.4)
+            // ========================================================================
+
+            // --- BEZIER LINEAL (2 puntos de control) ---
+            if name == "bezier::linear" && args.len() == 5 {
+                let vals: Vec<Valor> = args
+                    .iter()
+                    .map(|a| evaluar_expr(a, executor, funcs))
+                    .collect();
+                if let [Valor::Num(p0_x), Valor::Num(p0_y), Valor::Num(p1_x), Valor::Num(p1_y), Valor::Num(t)] =
+                    vals.as_slice()
+                {
+                    let t = t.max(0.0).min(1.0);
+                    let x = (1.0 - t) * p0_x + t * p1_x;
+                    let y = (1.0 - t) * p0_y + t * p1_y;
+                    return Valor::Array(vec![Valor::Num(x), Valor::Num(y)]);
+                }
+                return Valor::Error(
+                    "bezier::linear() requiere (p0_x, p0_y, p1_x, p1_y, t)".to_string(),
+                );
+            }
+
+            // --- BEZIER CUADRÁTICA (3 puntos de control) ---
+            if name == "bezier::quadratic" && args.len() == 7 {
+                let vals: Vec<Valor> = args
+                    .iter()
+                    .map(|a| evaluar_expr(a, executor, funcs))
+                    .collect();
+                if let [Valor::Num(p0_x), Valor::Num(p0_y), Valor::Num(p1_x), Valor::Num(p1_y), Valor::Num(p2_x), Valor::Num(p2_y), Valor::Num(t)] =
+                    vals.as_slice()
+                {
+                    let t = t.max(0.0).min(1.0);
+                    let mt = 1.0 - t;
+                    let x = mt * mt * p0_x + 2.0 * mt * t * p1_x + t * t * p2_x;
+                    let y = mt * mt * p0_y + 2.0 * mt * t * p1_y + t * t * p2_y;
+                    return Valor::Array(vec![Valor::Num(x), Valor::Num(y)]);
+                }
+                return Valor::Error(
+                    "bezier::quadratic() requiere (p0_x, p0_y, p1_x, p1_y, p2_x, p2_y, t)".to_string(),
+                );
+            }
+
+            // --- BEZIER CÚBICA (4 puntos de control) ---
+            if name == "bezier::cubic" && args.len() == 9 {
+                let vals: Vec<Valor> = args
+                    .iter()
+                    .map(|a| evaluar_expr(a, executor, funcs))
+                    .collect();
+                if let [Valor::Num(p0_x), Valor::Num(p0_y), Valor::Num(p1_x), Valor::Num(p1_y), Valor::Num(p2_x), Valor::Num(p2_y), Valor::Num(p3_x), Valor::Num(p3_y), Valor::Num(t)] =
+                    vals.as_slice()
+                {
+                    let t = t.max(0.0).min(1.0);
+                    let mt = 1.0 - t;
+                    let mt2 = mt * mt;
+                    let t2 = t * t;
+                    let x = mt2 * mt * p0_x + 3.0 * mt2 * t * p1_x + 3.0 * mt * t2 * p2_x + t2 * t * p3_x;
+                    let y = mt2 * mt * p0_y + 3.0 * mt2 * t * p1_y + 3.0 * mt * t2 * p2_y + t2 * t * p3_y;
+                    return Valor::Array(vec![Valor::Num(x), Valor::Num(y)]);
+                }
+                return Valor::Error(
+                    "bezier::cubic() requiere (p0_x, p0_y, p1_x, p1_y, p2_x, p2_y, p3_x, p3_y, t)".to_string(),
+                );
+            }
+
+            // --- DERIVADA BEZIER CÚBICA (tangente) ---
+            if name == "bezier::cubic_derivative" && args.len() == 9 {
+                let vals: Vec<Valor> = args
+                    .iter()
+                    .map(|a| evaluar_expr(a, executor, funcs))
+                    .collect();
+                if let [Valor::Num(p0_x), Valor::Num(p0_y), Valor::Num(p1_x), Valor::Num(p1_y), Valor::Num(p2_x), Valor::Num(p2_y), Valor::Num(p3_x), Valor::Num(p3_y), Valor::Num(t)] =
+                    vals.as_slice()
+                {
+                    let t = t.max(0.0).min(1.0);
+                    let mt = 1.0 - t;
+                    // Derivada de Bezier cúbica: B'(t) = 3(1-t)²(P1-P0) + 6(1-t)t(P2-P1) + 3t²(P3-P2)
+                    let dx = 3.0 * mt * mt * (p1_x - p0_x) + 6.0 * mt * t * (p2_x - p1_x) + 3.0 * t * t * (p3_x - p2_x);
+                    let dy = 3.0 * mt * mt * (p1_y - p0_y) + 6.0 * mt * t * (p2_y - p1_y) + 3.0 * t * t * (p3_y - p2_y);
+                    return Valor::Array(vec![Valor::Num(dx), Valor::Num(dy)]);
+                }
+                return Valor::Error(
+                    "bezier::cubic_derivative() requiere (p0_x, p0_y, p1_x, p1_y, p2_x, p2_y, p3_x, p3_y, t)".to_string(),
+                );
+            }
+
+            // --- GENERAR PUNTOS DE CURVA BEZIER ---
+            if name == "bezier::generate_points" && args.len() == 2 {
+                if let (Valor::Array(control_points), Valor::Num(steps)) = (
+                    evaluar_expr(&args[0], executor, funcs),
+                    evaluar_expr(&args[1], executor, funcs),
+                ) {
+                    let n = steps as usize;
+                    if n < 2 {
+                        return Valor::Error("bezier::generate_points() requiere steps >= 2".to_string());
+                    }
+                    
+                    // Extraer puntos de control
+                    let mut points: Vec<(f64, f64)> = Vec::new();
+                    for cp in &control_points {
+                        if let Valor::Array(coord) = cp {
+                            if coord.len() == 2 {
+                                if let (Valor::Num(x), Valor::Num(y)) = (&coord[0], &coord[1]) {
+                                    points.push((*x, *y));
+                                }
+                            }
+                        }
+                    }
+                    
+                    if points.is_empty() {
+                        return Valor::Error("bezier::generate_points() requiere puntos de control".to_string());
+                    }
+                    
+                    // Generar puntos usando algoritmo de De Casteljau
+                    let mut result = Vec::new();
+                    for i in 0..n {
+                        let t = i as f64 / (n - 1) as f64;
+                        let point = de_casteljau(&points, t);
+                        result.push(Valor::Array(vec![
+                            Valor::Num(point.0),
+                            Valor::Num(point.1),
+                        ]));
+                    }
+                    return Valor::Array(result);
+                }
+                return Valor::Error("bezier::generate_points() requiere [puntos_control], steps".to_string());
+            }
+
             Valor::Error(format!("Función '{}' no soportada en expresiones", name))
         }
         Expr::BinOp { left, op, right } => {

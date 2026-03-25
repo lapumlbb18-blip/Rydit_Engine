@@ -1,0 +1,42 @@
+# DEMO FÍSICA SIMPLE - RyDit v0.7.1.2
+
+print("=== PROYECTIL SIMPLE ===")
+
+# Lanzar proyectil desde (0, 0) con v0=50 m/s, ángulo 45°
+dark.slot resultado = physics::projectile(0, 0, 50, 45)
+print("Proyectil (v0=50 m/s, 45°):")
+print("  Tiempo de vuelo: " + resultado[2] + " s")
+print("  Altura máxima: " + resultado[3] + " m")
+print("  Alcance: " + resultado[4] + " m")
+
+# Proyectil en tiempo t=2s
+dark.slot estado = physics::projectile_at(0, 0, 50, 45, 2)
+print("\nEn t=2s:")
+print("  Posición: (" + estado[0] + ", " + estado[1] + ")")
+
+print("\n=== GRAVEDAD SIMPLE ===")
+
+# Fuerza entre dos masas pequeñas
+dark.slot G = 6.674e-11
+dark.slot m1 = 1000
+dark.slot m2 = 500
+dark.slot dist = 10
+dark.slot fuerzas = physics::nbody_2(m1, m2, 0, 0, dist, 0, G)
+print("Fuerza entre 1000kg y 500kg a 10m:")
+print("  F_x: " + fuerzas[0] + " N")
+print("  Distancia: " + fuerzas[4] + " m")
+
+print("\n=== ONDAS ===")
+
+dark.slot amplitud = physics::wave_1d(1, 0.5, 2, 1)
+print("Onda 1D (x=1, t=0.5, λ=2, f=1):")
+print("  Amplitud: " + amplitud)
+
+print("\n=== PÉNDULO ===")
+
+dark.slot pendulo = physics::pendulum(1, 10, 1)
+print("Péndulo (L=1m, θ0=10°, t=1s):")
+print("  Ángulo: " + pendulo[0] + "°")
+print("  Período: " + pendulo[2] + " s")
+
+print("\n¡Demo de física completada!")

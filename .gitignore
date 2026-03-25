@@ -136,6 +136,11 @@ ruta_v0.5.0_v0.9.9/
 archive/
 context/
 
+# Archivos de estado de sesión (Qwen Code)
+QWEN.md
+.qwen/
+output-language.md
+
 # ============================================================================
 # ARCHIVOS DE PLANES Y RESÚMENES INTERNOS (NO SUBIR)
 # ============================================================================
@@ -151,6 +156,22 @@ REPORTES_*.md
 ROADMAP_TOTAL_*.md
 TAREAS_SIGUIENTE_SESION_*.txt
 ideas_evaluar.txt
+
+# CHANGELOGs internos de sesión (solo local)
+CHANGELOG_v0.7.1.2-3.md
+CHANGELOG_v0.7.1.4.md
+
+# ============================================================================
+# BACKUPS Y SCRIPTS DE COPIA (NO SUBIR - PRIVADOS/PELIGROSOS)
+# ============================================================================
+backup/
+backups/
+backup_*.sh
+backup_google_drive.sh
+backup_con_binarios.sh
+.rcloneignore
+.rclone.conf
+rclone.conf
 
 # ============================================================================
 # SCREENSHOTS OPCIONALES (DECIDIR SI SUBIR)
