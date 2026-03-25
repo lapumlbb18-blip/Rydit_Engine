@@ -2,28 +2,28 @@
 // Main.rs dividido en módulos para mejor mantenibilidad
 
 // Módulos locales
-mod repl;
 mod bindings;
-mod eval;
-mod config;
-mod json_helpers;
-mod tests;
 mod cli;
+mod config;
+mod eval;
 mod executor;
+mod json_helpers;
 mod module;
+mod repl;
+mod tests;
 
 // Re-exportar funciones del módulo eval
 pub use eval::evaluar_expr;
 
 // Re-exportar helpers de config y json
-pub use config::{configurar_entorno_termux, cargar_modulo};
-pub use json_helpers::{valor_serde_a_rydit, valor_rydit_a_serde};
+pub use config::{cargar_modulo, configurar_entorno_termux};
+pub use json_helpers::{valor_rydit_a_serde, valor_serde_a_rydit};
 
 // Re-exportar ejecutores
 pub use executor::{ejecutar_programa, ejecutar_programa_gfx, ejecutar_programa_migui};
 
 // Re-exportar módulo system
-pub use module::{RyditModule, ModuleRegistry, ModuleContext, MathModule};
+pub use module::{MathModule, ModuleContext, ModuleRegistry, RyditModule};
 
 // Imports necesarios para el código restante en main.rs
 use blast_core::{Executor, Valor};
@@ -1296,11 +1296,7 @@ fn evaluar_expr_gfx(
                     if idx < arr.len() {
                         arr[idx].clone()
                     } else {
-                        Valor::Error(format!(
-                            "Índice {} fuera de rango (len={})",
-                            idx,
-                            arr.len()
-                        ))
+                        Valor::Error(format!("Índice {} fuera de rango (len={})", idx, arr.len()))
                     }
                 } else {
                     Valor::Error("El índice debe ser un número".to_string())
@@ -2235,11 +2231,7 @@ pub fn evaluar_expr_migui(
                     if idx < arr.len() {
                         arr[idx].clone()
                     } else {
-                        Valor::Error(format!(
-                            "Índice {} fuera de rango (len={})",
-                            idx,
-                            arr.len()
-                        ))
+                        Valor::Error(format!("Índice {} fuera de rango (len={})", idx, arr.len()))
                     }
                 } else {
                     Valor::Error("El índice debe ser un número".to_string())

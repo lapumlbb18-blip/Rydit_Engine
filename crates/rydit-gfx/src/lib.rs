@@ -782,10 +782,7 @@ impl RyditGfx {
 
     /// Obtener posición del mouse como (x, y)
     pub fn get_mouse_position(&self) -> (i32, i32) {
-        (
-            self.handle.get_mouse_x(),
-            self.handle.get_mouse_y(),
-        )
+        (self.handle.get_mouse_x(), self.handle.get_mouse_y())
     }
 
     /// Verificar si botón del mouse está presionado (0=izq, 1=der, 2=medio)

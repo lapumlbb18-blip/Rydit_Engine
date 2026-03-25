@@ -503,4 +503,220 @@ mod warning_tests {
         // Verify deleted
         assert!(!std::path::Path::new("test_delete.txt").exists());
     }
+
+    // ========================================================================
+    // TESTS V0.7.1.1 - ANIMACIÓN 2D
+    // ========
+
+    #[test]
+    fn test_anim_ease_in() {
+        // anim::ease_in(0.5) = 0.25 (quadratic)
+        let mut executor = Executor::nuevo();
+        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
+
+        let args = vec![Expr::Num(0.5)];
+        let expr = Expr::Call {
+            name: "anim::ease_in".to_string(),
+            args,
+        };
+
+        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
+
+        if let Valor::Num(val) = result {
+            assert!(
+                (val - 0.25).abs() < 0.001,
+                "ease_in(0.5) debería ser 0.25, fue {}",
+                val
+            );
+        } else {
+            panic!("ease_in debería retornar Num, fue {:?}", result);
+        }
+    }
+
+    #[test]
+    fn test_anim_ease_out() {
+        // anim::ease_out(0.5) = 0.75 (quadratic)
+        let mut executor = Executor::nuevo();
+        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
+
+        let args = vec![Expr::Num(0.5)];
+        let expr = Expr::Call {
+            name: "anim::ease_out".to_string(),
+            args,
+        };
+
+        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
+
+        if let Valor::Num(val) = result {
+            assert!(
+                (val - 0.75).abs() < 0.001,
+                "ease_out(0.5) debería ser 0.75, fue {}",
+                val
+            );
+        } else {
+            panic!("ease_out debería retornar Num, fue {:?}", result);
+        }
+    }
+
+    #[test]
+    fn test_anim_ease_in_out() {
+        // anim::ease_in_out(0.5) = 0.5 (punto medio)
+        let mut executor = Executor::nuevo();
+        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
+
+        let args = vec![Expr::Num(0.5)];
+        let expr = Expr::Call {
+            name: "anim::ease_in_out".to_string(),
+            args,
+        };
+
+        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
+
+        if let Valor::Num(val) = result {
+            assert!(
+                (val - 0.5).abs() < 0.001,
+                "ease_in_out(0.5) debería ser 0.5, fue {}",
+                val
+            );
+        } else {
+            panic!("ease_in_out debería retornar Num, fue {:?}", result);
+        }
+    }
+
+    #[test]
+    fn test_anim_squash() {
+        // anim::squash(2.0) = [2.0, 0.5] (mantiene área)
+        let mut executor = Executor::nuevo();
+        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
+
+        let args = vec![Expr::Num(2.0)];
+        let expr = Expr::Call {
+            name: "anim::squash".to_string(),
+            args,
+        };
+
+        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
+
+        if let Valor::Array(arr) = result {
+            assert_eq!(arr.len(), 2, "squash debería retornar array de 2 elementos");
+            if let (Valor::Num(x), Valor::Num(y)) = (&arr[0], &arr[1]) {
+                assert!((x - 2.0).abs() < 0.001, "squash X debería ser 2.0");
+                assert!((y - 0.5).abs() < 0.001, "squash Y debería ser 0.5");
+            }
+        } else {
+            panic!("squash debería retornar Array, fue {:?}", result);
+        }
+    }
+
+    #[test]
+    fn test_anim_stretch() {
+        // anim::stretch(2.0) = [0.5, 2.0] (mantiene área)
+        let mut executor = Executor::nuevo();
+        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
+
+        let args = vec![Expr::Num(2.0)];
+        let expr = Expr::Call {
+            name: "anim::stretch".to_string(),
+            args,
+        };
+
+        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
+
+        if let Valor::Array(arr) = result {
+            assert_eq!(
+                arr.len(),
+                2,
+                "stretch debería retornar array de 2 elementos"
+            );
+            if let (Valor::Num(x), Valor::Num(y)) = (&arr[0], &arr[1]) {
+                assert!((x - 0.5).abs() < 0.001, "stretch X debería ser 0.5");
+                assert!((y - 2.0).abs() < 0.001, "stretch Y debería ser 2.0");
+            }
+        } else {
+            panic!("stretch debería retornar Array, fue {:?}", result);
+        }
+    }
+
+    #[test]
+    fn test_anim_anticipate() {
+        // anim::anticipate(100, 200, 20) = 80 (retrocede antes de avanzar)
+        let mut executor = Executor::nuevo();
+        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
+
+        let args = vec![Expr::Num(100.0), Expr::Num(200.0), Expr::Num(20.0)];
+        let expr = Expr::Call {
+            name: "anim::anticipate".to_string(),
+            args,
+        };
+
+        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
+
+        if let Valor::Num(val) = result {
+            assert!(
+                (val - 80.0).abs() < 0.001,
+                "anticipate(100, 200, 20) debería ser 80, fue {}",
+                val
+            );
+        } else {
+            panic!("anticipate debería retornar Num, fue {:?}", result);
+        }
+    }
+
+    #[test]
+    fn test_illusion_muller_lyer() {
+        // illusion::muller_lyer(100, 200, 200, true)
+        let mut executor = Executor::nuevo();
+        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
+
+        let args = vec![
+            Expr::Num(100.0),
+            Expr::Num(200.0),
+            Expr::Num(200.0),
+            Expr::Bool(true),
+        ];
+        let expr = Expr::Call {
+            name: "illusion::muller_lyer".to_string(),
+            args,
+        };
+
+        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
+
+        if let Valor::Array(arr) = result {
+            assert_eq!(arr.len(), 4, "muller_lyer debería retornar 4 elementos");
+        } else {
+            panic!("muller_lyer debería retornar Array, fue {:?}", result);
+        }
+    }
+
+    #[test]
+    fn test_illusion_phi_effect() {
+        // illusion::phi_effect con movimiento
+        let mut executor = Executor::nuevo();
+        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
+
+        let args = vec![
+            Expr::Num(100.0), // x1
+            Expr::Num(300.0), // y1
+            Expr::Num(700.0), // x2
+            Expr::Num(300.0), // y2
+            Expr::Num(3.0),   // speed
+            Expr::Num(50.0),  // frame
+        ];
+        let expr = Expr::Call {
+            name: "illusion::phi_effect".to_string(),
+            args,
+        };
+
+        let result = evaluar_expr(&expr, &mut executor, &mut funcs);
+
+        if let Valor::Array(arr) = result {
+            assert_eq!(
+                arr.len(),
+                3,
+                "phi_effect debería retornar 3 elementos [x, y, direction]"
+            );
+        } else {
+            panic!("phi_effect debería retornar Array, fue {:?}", result);
+        }
+    }
 }

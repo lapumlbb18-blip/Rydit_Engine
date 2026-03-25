@@ -9,11 +9,7 @@ use migui::Migui;
 use rydit_gfx::RyditGfx;
 
 use crate::{
-    evaluar_expr_migui,
-    ejecutar_stmt,
-    ejecutar_stmt_gfx,
-    ejecutar_stmt_migui,
-    InputEstado,
+    ejecutar_stmt, ejecutar_stmt_gfx, ejecutar_stmt_migui, evaluar_expr_migui, InputEstado,
 };
 
 /// Ejecutar programa en modo comandante (sin gráficos)
@@ -203,10 +199,7 @@ pub fn ejecutar_programa_migui(
 
         // Debug: mostrar comandos generados
         if !gui.draw_commands().is_empty() {
-            println!(
-                "[MIGUI] {} comandos generados",
-                gui.draw_commands().len()
-            );
+            println!("[MIGUI] {} comandos generados", gui.draw_commands().len());
         }
 
         // Renderizar con el backend optimizado

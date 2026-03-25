@@ -4,8 +4,8 @@
 use std::collections::{HashMap, HashSet};
 use std::io::{self, Write};
 
-use lizer::{Lizer, Parser, Stmt};
 use blast_core::Executor;
+use lizer::{Lizer, Parser, Stmt};
 
 /// Iniciar modo REPL interactivo
 pub fn repl_mode() {
@@ -72,7 +72,13 @@ pub fn repl_mode() {
                         println!("[RYDIT] {} statements", program.statements.len());
                         // Ejecutar statements
                         for stmt in &program.statements {
-                            crate::ejecutar_stmt(stmt, &mut executor, &mut funcs, &mut loaded_modules, &mut importing_stack);
+                            crate::ejecutar_stmt(
+                                stmt,
+                                &mut executor,
+                                &mut funcs,
+                                &mut loaded_modules,
+                                &mut importing_stack,
+                            );
                         }
                     }
                     Err(e) => {

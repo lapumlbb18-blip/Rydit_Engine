@@ -8,12 +8,7 @@ use lizer::{Lizer, Parser};
 use migui::Migui;
 use rydit_gfx::RyditGfx;
 
-use crate::{
-    ejecutar_programa,
-    ejecutar_programa_gfx,
-    ejecutar_programa_migui,
-    repl::repl_mode,
-};
+use crate::{ejecutar_programa, ejecutar_programa_gfx, ejecutar_programa_migui, repl::repl_mode};
 
 /// Punto de entrada principal después de configurar entorno
 pub fn run() {
@@ -95,10 +90,7 @@ fn run_gfx_mode(script: &str) {
 
     match parser.parse() {
         Ok(program) => {
-            println!(
-                "[RYDIT] {} statements en AST",
-                program.statements.len()
-            );
+            println!("[RYDIT] {} statements en AST", program.statements.len());
             ejecutar_programa_gfx(&program, &mut executor, &mut funcs, &mut gfx);
         }
         Err(e) => {
@@ -130,10 +122,7 @@ fn run_migui_mode(script: &str) {
 
     match parser.parse() {
         Ok(program) => {
-            println!(
-                "[RYDIT] {} statements en AST",
-                program.statements.len()
-            );
+            println!("[RYDIT] {} statements en AST", program.statements.len());
             ejecutar_programa_migui(&program, &mut executor, &mut funcs, &mut gui, &mut gfx);
         }
         Err(e) => {
@@ -163,10 +152,7 @@ fn run_comandante_mode(script: &str) {
 
     match parser.parse() {
         Ok(program) => {
-            println!(
-                "[RYDIT] {} statements en AST",
-                program.statements.len()
-            );
+            println!("[RYDIT] {} statements en AST", program.statements.len());
             ejecutar_programa(&program, &mut executor, &mut funcs);
         }
         Err(e) => {

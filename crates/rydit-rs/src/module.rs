@@ -1,12 +1,13 @@
 // crates/rydit-rs/src/module.rs
 // RyditModule trait para módulos extensibles
 
-use std::collections::HashMap;
 use blast_core::{Executor, Valor};
 use lizer::{Expr, Stmt};
+use std::collections::HashMap;
 
 /// Tipo de función registrable en un módulo
-pub type ModuleFunction = fn(&[Expr], &mut Executor, &mut HashMap<String, (Vec<String>, Vec<Stmt>)>) -> Valor;
+pub type ModuleFunction =
+    fn(&[Expr], &mut Executor, &mut HashMap<String, (Vec<String>, Vec<Stmt>)>) -> Valor;
 
 /// Registro de funciones de un módulo
 pub struct ModuleRegistry {

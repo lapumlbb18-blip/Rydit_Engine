@@ -88,12 +88,7 @@ impl Particle {
             a: alpha,
         };
 
-        d.draw_circle(
-            self.x as i32,
-            self.y as i32,
-            self.size,
-            color_with_alpha,
-        );
+        d.draw_circle(self.x as i32, self.y as i32, self.size, color_with_alpha);
     }
 }
 

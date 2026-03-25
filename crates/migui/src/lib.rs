@@ -192,14 +192,12 @@ pub struct WindowState {
     pub open: bool,
 }
 
-#[derive(Debug, Clone)]
-#[derive(Default)]
+#[derive(Debug, Clone, Default)]
 pub struct TextboxState {
     pub text: String,
     pub cursor_pos: usize,
     pub selected: bool,
 }
-
 
 /// Estado para ListBox - v0.5.2
 #[derive(Debug, Clone)]
@@ -461,10 +459,7 @@ impl Migui {
 
     /// Button - retorna true si fue clickeado en este frame
     pub fn button(&mut self, id: WidgetId, rect: Rect, label: &str) -> bool {
-        let state = self
-            .widget_states
-            .entry(id.0)
-            .or_default();
+        let state = self.widget_states.entry(id.0).or_default();
 
         state.hovered = rect.contains(self.mouse_x, self.mouse_y);
         if state.hovered && self.mouse_pressed {
@@ -521,10 +516,7 @@ impl Migui {
 
     /// Checkbox - retorna true si cambió el estado
     pub fn checkbox(&mut self, id: WidgetId, label: &str, checked: &mut bool, rect: Rect) -> bool {
-        let state = self
-            .widget_states
-            .entry(id.0.clone())
-            .or_default();
+        let state = self.widget_states.entry(id.0.clone()).or_default();
 
         let cb_rect = Rect::new(rect.x + 4.0, rect.y + 4.0, rect.h - 8.0, rect.h - 8.0);
         state.hovered = cb_rect.contains(self.mouse_x, self.mouse_y);
@@ -586,10 +578,7 @@ impl Migui {
 
     /// Slider - retorna el valor actual
     pub fn slider(&mut self, id: WidgetId, value: f32, min: f32, max: f32, rect: Rect) -> f32 {
-        let state = self
-            .widget_states
-            .entry(id.0)
-            .or_default();
+        let state = self.widget_states.entry(id.0).or_default();
 
         let track_h = 8.0f32;
         let track_y = rect.y + (rect.h - track_h) / 2.0;
@@ -664,14 +653,8 @@ impl Migui {
 
     /// Textbox - retorna referencia al texto
     pub fn textbox(&mut self, id: WidgetId, rect: Rect) -> &str {
-        let state = self
-            .widget_states
-            .entry(id.0.clone())
-            .or_default();
-        let ts = self
-            .textbox_states
-            .entry(id.0)
-            .or_default();
+        let state = self.widget_states.entry(id.0.clone()).or_default();
+        let ts = self.textbox_states.entry(id.0).or_default();
 
         state.hovered = rect.contains(self.mouse_x, self.mouse_y);
         if state.hovered && self.mouse_pressed {
@@ -805,10 +788,7 @@ impl Migui {
         selected: &mut usize,
         rect: Rect,
     ) -> bool {
-        let state = self
-            .widget_states
-            .entry(id.0.clone())
-            .or_default();
+        let state = self.widget_states.entry(id.0.clone()).or_default();
 
         // Verificar si está abierto
         let is_open = state.active;

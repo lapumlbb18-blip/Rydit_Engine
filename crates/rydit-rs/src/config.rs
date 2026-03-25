@@ -10,8 +10,8 @@ use std::{env, fs, path::Path};
 /// Configurar variables de entorno para Termux-X11 automáticamente
 pub fn configurar_entorno_termux() {
     // Detectar si estamos en Termux
-    let es_termux = env::var("TERMUX_VERSION").is_ok()
-        || Path::new("/data/data/com.termux").exists();
+    let es_termux =
+        env::var("TERMUX_VERSION").is_ok() || Path::new("/data/data/com.termux").exists();
 
     if es_termux {
         println!("[RYDIT] Termux detectado - Configurando entorno gráfico...");
@@ -58,8 +58,7 @@ pub fn cargar_modulo(nombre: &str) -> Result<String, String> {
     // 1. Intentar archivo local
     let ruta_local = format!("modules/{}.rydit", nombre);
     if Path::new(&ruta_local).exists() {
-        fs::read_to_string(&ruta_local)
-            .map_err(|e| format!("Error leyendo '{}': {}", nombre, e))
+        fs::read_to_string(&ruta_local).map_err(|e| format!("Error leyendo '{}': {}", nombre, e))
     } else {
         // 2. Fallback embebido
         match nombre {

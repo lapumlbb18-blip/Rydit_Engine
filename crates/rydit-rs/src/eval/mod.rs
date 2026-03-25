@@ -1,12 +1,12 @@
 // crates/rydit-rs/src/eval/mod.rs
 // Evaluador de expresiones RyDit
 
-use std::collections::{HashMap, HashSet};
-use lizer::{Expr, Stmt};
 use blast_core::{Executor, Valor};
+use lizer::{Expr, Stmt};
+use std::collections::{HashMap, HashSet};
 
 // Importar funciones auxiliares desde main.rs
-use crate::{valor_serde_a_rydit, valor_rydit_a_serde, ejecutar_stmt, valor_a_bool};
+use crate::{ejecutar_stmt, valor_a_bool, valor_rydit_a_serde, valor_serde_a_rydit};
 
 /// Evaluar una expresión RyDit
 pub fn evaluar_expr(
@@ -46,11 +46,7 @@ pub fn evaluar_expr(
                     if idx < arr.len() {
                         arr[idx].clone()
                     } else {
-                        Valor::Error(format!(
-                            "Índice {} fuera de rango (len={})",
-                            idx,
-                            arr.len()
-                        ))
+                        Valor::Error(format!("Índice {} fuera de rango (len={})", idx, arr.len()))
                     }
                 } else {
                     Valor::Error("El índice debe ser un número".to_string())
@@ -878,7 +874,6 @@ pub fn evaluar_expr(
                 return return_value.unwrap_or(Valor::Vacio);
             }
 
-
             // ========================================================================
             // ANIMACIÓN 2D + ILUSIONES ÓPTICAS (v0.7.1.1)
             // ========================================================================
@@ -901,7 +896,11 @@ pub fn evaluar_expr(
             if name == "anim::ease_in_out" && args.len() == 1 {
                 if let Valor::Num(t) = evaluar_expr(&args[0], executor, funcs) {
                     let t = t.max(0.0).min(1.0);
-                    return Valor::Num(if t < 0.5 { 2.0 * t * t } else { 1.0 - 2.0 * (1.0 - t) * (1.0 - t) });
+                    return Valor::Num(if t < 0.5 {
+                        2.0 * t * t
+                    } else {
+                        1.0 - 2.0 * (1.0 - t) * (1.0 - t)
+                    });
                 }
                 return Valor::Error("anim::ease_in_out() requiere número (0.0-1.0)".to_string());
             }
@@ -927,7 +926,9 @@ pub fn evaluar_expr(
                 let pos = evaluar_expr(&args[0], executor, funcs);
                 let target = evaluar_expr(&args[1], executor, funcs);
                 let amount = evaluar_expr(&args[2], executor, funcs);
-                if let (Valor::Num(pos), Valor::Num(target), Valor::Num(ant)) = (pos, target, amount) {
+                if let (Valor::Num(pos), Valor::Num(target), Valor::Num(ant)) =
+                    (pos, target, amount)
+                {
                     let dir = if target > pos { -1.0 } else { 1.0 };
                     return Valor::Num(pos + dir * ant);
                 }
@@ -940,35 +941,72 @@ pub fn evaluar_expr(
                 let y = evaluar_expr(&args[1], executor, funcs);
                 let len = evaluar_expr(&args[2], executor, funcs);
                 let arrow = evaluar_expr(&args[3], executor, funcs);
-                if let (Valor::Num(x), Valor::Num(y), Valor::Num(len), Valor::Bool(arrow)) = (x, y, len, arrow) {
-                    return Valor::Array(vec![Valor::Num(x), Valor::Num(y), Valor::Num(len), Valor::Bool(arrow)]);
+                if let (Valor::Num(x), Valor::Num(y), Valor::Num(len), Valor::Bool(arrow)) =
+                    (x, y, len, arrow)
+                {
+                    return Valor::Array(vec![
+                        Valor::Num(x),
+                        Valor::Num(y),
+                        Valor::Num(len),
+                        Valor::Bool(arrow),
+                    ]);
                 }
-                return Valor::Error("illusion::muller_lyer() requiere (x, y, length, arrow_in)".to_string());
+                return Valor::Error(
+                    "illusion::muller_lyer() requiere (x, y, length, arrow_in)".to_string(),
+                );
             }
             if name == "illusion::ponzo" && args.len() == 4 {
-                let vals: Vec<Valor> = args.iter().map(|a| evaluar_expr(a, executor, funcs)).collect();
+                let vals: Vec<Valor> = args
+                    .iter()
+                    .map(|a| evaluar_expr(a, executor, funcs))
+                    .collect();
                 if vals.iter().all(|v| matches!(v, Valor::Num(_))) {
                     return Valor::Array(vals);
                 }
                 return Valor::Error("illusion::ponzo() requiere 4 números".to_string());
             }
             if name == "illusion::phi_effect" && args.len() == 6 {
-                let vals: Vec<Valor> = args.iter().map(|a| evaluar_expr(a, executor, funcs)).collect();
-                if let [Valor::Num(x1), Valor::Num(y1), Valor::Num(x2), Valor::Num(y2), Valor::Num(speed), Valor::Num(frame)] = vals.as_slice() {
+                let vals: Vec<Valor> = args
+                    .iter()
+                    .map(|a| evaluar_expr(a, executor, funcs))
+                    .collect();
+                if let [Valor::Num(x1), Valor::Num(y1), Valor::Num(x2), Valor::Num(y2), Valor::Num(speed), Valor::Num(frame)] =
+                    vals.as_slice()
+                {
                     let dist = ((x2 - x1).powi(2) + (y2 - y1).powi(2)).sqrt();
-                    let t = if dist > 0.0 { ((frame * speed) % (dist * 2.0)) / dist } else { 0.0 };
+                    let t = if dist > 0.0 {
+                        ((frame * speed) % (dist * 2.0)) / dist
+                    } else {
+                        0.0
+                    };
                     let t = if t > 1.0 { 2.0 - t } else { t };
-                    return Valor::Array(vec![Valor::Num(x1 + (x2 - x1) * t), Valor::Num(y1 + (y2 - y1) * t), Valor::Bool(t < 1.0)]);
+                    return Valor::Array(vec![
+                        Valor::Num(x1 + (x2 - x1) * t),
+                        Valor::Num(y1 + (y2 - y1) * t),
+                        Valor::Bool(t < 1.0),
+                    ]);
                 }
                 return Valor::Error("illusion::phi_effect() requiere 6 números".to_string());
             }
             if name == "illusion::fraser_spiral" && args.len() == 5 {
-                let vals: Vec<Valor> = args.iter().map(|a| evaluar_expr(a, executor, funcs)).collect();
-                if let [Valor::Num(cx), Valor::Num(cy), Valor::Num(min_r), Valor::Num(max_r), Valor::Num(step)] = vals.as_slice() {
+                let vals: Vec<Valor> = args
+                    .iter()
+                    .map(|a| evaluar_expr(a, executor, funcs))
+                    .collect();
+                if let [Valor::Num(cx), Valor::Num(cy), Valor::Num(min_r), Valor::Num(max_r), Valor::Num(step)] =
+                    vals.as_slice()
+                {
                     let mut circles = Vec::new();
                     let mut r = *min_r;
-                    while r <= *max_r { circles.push(Valor::Num(r)); r += step; }
-                    return Valor::Array(vec![Valor::Num(*cx), Valor::Num(*cy), Valor::Array(circles)]);
+                    while r <= *max_r {
+                        circles.push(Valor::Num(r));
+                        r += step;
+                    }
+                    return Valor::Array(vec![
+                        Valor::Num(*cx),
+                        Valor::Num(*cy),
+                        Valor::Array(circles),
+                    ]);
                 }
                 return Valor::Error("illusion::fraser_spiral() requiere 5 números".to_string());
             }
@@ -1060,4 +1098,3 @@ pub fn evaluar_expr(
 // ============================================================================
 // EVALUAR EXPRESIÓN (MODO GRÁFICO CON INPUT)
 // ============================================================================
-
