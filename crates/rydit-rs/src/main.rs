@@ -10,6 +10,7 @@ mod json_helpers;
 mod tests;
 mod cli;
 mod executor;
+mod module;
 
 // Re-exportar funciones del módulo eval
 pub use eval::evaluar_expr;
@@ -20,6 +21,9 @@ pub use json_helpers::{valor_serde_a_rydit, valor_rydit_a_serde};
 
 // Re-exportar ejecutores
 pub use executor::{ejecutar_programa, ejecutar_programa_gfx, ejecutar_programa_migui};
+
+// Re-exportar módulo system
+pub use module::{RyditModule, ModuleRegistry, ModuleContext, MathModule};
 
 // Imports necesarios para el código restante en main.rs
 use blast_core::{Executor, Valor};
