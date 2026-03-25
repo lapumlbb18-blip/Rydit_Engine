@@ -23,7 +23,7 @@ pub use executor::{ejecutar_programa, ejecutar_programa_gfx, ejecutar_programa_m
 
 // Imports necesarios para el código restante en main.rs
 use blast_core::{Executor, Valor};
-use lizer::{Expr, Lizer, Parser, Program, Stmt};
+use lizer::{Expr, Lizer, Parser, Stmt};
 use migui::{Color as MiguiColor, Migui, Rect, WidgetId};
 use rydit_gfx::{ColorRydit, Key, RyditGfx};
 use std::collections::{HashMap, HashSet};
