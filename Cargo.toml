@@ -6,7 +6,7 @@ members = [
     "crates/blast-core",
     "crates/rydit-rs",
     "crates/rydit-gfx",
-    "crates/migui"
+    "crates/migui",
 ]
 
 # =============================================================================
