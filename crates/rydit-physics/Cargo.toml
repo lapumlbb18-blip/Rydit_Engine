@@ -12,6 +12,6 @@ keywords = ["physics", "gravity", "projectile", "simulation", "game-engine"]
 categories = ["game-development", "simulation"]
 
 [dependencies]
-rydit-core = { version = "0.7.34", path = "../rydit-core" }
+rydit-core = { version = "0.8.2", path = "../rydit-core" }
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }

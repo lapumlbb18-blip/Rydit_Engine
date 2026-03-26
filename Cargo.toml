@@ -11,6 +11,7 @@ members = [
     "crates/rydit-rs",
     "crates/rydit-gfx",
     "crates/migui",
+    "crates/rydit-loader",
 ]
 
 # =============================================================================

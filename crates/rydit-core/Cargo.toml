@@ -1,6 +1,6 @@
 [package]
 name = "rydit-core"
-version = "0.7.34"
+version = "0.8.2"
 edition = "2021"
 description = "Core trait and registry for RyDit modules - Android game engine"
 license = "MIT"

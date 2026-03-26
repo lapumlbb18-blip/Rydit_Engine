@@ -1,69 +1,31 @@
-feat: v0.7.3.3 - rydit-anim extraído como crate independiente ✅
+feat: v0.8.1 - Gráficos Bezier + Fix Warnings ✅
 
-🎯 OBJETIVO
-===========
-Extraer rydit-anim como crate independiente para permitir:
-- Publicación en crates.io
-- Uso independiente en otros proyectos
-- Mejor organización del código
+RESUMEN:
+- Warnings: 50 → 26 (-48%)
+- 2 demos Bezier creados (bezier_demo.rydit, bezier_completo.rydit)
+- Termux-X11 funcionando @ 60 FPS
+- 203 tests passing
 
-📦 NUEVO CRATE
-==============
-✅ crates/rydit-anim/
-   - AnimModule (6 funciones de animación)
-   - 9 tests passing
-   - Dependencias: rydit-core, serde_json, serde
+FIXES TÉCNICOS:
+- vec_init_then_push: 2 warnings → 0 (geometry.rs)
+- should_implement_trait: 1 warning → 0 (FromStr para ColorRydit)
+- manual_clamp: 28 warnings → 3 (eval/mod.rs, lazos.rs, rydit-anim)
+- Tests actualizados para FromStr
 
-🔧 FUNCIONES IMPLEMENTADAS
-==========================
-- anim::ease_in(t) - Comienza lento, acelera
-- anim::ease_out(t) - Comienza rápido, frena
-- anim::ease_in_out(t) - Combina ambos
-- anim::squash(factor) - Aplasta (mantiene área)
-- anim::stretch(factor) - Estira (mantiene área)
-- anim::anticipate(pos, target, amount) - Retrocede antes de avanzar
+CAMBIOS PRINCIPALES:
+- crates/rydit-gfx: Implementado trait FromStr para ColorRydit
+- crates/rydit-anim: .clamp() en squash/stretch
+- crates/rydit-rs/eval: .clamp() en bezier y anim functions
+- crates/rydit-rs/lazos: .clamp() en LAZOS functions
+- crates/rydit-rs/main: from_str().unwrap_or() para colores
+- crates/rydit-science/geometry: vec![] en vez de push()
 
-🔧 CAMBIOS
-==========
-- Cargo.toml: workspace member rydit-anim
-- crates/rydit-rs/Cargo.toml: dependencia rydit-anim
-- crates/rydit-rs/src/main.rs: usa rydit_anim::AnimModule
-- crates/rydit-rs/src/lazos.rs: +6 funciones anim para LAZOS
+DEMOS BEZIER:
+- bezier_demo.rydit: Curva cúbica animada con puntos de control
+- bezier_completo.rydit: 3 tipos (lineal, cuadrática, cúbica)
 
-✅ VALIDACIÓN
-============
-- cargo check --workspace: ✅
-- cargo test -p rydit-anim: 9 tests passing ✅
-- cargo test -p rydit-rs: 53 tests passing ✅
-- Total: 81 tests (4 core + 9 science + 6 physics + 9 anim + 53 rydit-rs) ✅
-- LAZOS protocol: 100% funcional ✅
-  * anim::squash: [2.0, 0.5] ✅
-  * anim::ease_in: 0.25 (t=0.5) ✅
-  * anim::anticipate: 80.0 (100,200,20) ✅
-
-📊 MÉTRICAS
-===========
-- rydit-anim: ~260 líneas
-- Tests: 9
-- Build time: ~1m 15s (sin cambios significativos)
-- Binario release: ~730 KB
-
-🚀 PRÓXIMOS PASOS
-=================
-1. Publicar rydit-core, rydit-science, rydit-physics, rydit-anim en crates.io
-2. Implementar rydit-geometry (ilusiones ópticas, pendiente)
-3. Continuar con v0.7.3.0 - Gráficos Avanzados
-
-💡 ARQUITECTURA
-===============
-Workspace actual:
-├── rydit-core      ← Trait + Registry (4 tests) ✅
-├── rydit-science   ← Bezier + Stats (9 tests) ✅
-├── rydit-physics   ← Proyectil + N-Body (6 tests) ✅
-├── rydit-anim      ← Easing + Squash/Stretch (9 tests) ✅
-├── rydit-rs        ← Binario + módulos restantes (53 tests)
-└── rydit-geometry  ← (pendiente implementar)
-
----
-✅ RYDIT-ANIM EXTRAÍDO - LISTO PARA USAR
-✅ GEOMETRÍA QUEDA PENDIENTE
+MÉTRICAS:
+- Build time: 1m 06s (release)
+- Binario: 1.7 MB
+- Tests: 203 passing
+- Warnings: 26 (baja prioridad)
