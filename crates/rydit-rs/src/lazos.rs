@@ -53,37 +53,47 @@ fn ejecutar_comando_lazos(request: &Value) -> Value {
     // Routing de comandos
     let result = match method {
         // === SYSTEM ===
-        "system::version" => json!("v0.7.2.0-lazos"),
+        "system::version" => json!("v0.7.3-lazos"),
         "system::ping" => json!("pong"),
         "system::info" => {
             json!({
                 "name": "RyDit Engine",
-                "version": "v0.7.2.0-lazos",
+                "version": "v0.7.3-lazos",
                 "protocol": "LAZOS v1.0",
                 "commands": [
                     "system::version", "system::ping", "system::info",
                     "science::bezier::linear", "science::bezier::quadratic", "science::bezier::cubic",
+                    "science::stats::mean", "science::stats::median", "science::stats::min", "science::stats::max",
                     "physics::projectile", "physics::nbody_2",
-                    "stats::mean", "stats::median", "stats::min", "stats::max"
+                    "anim::ease_in", "anim::ease_out", "anim::ease_in_out",
+                    "anim::squash", "anim::stretch", "anim::anticipate"
                 ]
             })
         }
-        
+
         // === BEZIER ===
         "science::bezier::linear" => bezier_linear(params),
         "science::bezier::quadratic" => bezier_quadratic(params),
         "science::bezier::cubic" => bezier_cubic(params),
-        
+
+        // === ESTADÍSTICAS ===
+        "science::stats::mean" => stats_mean(params),
+        "science::stats::median" => stats_median(params),
+        "science::stats::min" => stats_min(params),
+        "science::stats::max" => stats_max(params),
+
         // === FÍSICA ===
         "physics::projectile" => physics_projectile(params),
         "physics::nbody_2" => physics_nbody_2(params),
-        
-        // === ESTADÍSTICAS ===
-        "stats::mean" => stats_mean(params),
-        "stats::median" => stats_median(params),
-        "stats::min" => stats_min(params),
-        "stats::max" => stats_max(params),
-        
+
+        // === ANIMACIÓN ===
+        "anim::ease_in" => anim_ease_in(params),
+        "anim::ease_out" => anim_ease_out(params),
+        "anim::ease_in_out" => anim_ease_in_out(params),
+        "anim::squash" => anim_squash(params),
+        "anim::stretch" => anim_stretch(params),
+        "anim::anticipate" => anim_anticipate(params),
+
         // === ERROR ===
         _ => json!({"error": format!("Unknown method: {}", method)}),
     };
@@ -321,4 +331,71 @@ fn stats_max(params: &Vec<Value>) -> Value {
     } else {
         json!({"error": "No numbers in array"})
     }
+}
+
+// ============================================================================
+// COMANDOS DE ANIMACIÓN (v0.7.3)
+// ============================================================================
+
+fn anim_ease_in(params: &Vec<Value>) -> Value {
+    if params.len() != 1 {
+        return json!({"error": "anim::ease_in requires 1 param: t (0.0-1.0)"});
+    }
+
+    let t = params[0].as_f64().unwrap_or(0.0).max(0.0).min(1.0);
+    json!(t * t)
+}
+
+fn anim_ease_out(params: &Vec<Value>) -> Value {
+    if params.len() != 1 {
+        return json!({"error": "anim::ease_out requires 1 param: t (0.0-1.0)"});
+    }
+
+    let t = params[0].as_f64().unwrap_or(0.0).max(0.0).min(1.0);
+    json!(t * (2.0 - t))
+}
+
+fn anim_ease_in_out(params: &Vec<Value>) -> Value {
+    if params.len() != 1 {
+        return json!({"error": "anim::ease_in_out requires 1 param: t (0.0-1.0)"});
+    }
+
+    let t = params[0].as_f64().unwrap_or(0.0).max(0.0).min(1.0);
+    let result = if t < 0.5 {
+        2.0 * t * t
+    } else {
+        1.0 - 2.0 * (1.0 - t) * (1.0 - t)
+    };
+    json!(result)
+}
+
+fn anim_squash(params: &Vec<Value>) -> Value {
+    if params.len() != 1 {
+        return json!({"error": "anim::squash requires 1 param: factor (0.5-2.0)"});
+    }
+
+    let factor = params[0].as_f64().unwrap_or(1.0).max(0.5).min(2.0);
+    json!([factor, 1.0 / factor])
+}
+
+fn anim_stretch(params: &Vec<Value>) -> Value {
+    if params.len() != 1 {
+        return json!({"error": "anim::stretch requires 1 param: factor (0.5-2.0)"});
+    }
+
+    let factor = params[0].as_f64().unwrap_or(1.0).max(0.5).min(2.0);
+    json!([1.0 / factor, factor])
+}
+
+fn anim_anticipate(params: &Vec<Value>) -> Value {
+    if params.len() != 3 {
+        return json!({"error": "anim::anticipate requires 3 params: pos, target, amount"});
+    }
+
+    let pos = params[0].as_f64().unwrap_or(0.0);
+    let target = params[1].as_f64().unwrap_or(0.0);
+    let amount = params[2].as_f64().unwrap_or(0.0);
+
+    let dir = if target > pos { -1.0 } else { 1.0 };
+    json!(pos + dir * amount)
 }

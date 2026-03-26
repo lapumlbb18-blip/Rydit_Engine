@@ -1,56 +1,69 @@
-feat: v0.7.3.2 - rydit-physics extraído como crate independiente ✅
+feat: v0.7.3.3 - rydit-anim extraído como crate independiente ✅
 
 🎯 OBJETIVO
 ===========
-Extraer rydit-physics como crate independiente para permitir:
+Extraer rydit-anim como crate independiente para permitir:
 - Publicación en crates.io
 - Uso independiente en otros proyectos
 - Mejor organización del código
 
 📦 NUEVO CRATE
 ==============
-✅ crates/rydit-physics/
-   - PhysicsModule (Proyectil + N-Body)
-   - 6 tests passing
+✅ crates/rydit-anim/
+   - AnimModule (6 funciones de animación)
+   - 9 tests passing
    - Dependencias: rydit-core, serde_json, serde
+
+🔧 FUNCIONES IMPLEMENTADAS
+==========================
+- anim::ease_in(t) - Comienza lento, acelera
+- anim::ease_out(t) - Comienza rápido, frena
+- anim::ease_in_out(t) - Combina ambos
+- anim::squash(factor) - Aplasta (mantiene área)
+- anim::stretch(factor) - Estira (mantiene área)
+- anim::anticipate(pos, target, amount) - Retrocede antes de avanzar
 
 🔧 CAMBIOS
 ==========
-- Cargo.toml: workspace member rydit-physics
-- crates/rydit-rs/Cargo.toml: dependencia rydit-physics
-- crates/rydit-rs/src/main.rs: usa rydit_physics::PhysicsModule
-- crates/rydit-rs/src/physics.rs: ELIMINADO (movido a crate)
+- Cargo.toml: workspace member rydit-anim
+- crates/rydit-rs/Cargo.toml: dependencia rydit-anim
+- crates/rydit-rs/src/main.rs: usa rydit_anim::AnimModule
+- crates/rydit-rs/src/lazos.rs: +6 funciones anim para LAZOS
 
 ✅ VALIDACIÓN
 ============
 - cargo check --workspace: ✅
-- cargo test -p rydit-physics: 6 tests passing ✅
+- cargo test -p rydit-anim: 9 tests passing ✅
 - cargo test -p rydit-rs: 53 tests passing ✅
-- Total: 72 tests (4 core + 9 science + 6 physics + 53 rydit-rs) ✅
+- Total: 81 tests (4 core + 9 science + 6 physics + 9 anim + 53 rydit-rs) ✅
 - LAZOS protocol: 100% funcional ✅
-- demo_lazos.sh: completada ✅
+  * anim::squash: [2.0, 0.5] ✅
+  * anim::ease_in: 0.25 (t=0.5) ✅
+  * anim::anticipate: 80.0 (100,200,20) ✅
 
 📊 MÉTRICAS
 ===========
-- rydit-physics: ~190 líneas
-- Tests: 6
-- Build time: ~1m 14s (sin cambios significativos)
-- Binario release: ~725 KB
+- rydit-anim: ~260 líneas
+- Tests: 9
+- Build time: ~1m 15s (sin cambios significativos)
+- Binario release: ~730 KB
 
 🚀 PRÓXIMOS PASOS
 =================
-1. Implementar rydit-geometry (ilusiones ópticas)
-2. Publicar rydit-core, rydit-science, rydit-physics en crates.io
+1. Publicar rydit-core, rydit-science, rydit-physics, rydit-anim en crates.io
+2. Implementar rydit-geometry (ilusiones ópticas, pendiente)
 3. Continuar con v0.7.3.0 - Gráficos Avanzados
 
 💡 ARQUITECTURA
 ===============
 Workspace actual:
-├── rydit-core      ← Trait + Registry (4 tests)
+├── rydit-core      ← Trait + Registry (4 tests) ✅
 ├── rydit-science   ← Bezier + Stats (9 tests) ✅
 ├── rydit-physics   ← Proyectil + N-Body (6 tests) ✅
+├── rydit-anim      ← Easing + Squash/Stretch (9 tests) ✅
 ├── rydit-rs        ← Binario + módulos restantes (53 tests)
 └── rydit-geometry  ← (pendiente implementar)
 
 ---
-✅ RYDIT-PHYSICS EXTRAÍDO - LISTO PARA USAR
+✅ RYDIT-ANIM EXTRAÍDO - LISTO PARA USAR
+✅ GEOMETRÍA QUEDA PENDIENTE

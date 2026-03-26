@@ -32,6 +32,7 @@ pub use module::{MathModule, ModuleContext, ModuleRegistry as BlastModuleRegistr
 // Re-exportar módulos con trait rydit-core (crates externos)
 pub use rydit_science::ScienceModule;
 pub use rydit_physics::PhysicsModule;
+pub use rydit_anim::AnimModule;
 pub use geometry::GeometryModule;
 pub use rydit_core::{RyditModule, ModuleRegistry, ModuleError, ModuleResult};
 
