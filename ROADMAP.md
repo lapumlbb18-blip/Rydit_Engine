@@ -1,243 +1,218 @@
-# 🛣️ Shield Project - Roadmap
+# 🛣️ RyDit Engine - Roadmap
 
-**Versión Actual:** v0.0.1 (Pre-Alpha)
-
-Este documento describe el plan de desarrollo del lenguaje RyDit y el ecosistema Shield.
-
----
-
-## 📍 Versión Actual: v0.0.1 (Pre-Alpha)
-
-### ✅ Completado
-
-- [x] Arquitectura multi-crate funcional
-- [x] Compilación en Termux con raylib nativo
-- [x] Lexer básico (Lizer) tokeniza scripts
-- [x] Motor de audio (BlastCore) responde a tokens
-- [x] Wrapper gráfico (VShield) con raylib
-- [x] sccache configurado para builds rápidos
-- [x] Documentación completa (README + Guía)
-- [x] Optimizaciones de RAM para dispositivos < 4GB
-
-### ⚠️ Limitaciones Actuales
-
-- Script hardcodeado en `main.rs` (requiere recompilar para cambios)
-- Lexer usa `split_whitespace()` (no parsea estructura real)
-- Tokens no se ejecutan, solo imprimen
-- Sin manejo de errores real
-- Sin tests automatizados
+**Versión Actual:** v0.7.3.3 (Split Progresivo ✅)
+**Próxima Versión:** v0.7.3.x (rydit-geometry)
+**Última Actualización:** 2026-03-26
 
 ---
 
-## 🎯 Próxima Versión: v0.0.2 (Alpha Temprana)
+## 📍 Versión Actual: v0.7.3.3 - 4 CRATES EXTRAÍDOS ✅
+
+### ✅ Completado en esta sesión
+
+- [x] **rydit-core** - Trait RyditModule + Registry (4 tests)
+- [x] **rydit-science** - Bezier + Stats (9 tests)
+- [x] **rydit-physics** - Projectile + NBody (6 tests)
+- [x] **rydit-anim** - Easing + Squash/Stretch (9 tests)
+- [x] **LAZOS protocol** - 100% funcional con módulos
+- [x] **Backups Google Drive** - 4 backups creados
+- [x] **Push GitHub** - Todo sincronizado
+- [x] **Documentación** - README + QWEN actualizados
+
+### 📊 Métricas Actuales
+
+| Crate | Tests | Líneas | Estado |
+|-------|-------|--------|--------|
+| rydit-core | 4 | ~150 | ✅ Completado |
+| rydit-science | 9 | ~330 | ✅ Completado |
+| rydit-physics | 6 | ~190 | ✅ Completado |
+| rydit-anim | 9 | ~260 | ✅ Completado |
+| rydit-rs | 53 | ~5,000 | ✅ Binario |
+| **Total** | **81** | **~5,930** | **✅ Funcional** |
+
+### ⚠️ Pendiente
+
+- [ ] rydit-geometry (ilusiones ópticas)
+- [ ] Publicación en crates.io
+- [ ] Linux/Windows builds
+
+---
+
+## 🎯 Próxima Versión: v0.7.3.x - rydit-geometry
 
 ### Objetivos Principales
 
-1. **CLI Básica** - Ejecutar scripts sin recompilar
-2. **Parser Mejorado** - Entender estructura, no solo palabras
-3. **Ejecución Real** - Que los tokens hagan algo
+1. **Implementar geometría** - Ilusiones ópticas reales
+2. **Tests visuales** - Validar con Termux-X11
+3. **Integrar con LAZOS** - Comandos JSON-RPC
 
 ### Features Planeadas
 
-```bash
-# Pasar script por línea de comandos
-cargo run -- "shield.init onda.core"
+```rust
+// geometry::penrose - Triángulo imposible
+echo '{"method":"geometry::penrose","params":[400,300,100]}' | rydit-rs --lazos
 
-# Leer desde archivo
-cargo run -- script.rydit
+// geometry::impossible_cube - Cubo imposible
+echo '{"method":"geometry::impossible_cube","params":[400,300,80]}' | rydit-rs --lazos
 
-# Ver tokens generados
-cargo run -- --tokens script.rydit
+// geometry::spiral - Espiral de Fraser
+echo '{"method":"geometry::spiral","params":[400,300,10,150,5]}' | rydit-rs --lazos
 ```
 
 ### Criterios de Aceptación
 
-- [ ] Poder cambiar script sin recompilar
-- [ ] Parser que entienda `dark.slot x = 100` como asignación
-- [ ] BlastCore ejecute acciones reales (no solo prints)
-- [ ] Manejo básico de errores de sintaxis
+- [ ] 3 ilusiones implementadas (Penrose, Cube, Spiral)
+- [ ] 6+ tests passing
+- [ ] Demo visual funcional en Termux-X11
+- [ ] Backup + Commit + Push
 
 ### Tiempo Estimado
 
-1-2 semanas de desarrollo
+2-3 horas de desarrollo
 
 ---
 
-## 🚀 Versión: v0.1.0 (Alpha Pública)
+## 🚀 Versión: v0.8.0.0 - Ecosistema Ry (Crates.io + Multi-plataforma)
 
 ### Objetivos Principales
 
-1. **Lenguaje Funcional** - Scripts ejecutables reales
-2. **Documentación Pública** - README para usuarios
-3. **Ejemplos Incluidos** - Scripts de demostración
+1. **Publicación crates.io** - 4 crates disponibles
+2. **Linux native** - Build en Linux
+3. **Windows native** - Build en Windows
+4. **CI/CD** - GitHub Actions
 
 ### Features Planeadas
 
-- [ ] Parser completo con AST
-- [ ] Variables y expresiones matemáticas
-- [ ] Condicionales (`onif` / `blelse`)
-- [ ] Funciones básicas (`ryprime`)
-- [ ] Sistema de tipos básico
-- [ ] Errores descriptivos
-- [ ] 5-10 scripts de ejemplo
-- [ ] Tests básicos del lexer y parser
+#### Publicación crates.io
+- [ ] rydit-core (primero, sin dependencias externas)
+- [ ] rydit-science (depende de rydit-core)
+- [ ] rydit-physics (depende de rydit-core)
+- [ ] rydit-anim (depende de rydit-core)
 
-### Ejemplo de Script v0.1.0
+#### Multi-plataforma
+- [ ] rydit-linux (binario Linux)
+- [ ] rydit-windows (binario Windows .exe)
+- [ ] GitHub Actions (build automático)
 
-```rydit
-shield.init
-dark.slot jugador_vida = 100
-dark.slot enemigo = "dragon"
-
-onif jugador_vida > 50
-    onda.core
-    ryprime ataque = 25
-blelse
-    dark.slot huir = true
-```
+#### Documentación
+- [ ] docs.rs para cada crate
+- [ ] README en inglés
+- [ ] Ejemplos de uso
 
 ### Criterios de Aceptación
 
-- [ ] Scripts complejos ejecutan sin errores
-- [ ] Documentación para nuevos usuarios
-- [ ] Al menos 100 líneas de tests
-- [ ] Binario < 10 MB
+- [ ] 4 crates en crates.io
+- [ ] Binarios Linux + Windows funcionales
+- [ ] CI/CD verde (tests passing)
+- [ ] Documentación completa
 
 ### Tiempo Estimado
 
-1-2 meses de desarrollo
+4-6 semanas de desarrollo
 
 ---
 
 ## 🔮 Versiones Futuras
 
-### v0.2.0 (Beta Temprana)
+### v0.9.0.0 - Expansión (2-3 meses)
 
-- [ ] VShield con ventana gráfica funcional
-- [ ] Sistema de eventos
-- [ ] Integración audio-gráficos
-- [ ] REPL interactivo
-- [ ] Debugger básico
+- [ ] **ry-web** - WebAssembly (correr en navegador)
+- [ ] **HTTP nativo** - Sin Python bridge
+- [ ] **WebSocket** - Comunicación en tiempo real
+- [ ] **Git integration** - Control de versiones embebido
 
-### v0.3.0 (Beta Pública)
+### v1.0.0 - Release Estable (6-8 meses)
 
-- [ ] Librería estándar básica
-- [ ] Sistema de módulos
-- [ ] Imports entre archivos
-- [ ] Documentación de API
-- [ ] Benchmark de rendimiento
+- [ ] **API estable** - Sin breaking changes
+- [ ] **20+ demos** - Ejemplos reales
+- [ ] **Documentación completa** - Libro/tutorial
+- [ ] **Tutoriales YouTube** - Canal oficial
+- [ ] **Comunidad activa** - Discord, contribuidores
 
-### v1.0.0 (Release Candidata)
+### v2.0.0 - IDE RyDit (1 año)
 
-- [ ] Lenguaje estable
-- [ ] API documentada
-- [ ] Tests exhaustivos
-- [ ] Ejemplos avanzados
-- [ ] Comunidad inicial
+- [ ] **Editor integrado** - Syntax highlighting
+- [ ] **Debugger** - Breakpoints, step-through
+- [ ] **Profiler** - Performance analysis
+- [ ] **Asset manager** - Sprites, sonidos
 
 ---
 
-## 📊 Estado por Componente
+## 📊 Comparativa de Versiones
 
-| Componente | v0.0.1 | v0.0.2 | v0.1.0 | v1.0.0 |
-|------------|--------|--------|--------|--------|
-| **Lizer (Lexer)** | ✅ Básico | ⚠️ Mejorado | ✅ Completo | ✅ Estable |
-| **Parser** | ❌ No existe | ⚠️ Básico | ✅ AST | ✅ Completo |
-| **Ejecutor** | ❌ Prints | ⚠️ Acciones | ✅ Real | ✅ Optimizado |
-| **BlastCore** | ⚠️ Simulado | ⚠️ Básico | ✅ Funcional | ✅ Completo |
-| **VShield** | ⚠️ Stub | ⚠️ Básico | ✅ Ventana | ✅ Gráficos |
-| **CLI** | ❌ Hardcodeado | ✅ Básica | ✅ Completa | ✅ Avanzada |
-| **Tests** | ❌ No hay | ⚠️ Mínimos | ✅ Básicos | ✅ Exhaustivos |
-| **Docs** | ✅ Internas | ⚠️ Básicas | ✅ Usuario | ✅ Completa |
-
----
-
-## 🤔 Decisiones Pendientes
-
-### 1. Sintaxis del Lenguaje
-
-**Opción A: Estilo actual (palabras clave)**
-```
-shield.init dark.slot x = 100
-```
-
-**Opción B: Estilo tradicional**
-```
-init
-let x = 100
-```
-
-**Opción C: Estilo funcional**
-```
-init()
-let(x, 100)
-```
-
-> **Decisión pendiente:** Esperando feedback de pruebas tempranas
+| Versión | Fecha | Tests | Crates | Estado |
+|---------|-------|-------|--------|--------|
+| v0.7.2.0 | 2026-03-25 | 68 | 1 (monolito) | ✅ LAZOS |
+| v0.7.3.0 | 2026-03-26 | 72 | 2 (core + science) | ✅ Split inicia |
+| v0.7.3.1 | 2026-03-26 | 72 | 3 (+ physics) | ✅ Extracción |
+| v0.7.3.2 | 2026-03-26 | 72 | 4 (+ anim) | ✅ Completado |
+| v0.7.3.3 | 2026-03-26 | 81 | 4 | ✅ GitHub |
+| v0.7.3.x | Próxima | 87+ | 5 | ⏳ Geometry |
+| v0.8.0.0 | 4-6 semanas | 100+ | 4 + crates.io | 🔮 Multi-platform |
+| v1.0.0 | 6-8 meses | 500+ | 20+ | 🔮 Production |
 
 ---
 
-### 2. Sistema de Tipos
+## 🎯 Métricas de Éxito
 
-**Opción A: Dinámico (como JavaScript)**
-```
-x = 100
-x = "hola"  # Válido
-```
+### Código
+- ✅ **81 tests** passing
+- ✅ **~5,930 líneas** en crates
+- ✅ **4 crates** independientes
+- ✅ **730 KB** binario release
 
-**Opción B: Estático (como Rust)**
-```
-let x: num = 100
-x = "hola"  # Error
-```
+### Comunidad (Objetivos v1.0.0)
+- 🔮 **1,000+** stars GitHub
+- 🔮 **50+** contribuidores
+- 🔮 **100+** demos de comunidad
+- 🔮 **10,000+** descargas crates.io
 
-**Opción C: Inferido (como TypeScript)**
-```
-let x = 100  # Infere num
-x = "hola"   # Error
-```
-
-> **Decisión pendiente:** Probablemente Opción A para v0.1.0, evaluar después
-
----
-
-### 3. Ejecución de Gráficos
-
-**Opción A: Immediate mode (raylib clásico)**
-```
-draw.circle(100, 100, 50, RED)
-```
-
-**Opción B: Componentes**
-```
-component Circle { x: 100, y: 100, r: 50, color: RED }
-```
-
-> **Decisión pendiente:** Opción A para v0.1.0 por simplicidad
+### Plataforma (Objetivos v1.0.0)
+- 🔮 Android (Termux) ✅ Nativo
+- 🔮 Linux ✅ Nativo
+- 🔮 Windows ✅ Nativo
+- 🔮 Web (WASM) 🔮 En desarrollo
+- 🔮 iOS ⏳ Futuro
 
 ---
 
-## 📝 Cómo Contribuir a Decisiones
+## 📝 Notas de Desarrollo
 
-Si estás desarrollando este proyecto, considera:
+### Filosofía RyDit
 
-1. **Probar la v0.0.1** - Entiende la arquitectura actual
-2. **Identificar dolores** - ¿Qué es incómodo de usar?
-3. **Proponer sintaxis** - ¿Cómo debería verse el código?
-4. **Priorizar features** - ¿Qué es más urgente?
+1. **Mobile-First Real** - Nació en Android, no portado
+2. **Ligero y Portable** - <1 MB, sin dependencias pesadas
+3. **Educativo** - Código abierto, lenguaje en español
+4. **David vs Goliat** - 6,000 líneas bien escritas > 500,000 líneas
+5. **Rendimiento Estable** - Sin calentamiento, RAM <100 MB, 60 FPS
+
+### Lecciones Aprendidas
+
+✅ **Lo que funcionó:**
+- Punto de restauración git antes de cambios grandes
+- Backup local + Google Drive después de cada crate
+- Tests primero - validar antes y después
+- Extracción incremental - un crate por vez
+- Commit messages descriptivos
+
+⚠️ **Desafíos:**
+- `eval/mod.rs` usa `Valor` (blast_core), no `serde_json::Value`
+- `lazos.rs` tenía funciones hardcodeadas
+- Termux-X11 requerido para tests visuales
+
+🚀 **Mejoras Futuras:**
+- Unificar `Valor` ↔ `serde_json::Value` conversion
+- Usar módulos en lazos.rs en vez de funciones hardcodeadas
+- Implementar CI/CD con GitHub Actions
 
 ---
 
-## 🔄 Actualizaciones del Roadmap
+<div align="center">
 
-Este documento se actualiza cuando:
+**🛡️ RyDit Engine Roadmap**
 
-- Se completa una versión mayor
-- Se toman decisiones de diseño
-- Se agregan nuevas features planeadas
-- Cambian las prioridades
+*v0.7.3.3 ✅ | 81 tests | 4 crates | GitHub actualizado*
 
----
+**Próximo: v0.7.3.x → rydit-geometry | v0.8.0.0 → crates.io**
 
-**Última actualización:** 2026-03-14
-**Próxima revisión:** Después de v0.0.2
+</div>

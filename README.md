@@ -6,8 +6,8 @@
 
 **"David vs Goliat - Un motor de videojuegos en Rust, construido 100% en un Redmi Note 8"**
 
-[![Version](https://img.shields.io/badge/version-v0.7.1.4-blue.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
-[![Tests](https://img.shields.io/badge/tests-163%20passing-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![Version](https://img.shields.io/badge/version-v0.7.3.3-blue.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![Tests](https://img.shields.io/badge/tests-81%20passing-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
 [![raylib](https://img.shields.io/badge/raylib-5.5-purple.svg)](https://www.raylib.com/)
 [![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
@@ -103,7 +103,7 @@ ryda frame < 1000 {
 
 ---
 
-## 🔌 Arquitectura Modular (v0.7.1.x+)
+## 🔌 Arquitectura Modular (v0.7.3.x+)
 
 **Filosofía:** Núcleo estable + módulos extensibles (Manim + Bevy style).
 
@@ -121,48 +121,49 @@ ryda frame < 1000 {
 │  │  - main.rs (game loop, rydit-gfx FFI)            │   │
 │  │  - eval/mod.rs (evaluar_expr)                    │   │
 │  │  - repl.rs (REPL interactivo)                    │   │
-│  │  Tamaño: ~4,500 líneas (ESTABLE)                 │   │
+│  │  - lazos.rs (protocolo LAZOS)                    │   │
+│  │  Tamaño: ~5,000 líneas (ESTABLE)                 │   │
 │  └─────────────────────────────────────────────────┘   │
 │                         │                               │
 │  ┌──────────────────────▼──────────────────────────┐   │
-│  │  CAPA 2: MÓDULOS INDEPENDIENTES (CRATES)         │   │
+│  │  CAPA 2: CRATES INDEPENDIENTES (PUBLICABLES)     │   │
 │  │                                                   │   │
-│  │  v0.7.1.0 🔬 crates/rydit-mod-scene/             │   │
-│  │     ├── Scene (contexto animación)               │   │
-│  │     ├── Camera (viewpoint, zoom, pan)            │   │
-│  │     ├── Timeline (keyframes, duration)           │   │
-│  │     └── MObject (Mathematical Object)            │   │
+│  │  v0.7.3.0 🔷 crates/rydit-core/                  │   │
+│  │     ├── RyditModule (trait)                      │   │
+│  │     ├── ModuleRegistry                           │   │
+│  │     └── ModuleError/Result                       │   │
+│  │     Tests: 4 passing ✅                          │   │
 │  │                                                   │   │
-│  │  v0.7.1.0 🔬 crates/rydit-mod-physics/           │   │
-│  │     ├── Projectile (proyectiles)                 │   │
-│  │     ├── NBody (órbitas, gravedad)                │   │
-│  │     ├── Wave (ondas, sonido)                     │   │
-│  │     └── Particle (sistemas)                      │   │
+│  │  v0.7.3.1 🔬 crates/rydit-science/               │   │
+│  │     ├── Bezier (linear, quadratic, cubic)        │   │
+│  │     └── Stats (mean, median, min, max)           │   │
+│  │     Tests: 9 passing ✅                          │   │
 │  │                                                   │   │
-│  │  v0.7.1.1 🎨 crates/rydit-mod-anim/              │   │
-│  │     ├── Easing (12 funciones)                    │   │
-│  │     ├── Transform (scale, rotate, translate)     │   │
-│  │     └── Principles (12 principios animación)     │   │
+│  │  v0.7.3.2 ⚛️  crates/rydit-physics/               │   │
+│  │     ├── Projectile (trayectoria, altura)         │   │
+│  │     └── NBody (gravedad 2 cuerpos)               │   │
+│  │     Tests: 6 passing ✅                          │   │
 │  │                                                   │   │
-│  │  v0.7.1.2 🌐 crates/rydit-mod-network/           │   │
-│  │     ├── HTTP (GET, POST, PUT, DELETE)            │   │
-│  │     ├── WebSocket (connect, send, recv)          │   │
-│  │     └── TCP/UDP (sockets)                        │   │
+│  │  v0.7.3.3 🎨 crates/rydit-anim/                  │   │
+│  │     ├── Easing (ease_in, ease_out, ease_in_out)  │   │
+│  │     ├── Squash & Stretch                         │   │
+│  │     └── Anticipation                             │   │
+│  │     Tests: 9 passing ✅                          │   │
 │  │                                                   │   │
-│  │  v0.7.1.3 📊 crates/rydit-mod-data/              │   │
-│  │     ├── CSV (load, save, parse)                  │   │
-│  │     ├── HDF5 (scientific data)                   │   │
-│  │     ├── Stats (mean, std, regression)            │   │
-│  │     └── Plot (2D/3D graphs)                      │   │
+│  │  v0.7.3.x 👁️  crates/rydit-geometry/ (PENDIENTE)   │   │
+│  │     ├── Penrose Triangle                         │   │
+│  │     ├── Impossible Cube                          │   │
+│  │     └── Optical Spirals                          │   │
 │  │                                                   │   │
-│  │  v0.7.2.0 🎬 crates/rydit-mod-nodes/             │   │
-│  │     ├── Node (base class)                        │   │
-│  │     ├── SceneNode (container)                    │   │
-│  │     ├── TransformNode (position, rotation)       │   │
-│  │     └── ComponentNode (custom data)              │   │
-│  │                                                   │   │
-│  │  Cada módulo: ~500-1000 líneas                   │   │
+│  │  Cada crate: ~150-330 líneas                     │   │
 │  │  Independiente, testeable, publicable crates.io  │   │
+│  └─────────────────────────────────────────────────┘   │
+│                                                         │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │  CAPA 3: APLICACIÓN PRINCIPAL                    │   │
+│  │  - crates/rydit-rs/ (binario)                    │   │
+│  │  - Protocolo LAZOS (stdin/stdout JSON-RPC)       │   │
+│  │  - Tests: 53 passing ✅                          │   │
 │  └─────────────────────────────────────────────────┘   │
 │                                                         │
 └─────────────────────────────────────────────────────────┘
@@ -170,7 +171,7 @@ ryda frame < 1000 {
 
 **Ventajas:**
 - ✅ Núcleo estable (no se rompe)
-- ✅ Módulos independientes (testing fácil)
+- ✅ Crates independientes (testing fácil)
 - ✅ Comunidad puede crear módulos
 - ✅ Publicables a crates.io
 - ✅ Manim + Bevy = Arquitectura probada
@@ -178,12 +179,12 @@ ryda frame < 1000 {
 **Versionamiento Granular:**
 ```
 v0.MAJOR.MINOR.PATCH
-v0.7.1.0 → Módulo Ciencia
-v0.7.1.1 → Módulo Animación
-v0.7.1.2 → Módulo Red
-v0.7.1.3 → Módulo Datos
-v0.7.2.0 → Sistema Nodos
-v0.8.0.0 → Integración Completa
+v0.7.3.0 → rydit-core (trait + registry)
+v0.7.3.1 → rydit-science (Bezier + Stats)
+v0.7.3.2 → rydit-physics (Projectile + NBody)
+v0.7.3.3 → rydit-anim (Easing + Squash/Stretch)
+v0.7.3.x → rydit-geometry (pendiente)
+v0.8.0.0 → Publicación crates.io + Linux/Windows
 ```
 
 ---
@@ -513,8 +514,13 @@ Crates:
 | **v0.7.1.1** | ✅ | **ANIMACIÓN 2D** (10 funciones, 12 principios Disney, 4 ilusiones) | 2026-03-24 |
 | **v0.7.1.2** | 🔜 | **Módulo RED** (HTTP, WebSocket, TCP/UDP) | Próxima sesión |
 | **v0.7.1.3** | 🔮 | **Módulo DATOS** (CSV, HDF5, plots, statistics) | 2-3 semanas |
-| **v0.7.2.0** | 🔮 | **Sistema NODOS/ESCENAS** (árbol de nodos, transforms) | 6-8 semanas |
-| **v0.8.0.0** | 🔮 | **Integración COMPLETA** (Manim + Bevy architecture) | 8-12 semanas |
+| **v0.7.2.0** | ✅ | **Protocolo LAZOS** (stdin/stdout JSON-RPC, Python bridge) | 2026-03-25 |
+| **v0.7.3.0** | ✅ | **SPLIT PROGRESIVO** (RyditModule trait + registry) | 2026-03-26 |
+| **v0.7.3.1** | ✅ | **rydit-science** (Bezier + Stats extraídos) | 2026-03-26 |
+| **v0.7.3.2** | ✅ | **rydit-physics** (Projectile + NBody extraídos) | 2026-03-26 |
+| **v0.7.3.3** | ✅ | **rydit-anim** (Easing + Squash/Stretch extraídos) | 2026-03-26 |
+| **v0.7.3.x** | ⏳ | **rydit-geometry** (Ilusiones ópticas, pendiente) | Próxima sesión |
+| **v0.8.0.0** | 🔮 | **Publicación crates.io + Linux/Windows** | 4-6 semanas |
 | **v1.0.0** | 🔮 | Production Ready | 6-8 meses |
 
 </div>
@@ -840,11 +846,9 @@ MIT License - Ver [LICENSE](LICENSE) para más detalles.
 
 *¿Quieres evaluar este proyecto?* Únete al **Discord Mouredev**: https://discord.gg/mouredev y comparte tu opinión en #mostrar-proyecto
 
-*Próxima actualización:* v0.7.2.0 - Protocolo LAZOS (Contenedores, Mundos, Actores)
-
-*Última actualización:* 2026-03-25 (v0.7.1.4 - Bezier + RyDit Science + Limpieza)
-*Próxima versión:* v0.7.2.0 (Protocolo LAZOS + Contenedores + Python Bridge)
-*Estado:* ✅ **163 TESTS - 21 FUNCIONES SCIENCE - 6 BEZIER - 12 WIDGETS - AUDIO - PARTÍCULAS - 700 KB**
+*Última actualización:* 2026-03-26 (v0.7.3.3 - 4 crates extraídos: core, science, physics, anim)
+*Próxima versión:* v0.7.3.x (rydit-geometry) → v0.8.0.0 (crates.io + Linux/Windows)
+*Estado:* ✅ **81 TESTS - 4 CRATES INDEPENDIENTES - LAZOS FUNCIONAL - 730 KB**
 
 ---
 
