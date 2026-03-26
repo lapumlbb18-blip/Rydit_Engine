@@ -1,4 +1,4 @@
-// RYDIT-RS v0.7.3.1 - LAZOS EDITION con RyditModule trait
+// RYDIT-RS v0.7.3.4 - LAZOS EDITION con RyditModule trait
 // Main.rs dividido en módulos para mejor mantenibilidad
 
 // Módulos locales
@@ -7,7 +7,6 @@ mod cli;
 mod config;
 mod eval;
 mod executor;
-mod geometry;    // ← Módulo de Geometría (ilusiones ópticas)
 mod json_helpers;
 mod lazos;       // ← PROTOCOLO LAZOS
 mod module;
@@ -33,7 +32,6 @@ pub use module::{MathModule, ModuleContext, ModuleRegistry as BlastModuleRegistr
 pub use rydit_science::ScienceModule;
 pub use rydit_physics::PhysicsModule;
 pub use rydit_anim::AnimModule;
-pub use geometry::GeometryModule;
 pub use rydit_core::{RyditModule, ModuleRegistry, ModuleError, ModuleResult};
 
 // Imports necesarios para el código restante en main.rs

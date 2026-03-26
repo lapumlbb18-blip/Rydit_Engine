@@ -1,8 +1,11 @@
 //! RyDit Science - Módulo de Ciencia para RyDit
-//! 
+//!
 //! Proporciona funcionalidad de:
 //! - Curvas Bezier (lineal, cuadrática, cúbica)
 //! - Estadísticas (media, mediana, mínimo, máximo)
+//! - Geometría (ilusiones ópticas: Penrose, Cubo imposible, Espiral)
+
+pub mod geometry;
 
 use rydit_core::{RyditModule, ModuleResult, ModuleError};
 use serde_json::{Value, json};
@@ -29,6 +32,11 @@ impl RyditModule for ScienceModule {
         cmds.insert("stats::median", "Mediana");
         cmds.insert("stats::min", "Valor mínimo");
         cmds.insert("stats::max", "Valor máximo");
+        cmds.insert("geometry::penrose", "Triángulo de Penrose");
+        cmds.insert("geometry::impossible_cube", "Cubo imposible");
+        cmds.insert("geometry::spiral", "Espiral óptica");
+        cmds.insert("geometry::muller_lyer", "Ilusión Müller-Lyer");
+        cmds.insert("geometry::ponzo", "Ilusión de Ponzo");
         cmds
     }
 
@@ -41,6 +49,11 @@ impl RyditModule for ScienceModule {
             "stats::median" => self.stats_median(params),
             "stats::min" => self.stats_min(params),
             "stats::max" => self.stats_max(params),
+            "geometry::penrose" => self.geometry_penrose(params),
+            "geometry::impossible_cube" => self.geometry_impossible_cube(params),
+            "geometry::spiral" => self.geometry_spiral(params),
+            "geometry::muller_lyer" => self.geometry_muller_lyer(params),
+            "geometry::ponzo" => self.geometry_ponzo(params),
             _ => Err(ModuleError {
                 code: "UNKNOWN_COMMAND".to_string(),
                 message: format!("Comando desconocido: {}", command),
@@ -242,6 +255,119 @@ impl ScienceModule {
             })
         }
     }
+
+    // ================================================================
+    // Funciones de Geometría - Ilusiones Ópticas
+    // ================================================================
+
+    /// Triángulo de Penrose (tribar imposible)
+    fn geometry_penrose(&self, params: Value) -> ModuleResult {
+        let arr = params.as_array().ok_or_else(|| ModuleError {
+            code: "INVALID_PARAMS".to_string(),
+            message: "Params must be an array".to_string(),
+        })?;
+
+        if arr.len() != 3 {
+            return Err(ModuleError {
+                code: "INVALID_PARAMS".to_string(),
+                message: "geometry::penrose requires 3 params: center_x, center_y, size".to_string(),
+            });
+        }
+
+        let center_x = arr[0].as_f64().unwrap_or(400.0);
+        let center_y = arr[1].as_f64().unwrap_or(300.0);
+        let size = arr[2].as_f64().unwrap_or(100.0);
+
+        Ok(geometry::penrose(center_x, center_y, size))
+    }
+
+    /// Cubo imposible (Necker cube)
+    fn geometry_impossible_cube(&self, params: Value) -> ModuleResult {
+        let arr = params.as_array().ok_or_else(|| ModuleError {
+            code: "INVALID_PARAMS".to_string(),
+            message: "Params must be an array".to_string(),
+        })?;
+
+        if arr.len() != 3 {
+            return Err(ModuleError {
+                code: "INVALID_PARAMS".to_string(),
+                message: "geometry::impossible_cube requires 3 params: center_x, center_y, size".to_string(),
+            });
+        }
+
+        let center_x = arr[0].as_f64().unwrap_or(400.0);
+        let center_y = arr[1].as_f64().unwrap_or(300.0);
+        let size = arr[2].as_f64().unwrap_or(100.0);
+
+        Ok(geometry::impossible_cube(center_x, center_y, size))
+    }
+
+    /// Espiral óptica (Arquímedes)
+    fn geometry_spiral(&self, params: Value) -> ModuleResult {
+        let arr = params.as_array().ok_or_else(|| ModuleError {
+            code: "INVALID_PARAMS".to_string(),
+            message: "Params must be an array".to_string(),
+        })?;
+
+        if arr.len() != 5 {
+            return Err(ModuleError {
+                code: "INVALID_PARAMS".to_string(),
+                message: "geometry::spiral requires 5 params: center_x, center_y, turns, radius, points".to_string(),
+            });
+        }
+
+        let center_x = arr[0].as_f64().unwrap_or(400.0);
+        let center_y = arr[1].as_f64().unwrap_or(300.0);
+        let turns = arr[2].as_i64().unwrap_or(3) as i32;
+        let radius = arr[3].as_f64().unwrap_or(100.0);
+        let points = arr[4].as_i64().unwrap_or(20) as i32;
+
+        Ok(geometry::spiral(center_x, center_y, turns, radius, points))
+    }
+
+    /// Ilusión de Müller-Lyer (flechas)
+    fn geometry_muller_lyer(&self, params: Value) -> ModuleResult {
+        let arr = params.as_array().ok_or_else(|| ModuleError {
+            code: "INVALID_PARAMS".to_string(),
+            message: "Params must be an array".to_string(),
+        })?;
+
+        if arr.len() != 3 {
+            return Err(ModuleError {
+                code: "INVALID_PARAMS".to_string(),
+                message: "geometry::muller_lyer requires 3 params: center_x, center_y, length".to_string(),
+            });
+        }
+
+        let center_x = arr[0].as_f64().unwrap_or(400.0);
+        let center_y = arr[1].as_f64().unwrap_or(300.0);
+        let length = arr[2].as_f64().unwrap_or(200.0);
+
+        Ok(geometry::muller_lyer(center_x, center_y, length))
+    }
+
+    /// Ilusión de Ponzo (perspectiva)
+    fn geometry_ponzo(&self, params: Value) -> ModuleResult {
+        let arr = params.as_array().ok_or_else(|| ModuleError {
+            code: "INVALID_PARAMS".to_string(),
+            message: "Params must be an array".to_string(),
+        })?;
+
+        if arr.len() != 5 {
+            return Err(ModuleError {
+                code: "INVALID_PARAMS".to_string(),
+                message: "geometry::ponzo requires 5 params: center_x, center_y, height, width_top, width_bottom".to_string(),
+            });
+        }
+
+        let center_x = arr[0].as_f64().unwrap_or(400.0);
+        let center_y = arr[1].as_f64().unwrap_or(300.0);
+        let height = arr[2].as_f64().unwrap_or(300.0);
+        let width_top = arr[3].as_f64().unwrap_or(100.0);
+        let width_bottom = arr[4].as_f64().unwrap_or(300.0);
+
+        Ok(geometry::ponzo(center_x, center_y, height, width_top, width_bottom))
+    }
 }
 
 #[cfg(test)]
@@ -259,11 +385,14 @@ mod tests {
     fn test_science_register() {
         let module = ScienceModule;
         let cmds = module.register();
-        
+
         assert!(cmds.contains_key("bezier::linear"));
         assert!(cmds.contains_key("bezier::cubic"));
         assert!(cmds.contains_key("stats::mean"));
         assert!(cmds.contains_key("stats::median"));
+        assert!(cmds.contains_key("geometry::penrose"));
+        assert!(cmds.contains_key("geometry::impossible_cube"));
+        assert!(cmds.contains_key("geometry::spiral"));
     }
 
     #[test]
@@ -328,9 +457,62 @@ mod tests {
     fn test_unknown_command() {
         let module = ScienceModule;
         let result = module.execute("unknown", json!([]));
-        
+
         assert!(result.is_err());
         let err = result.unwrap_err();
         assert_eq!(err.code, "UNKNOWN_COMMAND");
+    }
+
+    // Tests de Geometría
+    #[test]
+    fn test_geometry_penrose() {
+        let module = ScienceModule;
+        let params = json!([400.0, 300.0, 100.0]);
+        let result = module.execute("geometry::penrose", params).unwrap();
+
+        let lines = result.as_array().unwrap();
+        assert!(!lines.is_empty());
+        assert!(lines.len() >= 10);
+    }
+
+    #[test]
+    fn test_geometry_impossible_cube() {
+        let module = ScienceModule;
+        let params = json!([400.0, 300.0, 100.0]);
+        let result = module.execute("geometry::impossible_cube", params).unwrap();
+
+        let lines = result.as_array().unwrap();
+        assert!(!lines.is_empty());
+        assert!(lines.len() >= 12);
+    }
+
+    #[test]
+    fn test_geometry_spiral() {
+        let module = ScienceModule;
+        let params = json!([400.0, 300.0, 3, 100.0, 20]);
+        let result = module.execute("geometry::spiral", params).unwrap();
+
+        let points = result.as_array().unwrap();
+        assert_eq!(points.len(), 60); // 3 turns * 20 points
+    }
+
+    #[test]
+    fn test_geometry_muller_lyer() {
+        let module = ScienceModule;
+        let params = json!([400.0, 300.0, 200.0]);
+        let result = module.execute("geometry::muller_lyer", params).unwrap();
+
+        let lines = result.as_array().unwrap();
+        assert_eq!(lines.len(), 10);
+    }
+
+    #[test]
+    fn test_geometry_ponzo() {
+        let module = ScienceModule;
+        let params = json!([400.0, 300.0, 300.0, 100.0, 300.0]);
+        let result = module.execute("geometry::ponzo", params).unwrap();
+
+        let lines = result.as_array().unwrap();
+        assert_eq!(lines.len(), 6); // 2 rieles + 4 horizontales
     }
 }
