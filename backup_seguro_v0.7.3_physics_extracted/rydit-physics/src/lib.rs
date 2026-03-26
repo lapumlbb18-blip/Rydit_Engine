@@ -1,11 +1,14 @@
-// crates/rydit-rs/src/physics.rs
-// Módulo de Física - Proyectil, N-Body
-// Implementa el trait RyditModule de rydit-core
+//! RyDit Physics - Módulo de Física para RyDit
+//! 
+//! Proporciona funcionalidad de:
+//! - Proyectil 2D (trayectoria, altura máxima, alcance)
+//! - Gravedad N-cuerpos (2 cuerpos)
 
 use rydit_core::{RyditModule, ModuleResult, ModuleError};
 use serde_json::{Value, json};
 use std::collections::HashMap;
 
+/// Módulo de Física - Proyectil y Gravedad
 pub struct PhysicsModule;
 
 impl RyditModule for PhysicsModule {
@@ -37,6 +40,15 @@ impl RyditModule for PhysicsModule {
 }
 
 impl PhysicsModule {
+    /// Simulación de proyectil 2D
+    /// 
+    /// # Params
+    /// - x0, y0: Posición inicial
+    /// - v0: Velocidad inicial (m/s)
+    /// - angle: Ángulo en grados
+    /// 
+    /// # Returns
+    /// [x_final, y_final, flight_time, max_height, range]
     fn projectile(&self, params: Value) -> ModuleResult {
         let arr = params.as_array().ok_or_else(|| ModuleError {
             code: "INVALID_PARAMS".to_string(),
@@ -73,6 +85,16 @@ impl PhysicsModule {
         ]))
     }
 
+    /// Gravedad entre 2 cuerpos (Ley de Newton)
+    /// 
+    /// # Params
+    /// - m1, m2: Masas de los cuerpos
+    /// - x1, y1: Posición del cuerpo 1
+    /// - x2, y2: Posición del cuerpo 2
+    /// - G: Constante gravitacional (default: 6.674e-11)
+    /// 
+    /// # Returns
+    /// [fx1, fy1, fx2, fy2, distancia]
     fn nbody_2(&self, params: Value) -> ModuleResult {
         let arr = params.as_array().ok_or_else(|| ModuleError {
             code: "INVALID_PARAMS".to_string(),
@@ -125,7 +147,7 @@ mod tests {
     fn test_physics_register() {
         let module = PhysicsModule;
         let cmds = module.register();
-        
+
         assert!(cmds.contains_key("projectile"));
         assert!(cmds.contains_key("nbody_2"));
     }
@@ -136,7 +158,7 @@ mod tests {
         // x0=0, y0=0, v0=10, angle=45
         let params = json!([0.0, 0.0, 10.0, 45.0]);
         let result = module.execute("projectile", params).unwrap();
-        
+
         let arr = result.as_array().unwrap();
         assert_eq!(arr.len(), 5);
         // flight_time ≈ 2*vy/g = 2*(10*sin(45))/9.81 ≈ 1.44s
@@ -150,7 +172,7 @@ mod tests {
         // m1=100, m2=200, x1=0, y1=0, x2=10, y2=0, G=1.0
         let params = json!([100.0, 200.0, 0.0, 0.0, 10.0, 0.0, 1.0]);
         let result = module.execute("nbody_2", params).unwrap();
-        
+
         let arr = result.as_array().unwrap();
         assert_eq!(arr.len(), 5);
         // fx = G*m1*m2/dist^2 * dx/dist = 1*100*200/100 * 10/10 = 200
@@ -164,7 +186,7 @@ mod tests {
         // Cuerpos muy cercanos (dist < 0.001)
         let params = json!([100.0, 200.0, 0.0, 0.0, 0.0001, 0.0, 1.0]);
         let result = module.execute("nbody_2", params).unwrap();
-        
+
         let arr = result.as_array().unwrap();
         assert_eq!(arr[0].as_f64().unwrap(), 0.0);
         assert_eq!(arr[1].as_f64().unwrap(), 0.0);
@@ -174,7 +196,7 @@ mod tests {
     fn test_unknown_command() {
         let module = PhysicsModule;
         let result = module.execute("unknown", json!([]));
-        
+
         assert!(result.is_err());
         let err = result.unwrap_err();
         assert_eq!(err.code, "UNKNOWN_COMMAND");

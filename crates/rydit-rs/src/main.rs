@@ -1,4 +1,4 @@
-// RYDIT-RS v0.7.3.0 - LAZOS EDITION con RyditModule trait
+// RYDIT-RS v0.7.3.1 - LAZOS EDITION con RyditModule trait
 // Main.rs dividido en módulos para mejor mantenibilidad
 
 // Módulos locales
@@ -11,7 +11,7 @@ mod geometry;    // ← Módulo de Geometría (ilusiones ópticas)
 mod json_helpers;
 mod lazos;       // ← PROTOCOLO LAZOS
 mod module;
-mod physics;     // ← Módulo de Física
+// mod physics;  ← AHORA ES CRATE EXTERNO: use rydit_physics::PhysicsModule;
 mod repl;
 // mod science;  ← AHORA ES CRATE EXTERNO: use rydit_science::ScienceModule;
 mod tests;
@@ -29,9 +29,9 @@ pub use executor::{ejecutar_programa, ejecutar_programa_gfx, ejecutar_programa_m
 // Re-exportar módulo system (blast-core integration)
 pub use module::{MathModule, ModuleContext, ModuleRegistry as BlastModuleRegistry, RyditModule as BlastRyditModule};
 
-// Re-exportar nuevos módulos con trait rydit-core
+// Re-exportar módulos con trait rydit-core (crates externos)
 pub use rydit_science::ScienceModule;
-pub use physics::PhysicsModule;
+pub use rydit_physics::PhysicsModule;
 pub use geometry::GeometryModule;
 pub use rydit_core::{RyditModule, ModuleRegistry, ModuleError, ModuleResult};
 

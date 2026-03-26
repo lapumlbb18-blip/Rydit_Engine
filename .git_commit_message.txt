@@ -1,56 +1,56 @@
-feat: v0.7.3.1 - rydit-science extraído como crate independiente ✅
+feat: v0.7.3.2 - rydit-physics extraído como crate independiente ✅
 
 🎯 OBJETIVO
 ===========
-Extraer rydit-science como crate independiente para permitir:
+Extraer rydit-physics como crate independiente para permitir:
 - Publicación en crates.io
 - Uso independiente en otros proyectos
 - Mejor organización del código
 
 📦 NUEVO CRATE
 ==============
-✅ crates/rydit-science/
-   - ScienceModule (Bezier + Stats)
-   - 9 tests passing
+✅ crates/rydit-physics/
+   - PhysicsModule (Proyectil + N-Body)
+   - 6 tests passing
    - Dependencias: rydit-core, serde_json, serde
 
 🔧 CAMBIOS
 ==========
-- Cargo.toml: workspace member rydit-science
-- crates/rydit-rs/Cargo.toml: dependencia rydit-science
-- crates/rydit-rs/src/main.rs: usa rydit_science::ScienceModule
-- crates/rydit-rs/src/science.rs: ELIMINADO (movido a crate)
+- Cargo.toml: workspace member rydit-physics
+- crates/rydit-rs/Cargo.toml: dependencia rydit-physics
+- crates/rydit-rs/src/main.rs: usa rydit_physics::PhysicsModule
+- crates/rydit-rs/src/physics.rs: ELIMINADO (movido a crate)
 
 ✅ VALIDACIÓN
 ============
 - cargo check --workspace: ✅
-- cargo test -p rydit-science: 9 tests passing ✅
-- cargo test -p rydit-rs: 59 tests passing ✅
-- Total: 68 tests (mismo que antes) ✅
+- cargo test -p rydit-physics: 6 tests passing ✅
+- cargo test -p rydit-rs: 53 tests passing ✅
+- Total: 72 tests (4 core + 9 science + 6 physics + 53 rydit-rs) ✅
 - LAZOS protocol: 100% funcional ✅
 - demo_lazos.sh: completada ✅
 
 📊 MÉTRICAS
 ===========
-- rydit-science: ~330 líneas
-- Tests: 9
-- Build time: ~1m 16s (sin cambios significativos)
+- rydit-physics: ~190 líneas
+- Tests: 6
+- Build time: ~1m 14s (sin cambios significativos)
 - Binario release: ~725 KB
 
 🚀 PRÓXIMOS PASOS
 =================
-1. Extraer rydit-physics (siguiente módulo más fácil)
-2. Implementar rydit-geometry (ilusiones ópticas)
-3. Publicar rydit-science en crates.io
+1. Implementar rydit-geometry (ilusiones ópticas)
+2. Publicar rydit-core, rydit-science, rydit-physics en crates.io
+3. Continuar con v0.7.3.0 - Gráficos Avanzados
 
 💡 ARQUITECTURA
 ===============
 Workspace actual:
-├── rydit-core      ← Trait + Registry
-├── rydit-science   ← Bezier + Stats (NUEVO)
-├── rydit-rs        ← Binario + módulos restantes
-├── rydit-physics   ← (pendiente extraer)
+├── rydit-core      ← Trait + Registry (4 tests)
+├── rydit-science   ← Bezier + Stats (9 tests) ✅
+├── rydit-physics   ← Proyectil + N-Body (6 tests) ✅
+├── rydit-rs        ← Binario + módulos restantes (53 tests)
 └── rydit-geometry  ← (pendiente implementar)
 
 ---
-✅ RYDIT-SCIENCE EXTRAÍDO - LISTO PARA USAR
+✅ RYDIT-PHYSICS EXTRAÍDO - LISTO PARA USAR
