@@ -1,0 +1,39 @@
+style: cargo fmt automático + fix bench imports
+
+CARGO FMT - FORMATO AUTOMÁTICO
+==============================
+
+Archivos formateados: 12
+- crates/blast-core/src/lib.rs
+- crates/lizer/benches/bench_lizer.rs
+- crates/lizer/src/lib.rs
+- crates/migui/src/lib.rs
+- crates/rydit-gfx/build.rs
+- crates/rydit-gfx/examples/demo.rs
+- crates/rydit-gfx/src/lib.rs
+- crates/rydit-gfx/src/particles.rs
+- crates/rydit-rs/src/bin/demo_particles.rs
+- crates/rydit-rs/src/bin/snake.rs
+- crates/rydit-rs/src/main.rs
+- crates/v-shield/src/lib.rs
+
+Cambios:
+- Whitespace consistente (tabs, espacios)
+- Line breaks optimizados
+- Paréntesis en múltiples líneas cuando exceden ancho
+
+BENCH FIX
+=========
+- crates/lizer/benches/bench_lizer.rs
+  * Eliminado import unused: `Parser`
+  * Solo se usa `Lizer` en benchmarks
+
+VERIFICACIÓN
+============
+✅ cargo build --release: 0 errors, 0 warnings
+✅ cargo test: 137 tests passing
+✅ Sin regresiones
+
+PRÓXIMO: SPLIT DE main.rs (v0.7.0)
+===================================
+Ver documento SPLIT_EVALUACION.md para plan detallado

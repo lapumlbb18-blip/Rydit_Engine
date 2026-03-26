@@ -1,4 +1,4 @@
-// RYDIT-RS v0.7.3.0 - LAZOS EDITION con RyditModule trait
+// RYDIT-RS v0.7.0.bis - SPLIT EDITION
 // Main.rs dividido en módulos para mejor mantenibilidad
 
 // Módulos locales
@@ -7,13 +7,9 @@ mod cli;
 mod config;
 mod eval;
 mod executor;
-mod geometry;    // ← NUEVO: Módulo de Geometría (ilusiones ópticas)
 mod json_helpers;
-mod lazos;       // ← PROTOCOLO LAZOS
 mod module;
-mod physics;     // ← NUEVO: Módulo de Física
 mod repl;
-mod science;     // ← NUEVO: Módulo de Ciencia (Bezier, Stats)
 mod tests;
 
 // Re-exportar funciones del módulo eval
@@ -26,14 +22,8 @@ pub use json_helpers::{valor_rydit_a_serde, valor_serde_a_rydit};
 // Re-exportar ejecutores
 pub use executor::{ejecutar_programa, ejecutar_programa_gfx, ejecutar_programa_migui};
 
-// Re-exportar módulo system (blast-core integration)
-pub use module::{MathModule, ModuleContext, ModuleRegistry as BlastModuleRegistry, RyditModule as BlastRyditModule};
-
-// Re-exportar nuevos módulos con trait rydit-core
-pub use science::ScienceModule;
-pub use physics::PhysicsModule;
-pub use geometry::GeometryModule;
-pub use rydit_core::{RyditModule, ModuleRegistry, ModuleError, ModuleResult};
+// Re-exportar módulo system
+pub use module::{MathModule, ModuleContext, ModuleRegistry, RyditModule};
 
 // Imports necesarios para el código restante en main.rs
 use blast_core::{Executor, Valor};
