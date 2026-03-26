@@ -1,36 +1,33 @@
-feat: v0.8.2 - Fase 4: Scripts RyDit como módulos ✅
+demo: módulo dinámico de ejemplo para Sistema Universal Ry ✅
 
 RESUMEN:
-- rydit-script crate nuevo: carga scripts .rydit como módulos
-- Parser de metadata (__module__, __version__, etc.)
-- extract_exports() para funciones exportadas
-- ScriptModule implementa RyditModule trait
-- Documentación completa del Sistema Universal Ry
+- Módulo Rust compilable como biblioteca dinámica (.so)
+- 7 comandos: saludar, despedir, sumar, multiplicar, pi, cuadrado, info
+- 8 tests passing
+- README completo con instrucciones de uso
 
-CAMBIOS PRINCIPALES:
+ARCHIVOS NUEVOS:
+demos/modulo_ejemplo/
+├── Cargo.toml (cdylib, independiente)
+├── README.md (instrucciones completas)
+└── src/lib.rs (implementación + tests)
 
-rydit-script/ (NUEVO CRATE):
-- ScriptMetadata: parser de metadata de scripts
-- extract_exports(): detecta "export funcion"
-- ScriptModule: wrapper que implementa RyditModule
-- Tests: 4 passing
+CARACTERÍSTICAS:
+- Implementa RyditModule trait
+- Metadata completa (nombre, versión, descripción, license)
+- Función exportada create_module() para carga dinámica
+- Compatible con rydit-loader v0.8.2
 
-WORKSPACE:
-- Agregado rydit-script al Cargo.toml
+COMANDOS DISPONIBLES (LAZOS):
+echo '{"method":"saludar","params":["Rust"]}' | rydit-rs --lazos
+echo '{"method":"sumar","params":[5, 3]}' | rydit-rs --lazos
+echo '{"method":"pi","params":[]}' | rydit-rs --lazos
+echo '{"method":"info","params":[]}' | rydit-rs --lazos
 
-DOCUMENTACIÓN:
-- SISTEMA_UNIVERSAL_RY_COMPLETADO.md: resumen completo de las 4 fases
+MÉTRICAS:
+- Tamaño: 532 KB
+- Tests: 8 passing
+- Build time: ~50s
+- Comandos: 7 disponibles
 
-MÉTRICAS FASE 4:
-- Líneas nuevas: ~340
-- Tests: 4 passing
-- Build time: <1s (crate pequeño)
-
-MÉTRICAS TOTALES v0.8.2:
-- Fases: 4/4 completadas ✅
-- Crates nuevos: 2 (loader, script)
-- Tests totales: 265+ passing
-- Líneas nuevas: ~1,170
-- Crates workspace: 12
-
-PRÓXIMO: v0.9.0 - Runtime completo + Demo módulos
+PRÓXIMO: Integración completa en REPL + hot reload demo
