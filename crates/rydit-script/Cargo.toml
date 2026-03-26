@@ -1,0 +1,13 @@
+[package]
+name = "rydit-script"
+version = "0.8.2"
+edition = "2021"
+description = "RyDit Script Modules - Load .rydit scripts as dynamic modules"
+license = "MIT"
+repository = "https://github.com/lapumlbb18-blip/Rydit_Engine"
+keywords = ["game-engine", "android", "rust", "scripting", "modules"]
+categories = ["game-development"]
+
+[dependencies]
+rydit-core = { path = "../rydit-core", version = "0.8.2" }
+serde_json = "1.0"

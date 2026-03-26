@@ -1,38 +1,37 @@
-feat: v0.8.2 - Sistema Universal Ry (Fases 1-2) ✅
+feat: v0.8.2 - Fase 3: Hot reload en REPL + comandos module::* ✅
 
 RESUMEN:
-- rydit-core v0.8.2: ModuleMetadata + hooks hot reload
-- rydit-loader v0.8.2: Carga dinámica de módulos (.so/.dll)
-- 17 tests nuevos passing (9 core + 6 loader + 2 docs)
-- Workspace actualizado: 11 crates totales
+- Loader global implementado (Mutex<DynamicModuleLoader>)
+- Comandos module::list y module::info en protocolo LAZOS
+- Inicialización automática en cli::run()
+- 50 tests passing
 
 CAMBIOS PRINCIPALES:
 
-rydit-core v0.8.2:
-- ModuleMetadata struct (nombre, versión, autores, license, deps)
-- Builder pattern: with_name(), with_version(), etc.
-- RyditModule trait: metadata(), on_reload(), on_unload()
-- ModuleRegistry: reload(), unload(), list_with_metadata(), etc.
-- Tests: 9 passing + 1 doc-test
+main.rs:
+- GLOBAL_LOADER: variable estática global
+- init_global_loader(): inicializa el loader
+- get_loader(): obtiene referencia al loader global
 
-rydit-loader v0.8.2 (NUEVO CRATE):
-- DynamicModuleLoader: carga dinámica de bibliotecas
-- LoadedModuleInfo: tracking de módulos cargados
-- Soporte: Linux (.so), Windows (.dll), macOS (.dylib)
-- libloading para carga dinámica (desktop only)
-- Tests: 6 passing + 2 doc-tests
+cli.rs:
+- init_global_loader() al inicio de run()
 
-WORKSPACE:
-- rydit-core: 0.7.34 → 0.8.2
-- rydit-science: dependencia actualizada a 0.8.2
-- rydit-physics: dependencia actualizada a 0.8.2
-- rydit-anim: dependencia actualizada a 0.8.2
-- rydit-loader: nuevo crate en workspace
+lazos.rs:
+- module::list: lista módulos cargados
+- module::info: información de módulo específico
+- system::info actualizado a v0.8.2
+
+module_loader.rs (NUEVO):
+- ejecutar_comando_module(): handler para comandos module::*
+- init_loader(): factory function
 
 MÉTRICAS:
-- Tests totales: 211+ passing
-- Warnings: 0 en crates nuevos
-- Líneas nuevas: ~600 líneas Rust
-- Build time: ~1m 10s
+- Tests: 50 passing
+- Build time: 1m 07s
+- Warnings: 3 (menores, safe)
 
-PRÓXIMO: Fase 3 - Hot reload en REPL (comandos module::*)
+COMANDOS DISPONIBLES (LAZOS):
+echo '{"method":"module::list"}' | rydit-rs --lazos
+echo '{"method":"module::info","params":["mi_modulo"]}' | rydit-rs --lazos
+
+PRÓXIMO: Fase 4 - Scripts RyDit como módulos (modules/*.rydit)
