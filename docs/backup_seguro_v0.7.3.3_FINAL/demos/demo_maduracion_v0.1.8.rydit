@@ -1,0 +1,107 @@
+# Demo Maduración v0.1.8 - RyDit
+# Muestra las nuevas features de maduración del lenguaje
+
+shield.init
+
+voz "========================================"
+voz "  DEMO MADURACIÓN v0.1.8"
+voz "========================================"
+voz ""
+
+# ============================================================================
+# 1. ESCAPES EN STRINGS
+# ============================================================================
+voz "=== 1. ESCAPES EN STRINGS ==="
+voz ""
+
+# Salto de línea \n
+voz "Salto de línea:"
+voz "Linea1\\nLinea2"
+voz ""
+
+# Tabulación \t
+voz "Tabulación:"
+voz "Columna1\\tColumna2\\tColumna3"
+voz ""
+
+# Backslash \\
+voz "Backslash:"
+voz "Ruta: C:\\\\Usuarios\\\\RyDit"
+voz ""
+
+# Comillas escapadas
+voz "Comillas escapadas:"
+voz "Dijo \"hola\" al mundo"
+voz ""
+
+# ============================================================================
+# 2. COMILLAS SIMPLES
+# ============================================================================
+voz "=== 2. COMILLAS SIMPLES ==="
+voz ""
+
+# Comillas simples básicas
+dark.slot simple = 'Hola con comillas simples'
+voz simple
+
+# Comillas simples con dobles dentro
+dark.slot mix1 = 'Dijo "hola" y se fue'
+voz mix1
+
+# Comillas dobles con simples dentro
+dark.slot mix2 = "Dijo 'hola' y se fue"
+voz mix2
+voz ""
+
+# ============================================================================
+# 3. SÍMBOLOS EN IDENTIFICADORES
+# ============================================================================
+voz "=== 3. SÍMBOLOS EN IDENTIFICADORES ==="
+voz ""
+
+# Variables con símbolos
+dark.slot @usuario = "alucard18"
+dark.slot $precio = 99.99
+dark.slot %porcentaje = 50
+dark.slot &amper = 123
+
+voz "Usuario: " + @usuario
+voz "Precio: " + $precio
+voz "Porcentaje: " + %porcentaje
+voz "Amper: " + &amper
+voz ""
+
+# ============================================================================
+# 4. STRINGS MULTILÍNEA CON ESCAPES
+# ============================================================================
+voz "=== 4. STRINGS MULTILÍNEA ==="
+voz ""
+
+voz "Este es un\\nstring con\\nmúltiples líneas"
+voz ""
+
+# ============================================================================
+# 5. COMBINACIÓN DE FEATURES
+# ============================================================================
+voz "=== 5. COMBINACIÓN ==="
+voz ""
+
+dark.slot titulo = '=== "RyDit v0.1.8" ==='
+voz titulo
+voz "Tab:\\tEscape:\\\\Nuevo\\n"
+voz ""
+
+# ============================================================================
+# 6. CARACTERES UTF-8 EN STRINGS
+# ============================================================================
+voz "=== 6. UTF-8 EN STRINGS ==="
+voz ""
+
+voz "Español: Hola cómo estás"
+voz "Símbolos: €100 £50 ¥200"
+voz "Emojis: 🛡️ 🚀 💻"
+voz ""
+
+voz "========================================"
+voz "  DEMO MADURACIÓN v0.1.8 COMPLETADO"
+voz "========================================"

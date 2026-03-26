@@ -1,0 +1,42 @@
+shield.init
+# Demo Math Avanzado v0.3.0 - Prueba de funciones trigonométricas
+
+import math
+
+dark.slot centro_x = 400
+dark.slot centro_y = 300
+dark.slot radio = 100
+dark.slot angulo = 0
+
+ryda frame < 500 {
+    # Fondo negro
+    draw.rect(0, 0, 800, 600, "negro")
+    
+    # Dibujar círculo central
+    draw.circle(centro_x, centro_y, 10, "blanco")
+    
+    # Círculo orbitando usando sin/cos
+    dark.slot x = centro_x + math::cos(angulo) * radio
+    dark.slot y = centro_y + math::sin(angulo) * radio
+    draw.circle(x, y, 20, "cyan")
+    
+    # Línea desde centro al círculo
+    draw.line(centro_x, centro_y, x, y, "gris")
+    
+    # Mostrar valores
+    draw.text("Angulo: " + angulo, 20, 20, "amarillo")
+    draw.text("X: " + x, 20, 50, "verde")
+    draw.text("Y: " + y, 20, 80, "verde")
+    
+    # Incrementar ángulo (en radianes)
+    dark.slot angulo = angulo + 0.05
+    
+    # Segundo círculo en órbita opuesta
+    dark.slot angulo2 = angulo + 3.14159
+    dark.slot x2 = centro_x + math::cos(angulo2) * 80
+    dark.slot y2 = centro_y + math::sin(angulo2) * 80
+    draw.circle(x2, y2, 15, "magenta")
+    
+    # Texto
+    draw.text("Math v0.3.0 Demo", 300, 550, 30, "blanco")
+}

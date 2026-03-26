@@ -1,0 +1,122 @@
+# DEMO BEZIER - RyDit v0.7.1.4
+# Curvas de Bezier: lineal, cuadrática, cúbica
+
+io::print("=== CURVAS DE BEZIER ===")
+
+# ============================================================================
+# 1. BEZIER LINEAL (2 puntos: línea recta)
+# ============================================================================
+
+io::print("\n--- BEZIER LINEAL ---")
+io::print("P0=(0,0), P1=(100,100)")
+
+# Punto en t=0.5 (medio)
+dark.slot p_medio = bezier::linear(0, 0, 100, 100, 0.5)
+io::print("  t=0.5: (" + p_medio[0] + ", " + p_medio[1] + ")")
+
+# Punto en t=0.25
+dark.slot p_cuarto = bezier::linear(0, 0, 100, 100, 0.25)
+io::print("  t=0.25: (" + p_cuarto[0] + ", " + p_cuarto[1] + ")")
+
+# ============================================================================
+# 2. BEZIER CUADRÁTICA (3 puntos: 1 control)
+# ============================================================================
+
+io::print("\n--- BEZIER CUADRÁTICA ---")
+io::print("P0=(0,0), P1=(50,100) [control], P2=(100,0)")
+
+# Punto en t=0.5
+dark.slot q_medio = bezier::quadratic(0, 0, 50, 100, 100, 0, 0.5)
+io::print("  t=0.5: (" + q_medio[0] + ", " + q_medio[1] + ")")
+
+# Generar varios puntos
+io::print("\nGenerando 5 puntos:")
+dark.slot i = 0
+mientras i < 5 {
+    dark.slot t = i / 4.0
+    dark.slot p = bezier::quadratic(0, 0, 50, 100, 100, 0, t)
+    io::print("  t=" + t + ": (" + p[0] + ", " + p[1] + ")")
+    i = i + 1
+}
+
+# ============================================================================
+# 3. BEZIER CÚBICA (4 puntos: 2 controles)
+# ============================================================================
+
+io::print("\n--- BEZIER CÚBICA ---")
+io::print("P0=(0,0), P1=(30,100), P2=(70,100), P3=(100,0)")
+
+# Generar 11 puntos (t de 0 a 1 en pasos de 0.1)
+io::print("\nGenerando 11 puntos:")
+dark.slot j = 0
+mientras j < 11 {
+    dark.slot t = j / 10.0
+    dark.slot p = bezier::cubic(0, 0, 30, 100, 70, 100, 100, 0, t)
+    io::print("  t=" + t + ": (" + p[0] + ", " + p[1] + ")")
+    j = j + 1
+}
+
+# ============================================================================
+# 4. DERIVADA (TANGENTE)
+# ============================================================================
+
+io::print("\n--- DERIVADA CÚBICA (TANGENTE) ---")
+io::print("P0=(0,0), P1=(30,100), P2=(70,100), P3=(100,0)")
+
+dark.slot tangente = bezier::cubic_derivative(0, 0, 30, 100, 70, 100, 100, 0, 0.5)
+io::print("  Tangente en t=0.5: (" + tangente[0] + ", " + tangente[1] + ")")
+
+# ============================================================================
+# 5. GENERAR PUNTOS AUTOMÁTICAMENTE
+# ============================================================================
+
+io::print("\n--- GENERAR PUNTOS AUTOMÁTICO ---")
+
+# Puntos de control: [[0,0], [30,100], [70,100], [100,0]]
+dark.slot control_points = [[0, 0], [30, 100], [70, 100], [100, 0]]
+dark.slot puntos = bezier::generate_points(control_points, 10)
+
+io::print("Generando 10 puntos de curva cúbica:")
+dark.slot k = 0
+mientras k < puntos.len() {
+    dark.slot p = puntos[k]
+    io::print("  Punto " + k + ": (" + p[0] + ", " + p[1] + ")")
+    k = k + 1
+}
+
+# ============================================================================
+# 6. VISUALIZACIÓN ASCII
+# ============================================================================
+
+io::print("\n--- VISUALIZACIÓN ASCII (curva cúbica) ---")
+
+# Generar puntos y dibujar
+dark.slot pts = bezier::generate_points([[0, 0], [30, 100], [70, 100], [100, 0]], 20)
+dark.slot fila = 0
+mientras fila < 20 {
+    dark.slot linea = ""
+    dark.slot col = 0
+    mientras col < 40 {
+        dark.slot encontrado = 0
+        dark.slot m = 0
+        mientras m < pts.len() {
+            dark.slot pt = pts[m]
+            # Escalar coordenadas para visualización
+            dark.slot px = (pt[0] / 100.0 * 40.0) as int
+            dark.slot py = 19 - (pt[1] / 100.0 * 19.0) as int
+            si py == fila y px == col {
+                linea = linea + "*"
+                encontrado = 1
+            }
+            m = m + 1
+        }
+        si encontrado == 0 {
+            linea = linea + " "
+        }
+        col = col + 1
+    }
+    io::print(linea)
+    fila = fila + 1
+}
+
+io::print("\n¡Demo de Bezier completada!")

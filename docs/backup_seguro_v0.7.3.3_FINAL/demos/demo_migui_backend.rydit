@@ -1,0 +1,102 @@
+// ============================================================================
+// DEMO MIGUI BACKEND V0.4.1 - Immediate Mode GUI con renderizado raylib
+// ============================================================================
+// Ejecutar: cargo run --release --bin rydit-rs -- --migui demos/demo_migui_backend.rydit
+// ============================================================================
+
+// Variables de estado
+contador = 0
+slider_valor = 50
+texto = "Hola Migui v0.4.1"
+checkbox_estado = false
+ventana_abierta = true
+
+// Función para dibujar la UI
+fn dibujar_ui() {
+    // Panel de fondo
+    migui::panel("panel_fondo", 10, 10, 380, 450, "panel")
+
+    // Título
+    migui::label("lbl_titulo", "DEMO MIGUI V0.4.1", 20, 20, 360, 30)
+    migui::label("lbl_subtitle", "Backend raylib funcional", 20, 45, 360, 20)
+
+    // Contador con botones
+    migui::label("lbl_contador", "Contador:", 20, 80, 100, 30)
+
+    click = migui::button("btn_menos", "-", 120, 80, 40, 30)
+    si click {
+        contador = contador - 1
+    }
+
+    migui::label("lbl_valor_cont", str(contador), 170, 80, 50, 30)
+
+    click = migui::button("btn_mas", "+", 230, 80, 40, 30)
+    si click {
+        contador = contador + 1
+    }
+
+    // Slider
+    migui::label("lbl_slider", "Slider:", 20, 130, 100, 30)
+    slider_valor = migui::slider("slider_demo", slider_valor, 0, 100, 120, 130, 240, 30)
+
+    // Checkbox
+    cambio = migui::checkbox("chk_demo", "Activar opcion especial", checkbox_estado, 20, 180, 200, 30)
+    si cambio {
+        checkbox_estado = !checkbox_estado
+    }
+
+    // Textbox
+    migui::label("lbl_texto", "Texto:", 20, 230, 100, 30)
+    texto = migui::textbox("txt_demo", texto, 20, 260, 340, 35)
+
+    // Mostrar posicion del mouse
+    mx = migui::mouse_x()
+    my = migui::mouse_y()
+    migui::label("lbl_mouse", "Mouse: " + str(mx) + ", " + str(my), 20, 310, 340, 30)
+
+    // Boton que muestra mensaje
+    click = migui::button("btn_saludar", "Saludar", 20, 350, 150, 35)
+    si click {
+        print("¡" + texto + "!")
+    }
+
+    // Boton para abrir ventana
+    click = migui::button("btn_ventana", "Abrir ventana", 180, 350, 180, 35)
+    si click {
+        ventana_abierta = true
+    }
+
+    // Mensaje de estado
+    si checkbox_estado {
+        migui::label("lbl_estado", "ESTADO: ACTIVADO", 20, 400, 340, 30)
+    } blelse {
+        migui::label("lbl_estado", "ESTADO: DESACTIVADO", 20, 400, 340, 30)
+    }
+}
+
+// Funcion para dibujar ventana flotante
+fn dibujar_ventana() {
+    abierta = migui::window("ventana_demo", "Ventana Flotante", ventana_abierta, 420, 50, 350, 250)
+    si abierta {
+        // Contenido de la ventana
+        migui::label("lbl_ventana", "Esta es una ventana arrastrable", 430, 90, 330, 30)
+        migui::label("lbl_info", "Arrastra desde la barra azul superior", 430, 120, 330, 30)
+        migui::label("lbl_info2", "Haz clic en X para cerrar", 430, 150, 330, 30)
+
+        click = migui::button("btn_cerrar", "Cerrar", 430, 200, 100, 30)
+        si click {
+            ventana_abierta = false
+        }
+
+        click = migui::button("btn_info", "Info", 550, 200, 100, 30)
+        si click {
+            print("Migui v0.4.1 - Backend raylib")
+        }
+    }
+}
+
+// Loop principal - se ejecuta por frame
+{
+    dibujar_ui()
+    dibujar_ventana()
+}

@@ -40,8 +40,8 @@
 ```bash
 # En GitHub, click en "Fork"
 # Luego clona tu fork
-git clone https://github.com/TU_USUARIO/my_app.git
-cd my_app
+git clone https://github.com/TU_USUARIO/shield-project.git
+cd shield-project
 ```
 
 ### 2. Crea una Rama
@@ -180,7 +180,7 @@ fn test_nombre_descriptivo() {
 ## 📬 Contacto
 
 ¿Tienes preguntas? Abre un Issue o discute en:
-- [GitHub Discussions](https://github.com/lapumlbb18-blip/my_app/discussions)
+- [GitHub Discussions](https://github.com/lapumlbb18-blip/shield-project/discussions)
 - [MoureDev Discord](https://discord.gg/mouredev)
 
 ---

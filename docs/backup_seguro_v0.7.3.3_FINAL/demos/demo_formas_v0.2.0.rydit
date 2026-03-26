@@ -1,0 +1,33 @@
+shield.init
+# Demo formas v0.2.0 - Triángulos, elipses, líneas gruesas
+
+# Limpiar pantalla (fondo negro)
+ryda frame < 200 {
+    # Triángulo (bandera)
+    draw.triangle(200, 150, 300, 150, 250, 250, "verde")
+    draw.triangle(200, 150, 300, 150, 250, 100, "naranja")
+    
+    # Elipse (planeta)
+    draw.ellipse(500, 300, 80, 50, "morado")
+    draw.ellipse(500, 300, 60, 35, "rosa")
+    
+    # Rectángulo con líneas (marco)
+    draw.rectangle_lines(50, 400, 200, 100, "cyan")
+    draw.rectangle_lines(70, 420, 160, 60, "amarillo")
+    
+    # Línea gruesa (camino)
+    draw.line_thick(0, 500, 800, 500, 10, "gris")
+    draw.line_thick(0, 520, 800, 520, 5, "blanco")
+    
+    # Ring (sol simplificado como círculo)
+    draw.ring(650, 100, 30, 50, "amarillo")
+    draw.ring(650, 100, 20, 35, "naranja")
+    
+    # Texto
+    draw.text("RyDit v0.2.0 - Nuevas Formas", 200, 30, 20, "blanco")
+    draw.text("draw.triangle()", 180, 280, 15, "verde")
+    draw.text("draw.ellipse()", 470, 360, 15, "morado")
+    draw.text("draw.rectangle_lines()", 30, 520, 12, "cyan")
+    draw.text("draw.line_thick()", 600, 480, 12, "gris")
+    draw.text("draw.ring()", 630, 160, 12, "amarillo")
+}

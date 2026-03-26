@@ -1,0 +1,133 @@
+# =============================================================================
+# DEMO MÓDULO FILES v0.6.3
+# =============================================================================
+# Demostración de lectura/escritura de archivos en RyDit
+# =============================================================================
+
+import files
+
+# =============================================================================
+# 1. FILES::WRITE - Escribir archivo
+# =============================================================================
+
+dark.slot resultado = files::write("test_archivo.txt", "Hola RyDit v0.6.3!")
+voz "Archivo escrito: " + resultado  # true
+
+# =============================================================================
+# 2. FILES::READ - Leer archivo
+# =============================================================================
+
+dark.slot contenido = files::read("test_archivo.txt")
+voz "Contenido leído: " + contenido  # "Hola RyDit v0.6.3!"
+
+# =============================================================================
+# 3. FILES::APPEND - Añadir al final
+# =============================================================================
+
+files::append("test_archivo.txt", "\nSegunda línea")
+files::append("test_archivo.txt", "\nTercera línea")
+
+dark.slot contenido2 = files::read("test_archivo.txt")
+voz "Contenido después de append:"
+voz contenido2
+
+# =============================================================================
+# 4. FILES::EXISTS - Verificar existencia
+# =============================================================================
+
+dark.slot existe = files::exists("test_archivo.txt")
+voz "Existe test_archivo.txt: " + existe  # true
+
+dark.slot no_existe = files::exists("archivo_inexistente.txt")
+voz "Existe archivo_inexistente.txt: " + no_existe  # false
+
+# =============================================================================
+# 5. FILES::DELETE - Eliminar archivo
+# =============================================================================
+
+# Crear archivo para eliminar
+files::write("para_eliminar.txt", "Este archivo será eliminado")
+
+dark.slot antes = files::exists("para_eliminar.txt")
+voz "Antes de eliminar: " + antes  # true
+
+files::delete("para_eliminar.txt")
+
+dark.slot despues = files::exists("para_eliminar.txt")
+voz "Después de eliminar: " + despues  # false
+
+# =============================================================================
+# 6. CASOS DE USO REALES
+# =============================================================================
+
+# 6.1 Guardar partida en JSON
+import json
+
+dark.slot partida = {
+    "nombre": "Jugador1",
+    "nivel": 5,
+    "vidas": 3,
+    "puntos": 1500
+}
+
+dark.slot partida_json = json::stringify(partida)
+files::write("savegame.json", partida_json)
+voz "Partida guardada en savegame.json"
+
+# 6.2 Cargar partida
+dark.slot partida_cargada_str = files::read("savegame.json")
+dark.slot partida_cargada = json::parse(partida_cargada_str)
+voz "Partida cargada: " + partida_cargada_str
+
+# 6.3 Sistema de logs
+dark.slot frame = 0
+{
+    frame = frame + 1
+    
+    # Log cada 100 frames
+    si frame % 100 == 0 {
+        files::append("game.log", "Frame: " + frame + "\n")
+    }
+    
+    # Salir después de 500 frames para demo
+    si frame >= 500 {
+        romper
+    }
+}
+
+voz "Logs guardados en game.log"
+
+# 6.4 Leer configuración
+# Crear archivo de configuración
+files::write("config.ini", "volumen=0.8\nfullscreen=false\nidioma=es")
+
+dark.slot config = files::read("config.ini")
+voz "Configuración:"
+voz config
+
+# =============================================================================
+# 7. MANEJO DE ERRORES
+# =============================================================================
+
+# Intentar leer archivo inexistente
+dark.slot error_result = files::read("archivo_no_existe.txt")
+si strings::contains(error_result, "Error") {
+    voz "Error manejado correctamente"
+}
+
+# =============================================================================
+# LIMPIEZA
+# =============================================================================
+
+# Eliminar archivos de test
+files::delete("test_archivo.txt")
+files::delete("savegame.json")
+files::delete("game.log")
+files::delete("config.ini")
+
+voz "Archivos de test eliminados"
+
+# =============================================================================
+# FIN DE LA DEMO
+# =============================================================================
+voz "=== Demo Files Completada ==="

@@ -1,0 +1,52 @@
+shield.init
+# Tank Combat Simple v0.3.0 - Versión simplificada para test
+
+import math
+
+# Jugador
+dark.slot tanque_x = 400
+dark.slot tanque_y = 300
+
+# Game loop
+dark.slot frame = 0
+ryda frame < 1000 {
+    # Fondo negro
+    draw.rect(0, 0, 800, 600, "negro")
+    
+    # Grid simple
+    draw.line(400, 0, 400, 600, "gris")
+    draw.line(0, 300, 800, 300, "gris")
+    
+    # Input de mouse
+    dark.slot mouse_x = input::mouse_x()
+    dark.slot mouse_y = input::mouse_y()
+    
+    # Calcular ángulo hacia mouse
+    dark.slot dx = mouse_x - tanque_x
+    dark.slot dy = mouse_y - tanque_y
+    dark.slot angulo = math::atan2(dy, dx)
+    
+    # Dibujar tanque (círculo verde)
+    draw.circle(tanque_x, tanque_y, 30, "verde")
+    
+    # Dibujar línea que apunta al mouse (torreta)
+    dark.slot torreta_x = tanque_x + math::cos(angulo) * 40
+    dark.slot torreta_y = tanque_y + math::sin(angulo) * 40
+    draw.line_thick(tanque_x, tanque_y, torreta_x, torreta_y, 10, "lima")
+    
+    # Dibujar círculo en posición del mouse
+    draw.circle(mouse_x, mouse_y, 10, "rojo")
+    
+    # Texto
+    draw.text("TANK TEST v0.3.0", 300, 30, 25, "blanco")
+    draw.text("Mueve el mouse - Click para disparar", 220, 60, 18, "amarillo")
+    
+    # Click para disparar
+    dark.slot click = input::is_mouse_button_pressed(0)
+    onif click == 1 {
+        draw.circle(mouse_x, mouse_y, 20, "amarillo")
+    }
+    
+    # Incrementar frame
+    dark.slot frame = frame + 1
+}

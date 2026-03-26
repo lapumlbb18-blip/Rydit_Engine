@@ -1,0 +1,40 @@
+# =============================================================================
+# MÓDULO REGEX v0.6.2
+# =============================================================================
+# Expresiones regulares para RyDit
+# 
+# Funciones disponibles:
+#   - regex::match(patron, texto)        -> bool (true si hay match)
+#   - regex::replace(patron, reemplazo, texto) -> texto modificado
+#   - regex::split(patron, texto)        -> array de partes
+#   - regex::find_all(patron, texto)     -> array de matches
+#   - regex::capture(patron, texto)      -> array con captura completa + grupos
+# =============================================================================
+
+# Las funciones regex están implementadas nativamente en Rust (bindings)
+# Este archivo es documentación y wrapper opcional
+
+# =============================================================================
+# EJEMPLOS DE USO
+# =============================================================================
+
+# Validar email
+# si regex::match("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}", email) {
+#     voz "Email válido"
+# }
+
+# Reemplazar todas las vocales
+# resultado = regex::replace("[aeiou]", "*", "hola mundo")
+# # resultado = "h*l* m*nd*"
+
+# Split por comas
+# partes = regex::split(",", "uno,dos,tres")
+# # partes = ["uno", "dos", "tres"]
+
+# Encontrar todos los números
+# numeros = regex::find_all("\\d+", "a1b23c456")
+# # numeros = ["1", "23", "456"]
+
+# Capturar grupos (nombre:edad)
+# captura = regex::capture("([a-z]+):(\\d+)", "edad:25")
+# # captura = ["edad:25", "edad", "25"]
