@@ -1,12 +1,12 @@
 //! RyDit Anim - Módulo de Animación para RyDit
-//! 
+//!
 //! Implementa principios de animación de Disney:
 //! - Principio #1: Squash & Stretch (Deformación)
 //! - Principio #2: Anticipation (Anticipación)
 //! - Principio #6: Slow In & Slow Out (Easing)
 
-use rydit_core::{RyditModule, ModuleResult, ModuleError};
-use serde_json::{Value, json};
+use rydit_core::{ModuleError, ModuleResult, RyditModule};
+use serde_json::{json, Value};
 use std::collections::HashMap;
 
 /// Módulo de Animación - 12 principios de Disney
@@ -188,7 +188,7 @@ mod tests {
     fn test_anim_register() {
         let module = AnimModule;
         let cmds = module.register();
-        
+
         assert!(cmds.contains_key("ease_in"));
         assert!(cmds.contains_key("ease_out"));
         assert!(cmds.contains_key("squash"));
@@ -257,7 +257,7 @@ mod tests {
     fn test_unknown_command() {
         let module = AnimModule;
         let result = module.execute("unknown", json!([]));
-        
+
         assert!(result.is_err());
         let err = result.unwrap_err();
         assert_eq!(err.code, "UNKNOWN_COMMAND");

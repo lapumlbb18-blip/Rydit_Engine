@@ -1,9 +1,9 @@
 //! RyDit Core - Trait y Registro para módulos
-//! 
+//!
 //! Proporciona la interfaz común que todos los módulos deben implementar.
 
-use std::collections::HashMap;
 use serde_json::Value;
+use std::collections::HashMap;
 
 /// Resultado de operación de módulo
 pub type ModuleResult = Result<Value, ModuleError>;
@@ -27,16 +27,16 @@ impl std::error::Error for ModuleError {}
 pub trait RyditModule: Send + Sync {
     /// Nombre único del módulo
     fn name(&self) -> &'static str;
-    
+
     /// Versión del módulo
     fn version(&self) -> &'static str;
-    
+
     /// Registro de comandos disponibles
     /// Retorna: HashMap<nombre_comando, descripción>
     fn register(&self) -> HashMap<&'static str, &'static str>;
-    
+
     /// Ejecuta un comando con parámetros
-    /// 
+    ///
     /// # Arguments
     /// * `command` - Nombre del comando
     /// * `params` - Parámetros JSON
@@ -56,18 +56,18 @@ impl ModuleRegistry {
             modules: HashMap::new(),
         }
     }
-    
+
     /// Registra un módulo
     pub fn register<M: RyditModule + 'static>(&mut self, module: M) {
         let name = module.name().to_string();
         self.modules.insert(name, Box::new(module));
     }
-    
+
     /// Obtiene un módulo por nombre
     pub fn get(&self, name: &str) -> Option<&dyn RyditModule> {
         self.modules.get(name).map(|b| b.as_ref())
     }
-    
+
     /// Lista todos los módulos registrados
     pub fn list(&self) -> Vec<&str> {
         self.modules.keys().map(|s| s.as_str()).collect()
@@ -113,7 +113,7 @@ mod tests {
     fn test_module_registry() {
         let mut registry = ModuleRegistry::new();
         registry.register(TestModule);
-        
+
         assert_eq!(registry.list().len(), 1);
         assert!(registry.get("test").is_some());
         assert!(registry.get("unknown").is_none());
@@ -123,7 +123,7 @@ mod tests {
     fn test_module_execute_ping() {
         let mut registry = ModuleRegistry::new();
         registry.register(TestModule);
-        
+
         let module = registry.get("test").unwrap();
         let result = module.execute("ping", Value::Null).unwrap();
         assert_eq!(result, Value::String("pong".to_string()));
@@ -133,7 +133,7 @@ mod tests {
     fn test_module_execute_echo() {
         let mut registry = ModuleRegistry::new();
         registry.register(TestModule);
-        
+
         let module = registry.get("test").unwrap();
         let input = Value::String("hello".to_string());
         let result = module.execute("echo", input.clone()).unwrap();
@@ -144,11 +144,11 @@ mod tests {
     fn test_module_error() {
         let mut registry = ModuleRegistry::new();
         registry.register(TestModule);
-        
+
         let module = registry.get("test").unwrap();
         let result = module.execute("unknown", Value::Null);
         assert!(result.is_err());
-        
+
         let err = result.unwrap_err();
         assert_eq!(err.code, "UNKNOWN_COMMAND");
     }

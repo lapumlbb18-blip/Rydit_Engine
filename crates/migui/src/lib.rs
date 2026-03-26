@@ -22,6 +22,8 @@
 //! // gui.end_frame();
 //! ```
 
+use std::str::FromStr;
+
 // ============================================================================
 // TIPOS BÁSICOS
 // ============================================================================
@@ -83,22 +85,26 @@ impl Color {
     pub const BORDER: Color = Color::new(100, 100, 100, 255);
     pub const TEXT: Color = Color::new(240, 240, 240, 255);
     pub const ACCENT: Color = Color::new(51, 122, 206, 255);
+}
 
-    pub fn from_str(s: &str) -> Self {
+impl FromStr for Color {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_lowercase().as_str() {
-            "rojo" | "red" => Color::RED,
-            "verde" | "green" => Color::GREEN,
-            "azul" | "blue" => Color::BLUE,
-            "amarillo" | "yellow" => Color::YELLOW,
-            "blanco" | "white" => Color::WHITE,
-            "negro" | "black" => Color::BLACK,
-            "gris" | "gray" => Color::GRAY,
-            "panel" => Color::PANEL,
-            "boton" | "button" => Color::BUTTON,
-            "borde" | "border" => Color::BORDER,
-            "texto" | "text" => Color::TEXT,
-            "acento" | "accent" => Color::ACCENT,
-            _ => Color::WHITE,
+            "rojo" | "red" => Ok(Color::RED),
+            "verde" | "green" => Ok(Color::GREEN),
+            "azul" | "blue" => Ok(Color::BLUE),
+            "amarillo" | "yellow" => Ok(Color::YELLOW),
+            "blanco" | "white" => Ok(Color::WHITE),
+            "negro" | "black" => Ok(Color::BLACK),
+            "gris" | "gray" => Ok(Color::GRAY),
+            "panel" => Ok(Color::PANEL),
+            "boton" | "button" => Ok(Color::BUTTON),
+            "borde" | "border" => Ok(Color::BORDER),
+            "texto" | "text" => Ok(Color::TEXT),
+            "acento" | "accent" => Ok(Color::ACCENT),
+            _ => Ok(Color::WHITE),
         }
     }
 }

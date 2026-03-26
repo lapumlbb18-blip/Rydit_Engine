@@ -17,7 +17,7 @@ fn de_casteljau(points: &[(f64, f64)], t: f64) -> (f64, f64) {
     if n == 1 {
         return points[0];
     }
-    
+
     // Iterativamente interpolar entre puntos
     let mut current_points = points.to_vec();
     for r in 1..n {
@@ -1055,7 +1055,7 @@ pub fn evaluar_expr(
                     let range = vx * flight_time;
                     return Valor::Array(vec![
                         Valor::Num(x0 + vx * flight_time), // x final
-                        Valor::Num(*y0),                    // y final (asume suelo)
+                        Valor::Num(*y0),                   // y final (asume suelo)
                         Valor::Num(flight_time),           // tiempo vuelo
                         Valor::Num(max_height),            // altura máxima
                         Valor::Num(range),                 // alcance horizontal
@@ -1191,7 +1191,9 @@ pub fn evaluar_expr(
                         Valor::Num(2.0 * std::f64::consts::PI / omega),
                     ]);
                 }
-                return Valor::Error("physics::pendulum() requiere (longitud, ang0, t)".to_string());
+                return Valor::Error(
+                    "physics::pendulum() requiere (longitud, ang0, t)".to_string(),
+                );
             }
 
             // ========================================================================
@@ -1285,11 +1287,13 @@ pub fn evaluar_expr(
                         }
                     }
                     if nums.is_empty() {
-                        return Valor::Error("stats::median() requiere array de números".to_string());
+                        return Valor::Error(
+                            "stats::median() requiere array de números".to_string(),
+                        );
                     }
                     nums.sort_by(|a, b| a.partial_cmp(b).unwrap());
                     let mid = nums.len() / 2;
-                    let median = if nums.len() % 2 == 0 {
+                    let median = if nums.len().is_multiple_of(2) {
                         (nums[mid - 1] + nums[mid]) / 2.0
                     } else {
                         nums[mid]
@@ -1317,10 +1321,7 @@ pub fn evaluar_expr(
                     }
                     if count > 1 {
                         let mean = sum / count as f64;
-                        let variance: f64 = nums
-                            .iter()
-                            .map(|x| (x - mean).powi(2))
-                            .sum::<f64>()
+                        let variance: f64 = nums.iter().map(|x| (x - mean).powi(2)).sum::<f64>()
                             / (count - 1) as f64;
                         return Valor::Num(variance.sqrt());
                     }
@@ -1460,15 +1461,16 @@ pub fn evaluar_expr(
                         format!(
                             "{},{}",
                             padding,
-                            h - padding - ((nums[0] - min_val) / range * (h - 2 * padding) as f64)
-                                as i32
+                            h - padding
+                                - ((nums[0] - min_val) / range * (h - 2 * padding) as f64) as i32
                         )
                     );
                     for (i, &val) in nums.iter().enumerate().skip(1) {
                         let x = padding
                             + (i as f64 / (nums.len() - 1) as f64 * (w - 2 * padding) as f64)
                                 as i32;
-                        let y = h - padding
+                        let y = h
+                            - padding
                             - ((val - min_val) / range * (h - 2 * padding) as f64) as i32;
                         path.push_str(&format!(",{},{}", x, y));
                     }
@@ -1518,7 +1520,8 @@ pub fn evaluar_expr(
                     return Valor::Array(vec![Valor::Num(x), Valor::Num(y)]);
                 }
                 return Valor::Error(
-                    "bezier::quadratic() requiere (p0_x, p0_y, p1_x, p1_y, p2_x, p2_y, t)".to_string(),
+                    "bezier::quadratic() requiere (p0_x, p0_y, p1_x, p1_y, p2_x, p2_y, t)"
+                        .to_string(),
                 );
             }
 
@@ -1535,12 +1538,19 @@ pub fn evaluar_expr(
                     let mt = 1.0 - t;
                     let mt2 = mt * mt;
                     let t2 = t * t;
-                    let x = mt2 * mt * p0_x + 3.0 * mt2 * t * p1_x + 3.0 * mt * t2 * p2_x + t2 * t * p3_x;
-                    let y = mt2 * mt * p0_y + 3.0 * mt2 * t * p1_y + 3.0 * mt * t2 * p2_y + t2 * t * p3_y;
+                    let x = mt2 * mt * p0_x
+                        + 3.0 * mt2 * t * p1_x
+                        + 3.0 * mt * t2 * p2_x
+                        + t2 * t * p3_x;
+                    let y = mt2 * mt * p0_y
+                        + 3.0 * mt2 * t * p1_y
+                        + 3.0 * mt * t2 * p2_y
+                        + t2 * t * p3_y;
                     return Valor::Array(vec![Valor::Num(x), Valor::Num(y)]);
                 }
                 return Valor::Error(
-                    "bezier::cubic() requiere (p0_x, p0_y, p1_x, p1_y, p2_x, p2_y, p3_x, p3_y, t)".to_string(),
+                    "bezier::cubic() requiere (p0_x, p0_y, p1_x, p1_y, p2_x, p2_y, p3_x, p3_y, t)"
+                        .to_string(),
                 );
             }
 
@@ -1556,8 +1566,12 @@ pub fn evaluar_expr(
                     let t = t.max(0.0).min(1.0);
                     let mt = 1.0 - t;
                     // Derivada de Bezier cúbica: B'(t) = 3(1-t)²(P1-P0) + 6(1-t)t(P2-P1) + 3t²(P3-P2)
-                    let dx = 3.0 * mt * mt * (p1_x - p0_x) + 6.0 * mt * t * (p2_x - p1_x) + 3.0 * t * t * (p3_x - p2_x);
-                    let dy = 3.0 * mt * mt * (p1_y - p0_y) + 6.0 * mt * t * (p2_y - p1_y) + 3.0 * t * t * (p3_y - p2_y);
+                    let dx = 3.0 * mt * mt * (p1_x - p0_x)
+                        + 6.0 * mt * t * (p2_x - p1_x)
+                        + 3.0 * t * t * (p3_x - p2_x);
+                    let dy = 3.0 * mt * mt * (p1_y - p0_y)
+                        + 6.0 * mt * t * (p2_y - p1_y)
+                        + 3.0 * t * t * (p3_y - p2_y);
                     return Valor::Array(vec![Valor::Num(dx), Valor::Num(dy)]);
                 }
                 return Valor::Error(
@@ -1573,9 +1587,11 @@ pub fn evaluar_expr(
                 ) {
                     let n = steps as usize;
                     if n < 2 {
-                        return Valor::Error("bezier::generate_points() requiere steps >= 2".to_string());
+                        return Valor::Error(
+                            "bezier::generate_points() requiere steps >= 2".to_string(),
+                        );
                     }
-                    
+
                     // Extraer puntos de control
                     let mut points: Vec<(f64, f64)> = Vec::new();
                     for cp in &control_points {
@@ -1587,24 +1603,25 @@ pub fn evaluar_expr(
                             }
                         }
                     }
-                    
+
                     if points.is_empty() {
-                        return Valor::Error("bezier::generate_points() requiere puntos de control".to_string());
+                        return Valor::Error(
+                            "bezier::generate_points() requiere puntos de control".to_string(),
+                        );
                     }
-                    
+
                     // Generar puntos usando algoritmo de De Casteljau
                     let mut result = Vec::new();
                     for i in 0..n {
                         let t = i as f64 / (n - 1) as f64;
                         let point = de_casteljau(&points, t);
-                        result.push(Valor::Array(vec![
-                            Valor::Num(point.0),
-                            Valor::Num(point.1),
-                        ]));
+                        result.push(Valor::Array(vec![Valor::Num(point.0), Valor::Num(point.1)]));
                     }
                     return Valor::Array(result);
                 }
-                return Valor::Error("bezier::generate_points() requiere [puntos_control], steps".to_string());
+                return Valor::Error(
+                    "bezier::generate_points() requiere [puntos_control], steps".to_string(),
+                );
             }
 
             Valor::Error(format!("Función '{}' no soportada en expresiones", name))

@@ -1,11 +1,11 @@
 //! RyDit Physics - Módulo de Física para RyDit
-//! 
+//!
 //! Proporciona funcionalidad de:
 //! - Proyectil 2D (trayectoria, altura máxima, alcance)
 //! - Gravedad N-cuerpos (2 cuerpos)
 
-use rydit_core::{RyditModule, ModuleResult, ModuleError};
-use serde_json::{Value, json};
+use rydit_core::{ModuleError, ModuleResult, RyditModule};
+use serde_json::{json, Value};
 use std::collections::HashMap;
 
 /// Módulo de Física - Proyectil y Gravedad
@@ -41,12 +41,12 @@ impl RyditModule for PhysicsModule {
 
 impl PhysicsModule {
     /// Simulación de proyectil 2D
-    /// 
+    ///
     /// # Params
     /// - x0, y0: Posición inicial
     /// - v0: Velocidad inicial (m/s)
     /// - angle: Ángulo en grados
-    /// 
+    ///
     /// # Returns
     /// [x_final, y_final, flight_time, max_height, range]
     fn projectile(&self, params: Value) -> ModuleResult {
@@ -77,22 +77,22 @@ impl PhysicsModule {
         let range = vx * flight_time;
 
         Ok(json!([
-            x0 + vx * flight_time,  // x final
-            y0,                      // y final
-            flight_time,            // tiempo vuelo
-            max_height,             // altura máxima
-            range                   // alcance horizontal
+            x0 + vx * flight_time, // x final
+            y0,                    // y final
+            flight_time,           // tiempo vuelo
+            max_height,            // altura máxima
+            range                  // alcance horizontal
         ]))
     }
 
     /// Gravedad entre 2 cuerpos (Ley de Newton)
-    /// 
+    ///
     /// # Params
     /// - m1, m2: Masas de los cuerpos
     /// - x1, y1: Posición del cuerpo 1
     /// - x2, y2: Posición del cuerpo 2
     /// - G: Constante gravitacional (default: 6.674e-11)
-    /// 
+    ///
     /// # Returns
     /// [fx1, fy1, fx2, fy2, distancia]
     fn nbody_2(&self, params: Value) -> ModuleResult {
@@ -104,7 +104,8 @@ impl PhysicsModule {
         if arr.len() != 7 {
             return Err(ModuleError {
                 code: "INVALID_PARAMS".to_string(),
-                message: "physics::nbody_2 requires 7 params: m1, m2, x1, y1, x2, y2, G".to_string(),
+                message: "physics::nbody_2 requires 7 params: m1, m2, x1, y1, x2, y2, G"
+                    .to_string(),
             });
         }
 

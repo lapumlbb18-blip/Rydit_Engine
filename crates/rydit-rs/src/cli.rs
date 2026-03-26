@@ -8,7 +8,10 @@ use lizer::{Lizer, Parser};
 use migui::Migui;
 use rydit_gfx::RyditGfx;
 
-use crate::{ejecutar_programa, ejecutar_programa_gfx, ejecutar_programa_migui, lazos::lazos_loop, repl::repl_mode};
+use crate::{
+    ejecutar_programa, ejecutar_programa_gfx, ejecutar_programa_migui, lazos::lazos_loop,
+    repl::repl_mode,
+};
 
 /// Punto de entrada principal después de configurar entorno
 pub fn run() {

@@ -731,10 +731,10 @@ mod warning_tests {
         let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
 
         let args = vec![
-            Expr::Num(0.0),   // x0
-            Expr::Num(0.0),   // y0
-            Expr::Num(50.0),  // v0
-            Expr::Num(45.0),  // angle
+            Expr::Num(0.0),  // x0
+            Expr::Num(0.0),  // y0
+            Expr::Num(50.0), // v0
+            Expr::Num(45.0), // angle
         ];
         let expr = Expr::Call {
             name: "physics::projectile".to_string(),
@@ -747,7 +747,10 @@ mod warning_tests {
             assert_eq!(arr.len(), 5, "projectile debería retornar 5 elementos");
             // Verificar que todos sean números
             for val in &arr {
-                assert!(matches!(val, Valor::Num(_)), "Todos los elementos deberían ser números");
+                assert!(
+                    matches!(val, Valor::Num(_)),
+                    "Todos los elementos deberían ser números"
+                );
             }
         } else {
             panic!("projectile debería retornar Array, fue {:?}", result);
@@ -761,11 +764,11 @@ mod warning_tests {
         let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
 
         let args = vec![
-            Expr::Num(0.0),   // x0
-            Expr::Num(0.0),   // y0
-            Expr::Num(50.0),  // v0
-            Expr::Num(45.0),  // angle
-            Expr::Num(2.0),   // t
+            Expr::Num(0.0),  // x0
+            Expr::Num(0.0),  // y0
+            Expr::Num(50.0), // v0
+            Expr::Num(45.0), // angle
+            Expr::Num(2.0),  // t
         ];
         let expr = Expr::Call {
             name: "physics::projectile_at".to_string(),
@@ -775,7 +778,11 @@ mod warning_tests {
         let result = evaluar_expr(&expr, &mut executor, &mut funcs);
 
         if let Valor::Array(arr) = result {
-            assert_eq!(arr.len(), 4, "projectile_at debería retornar 4 elementos [x, y, vx, vy]");
+            assert_eq!(
+                arr.len(),
+                4,
+                "projectile_at debería retornar 4 elementos [x, y, vx, vy]"
+            );
         } else {
             panic!("projectile_at debería retornar Array, fue {:?}", result);
         }
@@ -788,12 +795,12 @@ mod warning_tests {
         let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
 
         let args = vec![
-            Expr::Num(5.97e24), // m1 (Tierra)
-            Expr::Num(7.35e22), // m2 (Luna)
-            Expr::Num(0.0),     // x1
-            Expr::Num(0.0),     // y1
-            Expr::Num(3.844e8), // x2
-            Expr::Num(0.0),     // y2
+            Expr::Num(5.97e24),   // m1 (Tierra)
+            Expr::Num(7.35e22),   // m2 (Luna)
+            Expr::Num(0.0),       // x1
+            Expr::Num(0.0),       // y1
+            Expr::Num(3.844e8),   // x2
+            Expr::Num(0.0),       // y2
             Expr::Num(6.674e-11), // G
         ];
         let expr = Expr::Call {
@@ -804,7 +811,11 @@ mod warning_tests {
         let result = evaluar_expr(&expr, &mut executor, &mut funcs);
 
         if let Valor::Array(arr) = result {
-            assert_eq!(arr.len(), 5, "nbody_2 debería retornar 5 elementos [fx1, fy1, fx2, fy2, dist]");
+            assert_eq!(
+                arr.len(),
+                5,
+                "nbody_2 debería retornar 5 elementos [fx1, fy1, fx2, fy2, dist]"
+            );
             // La fuerza debería ser positiva (atracción)
             if let Valor::Num(fx) = arr[0] {
                 assert!(fx > 0.0, "La fuerza en x debería ser positiva");
@@ -835,7 +846,11 @@ mod warning_tests {
 
         if let Valor::Num(amp) = result {
             // La amplitud debería estar entre -1 y 1
-            assert!(amp >= -1.0 && amp <= 1.0, "La amplitud debería estar entre -1 y 1, fue {}", amp);
+            assert!(
+                amp >= -1.0 && amp <= 1.0,
+                "La amplitud debería estar entre -1 y 1, fue {}",
+                amp
+            );
         } else {
             panic!("wave_1d debería retornar Num, fue {:?}", result);
         }
@@ -860,7 +875,11 @@ mod warning_tests {
         let result = evaluar_expr(&expr, &mut executor, &mut funcs);
 
         if let Valor::Array(arr) = result {
-            assert_eq!(arr.len(), 3, "pendulum debería retornar 3 elementos [angle, angular_vel, period]");
+            assert_eq!(
+                arr.len(),
+                3,
+                "pendulum debería retornar 3 elementos [angle, angular_vel, period]"
+            );
         } else {
             panic!("pendulum debería retornar Array, fue {:?}", result);
         }
@@ -876,15 +895,13 @@ mod warning_tests {
         let mut executor = Executor::nuevo();
         let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
 
-        let args = vec![
-            Expr::Array(vec![
-                Expr::Num(1.0),
-                Expr::Num(2.0),
-                Expr::Num(3.0),
-                Expr::Num(4.0),
-                Expr::Num(5.0),
-            ])
-        ];
+        let args = vec![Expr::Array(vec![
+            Expr::Num(1.0),
+            Expr::Num(2.0),
+            Expr::Num(3.0),
+            Expr::Num(4.0),
+            Expr::Num(5.0),
+        ])];
         let expr = Expr::Call {
             name: "stats::mean".to_string(),
             args,
@@ -893,7 +910,11 @@ mod warning_tests {
         let result = evaluar_expr(&expr, &mut executor, &mut funcs);
 
         if let Valor::Num(mean) = result {
-            assert!((mean - 3.0).abs() < 0.001, "mean([1,2,3,4,5]) debería ser 3.0, fue {}", mean);
+            assert!(
+                (mean - 3.0).abs() < 0.001,
+                "mean([1,2,3,4,5]) debería ser 3.0, fue {}",
+                mean
+            );
         } else {
             panic!("mean debería retornar Num, fue {:?}", result);
         }
@@ -905,15 +926,13 @@ mod warning_tests {
         let mut executor = Executor::nuevo();
         let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
 
-        let args = vec![
-            Expr::Array(vec![
-                Expr::Num(1.0),
-                Expr::Num(2.0),
-                Expr::Num(3.0),
-                Expr::Num(4.0),
-                Expr::Num(5.0),
-            ])
-        ];
+        let args = vec![Expr::Array(vec![
+            Expr::Num(1.0),
+            Expr::Num(2.0),
+            Expr::Num(3.0),
+            Expr::Num(4.0),
+            Expr::Num(5.0),
+        ])];
         let expr = Expr::Call {
             name: "stats::median".to_string(),
             args,
@@ -922,7 +941,11 @@ mod warning_tests {
         let result = evaluar_expr(&expr, &mut executor, &mut funcs);
 
         if let Valor::Num(median) = result {
-            assert!((median - 3.0).abs() < 0.001, "median([1,2,3,4,5]) debería ser 3.0, fue {}", median);
+            assert!(
+                (median - 3.0).abs() < 0.001,
+                "median([1,2,3,4,5]) debería ser 3.0, fue {}",
+                median
+            );
         } else {
             panic!("median debería retornar Num, fue {:?}", result);
         }
@@ -934,14 +957,12 @@ mod warning_tests {
         let mut executor = Executor::nuevo();
         let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
 
-        let args = vec![
-            Expr::Array(vec![
-                Expr::Num(1.0),
-                Expr::Num(2.0),
-                Expr::Num(3.0),
-                Expr::Num(4.0),
-            ])
-        ];
+        let args = vec![Expr::Array(vec![
+            Expr::Num(1.0),
+            Expr::Num(2.0),
+            Expr::Num(3.0),
+            Expr::Num(4.0),
+        ])];
         let expr = Expr::Call {
             name: "stats::median".to_string(),
             args,
@@ -950,7 +971,11 @@ mod warning_tests {
         let result = evaluar_expr(&expr, &mut executor, &mut funcs);
 
         if let Valor::Num(median) = result {
-            assert!((median - 2.5).abs() < 0.001, "median([1,2,3,4]) debería ser 2.5, fue {}", median);
+            assert!(
+                (median - 2.5).abs() < 0.001,
+                "median([1,2,3,4]) debería ser 2.5, fue {}",
+                median
+            );
         } else {
             panic!("median debería retornar Num, fue {:?}", result);
         }
@@ -977,7 +1002,11 @@ mod warning_tests {
         };
         let result_min = evaluar_expr(&expr_min, &mut executor, &mut funcs);
         if let Valor::Num(min) = result_min {
-            assert!((min - 1.0).abs() < 0.001, "min debería ser 1.0, fue {}", min);
+            assert!(
+                (min - 1.0).abs() < 0.001,
+                "min debería ser 1.0, fue {}",
+                min
+            );
         } else {
             panic!("min debería retornar Num, fue {:?}", result_min);
         }
@@ -989,7 +1018,11 @@ mod warning_tests {
         };
         let result_max = evaluar_expr(&expr_max, &mut executor, &mut funcs);
         if let Valor::Num(max) = result_max {
-            assert!((max - 9.0).abs() < 0.001, "max debería ser 9.0, fue {}", max);
+            assert!(
+                (max - 9.0).abs() < 0.001,
+                "max debería ser 9.0, fue {}",
+                max
+            );
         } else {
             panic!("max debería retornar Num, fue {:?}", result_max);
         }
@@ -1001,9 +1034,7 @@ mod warning_tests {
         let mut executor = Executor::nuevo();
         let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
 
-        let args = vec![
-            Expr::Texto("nombre,edad\nJuan,25\nMaria,30".to_string())
-        ];
+        let args = vec![Expr::Texto("nombre,edad\nJuan,25\nMaria,30".to_string())];
         let expr = Expr::Call {
             name: "csv::parse".to_string(),
             args,

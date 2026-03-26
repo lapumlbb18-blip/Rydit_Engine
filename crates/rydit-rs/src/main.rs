@@ -8,7 +8,7 @@ mod config;
 mod eval;
 mod executor;
 mod json_helpers;
-mod lazos;       // ← PROTOCOLO LAZOS
+mod lazos; // ← PROTOCOLO LAZOS
 mod module;
 // mod physics;  ← AHORA ES CRATE EXTERNO: use rydit_physics::PhysicsModule;
 mod repl;
@@ -26,13 +26,16 @@ pub use json_helpers::{valor_rydit_a_serde, valor_serde_a_rydit};
 pub use executor::{ejecutar_programa, ejecutar_programa_gfx, ejecutar_programa_migui};
 
 // Re-exportar módulo system (blast-core integration)
-pub use module::{MathModule, ModuleContext, ModuleRegistry as BlastModuleRegistry, RyditModule as BlastRyditModule};
+pub use module::{
+    MathModule, ModuleContext, ModuleRegistry as BlastModuleRegistry,
+    RyditModule as BlastRyditModule,
+};
 
 // Re-exportar módulos con trait rydit-core (crates externos)
-pub use rydit_science::ScienceModule;
-pub use rydit_physics::PhysicsModule;
 pub use rydit_anim::AnimModule;
-pub use rydit_core::{RyditModule, ModuleRegistry, ModuleError, ModuleResult};
+pub use rydit_core::{ModuleError, ModuleRegistry, ModuleResult, RyditModule};
+pub use rydit_physics::PhysicsModule;
+pub use rydit_science::ScienceModule;
 
 // Imports necesarios para el código restante en main.rs
 use blast_core::{Executor, Valor};
@@ -40,6 +43,7 @@ use lizer::{Expr, Lizer, Parser, Stmt};
 use migui::{Color as MiguiColor, Migui, Rect, WidgetId};
 use rydit_gfx::{ColorRydit, Key, RyditGfx};
 use std::collections::{HashMap, HashSet};
+use std::str::FromStr;
 
 fn main() {
     cli::run();
@@ -2700,7 +2704,7 @@ pub fn evaluar_expr_migui(
                         funcs,
                     ),
                 ) {
-                    let color = MiguiColor::from_str(&color_str);
+                    let color = MiguiColor::from_str(&color_str).unwrap_or(MiguiColor::PANEL);
                     gui.panel(
                         WidgetId::new(&id),
                         Rect::new(x as f32, y as f32, w as f32, h as f32),

@@ -1,0 +1,206 @@
+# ============================================================================
+# RYDIT - .GITIGNORE
+# ============================================================================
+# Código core AHORA SÍ se sube (open source)
+# Se mantiene protección solo para metodología y diagnósticos
+# ============================================================================
+
+# ============================================================================
+# METODOLOGÍA Y DIAGNÓSTICOS (NO SUBIR - SOLO INTERNO)
+# ============================================================================
+diagnostico/
+DIAGNOSTICO_*.md
+DIAGNOSTICO_*.txt
+ANALISIS_*.txt
+ANALISIS_*.md
+BREAK_SESION_*.txt
+CIERRE_SESION_*.txt
+RESUMEN_SESION_*.txt
+LOG_ERRORES_*.txt
+LOGROS_*.txt
+SESSION_STATE*.md
+CONTEXT*.md
+QWEN.md
+
+# ============================================================================
+# BUILD ARTIFACTS (NO SUBIR - GENERADOS)
+# ============================================================================
+target/
+**/target/
+**/*.rs.bk
+*.o
+*.so
+*.dll
+*.dylib
+*.exe
+*.pdb
+*.ilk
+*.a
+*.lib
+
+# ============================================================================
+# CARGO (PARCIAL - SOLO LOCK)
+# ============================================================================
+# Cargo.lock puede subirse para reproducibilidad
+# Cargo.toml se mantiene (configuración pública)
+**/Cargo.lock
+
+# ============================================================================
+# EJEMPLOS COMPILADOS (NO SUBIR - GENERADOS)
+# ============================================================================
+target/debug/examples/
+target/release/examples/
+*.d
+
+# ============================================================================
+# ARCHIVOS TEMPORALES DE PRUEBA
+# ============================================================================
+test_*.rydit
+test_*.rs
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# ============================================================================
+# IDE / EDITORES (NO SUBIR - CONFIGURACIÓN LOCAL)
+# ============================================================================
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+*.sublime-project
+*.sublime-workspace
+.nvim/
+.vs/
+
+# ============================================================================
+# SISTEMA OPERATIVO (NO SUBIR - BASURA)
+# ============================================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ============================================================================
+# LOGS Y REPORTES (NO SUBIR - LOCALES)
+# ============================================================================
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ============================================================================
+# CLAVES Y SECRETOS (NUNCA SUBIR - SEGURIDAD)
+# ============================================================================
+*.pem
+*.key
+*.env
+.env
+.env.local
+.env.*.local
+secrets/
+credentials/
+*.credentials
+*.password
+
+# ============================================================================
+# BACKUPS (NO SUBIR - LOCALES Y PELIGROSOS)
+# ============================================================================
+*.bak
+*.backup
+*.old
+backup/
+backups/
+backup_*.sh
+.rcloneignore
+
+# ============================================================================
+# DOCUMENTACIÓN INTERNA (NO SUBIR - SOLO EQUIPO)
+# ============================================================================
+internal/
+private/
+confidential/
+historial/
+ruta_v0.5.0_v0.9.9/
+archive/
+context/
+
+# Archivos de estado de sesión (Qwen Code)
+QWEN.md
+.qwen/
+output-language.md
+
+# ============================================================================
+# ARCHIVOS DE PLANES Y RESÚMENES INTERNOS (NO SUBIR)
+# ============================================================================
+PLAN_*.md
+RESUMEN_*.md
+RESUMEN_*.txt
+CONTEXTO_*.md
+EVALUACION_*.md
+SOLUCION_*.md
+DATOS_EXACTOS_*.md
+ORGANIZACION_*.md
+REPORTES_*.md
+ROADMAP_TOTAL_*.md
+TAREAS_SIGUIENTE_SESION_*.txt
+ideas_evaluar.txt
+
+# CHANGELOGs internos de sesión (solo local)
+CHANGELOG_v0.7.1.2-3.md
+CHANGELOG_v0.7.1.4.md
+
+# ============================================================================
+# BACKUPS Y SCRIPTS DE COPIA (NO SUBIR - PRIVADOS/PELIGROSOS)
+# ============================================================================
+backup/
+backups/
+backup_*.sh
+backup_google_drive.sh
+backup_con_binarios.sh
+.rcloneignore
+.rclone.conf
+rclone.conf
+
+# ============================================================================
+# SCREENSHOTS OPCIONALES (DECIDIR SI SUBIR)
+# ============================================================================
+# Descomentar si NO quieres subir screenshots
+# screenshots/*.jpg
+# screenshots/*.png
+# screenshots/*.jpeg
+
+# ============================================================================
+# NOTAS DEL DESARROLLADOR (NO SUBIR - PERSONAL)
+# ============================================================================
+notas/
+notes/
+TODO.md
+ROADMAP_INTERNAL.md
+
+# ============================================================================
+# FIN DEL .GITIGNORE
+# ============================================================================
+# Lo que SÍ se sube:
+# - README.md (presentación)
+# - LICENSE (licencia)
+# - CONTRIBUTING.md (contribución)
+# - screenshots/ (evidencia visual)
+# - demos/*.rydit (scripts de usuario)
+# - crates/modules/*.rydit (stdlib público)
+# - scripts/ (utilidades)
+# - docs/ (documentación pública)
+# ============================================================================
+.local/
+.private/

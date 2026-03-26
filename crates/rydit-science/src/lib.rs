@@ -7,8 +7,8 @@
 
 pub mod geometry;
 
-use rydit_core::{RyditModule, ModuleResult, ModuleError};
-use serde_json::{Value, json};
+use rydit_core::{ModuleError, ModuleResult, RyditModule};
+use serde_json::{json, Value};
 use std::collections::HashMap;
 
 /// Módulo de Ciencia - Bezier y Estadísticas
@@ -99,7 +99,9 @@ impl ScienceModule {
         if arr.len() != 7 {
             return Err(ModuleError {
                 code: "INVALID_PARAMS".to_string(),
-                message: "bezier::quadratic requires 7 params: p0_x, p0_y, p1_x, p1_y, p2_x, p2_y, t".to_string(),
+                message:
+                    "bezier::quadratic requires 7 params: p0_x, p0_y, p1_x, p1_y, p2_x, p2_y, t"
+                        .to_string(),
             });
         }
 
@@ -189,7 +191,7 @@ impl ScienceModule {
         nums.sort_by(|a, b| a.partial_cmp(b).unwrap());
         let mid = nums.len() / 2;
 
-        let median = if nums.len() % 2 == 0 {
+        let median = if nums.len().is_multiple_of(2) {
             (nums[mid - 1] + nums[mid]) / 2.0
         } else {
             nums[mid]
@@ -270,7 +272,8 @@ impl ScienceModule {
         if arr.len() != 3 {
             return Err(ModuleError {
                 code: "INVALID_PARAMS".to_string(),
-                message: "geometry::penrose requires 3 params: center_x, center_y, size".to_string(),
+                message: "geometry::penrose requires 3 params: center_x, center_y, size"
+                    .to_string(),
             });
         }
 
@@ -291,7 +294,8 @@ impl ScienceModule {
         if arr.len() != 3 {
             return Err(ModuleError {
                 code: "INVALID_PARAMS".to_string(),
-                message: "geometry::impossible_cube requires 3 params: center_x, center_y, size".to_string(),
+                message: "geometry::impossible_cube requires 3 params: center_x, center_y, size"
+                    .to_string(),
             });
         }
 
@@ -312,7 +316,9 @@ impl ScienceModule {
         if arr.len() != 5 {
             return Err(ModuleError {
                 code: "INVALID_PARAMS".to_string(),
-                message: "geometry::spiral requires 5 params: center_x, center_y, turns, radius, points".to_string(),
+                message:
+                    "geometry::spiral requires 5 params: center_x, center_y, turns, radius, points"
+                        .to_string(),
             });
         }
 
@@ -335,7 +341,8 @@ impl ScienceModule {
         if arr.len() != 3 {
             return Err(ModuleError {
                 code: "INVALID_PARAMS".to_string(),
-                message: "geometry::muller_lyer requires 3 params: center_x, center_y, length".to_string(),
+                message: "geometry::muller_lyer requires 3 params: center_x, center_y, length"
+                    .to_string(),
             });
         }
 
@@ -366,7 +373,13 @@ impl ScienceModule {
         let width_top = arr[3].as_f64().unwrap_or(100.0);
         let width_bottom = arr[4].as_f64().unwrap_or(300.0);
 
-        Ok(geometry::ponzo(center_x, center_y, height, width_top, width_bottom))
+        Ok(geometry::ponzo(
+            center_x,
+            center_y,
+            height,
+            width_top,
+            width_bottom,
+        ))
     }
 }
 
@@ -400,7 +413,7 @@ mod tests {
         let module = ScienceModule;
         let params = json!([0.0, 0.0, 100.0, 100.0, 0.5]);
         let result = module.execute("bezier::linear", params).unwrap();
-        
+
         assert_eq!(result, json!([50.0, 50.0]));
     }
 
@@ -410,7 +423,7 @@ mod tests {
         // p0=(0,0), p1=(30,100), p2=(70,100), p3=(100,0), t=0.5
         let params = json!([0.0, 0.0, 30.0, 100.0, 70.0, 100.0, 100.0, 0.0, 0.5]);
         let result = module.execute("bezier::cubic", params).unwrap();
-        
+
         assert_eq!(result, json!([50.0, 75.0]));
     }
 
@@ -419,7 +432,7 @@ mod tests {
         let module = ScienceModule;
         let params = json!([1.0, 2.0, 3.0, 4.0, 5.0]);
         let result = module.execute("stats::mean", params).unwrap();
-        
+
         assert_eq!(result, json!(3.0));
     }
 
@@ -428,7 +441,7 @@ mod tests {
         let module = ScienceModule;
         let params = json!([1.0, 2.0, 3.0, 4.0, 5.0]);
         let result = module.execute("stats::median", params).unwrap();
-        
+
         assert_eq!(result, json!(3.0));
     }
 
@@ -437,7 +450,7 @@ mod tests {
         let module = ScienceModule;
         let params = json!([1.0, 2.0, 3.0, 4.0]);
         let result = module.execute("stats::median", params).unwrap();
-        
+
         assert_eq!(result, json!(2.5));
     }
 
@@ -445,10 +458,10 @@ mod tests {
     fn test_stats_min_max() {
         let module = ScienceModule;
         let params = json!([3.0, 1.0, 4.0, 1.0, 5.0]);
-        
+
         let min_result = module.execute("stats::min", params.clone()).unwrap();
         assert_eq!(min_result, json!(1.0));
-        
+
         let max_result = module.execute("stats::max", params).unwrap();
         assert_eq!(max_result, json!(5.0));
     }
