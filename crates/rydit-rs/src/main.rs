@@ -7,13 +7,13 @@ mod cli;
 mod config;
 mod eval;
 mod executor;
-mod geometry;    // ← NUEVO: Módulo de Geometría (ilusiones ópticas)
+mod geometry;    // ← Módulo de Geometría (ilusiones ópticas)
 mod json_helpers;
 mod lazos;       // ← PROTOCOLO LAZOS
 mod module;
-mod physics;     // ← NUEVO: Módulo de Física
+mod physics;     // ← Módulo de Física
 mod repl;
-mod science;     // ← NUEVO: Módulo de Ciencia (Bezier, Stats)
+// mod science;  ← AHORA ES CRATE EXTERNO: use rydit_science::ScienceModule;
 mod tests;
 
 // Re-exportar funciones del módulo eval
@@ -30,7 +30,7 @@ pub use executor::{ejecutar_programa, ejecutar_programa_gfx, ejecutar_programa_m
 pub use module::{MathModule, ModuleContext, ModuleRegistry as BlastModuleRegistry, RyditModule as BlastRyditModule};
 
 // Re-exportar nuevos módulos con trait rydit-core
-pub use science::ScienceModule;
+pub use rydit_science::ScienceModule;
 pub use physics::PhysicsModule;
 pub use geometry::GeometryModule;
 pub use rydit_core::{RyditModule, ModuleRegistry, ModuleError, ModuleResult};

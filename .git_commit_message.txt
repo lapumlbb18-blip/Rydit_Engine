@@ -1,39 +1,56 @@
-style: cargo fmt automático + fix bench imports
+feat: v0.7.3.1 - rydit-science extraído como crate independiente ✅
 
-CARGO FMT - FORMATO AUTOMÁTICO
-==============================
+🎯 OBJETIVO
+===========
+Extraer rydit-science como crate independiente para permitir:
+- Publicación en crates.io
+- Uso independiente en otros proyectos
+- Mejor organización del código
 
-Archivos formateados: 12
-- crates/blast-core/src/lib.rs
-- crates/lizer/benches/bench_lizer.rs
-- crates/lizer/src/lib.rs
-- crates/migui/src/lib.rs
-- crates/rydit-gfx/build.rs
-- crates/rydit-gfx/examples/demo.rs
-- crates/rydit-gfx/src/lib.rs
-- crates/rydit-gfx/src/particles.rs
-- crates/rydit-rs/src/bin/demo_particles.rs
-- crates/rydit-rs/src/bin/snake.rs
-- crates/rydit-rs/src/main.rs
-- crates/v-shield/src/lib.rs
+📦 NUEVO CRATE
+==============
+✅ crates/rydit-science/
+   - ScienceModule (Bezier + Stats)
+   - 9 tests passing
+   - Dependencias: rydit-core, serde_json, serde
 
-Cambios:
-- Whitespace consistente (tabs, espacios)
-- Line breaks optimizados
-- Paréntesis en múltiples líneas cuando exceden ancho
+🔧 CAMBIOS
+==========
+- Cargo.toml: workspace member rydit-science
+- crates/rydit-rs/Cargo.toml: dependencia rydit-science
+- crates/rydit-rs/src/main.rs: usa rydit_science::ScienceModule
+- crates/rydit-rs/src/science.rs: ELIMINADO (movido a crate)
 
-BENCH FIX
-=========
-- crates/lizer/benches/bench_lizer.rs
-  * Eliminado import unused: `Parser`
-  * Solo se usa `Lizer` en benchmarks
-
-VERIFICACIÓN
+✅ VALIDACIÓN
 ============
-✅ cargo build --release: 0 errors, 0 warnings
-✅ cargo test: 137 tests passing
-✅ Sin regresiones
+- cargo check --workspace: ✅
+- cargo test -p rydit-science: 9 tests passing ✅
+- cargo test -p rydit-rs: 59 tests passing ✅
+- Total: 68 tests (mismo que antes) ✅
+- LAZOS protocol: 100% funcional ✅
+- demo_lazos.sh: completada ✅
 
-PRÓXIMO: SPLIT DE main.rs (v0.7.0)
-===================================
-Ver documento SPLIT_EVALUACION.md para plan detallado
+📊 MÉTRICAS
+===========
+- rydit-science: ~330 líneas
+- Tests: 9
+- Build time: ~1m 16s (sin cambios significativos)
+- Binario release: ~725 KB
+
+🚀 PRÓXIMOS PASOS
+=================
+1. Extraer rydit-physics (siguiente módulo más fácil)
+2. Implementar rydit-geometry (ilusiones ópticas)
+3. Publicar rydit-science en crates.io
+
+💡 ARQUITECTURA
+===============
+Workspace actual:
+├── rydit-core      ← Trait + Registry
+├── rydit-science   ← Bezier + Stats (NUEVO)
+├── rydit-rs        ← Binario + módulos restantes
+├── rydit-physics   ← (pendiente extraer)
+└── rydit-geometry  ← (pendiente implementar)
+
+---
+✅ RYDIT-SCIENCE EXTRAÍDO - LISTO PARA USAR

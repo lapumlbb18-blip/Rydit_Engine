@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 rydit-core = { path = "../rydit-core" }
+rydit-science = { path = "../rydit-science" }
 lizer = { path = "../lizer" }
 v-shield = { path = "../v-shield" }
 blast-core = { path = "../blast-core" }

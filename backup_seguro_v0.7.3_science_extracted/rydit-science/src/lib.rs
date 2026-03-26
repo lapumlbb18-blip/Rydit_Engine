@@ -1,11 +1,14 @@
-// crates/rydit-rs/src/science.rs
-// Módulo de Ciencia - Bezier, Stats
-// Implementa el trait RyditModule de rydit-core
+//! RyDit Science - Módulo de Ciencia para RyDit
+//! 
+//! Proporciona funcionalidad de:
+//! - Curvas Bezier (lineal, cuadrática, cúbica)
+//! - Estadísticas (media, mediana, mínimo, máximo)
 
 use rydit_core::{RyditModule, ModuleResult, ModuleError};
 use serde_json::{Value, json};
 use std::collections::HashMap;
 
+/// Módulo de Ciencia - Bezier y Estadísticas
 pub struct ScienceModule;
 
 impl RyditModule for ScienceModule {
@@ -47,6 +50,7 @@ impl RyditModule for ScienceModule {
 }
 
 impl ScienceModule {
+    /// Curva Bezier lineal: P(t) = (1-t)*P0 + t*P1
     fn bezier_linear(&self, params: Value) -> ModuleResult {
         let arr = params.as_array().ok_or_else(|| ModuleError {
             code: "INVALID_PARAMS".to_string(),
@@ -72,6 +76,7 @@ impl ScienceModule {
         Ok(json!([x, y]))
     }
 
+    /// Curva Bezier cuadrática: P(t) = (1-t)²*P0 + 2(1-t)t*P1 + t²*P2
     fn bezier_quadratic(&self, params: Value) -> ModuleResult {
         let arr = params.as_array().ok_or_else(|| ModuleError {
             code: "INVALID_PARAMS".to_string(),
@@ -100,6 +105,7 @@ impl ScienceModule {
         Ok(json!([x, y]))
     }
 
+    /// Curva Bezier cúbica: P(t) = (1-t)³*P0 + 3(1-t)²t*P1 + 3(1-t)t²*P2 + t³*P3
     fn bezier_cubic(&self, params: Value) -> ModuleResult {
         let arr = params.as_array().ok_or_else(|| ModuleError {
             code: "INVALID_PARAMS".to_string(),
@@ -133,6 +139,7 @@ impl ScienceModule {
         Ok(json!([x, y]))
     }
 
+    /// Media aritmética: sum / n
     fn stats_mean(&self, params: Value) -> ModuleResult {
         let arr = params.as_array().ok_or_else(|| ModuleError {
             code: "INVALID_PARAMS".to_string(),
@@ -150,6 +157,7 @@ impl ScienceModule {
         Ok(json!(sum / arr.len() as f64))
     }
 
+    /// Mediana: valor central de array ordenado
     fn stats_median(&self, params: Value) -> ModuleResult {
         let arr = params.as_array().ok_or_else(|| ModuleError {
             code: "INVALID_PARAMS".to_string(),
@@ -177,6 +185,7 @@ impl ScienceModule {
         Ok(json!(median))
     }
 
+    /// Valor mínimo de un array
     fn stats_min(&self, params: Value) -> ModuleResult {
         let arr = params.as_array().ok_or_else(|| ModuleError {
             code: "INVALID_PARAMS".to_string(),
@@ -205,6 +214,7 @@ impl ScienceModule {
         }
     }
 
+    /// Valor máximo de un array
     fn stats_max(&self, params: Value) -> ModuleResult {
         let arr = params.as_array().ok_or_else(|| ModuleError {
             code: "INVALID_PARAMS".to_string(),
