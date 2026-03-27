@@ -1,0 +1,127 @@
+# 🎮 TEST INPUT MAP SIMPLE
+# Sin bloques anidados
+
+shield.init
+
+dark.slot frame = 0
+dark.slot test_count = 0
+dark.slot detected = ""
+
+voz "=== TEST INPUT MAP ==="
+voz "Presiona: ESC, SPACE, ENTER, Flechas"
+voz "O usa: VolUP + W/A/S/D para flechas"
+voz ""
+
+ryda frame < 10000 {
+    # Fondo
+    draw.rect(0, 0, 800, 600, "negro")
+    
+    # Título
+    draw.text("TEST INPUT MAP", 280, 30, 26, "amarillo")
+    
+    # Estado
+    draw.text("Presiona teclas:", 50, 100, 20, "blanco")
+    draw.text("Detectada: " + detected, 50, 140, 22, "verde")
+    draw.text("Total: " + test_count, 50, 180, 20, "blanco")
+    
+    # =====================
+    # DETECTAR TECLAS
+    # =====================
+    
+    # ESC
+    dark.slot es_escape = tecla_presionada("escape")
+    onif es_escape {
+        detected = "ESC"
+        audio::beep(300, 100)
+        test_count = test_count + 1
+        draw.text("ESC DETECTADO!", 300, 250, 28, "verde")
+    }
+    
+    # SPACE
+    dark.slot es_space = tecla_presionada("space")
+    onif es_space {
+        detected = "SPACE"
+        audio::beep(400, 100)
+        test_count = test_count + 1
+        draw.text("SPACE DETECTADO!", 300, 250, 28, "azul")
+        particles::emit(400, 300, "spark", 20)
+    }
+    
+    # ENTER
+    dark.slot es_enter = tecla_presionada("enter")
+    onif es_enter {
+        detected = "ENTER"
+        audio::beep(500, 100)
+        test_count = test_count + 1
+        draw.text("ENTER DETECTADO!", 300, 250, 28, "naranja")
+        particles::emit(400, 300, "spark", 20)
+    }
+    
+    # Flecha ARRIBA
+    dark.slot es_up = tecla_presionada("arrow_up")
+    onif es_up {
+        detected = "ARRIBA"
+        audio::beep(600, 100)
+        test_count = test_count + 1
+        draw.text("FLECHA ARRIBA!", 300, 250, 28, "magenta")
+        particles::emit(400, 300, "spark", 20)
+    }
+    
+    # Flecha ABAJO
+    dark.slot es_down = tecla_presionada("arrow_down")
+    onif es_down {
+        detected = "ABAJO"
+        audio::beep(700, 100)
+        test_count = test_count + 1
+        draw.text("FLECHA ABAJO!", 300, 250, 28, "magenta")
+        particles::emit(400, 300, "spark", 20)
+    }
+    
+    # Flecha IZQUIERDA
+    dark.slot es_left = tecla_presionada("arrow_left")
+    onif es_left {
+        detected = "IZQUIERDA"
+        audio::beep(800, 100)
+        test_count = test_count + 1
+        draw.text("FLECHA IZQ!", 300, 250, 28, "magenta")
+        particles::emit(400, 300, "spark", 20)
+    }
+    
+    # Flecha DERECHA
+    dark.slot es_right = tecla_presionada("arrow_right")
+    onif es_right {
+        detected = "DERECHA"
+        audio::beep(900, 100)
+        test_count = test_count + 1
+        draw.text("FLECHA DER!", 300, 250, 28, "magenta")
+        particles::emit(400, 300, "spark", 20)
+    }
+    
+    # =====================
+    # INFO
+    # =====================
+    draw.text("Combinaciones Termux:", 50, 400, 18, "gris")
+    draw.text("  VolUP + W = ARRIBA", 70, 430, 16, "gris")
+    draw.text("  VolUP + A = IZQ", 70, 455, 16, "gris")
+    draw.text("  VolUP + S = ABAJO", 70, 480, 16, "gris")
+    draw.text("  VolUP + D = DER", 70, 505, 16, "gris")
+    draw.text("  VolUP + Q = Extra Keys", 70, 530, 16, "gris")
+    
+    # Partículas
+    particles::update()
+    
+    # Salir con ESC (después de 30 frames)
+    onif es_escape {
+        onif frame > 30 {
+            particles::clear()
+            voz "Test completado"
+            break
+        }
+    }
+    
+    dark.slot frame = frame + 1
+}
+
+particles::clear()
+voz "=== TEST FINALIZADO ==="
+voz "Teclas detectadas: " + test_count

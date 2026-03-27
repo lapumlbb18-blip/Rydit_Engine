@@ -1,0 +1,152 @@
+# 🎮 TEST INPUT MAP PERSONALIZABLE
+# Usa input_map::register() para mapear teclas
+
+shield.init
+
+dark.slot frame = 0
+dark.slot test_count = 0
+dark.slot detected = ""
+
+# Registrar combinaciones personalizadas (ejemplo)
+# input_map::register("volup_x", "space")
+
+voz "=== TEST INPUT MAP PERSONALIZABLE ==="
+voz "Funciones disponibles:"
+voz "  input_map::register(combo, action)"
+voz "  input_map::list()"
+voz "  input_map::count()"
+voz ""
+voz "Combinaciones por defecto:"
+voz "  VolUP + W = Arrow Up"
+voz "  VolUP + A/S/D = Otras flechas"
+voz "  VolUP + E = Escape"
+voz ""
+
+ryda frame < 10000 {
+    # Fondo
+    draw.rect(0, 0, 800, 600, "negro")
+    
+    # Título
+    draw.text("INPUT MAP TEST", 270, 30, 26, "amarillo")
+    
+    # Estado
+    draw.text("Detectada: " + detected, 50, 100, 22, "verde")
+    draw.text("Total: " + test_count, 50, 140, 20, "blanco")
+    
+    # =====================
+    # DETECTAR TECLAS
+    # =====================
+    
+    # ESC (directo)
+    dark.slot es_escape = tecla_presionada("escape")
+    onif es_escape {
+        detected = "ESCAPE"
+        audio::beep(300, 100)
+        test_count = test_count + 1
+        draw.text("ESCAPE!", 300, 250, 28, "rojo")
+    }
+    
+    # SPACE
+    dark.slot es_space = tecla_presionada("space")
+    onif es_space {
+        detected = "SPACE"
+        audio::beep(400, 100)
+        test_count = test_count + 1
+        draw.text("SPACE!", 300, 250, 28, "azul")
+        particles::emit(400, 300, "spark", 20)
+    }
+    
+    # ENTER
+    dark.slot es_enter = tecla_presionada("enter")
+    onif es_enter {
+        detected = "ENTER"
+        audio::beep(500, 100)
+        test_count = test_count + 1
+        draw.text("ENTER!", 300, 250, 28, "naranja")
+        particles::emit(400, 300, "spark", 20)
+    }
+    
+    # Flechas
+    dark.slot es_up = tecla_presionada("arrow_up")
+    onif es_up {
+        detected = "ARRIBA"
+        audio::beep(600, 100)
+        test_count = test_count + 1
+        draw.text("ARRIBA!", 300, 250, 28, "magenta")
+        particles::emit(400, 300, "spark", 20)
+    }
+    
+    dark.slot es_down = tecla_presionada("arrow_down")
+    onif es_down {
+        detected = "ABAJO"
+        audio::beep(700, 100)
+        test_count = test_count + 1
+        draw.text("ABAJO!", 300, 250, 28, "magenta")
+        particles::emit(400, 300, "spark", 20)
+    }
+    
+    dark.slot es_left = tecla_presionada("arrow_left")
+    onif es_left {
+        detected = "IZQUIERDA"
+        audio::beep(800, 100)
+        test_count = test_count + 1
+        draw.text("IZQUIERDA!", 300, 250, 28, "magenta")
+        particles::emit(400, 300, "spark", 20)
+    }
+    
+    dark.slot es_right = tecla_presionada("arrow_right")
+    onif es_right {
+        detected = "DERECHA"
+        audio::beep(900, 100)
+        test_count = test_count + 1
+        draw.text("DERECHA!", 300, 250, 28, "magenta")
+        particles::emit(400, 300, "spark", 20)
+    }
+    
+    # =====================
+    # INFO INPUT MAP
+    # =====================
+    draw.text("=== INPUT MAP ===", 500, 100, 18, "amarillo")
+    
+    # Mostrar combinaciones registradas
+    dark.slot combos = input_map::list()
+    dark.slot i = 0
+    dark.slot y_pos = 130
+    
+    # Mostrar primeras 5 combinaciones
+    ryda i < 5 {
+        onif i < arrays::length(combos) {
+            dark.slot combo_text = combos[i]
+            draw.text(combo_text, 510, y_pos, 14, "blanco")
+            dark.slot y_pos = y_pos + 20
+        }
+        dark.slot i = i + 1
+    }
+    
+    dark.slot total_combos = input_map::count()
+    draw.text("Total: " + total_combos, 510, 240, 16, "gris")
+    
+    # =====================
+    # EJEMPLO DE USO
+    # =====================
+    draw.text("=== EJEMPLO ===", 50, 400, 16, "amarillo")
+    draw.text("input_map::register('volup_x', 'space')", 70, 425, 14, "gris")
+    draw.text("input_map::register('volup_z', 'enter')", 70, 445, 14, "gris")
+    
+    # Partículas
+    particles::update()
+    
+    # Salir con ESC (después de 30 frames)
+    onif es_escape {
+        onif frame > 30 {
+            particles::clear()
+            voz "Test completado: " + test_count
+            break
+        }
+    }
+    
+    dark.slot frame = frame + 1
+}
+
+particles::clear()
+voz "=== TEST FINALIZADO ==="

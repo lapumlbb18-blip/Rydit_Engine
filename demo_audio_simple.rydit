@@ -1,0 +1,109 @@
+# 🎵 Demo Audio Player SIMPLE v0.5.1
+# Versión simplificada para Termux-X11
+
+shield.init
+
+dark.slot frame = 0
+dark.slot playing = 0
+dark.slot volumen = 0.5
+
+# UI inicial (fuera del loop)
+voz "=== Audio Player Demo v0.5.1 ==="
+voz "Controles:"
+voz "  ESPACIO - Play/Pause"
+voz "  F - Beep agudo (800 Hz)"
+voz "  G - Beep grave (400 Hz)"
+voz "  C - Click UI"
+voz "  + - Subir volumen"
+voz "  - - Bajar volumen"
+voz "  ESC - Salir"
+voz ""
+
+ryda frame < 10000 {
+    # Fondo negro
+    draw.rect(0, 0, 800, 600, "negro")
+    
+    # Título
+    draw.text("Audio Player Demo", 250, 30, 28, "amarillo")
+    draw.text("v0.5.1", 650, 35, 16, "blanco")
+    
+    # Estado
+    onif playing {
+        draw.text("REPRODUCIENDO", 50, 100, 24, "verde")
+    } blelse {
+        draw.text("PAUSA", 50, 100, 24, "rojo")
+    }
+    
+    # Volumen
+    draw.text("Volumen:", 50, 150, 20, "blanco")
+    dark.slot bar_w = volumen * 200
+    draw.rect(150, 145, bar_w, 25, "verde")
+    draw.rectangle_lines(150, 145, 200, 25, 2, "blanco")
+    
+    # Botones
+    draw.rect(50, 230, 100, 40, "azul")
+    draw.text("PLAY/PAUSE", 60, 245, 16, "blanco")
+    
+    draw.rect(200, 230, 80, 40, "naranja")
+    draw.text("BEEP +", 210, 245, 16, "blanco")
+    
+    draw.rect(300, 230, 80, 40, "naranja")
+    draw.text("BEEP -", 310, 245, 16, "blanco")
+    
+    draw.rect(400, 230, 80, 40, "magenta")
+    draw.text("CLICK", 420, 245, 16, "blanco")
+    
+    # Input
+    onif tecla_presionada("space") {
+        playing = not playing
+        onif playing {
+            voz "Play"
+        } blelse {
+            voz "Pausa"
+        }
+    }
+    
+    onif tecla_presionada("f") {
+        audio::beep(800, 100)
+        voz "Beep agudo"
+    }
+    
+    onif tecla_presionada("g") {
+        audio::beep(400, 150)
+        voz "Beep grave"
+    }
+    
+    onif tecla_presionada("c") {
+        audio::click()
+        voz "Click"
+    }
+    
+    onif tecla_presionada("+") {
+        volumen = volumen + 0.1
+        onif volumen > 1.0 {
+            volumen = 1.0
+        }
+        audio::music_volume(volumen)
+        voz "Volumen: " + volumen
+    }
+    
+    onif tecla_presionada("-") {
+        volumen = volumen - 0.1
+        onif volumen < 0.0 {
+            volumen = 0.0
+        }
+        audio::music_volume(volumen)
+        voz "Volumen: " + volumen
+    }
+    
+    onif tecla_presionada("escape") {
+        voz "Saliendo..."
+        break
+    }
+    
+    # Info
+    draw.text("Presiona ESC para salir", 280, 570, 16, "blanco")
+}
+
+audio::stop_music()
+voz "=== Demo Finalizado ==="

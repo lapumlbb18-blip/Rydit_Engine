@@ -1,0 +1,224 @@
+# 🎵 Demo Audio + Partículas v0.5.1
+# Interactivo con feedback visual
+
+shield.init
+
+dark.slot frame = 0
+dark.slot playing = 0
+dark.slot volumen = 0.5
+dark.slot mx = 0
+dark.slot my = 0
+dark.slot click_anterior = 0
+
+# Mensajes iniciales
+voz "=== Audio + Partículas Demo ==="
+voz "Haz CLICK en los botones"
+voz "O usa teclas: F, G, C, ESPACIO"
+voz ""
+
+ryda frame < 10000 {
+    # Fondo oscuro
+    draw.rect(0, 0, 800, 600, "negro")
+    
+    # Obtener mouse
+    dark.slot mx = input::mouse_x()
+    dark.slot my = input::mouse_y()
+    dark.slot click = input::is_mouse_button_pressed(0)
+    
+    # =====================
+    # TÍTULO
+    # =====================
+    draw.text("Audio + Particulas Demo", 220, 20, 26, "amarillo")
+    draw.text("v0.5.1", 680, 25, 16, "blanco")
+    
+    # =====================
+    # ESTADO
+    # =====================
+    onif playing {
+        draw.text("REPRODUCIENDO", 50, 80, 22, "verde")
+        
+        # Partículas de música
+        particles::emit(400, 300, "spark", 5)
+    } blelse {
+        draw.text("PAUSA", 50, 80, 22, "rojo")
+    }
+    
+    # Volumen
+    draw.text("Volumen:", 50, 120, 20, "blanco")
+    dark.slot bar_w = volumen * 200
+    draw.rect(150, 115, bar_w, 25, "verde")
+    draw.rectangle_lines(150, 115, 200, 25, 2, "blanco")
+    
+    # =====================
+    # BOTONES
+    # =====================
+    
+    # Botón Play/Pause
+    draw.rect(50, 160, 140, 50, "azul")
+    draw.rectangle_lines(50, 160, 140, 50, 2, "blanco")
+    onif playing {
+        draw.text("PAUSE", 85, 175, 20, "blanco")
+    } blelse {
+        draw.text("PLAY", 95, 175, 20, "blanco")
+    }
+    
+    # Botón Beep +
+    draw.rect(220, 160, 120, 50, "naranja")
+    draw.rectangle_lines(220, 160, 120, 50, 2, "blanco")
+    draw.text("BEEP +", 240, 175, 18, "blanco")
+    
+    # Botón Beep -
+    draw.rect(360, 160, 120, 50, "naranja")
+    draw.rectangle_lines(360, 160, 120, 50, 2, "blanco")
+    draw.text("BEEP -", 380, 175, 18, "blanco")
+    
+    # Botón Click
+    draw.rect(500, 160, 120, 50, "magenta")
+    draw.rectangle_lines(500, 160, 120, 50, 2, "blanco")
+    draw.text("CLICK", 525, 175, 18, "blanco")
+    
+    # Botón Partículas
+    draw.rect(50, 230, 160, 50, "verde")
+    draw.rectangle_lines(50, 230, 160, 50, 2, "blanco")
+    draw.text("PARTICULAS", 70, 245, 18, "blanco")
+    
+    # Botón Explosión
+    draw.rect(230, 230, 160, 50, "rojo")
+    draw.rectangle_lines(230, 230, 160, 50, 2, "blanco")
+    draw.text("EXPLOSION", 245, 245, 18, "blanco")
+    
+    # =====================
+    # INPUT MOUSE - BOTONES
+    # =====================
+    onif click {
+        onif click_anterior == 0 {
+            # Play/Pause
+            onif mx > 50 and mx < 190 and my > 160 and my < 210 {
+                playing = not playing
+                onif playing {
+                    audio::beep(600, 100)
+                    voz "Play"
+                } blelse {
+                    audio::beep(300, 100)
+                    voz "Pausa"
+                }
+            }
+            
+            # Beep +
+            onif mx > 220 and mx < 340 and my > 160 and my < 210 {
+                audio::beep(800, 150)
+                particles::emit(mx, my, "spark", 20)
+                voz "Beep agudo"
+            }
+            
+            # Beep -
+            onif mx > 360 and mx < 480 and my > 160 and my < 210 {
+                audio::beep(400, 150)
+                particles::emit(mx, my, "spark", 20)
+                voz "Beep grave"
+            }
+            
+            # Click
+            onif mx > 500 and mx < 620 and my > 160 and my < 210 {
+                audio::click()
+                particles::emit(mx, my, "spark", 10)
+                voz "Click"
+            }
+            
+            # Partículas
+            onif mx > 50 and mx < 210 and my > 230 and my < 280 {
+                particles::emit(mx, my, "fire", 30)
+                audio::beep(500, 100)
+                voz "Fuego"
+            }
+            
+            # Explosión
+            onif mx > 230 and mx < 390 and my > 230 and my < 280 {
+                particles::emit(mx, my, "explosion", 100)
+                audio::beep(200, 200)
+                voz "Explosion"
+            }
+        }
+    }
+    dark.slot click_anterior = click
+    
+    # =====================
+    # INPUT TECLADO
+    # =====================
+    onif tecla_presionada("space") {
+        playing = not playing
+        onif playing {
+            audio::beep(600, 100)
+            voz "Play"
+        } blelse {
+            audio::beep(300, 100)
+            voz "Pausa"
+        }
+    }
+    
+    onif tecla_presionada("f") {
+        audio::beep(800, 100)
+        particles::emit(mx, my, "spark", 20)
+        voz "Beep agudo"
+    }
+    
+    onif tecla_presionada("g") {
+        audio::beep(400, 150)
+        particles::emit(mx, my, "spark", 20)
+        voz "Beep grave"
+    }
+    
+    onif tecla_presionada("c") {
+        audio::click()
+        particles::emit(mx, my, "spark", 10)
+        voz "Click"
+    }
+    
+    onif tecla_presionada("+") {
+        volumen = volumen + 0.1
+        onif volumen > 1.0 {
+            volumen = 1.0
+        }
+        audio::music_volume(volumen)
+        particles::emit(mx, my, "spark", 15)
+        voz "Volumen: " + volumen
+    }
+    
+    onif tecla_presionada("-") {
+        volumen = volumen - 0.1
+        onif volumen < 0.0 {
+            volumen = 0.0
+        }
+        audio::music_volume(volumen)
+        particles::emit(mx, my, "spark", 15)
+        voz "Volumen: " + volumen
+    }
+    
+    onif tecla_presionada("e") {
+        particles::emit(mx, my, "explosion", 100)
+        audio::beep(200, 200)
+        voz "Explosion"
+    }
+    
+    onif tecla_presionada("escape") {
+        particles::clear()
+        audio::stop_music()
+        voz "Saliendo..."
+        break
+    }
+    
+    # =====================
+    # PARTÍCULAS
+    # =====================
+    particles::update()
+    
+    # =====================
+    # INFO
+    # =====================
+    draw.text("Click en botones o usa: ESPACIO, F, G, C, +, -, E", 150, 550, 16, "gris")
+    draw.text("ESC - Salir", 350, 575, 16, "blanco")
+}
+
+particles::clear()
+audio::stop_music()
+voz "=== Demo Finalizado ==="

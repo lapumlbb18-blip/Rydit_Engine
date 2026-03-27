@@ -1448,6 +1448,31 @@ pub fn evaluar_expr(
                 return audio::audio_list(args, executor, funcs);
             }
 
+            // --- INPUT MAP (v0.5.1) ---
+            // input_map::register(combo, action) - Registrar combinación
+            if name == "input_map::register" && args.len() == 2 {
+                use crate::modules::input_map;
+                return input_map::input_map_register(args, executor, funcs);
+            }
+
+            // input_map::list() - Listar combinaciones
+            if name == "input_map::list" {
+                use crate::modules::input_map;
+                return input_map::input_map_list(args, executor, funcs);
+            }
+
+            // input_map::clear() - Limpiar combinaciones
+            if name == "input_map::clear" {
+                use crate::modules::input_map;
+                return input_map::input_map_clear(args, executor, funcs);
+            }
+
+            // input_map::count() - Cantidad de combinaciones
+            if name == "input_map::count" {
+                use crate::modules::input_map;
+                return input_map::input_map_count(args, executor, funcs);
+            }
+
             // --- STATISTICS: MEAN ---
             if name == "stats::mean" && args.len() == 1 {
                 if let Valor::Array(arr) = evaluar_expr(&args[0], executor, funcs) {

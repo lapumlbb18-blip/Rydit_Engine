@@ -6,9 +6,9 @@
 
 **"Construido sin prisa, madurado con paciencia"**
 
-[![Version](https://img.shields.io/badge/version-v0.5.0-blue.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![Version](https://img.shields.io/badge/version-v0.8.5--dev-blue.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
 [![Tests](https://img.shields.io/badge/tests-157%2B%20passing-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
-[![Status](https://img.shields.io/badge/estado-en%20maduración-orange.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![Status](https://img.shields.io/badge/estado-v0.8.5--dev--ready-orange.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
 [![raylib](https://img.shields.io/badge/raylib-5.5-purple.svg)](https://www.raylib.com/)
 [![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
@@ -34,26 +34,29 @@
 
 ## ⚠️ ESTADO ACTUAL
 
-### Puntuación: 7/10 ✅ (en maduración)
+### Puntuación: 8.5/10 ✅ (v0.8.5-dev - LISTO PARA PUSH)
 
-**Verificado en Producción (2026-03-27):**
-- ✅ **Parser FUNCIONA** - Paréntesis, expresiones complejas, arrays multidimensionales
-- ✅ **Eval único** - `evaluar_expr()` en eval/mod.rs es el principal
-- ✅ **CSV implementado** - `csv::parse()`, `csv::parse_no_headers()` en eval/mod.rs
-- ✅ **Audio en rydit-gfx** - `load_sound()`, `play_sound()` (falta exponer como módulo)
+**Última actualización**: 2026-03-27
 
-**Lo que SÍ funciona:**
+**✅ COMPLETADO EN v0.8.5**:
+- ✅ **Audio Module** - 12 funciones (`audio::beep`, `audio::load`, `audio::play`, etc.)
+- ✅ **Particles Module** - 5 efectos (fire, smoke, spark, explosion, rain)
+- ✅ **Input Map** - Mapeo de combinaciones (VolUP + teclas)
+- ✅ **Configuración Termux-X11** - DISPLAY, zink, DRI3 automáticos
+- ✅ **LAZOS Protocol** - JSON-RPC funcional con Python bridge
+- ✅ **CSV** - `csv::parse()`, `csv::parse_no_headers()` implementados
+- ✅ **Stats** - `stats::mean`, `stats::median`, `stats::std_dev()` implementados
+
+**⚠️ PENDIENTE CRÍTICO**:
+- 🔴 **Parser bloques anidados** - Simplificar demos constantemente (PROBLEMA MAYOR)
+- ⚠️ **Assets Draw** - `assets::draw()` no dibuja realmente (50%)
+- ⚠️ **HTTP Module** - Decidido: crate `rydit-http` con ureq (pendiente)
+
+**📊 MÉTRICAS**:
 - ✅ 157 tests passing
-- ✅ 7 demos gráficos funcionales
-- ✅ Sistema Universal Ry (RyditModule)
-- ✅ Crates estables (blast-core, rydit-core, etc.)
-- ✅ Expresiones complejas: `(10 + 5) * 2 = 30`, `[[1,2,3],[4,5,6]]`
-
-**Lo que FALTA exponer como módulos:**
-- ⚠️ **Assets Manager** - Struct en rydit-gfx, falta módulo `assets::`
-- ⚠️ **Audio** - Funciones en rydit-gfx, falta módulo `audio::`
-- ⚠️ **Partículas** - Pendiente implementar en rydit-anim
-- ⚠️ **HTTP** - Pendiente implementar con ureq
+- ✅ 10+ demos funcionales
+- ✅ 0 warnings
+- ✅ ~1.7 MB binario release
 
 ---
 

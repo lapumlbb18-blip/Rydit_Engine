@@ -60,8 +60,10 @@ ryda frame < 2000 {
     dark.slot bar_width = volumen * 200
     draw.rect(150, 145, bar_width, 25, "verde")
     draw.rectangle_lines(150, 145, 200, 25, 2, "blanco")
-    
-    draw.text((volumen * 100) + "%", 360, 150, 20, "blanco")
+
+    dark.slot vol_porcentaje = volumen * 100
+    dark.slot vol_text = "Volumen: " + vol_porcentaje + "%"
+    draw.text(vol_text, 360, 150, 20, "blanco")
     
     # ========================================
     # UI - Controles
@@ -135,7 +137,9 @@ ryda frame < 2000 {
             dark.slot volumen = 1.0
         }
         audio::music_volume(volumen)
-        voz "🔊 Volumen: " + (volumen * 100) + "%"
+        dark.slot vol_porcentaje = volumen * 100
+        dark.slot vol_msg = "🔊 Volumen: " + vol_porcentaje + "%"
+        voz vol_msg
     }
     
     # ========================================
@@ -147,7 +151,9 @@ ryda frame < 2000 {
             dark.slot volumen = 0.0
         }
         audio::music_volume(volumen)
-        voz "🔈 Volumen: " + (volumen * 100) + "%"
+        dark.slot vol_porcentaje = volumen * 100
+        dark.slot vol_msg = "🔈 Volumen: " + vol_porcentaje + "%"
+        voz vol_msg
     }
     
     # ========================================
@@ -163,13 +169,23 @@ ryda frame < 2000 {
     # ========================================
     onif playing {
         # Dibujar ondas animadas
-        dark.slot offset = (frame % 100) / 100.0
-        
+        dark.slot frame_mod = frame % 100
+        dark.slot offset = frame_mod / 100.0
+
         ryda i < 20 {
             dark.slot x = 500 + i * 15
-            dark.slot altura = (i % 5 + 1) * 10 + offset * 20
-            dark.slot color = onif i % 3 == 0 "rojo" blelse onif i % 3 == 1 "amarillo" blelse "verde"
+            dark.slot i_mod = i % 5
+            dark.slot altura = (i_mod + 1) * 10 + offset * 20
             
+            # Color según índice
+            dark.slot color = "verde"
+            onif i % 3 == 0 {
+                dark.slot color = "rojo"
+            }
+            onif i % 3 == 1 {
+                dark.slot color = "amarillo"
+            }
+
             draw.rect(x, 300 - altura / 2, 10, altura, color)
         }
     }

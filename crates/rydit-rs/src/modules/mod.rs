@@ -3,6 +3,7 @@
 
 pub mod assets;
 pub mod audio;
+pub mod input_map;
 
 // Próximos módulos:
 // pub mod particles;

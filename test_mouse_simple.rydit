@@ -1,0 +1,60 @@
+# 🧪 TEST Input Mouse SIMPLE
+# Sin anidamientos complejos
+
+shield.init
+
+dark.slot frame = 0
+dark.slot mx = 0
+dark.slot my = 0
+dark.slot click = 0
+
+voz "=== TEST INPUT MOUSE SIMPLE ==="
+voz "Mueve el mouse y haz click"
+voz "Verifica coordenadas en pantalla"
+voz ""
+
+ryda frame < 10000 {
+    # Fondo
+    draw.rect(0, 0, 800, 600, "negro")
+    
+    # Input
+    dark.slot mx = input::mouse_x()
+    dark.slot my = input::mouse_y()
+    dark.slot click = input::is_mouse_button_pressed(0)
+    
+    # Título
+    draw.text("TEST INPUT MOUSE", 280, 30, 26, "amarillo")
+    
+    # Coordenadas grandes
+    draw.text("X: " + mx, 350, 150, 48, "verde")
+    draw.text("Y: " + my, 350, 220, 48, "azul")
+    
+    # Click indicator
+    onif click {
+        draw.text("CLICK!", 340, 300, 36, "rojo")
+        audio::click()
+        particles::emit(mx, my, "spark", 10)
+    }
+    
+    # Partículas
+    particles::update()
+    
+    # Cursor
+    draw.circle(mx, my, 8, "amarillo")
+    draw.circle(mx, my, 15, "rojo")
+    
+    # Info
+    draw.text("Mueve el mouse para verificar coordenadas", 180, 500, 18, "blanco")
+    draw.text("Haz click para ver feedback visual + audio", 190, 530, 18, "blanco")
+    draw.text("ESC - Salir", 350, 570, 18, "gris")
+    
+    # Salir
+    onif tecla_presionada("escape") {
+        particles::clear()
+        voz "Test finalizado"
+        break
+    }
+}
+
+particles::clear()
+voz "=== TEST FINALIZADO ==="
