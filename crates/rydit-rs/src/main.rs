@@ -58,6 +58,13 @@ pub fn init_global_loader() {
 }
 
 /// Obtener referencia al loader global
+///
+/// # Safety
+/// Esta función es safe porque:
+/// - GLOBAL_LOADER se inicializa una sola vez al inicio
+/// - El Mutex protege contra data races
+/// - No hay mutación después de la inicialización
+#[allow(static_mut_refs)]
 pub fn get_loader() -> Option<&'static Mutex<DynamicModuleLoader>> {
     unsafe { GLOBAL_LOADER.as_ref() }
 }
@@ -1293,6 +1300,7 @@ pub fn valor_a_bool(val: &Valor) -> bool {
         _ => false,
     }
 }
+#[allow(clippy::only_used_in_recursion)]
 fn evaluar_expr_gfx(
     expr: &Expr,
     executor: &mut Executor,

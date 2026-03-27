@@ -16,7 +16,7 @@ pub fn lazos_loop() {
     eprintln!("[LAZOS] Modo: stdin/stdout JSON-RPC");
     eprintln!("[LAZOS] Presiona Ctrl+D para salir");
 
-    for line in stdin.lock().lines().flatten() {
+    for line in stdin.lock().lines().map_while(Result::ok) {
         // Parsear request JSON
         let request: Value = match serde_json::from_str(&line) {
             Ok(req) => req,
