@@ -1,0 +1,121 @@
+# DEMO PARTÍCULAS v0.8.4 - RyDit Engine
+# Sistema de partículas simulado con draw.circle
+
+shield.init
+
+dark.slot frame = 0
+dark.slot px = 400
+dark.slot py = 500
+
+# Partículas
+dark.slot p1_x = 400
+dark.slot p1_y = 500
+dark.slot p1_vy = -5
+dark.slot p2_x = 400
+dark.slot p2_y = 500
+dark.slot p2_vy = -4
+dark.slot p3_x = 400
+dark.slot p3_y = 500
+dark.slot p3_vy = -6
+
+ryda frame < 10000 {
+    # Fondo negro
+    draw.rect(0, 0, 800, 600, "negro")
+    
+    # Título
+    draw.text("SISTEMA DE PARTÍCULAS v0.8.4", 220, 20, 30, "blanco")
+    draw.text("Simulado con draw.circle", 280, 50, 20, "gris")
+    
+    # ========================================================================
+    # EMISOR DE PARTÍCULAS - tipo fuego
+    # ========================================================================
+    
+    # Nueva partícula cada 5 frames
+    dark.slot spawn = frame % 5
+    
+    onif spawn == 0 {
+        dark.slot p1_x = px
+        dark.slot p1_y = py
+        dark.slot p1_vy = -3
+    }
+    onif spawn == 1 {
+        dark.slot p2_x = px
+        dark.slot p2_y = py
+        dark.slot p2_vy = -4
+    }
+    onif spawn == 2 {
+        dark.slot p3_x = px
+        dark.slot p3_y = py
+        dark.slot p3_vy = -5
+    }
+    
+    # ========================================================================
+    # DIBUJAR PARTÍCULAS - fuego: rojo -> naranja -> amarillo
+    # ========================================================================
+    
+    # Partícula 1
+    dark.slot p1_y = p1_y + p1_vy
+    dark.slot p1_size = 8
+    onif p1_y > 100 {
+        draw.circle(p1_x, p1_y, p1_size, "rojo")
+    }
+    onif p1_y > 200 {
+        draw.circle(p1_x, p1_y, p1_size, "naranja")
+    }
+    onif p1_y < 200 {
+        draw.circle(p1_x, p1_y, p1_size, "amarillo")
+    }
+    
+    # Partícula 2
+    dark.slot p2_y = p2_y + p2_vy
+    dark.slot p2_size = 6
+    onif p2_y > 100 {
+        draw.circle(p2_x, p2_y, p2_size, "rojo")
+    }
+    onif p2_y > 200 {
+        draw.circle(p2_x, p2_y, p2_size, "naranja")
+    }
+    onif p2_y < 200 {
+        draw.circle(p2_x, p2_y, p2_size, "amarillo")
+    }
+    
+    # Partícula 3
+    dark.slot p3_y = p3_y + p3_vy
+    dark.slot p3_size = 10
+    onif p3_y > 100 {
+        draw.circle(p3_x, p3_y, p3_size, "rojo")
+    }
+    onif p3_y > 200 {
+        draw.circle(p3_x, p3_y, p3_size, "naranja")
+    }
+    onif p3_y < 200 {
+        draw.circle(p3_x, p3_y, p3_size, "amarillo")
+    }
+    
+    # ========================================================================
+    # BASE DEL EMISOR
+    # ========================================================================
+    draw.rect(350, 520, 100, 80, "gris")
+    draw.rect(360, 530, 80, 60, "gris_oscuro")
+    
+    # ========================================================================
+    # LLUVIA DE PARTÍCULAS - parte superior
+    # ========================================================================
+    dark.slot rain_y = frame * 3
+    dark.slot rain_y = rain_y % 600
+    
+    draw.circle(100, rain_y, 3, "azul")
+    draw.circle(200, rain_y, 3, "azul")
+    draw.circle(300, rain_y, 3, "azul")
+    draw.circle(500, rain_y, 3, "azul")
+    draw.circle(600, rain_y, 3, "azul")
+    draw.circle(700, rain_y, 3, "azul")
+    
+    # ========================================================================
+    # INFORMACIÓN
+    # ========================================================================
+    draw.text("Frame: " + frame, 10, 580, 20, "cyan")
+    draw.text("ESC: Salir", 700, 580, 20, "amarillo")
+    
+    dark.slot frame = frame + 1
+}

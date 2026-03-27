@@ -1,0 +1,172 @@
+# DEMO ENEMIGOS MOVIÉNDOSE v0.8.4
+
+shield.init
+
+dark.slot frame = 0
+
+# Jugador
+dark.slot jx = 400
+dark.slot jy = 300
+
+# Bala
+dark.slot bx = -100
+dark.slot by = -100
+dark.slot bala_activa = 0
+
+# Enemigo 1 - movimiento horizontal
+dark.slot e1x = 200
+dark.slot e1y = 100
+dark.slot e1_dir = 1
+
+# Enemigo 2 - movimiento horizontal
+dark.slot e2x = 600
+dark.slot e2y = 200
+dark.slot e2_dir = -1
+
+# Enemigo 3 - movimiento vertical
+dark.slot e3x = 400
+dark.slot e3y = 80
+dark.slot e3_dir = 1
+
+# Score
+dark.slot score = 0
+dark.slot click_ant = 0
+
+ryda frame < 10000 {
+    # Fondo negro
+    draw.rect(0, 0, 800, 600, "negro")
+    
+    # =====================
+    # INPUT
+    # =====================
+    dark.slot mx = input::mouse_x()
+    dark.slot my = input::mouse_y()
+    dark.slot click = input::is_mouse_button_pressed(0)
+    
+    # =====================
+    # JUGADOR - sigue mouse
+    # =====================
+    dark.slot jx = mx
+    dark.slot jy = my
+    
+    draw.circle(jx, jy, 20, "cyan")
+    draw.circle(jx, jy, 12, "blanco")
+    
+    # =====================
+    # DISPARO con click
+    # =====================
+    onif click == 1 {
+        onif click_ant == 0 {
+            onif bala_activa == 0 {
+                dark.slot bx = jx
+                dark.slot by = jy
+                dark.slot bala_activa = 1
+            }
+        }
+    }
+    dark.slot click_ant = click
+    
+    # =====================
+    # BALA - viaja hacia arriba
+    # =====================
+    onif bala_activa == 1 {
+        dark.slot by = by - 10
+        
+        draw.circle(bx, by, 8, "amarillo")
+        draw.circle(bx, by, 5, "blanco")
+        
+        onif by < 0 {
+            dark.slot bala_activa = 0
+        }
+    }
+    
+    # =====================
+    # ENEMIGO 1 - izquierda/derecha
+    # =====================
+    dark.slot e1x = e1x + e1_dir * 3
+    
+    onif e1x > 750 {
+        dark.slot e1_dir = -1
+    }
+    onif e1x < 50 {
+        dark.slot e1_dir = 1
+    }
+    
+    draw.circle(e1x, e1y, 25, "rojo")
+    
+    # =====================
+    # ENEMIGO 2 - derecha/izquierda
+    # =====================
+    dark.slot e2x = e2x + e2_dir * 3
+    
+    onif e2x > 750 {
+        dark.slot e2_dir = -1
+    }
+    onif e2x < 50 {
+        dark.slot e2_dir = 1
+    }
+    
+    draw.circle(e2x, e2y, 25, "rojo")
+    
+    # =====================
+    # ENEMIGO 3 - arriba/abajo
+    # =====================
+    dark.slot e3y = e3y + e3_dir * 2
+    
+    onif e3y > 550 {
+        dark.slot e3_dir = -1
+    }
+    onif e3y < 80 {
+        dark.slot e3_dir = 1
+    }
+    
+    draw.circle(e3x, e3y, 25, "rojo")
+    
+    # =====================
+    # COLISIONES
+    # =====================
+    onif bala_activa == 1 {
+        # Enemigo 1
+        dark.slot dx1 = bx - e1x
+        dark.slot dy1 = by - e1y
+        dark.slot d1 = dx1 * dx1 + dy1 * dy1
+        onif d1 < 2500 {
+            dark.slot bala_activa = 0
+            dark.slot e1x = 200
+            dark.slot e1y = 100
+            dark.slot score = score + 100
+        }
+        
+        # Enemigo 2
+        dark.slot dx2 = bx - e2x
+        dark.slot dy2 = by - e2y
+        dark.slot d2 = dx2 * dx2 + dy2 * dy2
+        onif d2 < 2500 {
+            dark.slot bala_activa = 0
+            dark.slot e2x = 600
+            dark.slot e2y = 200
+            dark.slot score = score + 100
+        }
+        
+        # Enemigo 3
+        dark.slot dx3 = bx - e3x
+        dark.slot dy3 = by - e3y
+        dark.slot d3 = dx3 * dx3 + dy3 * dy3
+        onif d3 < 2500 {
+            dark.slot bala_activa = 0
+            dark.slot e3x = 400
+            dark.slot e3y = 80
+            dark.slot score = score + 100
+        }
+    }
+    
+    # =====================
+    # TEXTO
+    # =====================
+    draw.text("ENEMIGOS CON MOVIMIENTO v0.8.4", 220, 20, 26, "blanco")
+    draw.text("Mouse: Mover | Click: Disparar", 250, 50, 18, "gris")
+    draw.text("Score: " + score, 10, 580, 20, "amarillo")
+    draw.text("ESC: Salir", 700, 580, 20, "blanco")
+    
+    dark.slot frame = frame + 1
+}

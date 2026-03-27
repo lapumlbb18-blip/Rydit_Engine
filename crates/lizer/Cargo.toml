@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 
-# Benchmarks requieren nightly
-[[bench]]
-name = "bench_lizer"
-harness = false
+# Benchmarks requieren nightly (temporalmente deshabilitado)
+# [[bench]]
+# name = "bench_lizer"
+# harness = false

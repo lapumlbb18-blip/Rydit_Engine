@@ -412,12 +412,12 @@ pub enum Stmt {
         color: String,
     }, // draw.line(x1, y1, x2, y2, "red")
     DrawText {
-        texto: String,
+        texto: Expr,
         x: Expr,
         y: Expr,
         tamano: Expr,
         color: String,
-    }, // draw.text("Hola", x, y, tamano, "red")
+    }, // draw.text("Hola" + var, x, y, tamano, "red")
     // Statements v0.2.0 - Nuevas formas
     DrawTriangle {
         v1_x: Expr,
@@ -1635,7 +1635,7 @@ impl Parser {
     }
 
     fn parse_draw_text(&mut self) -> Result<Option<Stmt>> {
-        // draw.text("texto", x, y, tamano, "color")
+        // draw.text(texto, x, y, tamano, "color") - texto puede ser expresion "hola" + var
         self.pos += 1; // consumir draw.text
 
         if self.pos >= self.tokens.len() || !matches!(self.tokens[self.pos], Token::ParentIzq) {
@@ -1643,17 +1643,8 @@ impl Parser {
         }
         self.pos += 1;
 
-        // Parsear texto (string)
-        let texto = if self.pos < self.tokens.len() {
-            if let Token::Texto(t) = &self.tokens[self.pos] {
-                self.pos += 1;
-                t.clone()
-            } else {
-                "".to_string()
-            }
-        } else {
-            "".to_string()
-        };
+        // Parsear texto como expresion (para permitir "hola" + var)
+        let texto_expr = self.parse_expression()?;
         self.skip_comma();
 
         let x = self.parse_expression()?;
@@ -1679,7 +1670,7 @@ impl Parser {
         }
 
         Ok(Some(Stmt::DrawText {
-            texto,
+            texto: texto_expr,
             x,
             y,
             tamano,

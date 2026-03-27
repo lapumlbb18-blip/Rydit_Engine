@@ -10,9 +10,9 @@
 [![crates.io](https://img.shields.io/crates/v/rydit-science.svg)](https://crates.io/crates/rydit-science)
 [![crates.io](https://img.shields.io/crates/v/rydit-physics.svg)](https://crates.io/crates/rydit-physics)
 [![crates.io](https://img.shields.io/crates/v/rydit-anim.svg)](https://crates.io/crates/rydit-anim)
-[![Version](https://img.shields.io/badge/version-v0.8.3-blue.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
-[![Tests](https://img.shields.io/badge/tests-273%2B%20passing-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
-[![Warnings](https://img.shields.io/badge/warnings-2%20remaining-brightgreen.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![Version](https://img.shields.io/badge/version-v0.5.0-blue.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![Tests](https://img.shields.io/badge/tests-157%2B%20passing-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![Warnings](https://img.shields.io/badge/warnings-~15%20menores-brightgreen.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
 [![raylib](https://img.shields.io/badge/raylib-5.5-purple.svg)](https://www.raylib.com/)
 [![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
@@ -526,6 +526,12 @@ Crates:
 | **v0.7.3.1** | ✅ | **rydit-science** (Bezier + Stats extraídos) | 2026-03-26 |
 | **v0.7.3.2** | ✅ | **rydit-physics** (Projectile + NBody extraídos) | 2026-03-26 |
 | **v0.7.3.3** | ✅ | **rydit-anim** (Easing + Squash/Stretch extraídos) | 2026-03-26 |
+| **v0.8.0** | ✅ | **Sistema Universal Ry** (módulos dinámicos, hot reload) | 2026-03-26 |
+| **v0.8.2** | ✅ | **Sistema Universal Ry** (Fases 1-4 completadas) | 2026-03-26 |
+| **v0.8.3** | ✅ | **Fix Warnings** (50→~15 warnings, -70%) | 2026-03-26 |
+| **v0.8.4** | ✅ | **FIX GRÁFICOS** (draw.text con expresiones, game loop estable) | 2026-03-26 |
+| **v0.5.0** | ✅ | **RELEASE ESTABLE** (7 demos funcionales, 157 tests) | 2026-03-26 |
+| **v0.5.1** | 🔜 | **Audio + HTTP** (sonidos básicos, GET request) | Próxima sesión |
 | **v0.7.3.x** | ⏳ | **rydit-geometry** (Ilusiones ópticas, pendiente) | Próxima sesión |
 | **v0.8.0.0** | 🔮 | **Publicación crates.io + Linux/Windows** | 4-6 semanas |
 | **v1.0.0** | 🔮 | Production Ready | 6-8 meses |

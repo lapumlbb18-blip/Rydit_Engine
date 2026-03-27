@@ -1,0 +1,186 @@
+# DEMO MOVIMIENTO MOUSE v0.8.4 - RyDit Engine
+# Jugador sigue el mouse + dispara con colisiones
+
+shield.init
+
+# Jugador
+dark.slot j_x = 400
+dark.slot j_y = 300
+
+# Mouse
+dark.slot m_x = 400
+dark.slot m_y = 300
+
+# Bala
+dark.slot b_x = 0
+dark.slot b_y = 0
+dark.slot b_vx = 0
+dark.slot b_vy = 0
+dark.slot b_activa = 0
+
+# Enemigos
+dark.slot e1_x = 200
+dark.slot e1_y = 100
+dark.slot e1_vx = 2
+dark.slot e2_x = 600
+dark.slot e2_y = 150
+dark.slot e2_vx = -2
+dark.slot e3_x = 400
+dark.slot e3_y = 80
+dark.slot e3_vy = 2
+
+# Puntuación
+dark.slot score = 0
+
+# Game loop
+dark.slot frame = 0
+dark.slot click_prev = 0
+
+ryda frame < 10000 {
+    # Fondo negro
+    draw.rect(0, 0, 800, 600, "negro")
+    
+    # ========================================================================
+    # INPUT DE MOUSE
+    # ========================================================================
+    dark.slot m_x = input::mouse_x()
+    dark.slot m_y = input::mouse_y()
+    dark.slot click = input::is_mouse_button_pressed(0)
+    
+    # ========================================================================
+    # JUGADOR SIGUE EL MOUSE - movimiento directo
+    # ========================================================================
+    dark.slot j_x = m_x
+    dark.slot j_y = m_y
+    
+    # ========================================================================
+    # DIBUJAR JUGADOR
+    # ========================================================================
+    draw.circle(j_x, j_y, 25, "cyan")
+    draw.circle(j_x, j_y, 15, "blanco")
+    
+    # ========================================================================
+    # DISPARO - al hacer click
+    # ========================================================================
+    onif click == 1 {
+        onif click_prev == 0 {
+            onif b_activa == 0 {
+                # Activar bala desde jugador
+                dark.slot b_x = j_x
+                dark.slot b_y = j_y
+                dark.slot b_activa = 1
+                
+                # Calcular velocidad hacia arriba
+                dark.slot b_vx = 0
+                dark.slot b_vy = -8
+            }
+        }
+    }
+    dark.slot click_prev = click
+    
+    # ========================================================================
+    # ACTUALIZAR BALA
+    # ========================================================================
+    onif b_activa == 1 {
+        dark.slot b_x = b_x + b_vx
+        dark.slot b_y = b_y + b_vy
+        
+        # Dibujar bala
+        draw.circle(b_x, b_y, 10, "amarillo")
+        draw.circle(b_x, b_y, 6, "blanco")
+        
+        # Desactivar si sale de pantalla
+        onif b_y < 0 {
+            dark.slot b_activa = 0
+        }
+    }
+    
+    # ========================================================================
+    # ENEMIGO 1 - se mueve horizontal
+    # ========================================================================
+    dark.slot e1_x = e1_x + e1_vx
+    onif e1_x > 750 {
+        dark.slot e1_vx = -2
+    }
+    onif e1_x < 50 {
+        dark.slot e1_vx = 2
+    }
+    draw.circle(e1_x, e1_y, 30, "rojo")
+    draw.circle(e1_x, e1_y, 20, "rojo_oscuro")
+    
+    # ========================================================================
+    # ENEMIGO 2 - se mueve horizontal
+    # ========================================================================
+    dark.slot e2_x = e2_x + e2_vx
+    onif e2_x > 750 {
+        dark.slot e2_vx = -2
+    }
+    onif e2_x < 50 {
+        dark.slot e2_vx = 2
+    }
+    draw.circle(e2_x, e2_y, 35, "rojo")
+    draw.circle(e2_x, e2_y, 25, "rojo_oscuro")
+    
+    # ========================================================================
+    # ENEMIGO 3 - se mueve vertical
+    # ========================================================================
+    dark.slot e3_y = e3_y + e3_vy
+    onif e3_y > 550 {
+        dark.slot e3_vy = -2
+    }
+    onif e3_y < 80 {
+        dark.slot e3_vy = 2
+    }
+    draw.circle(e3_x, e3_y, 28, "rojo")
+    draw.circle(e3_x, e3_y, 18, "rojo_oscuro")
+    
+    # ========================================================================
+    # COLISIONES - bala con enemigos
+    # ========================================================================
+    onif b_activa == 1 {
+        # Colisión con enemigo 1
+        dark.slot dx1 = b_x - e1_x
+        dark.slot dy1 = b_y - e1_y
+        dark.slot dist1 = dx1 * dx1 + dy1 * dy1
+        onif dist1 < 1600 {
+            dark.slot b_activa = 0
+            dark.slot e1_x = 200
+            dark.slot e1_y = 100
+            dark.slot score = score + 100
+        }
+        
+        # Colisión con enemigo 2
+        dark.slot dx2 = b_x - e2_x
+        dark.slot dy2 = b_y - e2_y
+        dark.slot dist2 = dx2 * dx2 + dy2 * dy2
+        onif dist2 < 1600 {
+            dark.slot b_activa = 0
+            dark.slot e2_x = 600
+            dark.slot e2_y = 150
+            dark.slot score = score + 100
+        }
+        
+        # Colisión con enemigo 3
+        dark.slot dx3 = b_x - e3_x
+        dark.slot dy3 = b_y - e3_y
+        dark.slot dist3 = dx3 * dx3 + dy3 * dy3
+        onif dist3 < 1600 {
+            dark.slot b_activa = 0
+            dark.slot e3_x = 400
+            dark.slot e3_y = 80
+            dark.slot score = score + 100
+        }
+    }
+    
+    # ========================================================================
+    # TEXTO
+    # ========================================================================
+    draw.text("DEMO MOVIMIENTO + DISPARO v0.8.4", 220, 20, 28, "blanco")
+    draw.text("Mouse: Mover jugador | Click: Disparar", 210, 50, 18, "gris")
+    
+    draw.text("Score: " + score, 10, 580, 20, "amarillo")
+    draw.text("Bala: " + b_activa, 150, 580, 20, "cyan")
+    draw.text("ESC: Salir", 700, 580, 20, "blanco")
+    
+    dark.slot frame = frame + 1
+}

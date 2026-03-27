@@ -1,0 +1,131 @@
+# DEMO INPUT MOUSE v0.8.4 - RyDit Engine
+# Demostración de input de mouse y apuntado
+
+shield.init
+
+# Jugador en el centro
+dark.slot jugador_x = 400
+dark.slot jugador_y = 300
+
+# Variables para disparos
+dark.slot balas = []
+dark.slot b_x = 0
+dark.slot b_y = 0
+dark.slot b_ang = 0
+
+# Game loop
+dark.slot frame = 0
+
+ryda frame < 10000 {
+    # Fondo negro con grid
+    draw.rect(0, 0, 800, 600, "negro")
+    
+    # Grid táctico
+    dark.slot gx = 0
+    ryda gx < 800 {
+        draw.line(gx, 0, gx, 600, "gris_oscuro")
+        dark.slot gx = gx + 50
+    }
+    dark.slot gy = 0
+    ryda gy < 600 {
+        draw.line(0, gy, 800, gy, "gris_oscuro")
+        dark.slot gy = gy + 50
+    }
+    
+    # ========================================================================
+    # INPUT DE MOUSE
+    # ========================================================================
+    dark.slot mouse_x = input::mouse_x()
+    dark.slot mouse_y = input::mouse_y()
+    
+    # ========================================================================
+    # JUGADOR - círculo verde en el centro
+    # ========================================================================
+    draw.circle(jugador_x, jugador_y, 30, "verde")
+    
+    # ========================================================================
+    # TORRETA - línea que apunta al mouse
+    # ========================================================================
+    # Calcular ángulo hacia el mouse
+    dark.slot dx = mouse_x - jugador_x
+    dark.slot dy = mouse_y - jugador_y
+    
+    # Usar atan2 para el ángulo (si está disponible) o calcular manualmente
+    dark.slot angulo = 0
+    
+    # Dibujar torreta (línea gruesa hacia el mouse)
+    dark.slot torreta_largo = 50
+    dark.slot tx = jugador_x + dx * 0.5
+    dark.slot ty = jugador_y + dy * 0.5
+    
+    # Normalizar dirección
+    dark.slot dist = dx * dx + dy * dy
+    dark.slot dist = dist + 0.001  # Evitar división por cero
+    
+    # Línea de la torreta
+    draw.line(jugador_x, jugador_y, tx, ty, "lima")
+    draw.line_thick(jugador_x, jugador_y, tx, ty, 8, "verde_limón")
+    
+    # ========================================================================
+    # DISPARO - click izquierdo
+    # ========================================================================
+    dark.slot click = input::is_mouse_button_pressed(0)
+    
+    onif click == 1 {
+        # Dibujar efecto de disparo
+        draw.circle(mouse_x, mouse_y, 25, "amarillo")
+        draw.circle(mouse_x, mouse_y, 15, "blanco")
+        
+        # Crear bala en dirección del mouse
+        dark.slot bx = jugador_x
+        dark.slot by = jugador_y
+        dark.slot bdx = dx * 0.2
+        dark.slot bdy = dy * 0.2
+        
+        # Dibujar trayectoria de bala
+        dark.slot i = 0
+        ryda i < 10 {
+            dark.slot bx = bx + bdx
+            dark.slot by = by + bdy
+            draw.circle(bx, by, 6, "naranja")
+            dark.slot i = i + 1
+        }
+    }
+    
+    # ========================================================================
+    # BLANCOS - círculos rojos en posiciones fijas
+    # ========================================================================
+    draw.circle(200, 150, 40, "rojo")
+    draw.circle(600, 150, 40, "rojo")
+    draw.circle(200, 450, 40, "rojo")
+    draw.circle(600, 450, 40, "rojo")
+    draw.circle(400, 100, 35, "rojo")
+    
+    # ========================================================================
+    # EFECTO DE EXPLOSIÓN EN MOUSE
+    # ========================================================================
+    dark.slot click_prev = frame % 10
+    onif click_prev < 5 {
+        draw.circle(mouse_x, mouse_y, 30, "rojo")
+        draw.circle(mouse_x, mouse_y, 20, "naranja")
+        draw.circle(mouse_x, mouse_y, 10, "amarillo")
+    }
+    
+    # ========================================================================
+    # TEXTO INFORMATIVO
+    # ========================================================================
+    draw.text("DEMO INPUT MOUSE v0.8.4", 260, 20, 30, "blanco")
+    draw.text("Apunta con el mouse - Click para disparar", 210, 50, 20, "gris")
+    
+    # Coordenadas del mouse
+    draw.text("Mouse: (" + mouse_x + ", " + mouse_y + ")", 10, 580, 20, "cyan")
+    draw.text("Jugador: (" + jugador_x + ", " + jugador_y + ")", 10, 555, 18, "verde")
+    
+    # Controles
+    draw.text("Click Izq: Disparar | ESC: Salir", 500, 580, 20, "amarillo")
+    
+    # Frame counter
+    draw.text("Frame: " + frame, 650, 555, 18, "blanco")
+    
+    dark.slot frame = frame + 1
+}

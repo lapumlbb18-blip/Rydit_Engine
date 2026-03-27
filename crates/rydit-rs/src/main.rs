@@ -519,15 +519,24 @@ pub fn ejecutar_stmt(
             tamano,
             color,
         } => {
+            let texto_val = evaluar_expr(texto, executor, funcs);
             let x_val = evaluar_expr(x, executor, funcs);
             let y_val = evaluar_expr(y, executor, funcs);
             let tamano_val = evaluar_expr(tamano, executor, funcs);
             let color_val = ColorRydit::from_str(color).unwrap_or(ColorRydit::Blanco);
 
+            // Convertir texto a string (puede ser Texto o Num convertido)
+            let texto_str = match &texto_val {
+                Valor::Texto(t) => t.clone(),
+                Valor::Num(n) => n.to_string(),
+                Valor::Bool(b) => if *b { "verdadero".to_string() } else { "falso".to_string() },
+                _ => "[texto]".to_string(),
+            };
+
             if let (Valor::Num(x), Valor::Num(y), Valor::Num(tamano)) = (x_val, y_val, tamano_val) {
                 println!(
                     "[DRAW] text('{}', {}, {}, {}, {:?})",
-                    texto, x, y, tamano, color_val
+                    texto_str, x, y, tamano, color_val
                 );
             } else {
                 println!("[ERROR] draw.text requiere números");
@@ -846,10 +855,12 @@ fn ejecutar_stmt_gfx(
         }
         Stmt::While { condition, body } => {
             // Cuidado: while en modo gráfico puede causar loop infinito
-            // Usar solo con condiciones controladas
+            // Para game loops tipo "ryda frame < N", el límite debe ser 1 por frame
+            // El game loop real lo maneja ejecutar_programa_gfx()
             let mut iterations = 0;
-            while iterations < 10 {
-                // Límite estricto en modo gráfico
+            let max_iterations = 1; // SOLO 1 iteración por frame en modo gráfico
+
+            while iterations < max_iterations {
                 let cond_val = evaluar_expr_gfx(condition, executor, input, funcs);
                 let es_verdad = match cond_val {
                     Valor::Num(n) => n != 0.0,
@@ -1150,13 +1161,22 @@ fn ejecutar_stmt_gfx(
             tamano,
             color,
         } => {
+            let texto_val = evaluar_expr(texto, executor, funcs);
             let x_val = evaluar_expr(x, executor, funcs);
             let y_val = evaluar_expr(y, executor, funcs);
             let tamano_val = evaluar_expr(tamano, executor, funcs);
             let color_val = ColorRydit::from_str(color).unwrap_or(ColorRydit::Blanco);
 
+            // Convertir texto a string (puede ser Texto o Num convertido)
+            let texto_str = match &texto_val {
+                Valor::Texto(t) => t.clone(),
+                Valor::Num(n) => n.to_string(),
+                Valor::Bool(b) => if *b { "verdadero".to_string() } else { "falso".to_string() },
+                _ => "[texto]".to_string(),
+            };
+
             if let (Valor::Num(x), Valor::Num(y), Valor::Num(tamano)) = (x_val, y_val, tamano_val) {
-                d.draw_text(texto, x as i32, y as i32, tamano as i32, color_val);
+                d.draw_text(&texto_str, x as i32, y as i32, tamano as i32, color_val);
             }
         }
         // Statements v0.2.0 - Nuevas formas (gráficos reales)

@@ -1,0 +1,85 @@
+# DEMO SHOWCASE v0.8.4 - RyDit Engine
+# Formas animadas y texto dinámico
+
+shield.init
+
+dark.slot frame = 0
+dark.slot cx = 400
+dark.slot cy = 300
+
+ryda frame < 10000 {
+    # Fondo
+    draw.rect(0, 0, 800, 600, "azul_oscuro")
+    
+    # Sol que pulsa
+    dark.slot radio = 60
+    dark.slot extra = frame % 60
+    dark.slot radio = radio + extra * 0.5
+    draw.circle(cx, cy, radio, "amarillo")
+    
+    # Rayos del sol
+    dark.slot i = 0
+    ryda i < 8 {
+        dark.slot ang = i * 45 + frame
+        dark.slot ang_rad = ang * 0.0174533
+        dark.slot rx = cx + cos(ang_rad) * 90
+        dark.slot ry = cy + sin(ang_rad) * 90
+        draw.line(cx, cy, rx, ry, "naranja")
+        dark.slot i = i + 1
+    }
+    
+    # Planeta 1 - rojo orbitando
+    dark.slot a1 = frame * 0.02
+    dark.slot x1 = cx + cos(a1) * 150
+    dark.slot y1 = cy + sin(a1) * 150
+    draw.circle(x1, y1, 20, "rojo")
+    
+    # Planeta 2 - verde
+    dark.slot a2 = frame * 0.015
+    dark.slot x2 = cx + cos(a2) * 200
+    dark.slot y2 = cy + sin(a2) * 200
+    draw.circle(x2, y2, 25, "verde")
+    
+    # Planeta 3 - azul
+    dark.slot a3 = frame * 0.01
+    dark.slot x3 = cx + cos(a3) * 250
+    dark.slot y3 = cy + sin(a3) * 250
+    draw.circle(x3, y3, 30, "azul")
+    
+    # Estrellas fijas
+    draw.circle(100, 50, 2, "blanco")
+    draw.circle(700, 100, 2, "blanco")
+    draw.circle(150, 500, 2, "blanco")
+    draw.circle(650, 450, 2, "blanco")
+    draw.circle(300, 80, 2, "blanco")
+    draw.circle(500, 120, 2, "blanco")
+    
+    # Cuadrado decorativo
+    dark.slot sq = 80
+    dark.slot mod = frame % 40
+    dark.slot sq = sq + mod
+    draw.rect(50, 50, sq, sq, "magenta")
+    draw.rect(65, 65, 50, 50, "cyan")
+    
+    # Triángulos esquinas
+    draw.line(700, 50, 780, 50, "verde")
+    draw.line(780, 50, 780, 130, "verde")
+    draw.line(780, 130, 700, 50, "verde")
+    
+    draw.line(50, 500, 50, 580, "rojo")
+    draw.line(50, 580, 130, 580, "rojo")
+    draw.line(130, 580, 50, 500, "rojo")
+    
+    # Texto
+    draw.text("RYDIT ENGINE v0.8.4", 250, 20, 35, "blanco")
+    draw.text("Motor en Rust para Termux", 250, 50, 20, "gris")
+    draw.text("Frame: " + frame, 10, 580, 20, "cyan")
+    draw.text("ESC: Salir", 700, 580, 20, "amarillo")
+    
+    # Barra progreso
+    draw.rect(200, 550, 400, 20, "gris_oscuro")
+    dark.slot bw = frame % 400
+    draw.rect(200, 550, bw, 20, "verde")
+    
+    dark.slot frame = frame + 1
+}

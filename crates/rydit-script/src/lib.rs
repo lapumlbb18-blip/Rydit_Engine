@@ -21,6 +21,7 @@
 //! # Ejemplo de uso
 //! ```rust,no_run
 //! use rydit_script::ScriptModule;
+//! use rydit_core::RyditModule;
 //!
 //! // Cargar script como módulo
 //! let module = ScriptModule::from_file("modules/mi_modulo.rydit").unwrap();
