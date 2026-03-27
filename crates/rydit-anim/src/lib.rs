@@ -4,6 +4,9 @@
 //! - Principio #1: Squash & Stretch (Deformación)
 //! - Principio #2: Anticipation (Anticipación)
 //! - Principio #6: Slow In & Slow Out (Easing)
+//! - Principio #9: Particles (Sistema de partículas)
+
+pub mod particles;
 
 use rydit_core::{ModuleError, ModuleResult, RyditModule};
 use serde_json::{json, Value};

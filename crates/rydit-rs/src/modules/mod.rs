@@ -2,8 +2,8 @@
 // Módulos extensibles para RyDit
 
 pub mod assets;
+pub mod audio;
 
 // Próximos módulos:
-// pub mod audio;
 // pub mod particles;
 // pub mod http;

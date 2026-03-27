@@ -1369,6 +1369,85 @@ pub fn evaluar_expr(
                 return Valor::Num(assets_ref.texture_count() as f64);
             }
 
+            // --- AUDIO MANAGER (v0.5.1) ---
+            // audio::beep(frecuencia, duracion) - Generar beep
+            if name == "audio::beep" && args.len() == 2 {
+                use crate::modules::audio;
+                return audio::audio_beep(args, executor, funcs);
+            }
+
+            // audio::click() - Sonido de click UI
+            if name == "audio::click" && args.len() == 0 {
+                use crate::modules::audio;
+                return audio::audio_click(args, executor, funcs);
+            }
+
+            // audio::load(id, path) - Cargar sonido
+            if name == "audio::load" && args.len() == 2 {
+                use crate::modules::audio;
+                return audio::audio_load_sound(args, executor, funcs);
+            }
+
+            // audio::play(id) - Reproducir sonido
+            if name == "audio::play" && args.len() == 1 {
+                use crate::modules::audio;
+                return audio::audio_play(args, executor, funcs);
+            }
+
+            // audio::stop(id) - Detener sonido
+            if name == "audio::stop" && args.len() == 1 {
+                use crate::modules::audio;
+                return audio::audio_stop(args, executor, funcs);
+            }
+
+            // audio::volume(id, level) - Configurar volumen
+            if name == "audio::volume" && args.len() == 2 {
+                use crate::modules::audio;
+                return audio::audio_volume(args, executor, funcs);
+            }
+
+            // audio::load_music(path) - Cargar música
+            if name == "audio::load_music" && args.len() == 1 {
+                use crate::modules::audio;
+                return audio::audio_load_music(args, executor, funcs);
+            }
+
+            // audio::play_music() - Reproducir música
+            if name == "audio::play_music" {
+                use crate::modules::audio;
+                return audio::audio_play_music(args, executor, funcs);
+            }
+
+            // audio::stop_music() - Detener música
+            if name == "audio::stop_music" {
+                use crate::modules::audio;
+                return audio::audio_stop_music(args, executor, funcs);
+            }
+
+            // audio::is_playing() - Verificar si hay música
+            if name == "audio::is_playing" {
+                use crate::modules::audio;
+                return audio::audio_is_playing(args, executor, funcs);
+            }
+
+            // audio::music_volume(level) - Volumen de música
+            if name == "audio::music_volume" && args.len() == 1 {
+                use crate::modules::audio;
+                return audio::audio_music_volume(args, executor, funcs);
+            }
+
+            // audio::count() - Cantidad de sonidos cargados
+            if name == "audio::count" {
+                use crate::modules::audio;
+                return audio::audio_count(args, executor, funcs);
+            }
+
+            // audio::list() - Listar sonidos cargados
+            if name == "audio::list" {
+                use crate::modules::audio;
+                return audio::audio_list(args, executor, funcs);
+            }
+
             // --- STATISTICS: MEAN ---
             if name == "stats::mean" && args.len() == 1 {
                 if let Valor::Array(arr) = evaluar_expr(&args[0], executor, funcs) {
