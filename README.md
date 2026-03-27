@@ -4,21 +4,17 @@
 
 ![RyDit Engine Logo](screenshots/logo.png)
 
-**"David vs Goliat - Un motor de videojuegos en Rust, construido 100% en un Redmi Note 8"**
+**"Construido sin prisa, madurado con paciencia"**
 
-[![crates.io](https://img.shields.io/crates/v/rydit-core.svg)](https://crates.io/crates/rydit-core)
-[![crates.io](https://img.shields.io/crates/v/rydit-science.svg)](https://crates.io/crates/rydit-science)
-[![crates.io](https://img.shields.io/crates/v/rydit-physics.svg)](https://crates.io/crates/rydit-physics)
-[![crates.io](https://img.shields.io/crates/v/rydit-anim.svg)](https://crates.io/crates/rydit-anim)
 [![Version](https://img.shields.io/badge/version-v0.5.0-blue.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
 [![Tests](https://img.shields.io/badge/tests-157%2B%20passing-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
-[![Warnings](https://img.shields.io/badge/warnings-~15%20menores-brightgreen.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![Status](https://img.shields.io/badge/estado-en%20maduración-orange.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
 [![raylib](https://img.shields.io/badge/raylib-5.5-purple.svg)](https://www.raylib.com/)
 [![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine/blob/main/LICENSE)
 
-[📖 Documentación](#-documentación) • [🎮 Demo Snake](#-snake-game---demo-funcional) • [🚀 Roadmap](#-roadmap) • [📱 Construido en Android](#-construido-en-androidtermux) • [💬 Comunidad](#-comunidad)
+[📖 Documentación](#-documentación) • [🔧 Estado Actual](#-estado-actual) • [🎯 Roadmap](#-roadmap) • [📱 Construido en Android](#-construido-en-androidtermux)
 
 </div>
 
@@ -26,9 +22,154 @@
 
 ## 🎯 ¿Qué es RyDit?
 
-**RyDit** es un **motor de videojuegos 2D con lenguaje de scripting** escrito en **Rust** con **raylib**, diseñado para ejecutarse nativamente en **Android/Termux** sin necesidad de desktop, emuladores o IDEs pesados.
+**RyDit** es un **motor de videojuegos 2D con lenguaje de scripting** escrito en **Rust** con **raylib**, diseñado para ejecutarse nativamente en **Android/Termux**.
 
-**No es solo un lenguaje** - es un motor completo con:
+**Filosofía Actual:**
+- 🐌 **Sin prisa** - Madurar cada feature antes de lanzar
+- 🔧 **Bien hecho** - Calidad sobre cantidad
+- 🏠 **Para nosotros** - No para la comunidad ni releases
+- 📦 **Modular** - Usar RyditModule, no tantos crates
+
+---
+
+## ⚠️ ESTADO ACTUAL
+
+### Puntuación: 5/10 ⬇️ (era 8/10)
+
+**Problemas Críticos:**
+- ❌ **Parser débil** - Paréntesis y expresiones complejas fallan
+- ❌ **Demos simplificados** - No reflejan capacidad real
+- ❌ **Eval duplicado** - Lógica en main.rs y eval/mod.rs
+- ❌ **Assets no expuesto** - Struct existe pero no usable
+
+**Lo que SÍ funciona:**
+- ✅ 157 tests passing
+- ✅ 7 demos gráficos (baja complejidad)
+- ✅ Sistema Universal Ry (RyditModule)
+- ✅ Crates estables (blast-core, rydit-core, etc.)
+
+---
+
+## 🔧 PRÓXIMAS FASES DE MADURACIÓN
+
+### Fase 1: Parser Maduro (2-3 semanas)
+- [ ] Refactorizar `lizer/src/lib.rs` completo
+- [ ] Paréntesis que funcionen SIEMPRE
+- [ ] Expresiones complejas sin dolor
+- [ ] Arrays multidimensionales reales
+
+### Fase 2: Assets Manager (1-2 semanas)
+- [ ] `rydit-rs/src/modules/assets.rs`
+- [ ] `assets::sprite()`, `assets::draw()`
+- [ ] Sprites estilo Godot
+
+### Fase 3: Partículas (1-2 semanas)
+- [ ] `rydit-anim/src/particles.rs`
+- [ ] `particles::emit()`, `particles::update()`
+- [ ] Fuego, humo, explosiones
+
+### Fase 4: CSV + Data (1 semana)
+- [ ] `rydit-science/src/csv.rs`
+- [ ] `csv::read()`, `csv::write()`
+- [ ] `stats::std_dev()`, `stats::variance()`
+
+### Fase 5: Audio + HTTP (1-2 semanas)
+- [ ] Módulos (NO crates nuevos)
+- [ ] `audio::beep()`, `audio::play()`
+- [ ] `http::get()`, `http::post()`
+
+### Fase 6: LAZOS Maduro (1 semana)
+- [ ] Unificar `evaluar_expr()`
+- [ ] Protocolo universal funcionando
+
+---
+
+## 📊 POTENCIAL
+
+| Estado | Score |
+|--------|-------|
+| Actual | 5/10 |
+| Fase 1 (Parser) | 7/10 |
+| Fase 2 (Assets) | 8/10 |
+| Fase 3 (Particles) | 8.5/10 |
+| Fase 4 (CSV) | 9/10 |
+| Fase 5 (Audio+HTTP) | 9.5/10 |
+| Fase 6 (LAZOS) | **9.5/10** ✅ |
+
+---
+
+## 🚫 LO QUE NO HAREMOS
+
+- ❌ NO git push hasta que esté maduro
+- ❌ NO publicar en crates.io
+- ❌ NO release público
+- ❌ NO prisa por terminar
+
+---
+
+## ✅ LO QUE SÍ HAREMOS
+
+- ✅ Trabajar sin presión
+- ✅ Cada feature bien hecha
+- ✅ Tests reales (no solo que pasen)
+- ✅ Demos complejos (no simplificados)
+- ✅ Código del que estemos orgullosos
+
+---
+
+## 📖 Documentación
+
+| Documento | Descripción |
+|-----------|-------------|
+| [ESTRUCTURA.md](ESTRUCTURA.md) | ⚠️ Estado real sin filtros |
+| [QWEN.md](QWEN.md) | 📓 Bitácora de sesión |
+| [PLANIFICACION_V0.5.1_AUDIO_HTTP.md](PLANIFICACION_V0.5.1_AUDIO_HTTP.md) | 📋 Plan detallado |
+| [ESTADO_DEL_CODIGO_V0.8.4.md](ESTADO_DEL_CODIGO_V0.8.4.md) | 📊 Revisión completa |
+
+---
+
+## 🚀 Roadmap
+
+<div align="center">
+
+| Versión | Estado | Features | Fecha |
+|---------|--------|----------|-------|
+| **v0.5.0** | ✅ | Release estable (7 demos, 157 tests) | 2026-03-26 |
+| **v0.5.1** | 🔜 | Parser maduro + Assets + Particles | En maduración |
+| **v0.5.2** | 🔜 | CSV + Audio + HTTP | En maduración |
+| **v0.6.0** | 🔮 | **LAZOS maduro + todo integrado** | Potencial 9.5/10 |
+| **v1.0.0** | 🔮 | Production Ready (si algún día) | Sin fecha |
+
+</div>
+
+---
+
+## 📱 Construido en Android/Termux
+
+<div align="center">
+
+| Setup | Especificaciones |
+|-------|-----------------|
+| **Dispositivo** | Redmi Note 8 |
+| **OS** | Android 11 |
+| **Terminal** | Termux |
+| **RAM** | 4 GB |
+
+</div>
+
+**Filosofía:** Construido 100% en teléfono Android, sin prisa, madurado con paciencia.
+
+---
+
+<div align="center">
+
+## 🛡️ RyDit v0.5.0 - En Maduración
+
+*Sin prisa | Sin releases | Solo código bien hecho*
+
+**Potencial: 9.5/10**
+
+</div>
 - 🎮 Game loop integrado
 - 🎨 Renderizado gráfico (círculos, rectángulos, líneas, texto, sprites)
 - 🎹 Input de teclado en tiempo real
