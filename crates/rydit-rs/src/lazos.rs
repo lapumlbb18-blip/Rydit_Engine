@@ -24,11 +24,10 @@ pub fn lazos_loop() {
                 Err(e) => {
                     let error = json!({
                         "jsonrpc": "2.0",
-                        "error": format!("Invalid JSON: {}", e),
+                        "error": format!("Invalid JSON: {e}"),
                         "id": null
                     });
-                    writeln!(stdout, "{}", error).unwrap();
-                    stdout.flush().unwrap();
+                    println!("{error}");
                     continue;
                 }
             };

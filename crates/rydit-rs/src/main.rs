@@ -3188,17 +3188,13 @@ pub fn evaluar_expr_migui(
 
             match (&left_val, &right_val) {
                 (Valor::Texto(l), Valor::Texto(r)) => {
-                    match op {
-                        lizer::BinOp::Igual => return Valor::Bool(l == r),
-                        // lizer::BinOp::Ne (no existe) => return Valor::Bool(l != r),
-                        _ => {}
+                    if op == &lizer::BinOp::Igual {
+                        return Valor::Bool(l == r);
                     }
                 }
                 (Valor::Bool(l), Valor::Bool(r)) => {
-                    match op {
-                        lizer::BinOp::Igual => return Valor::Bool(l == r),
-                        // lizer::BinOp::Ne (no existe) => return Valor::Bool(l != r),
-                        _ => {}
+                    if op == &lizer::BinOp::Igual {
+                        return Valor::Bool(l == r);
                     }
                 }
                 _ => {}
@@ -3595,28 +3591,26 @@ pub fn ejecutar_stmt_migui(
                 println!("[ERROR] Módulo '{}' no encontrado", module);
             }
         }
-        Stmt::Return(opt_expr) => {
-            if let Some(val) = opt_expr {
-                let valor = evaluar_expr_migui(
-                    val,
-                    executor,
-                    gui,
-                    checkbox_states,
-                    slider_states,
-                    textbox_states,
-                    window_states,
-                    funcs,
-                );
-                println!(
-                    "[RETURN] {}",
-                    match valor {
-                        Valor::Num(n) => format!("{}", n),
-                        Valor::Texto(s) => s,
-                        Valor::Bool(b) => format!("{}", b),
-                        _ => format!("{:?}", valor),
-                    }
-                );
-            }
+        Stmt::Return(Some(val)) => {
+            let valor = evaluar_expr_migui(
+                val,
+                executor,
+                gui,
+                checkbox_states,
+                slider_states,
+                textbox_states,
+                window_states,
+                funcs,
+            );
+            println!(
+                "[RETURN] {}",
+                match valor {
+                    Valor::Num(n) => format!("{}", n),
+                    Valor::Texto(s) => s,
+                    Valor::Bool(b) => format!("{}", b),
+                    _ => format!("{:?}", valor),
+                }
+            );
         }
         Stmt::Expr(expr) => {
             let valor = evaluar_expr_migui(
