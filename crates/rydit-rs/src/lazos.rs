@@ -146,7 +146,7 @@ fn ejecutar_comando_lazos(request: &Value) -> Value {
 // COMANDOS DE BEZIER
 // ============================================================================
 
-fn bezier_linear(params: &Vec<Value>) -> Value {
+fn bezier_linear(params: &[Value]) -> Value {
     if params.len() != 5 {
         return json!({"error": "bezier::linear requires 5 params: p0_x, p0_y, p1_x, p1_y, t"});
     }
@@ -163,7 +163,7 @@ fn bezier_linear(params: &Vec<Value>) -> Value {
     json!([x, y])
 }
 
-fn bezier_quadratic(params: &Vec<Value>) -> Value {
+fn bezier_quadratic(params: &[Value]) -> Value {
     if params.len() != 7 {
         return json!({"error": "bezier::quadratic requires 7 params: p0_x, p0_y, p1_x, p1_y, p2_x, p2_y, t"});
     }
@@ -183,7 +183,7 @@ fn bezier_quadratic(params: &Vec<Value>) -> Value {
     json!([x, y])
 }
 
-fn bezier_cubic(params: &Vec<Value>) -> Value {
+fn bezier_cubic(params: &[Value]) -> Value {
     if params.len() != 9 {
         return json!({"error": "bezier::cubic requires 9 params: p0_x, p0_y, p1_x, p1_y, p2_x, p2_y, p3_x, p3_y, t"});
     }
@@ -212,7 +212,7 @@ fn bezier_cubic(params: &Vec<Value>) -> Value {
 // COMANDOS DE FÍSICA
 // ============================================================================
 
-fn physics_projectile(params: &Vec<Value>) -> Value {
+fn physics_projectile(params: &[Value]) -> Value {
     if params.len() != 4 {
         return json!({"error": "physics::projectile requires 4 params: x0, y0, v0, angle"});
     }
@@ -240,7 +240,7 @@ fn physics_projectile(params: &Vec<Value>) -> Value {
     ])
 }
 
-fn physics_nbody_2(params: &Vec<Value>) -> Value {
+fn physics_nbody_2(params: &[Value]) -> Value {
     if params.len() != 7 {
         return json!({"error": "physics::nbody_2 requires 7 params: m1, m2, x1, y1, x2, y2, G"});
     }
@@ -272,7 +272,7 @@ fn physics_nbody_2(params: &Vec<Value>) -> Value {
 // COMANDOS DE ESTADÍSTICAS
 // ============================================================================
 
-fn stats_mean(params: &Vec<Value>) -> Value {
+fn stats_mean(params: &[Value]) -> Value {
     if params.len() != 1 {
         return json!({"error": "stats::mean requires 1 param: [array]"});
     }
@@ -289,7 +289,7 @@ fn stats_mean(params: &Vec<Value>) -> Value {
     json!(sum / arr.len() as f64)
 }
 
-fn stats_median(params: &Vec<Value>) -> Value {
+fn stats_median(params: &[Value]) -> Value {
     if params.len() != 1 {
         return json!({"error": "stats::median requires 1 param: [array]"});
     }
@@ -314,7 +314,7 @@ fn stats_median(params: &Vec<Value>) -> Value {
     json!(median)
 }
 
-fn stats_min(params: &Vec<Value>) -> Value {
+fn stats_min(params: &[Value]) -> Value {
     if params.len() != 1 {
         return json!({"error": "stats::min requires 1 param: [array]"});
     }
@@ -340,7 +340,7 @@ fn stats_min(params: &Vec<Value>) -> Value {
     }
 }
 
-fn stats_max(params: &Vec<Value>) -> Value {
+fn stats_max(params: &[Value]) -> Value {
     if params.len() != 1 {
         return json!({"error": "stats::max requires 1 param: [array]"});
     }
@@ -370,30 +370,30 @@ fn stats_max(params: &Vec<Value>) -> Value {
 // COMANDOS DE ANIMACIÓN (v0.7.3)
 // ============================================================================
 
-fn anim_ease_in(params: &Vec<Value>) -> Value {
+fn anim_ease_in(params: &[Value]) -> Value {
     if params.len() != 1 {
         return json!({"error": "anim::ease_in requires 1 param: t (0.0-1.0)"});
     }
 
-    let t = params[0].as_f64().unwrap_or(0.0).max(0.0).min(1.0);
+    let t = params[0].as_f64().unwrap_or(0.0).clamp(0.0, 1.0);
     json!(t * t)
 }
 
-fn anim_ease_out(params: &Vec<Value>) -> Value {
+fn anim_ease_out(params: &[Value]) -> Value {
     if params.len() != 1 {
         return json!({"error": "anim::ease_out requires 1 param: t (0.0-1.0)"});
     }
 
-    let t = params[0].as_f64().unwrap_or(0.0).max(0.0).min(1.0);
+    let t = params[0].as_f64().unwrap_or(0.0).clamp(0.0, 1.0);
     json!(t * (2.0 - t))
 }
 
-fn anim_ease_in_out(params: &Vec<Value>) -> Value {
+fn anim_ease_in_out(params: &[Value]) -> Value {
     if params.len() != 1 {
         return json!({"error": "anim::ease_in_out requires 1 param: t (0.0-1.0)"});
     }
 
-    let t = params[0].as_f64().unwrap_or(0.0).max(0.0).min(1.0);
+    let t = params[0].as_f64().unwrap_or(0.0).clamp(0.0, 1.0);
     let result = if t < 0.5 {
         2.0 * t * t
     } else {
@@ -402,7 +402,7 @@ fn anim_ease_in_out(params: &Vec<Value>) -> Value {
     json!(result)
 }
 
-fn anim_squash(params: &Vec<Value>) -> Value {
+fn anim_squash(params: &[Value]) -> Value {
     if params.len() != 1 {
         return json!({"error": "anim::squash requires 1 param: factor (0.5-2.0)"});
     }
@@ -411,7 +411,7 @@ fn anim_squash(params: &Vec<Value>) -> Value {
     json!([factor, 1.0 / factor])
 }
 
-fn anim_stretch(params: &Vec<Value>) -> Value {
+fn anim_stretch(params: &[Value]) -> Value {
     if params.len() != 1 {
         return json!({"error": "anim::stretch requires 1 param: factor (0.5-2.0)"});
     }
@@ -420,7 +420,7 @@ fn anim_stretch(params: &Vec<Value>) -> Value {
     json!([1.0 / factor, factor])
 }
 
-fn anim_anticipate(params: &Vec<Value>) -> Value {
+fn anim_anticipate(params: &[Value]) -> Value {
     if params.len() != 3 {
         return json!({"error": "anim::anticipate requires 3 params: pos, target, amount"});
     }
