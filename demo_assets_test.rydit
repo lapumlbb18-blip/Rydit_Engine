@@ -1,0 +1,76 @@
+# Demo Assets Manager v0.5.1
+# Prueba de carga y dibujado de sprites
+
+shield.init
+
+# ========================================
+# Cargar sprites
+# ========================================
+# NOTA: Los archivos de imagen deben existir en la ruta especificada
+# Para este demo, usamos rutas relativas desde el directorio del proyecto
+
+dark.slot resultado = assets::load("tank", "sprites/tank.png")
+voz "Tank: " + resultado
+
+dark.slot resultado2 = assets::load("helicopter", "sprites/helicopter.png")
+voz "Helicopter: " + resultado2
+
+# ========================================
+# Verificar si existen
+# ========================================
+dark.slot existe_tank = assets::exists("tank")
+dark.slot existe_heli = assets::exists("helicopter")
+
+voz "Tank existe: " + existe_tank
+voz "Heli existe: " + existe_heli
+
+# ========================================
+# Contar assets cargados
+# ========================================
+dark.slot count = assets::count()
+voz "Assets cargados: " + count
+
+# ========================================
+# Game loop - Dibujar sprites si existen
+# ========================================
+ryda frame < 1000 {
+    # Limpiar pantalla
+    # (esto se hace automáticamente en el game loop)
+    
+    # Dibujar tank en el centro
+    onif existe_tank {
+        # assets::draw("tank", 300, 250, 2.0)
+        # NOTA: El dibujado real requiere integrar con el game loop de main.rs
+        # Por ahora usamos círculos como placeholder
+        draw.circle(300, 250, 40, "verde")
+        draw.text("TANK", 280, 230, 20, "blanco")
+    }
+    
+    # Dibujar helicopter a la derecha
+    onif existe_heli {
+        # assets::draw("helicopter", 500, 250, 2.0)
+        draw.circle(500, 250, 40, "rojo")
+        draw.text("HELICOPTER", 460, 230, 20, "blanco")
+    }
+    
+    # Mostrar información
+    draw.text("Assets Manager Demo v0.5.1", 250, 50, 24, "amarillo")
+    draw.text("Presiona ESC para salir", 280, 550, 16, "blanco")
+    
+    # Input para salir
+    onif tecla_presionada("escape") {
+        break
+    }
+}
+
+# ========================================
+# Limpiar assets
+# ========================================
+dark.slot resultado_unload = assets::unload("tank")
+voz "Unload tank: " + resultado_unload
+
+dark.slot resultado_unload2 = assets::unload("helicopter")
+voz "Unload helicopter: " + resultado_unload2
+
+dark.slot count_final = assets::count()
+voz "Assets finales: " + count_final

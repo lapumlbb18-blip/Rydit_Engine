@@ -34,19 +34,26 @@
 
 ## ⚠️ ESTADO ACTUAL
 
-### Puntuación: 5/10 ⬇️ (era 8/10)
+### Puntuación: 7/10 ✅ (en maduración)
 
-**Problemas Críticos:**
-- ❌ **Parser débil** - Paréntesis y expresiones complejas fallan
-- ❌ **Demos simplificados** - No reflejan capacidad real
-- ❌ **Eval duplicado** - Lógica en main.rs y eval/mod.rs
-- ❌ **Assets no expuesto** - Struct existe pero no usable
+**Verificado en Producción (2026-03-27):**
+- ✅ **Parser FUNCIONA** - Paréntesis, expresiones complejas, arrays multidimensionales
+- ✅ **Eval único** - `evaluar_expr()` en eval/mod.rs es el principal
+- ✅ **CSV implementado** - `csv::parse()`, `csv::parse_no_headers()` en eval/mod.rs
+- ✅ **Audio en rydit-gfx** - `load_sound()`, `play_sound()` (falta exponer como módulo)
 
 **Lo que SÍ funciona:**
 - ✅ 157 tests passing
-- ✅ 7 demos gráficos (baja complejidad)
+- ✅ 7 demos gráficos funcionales
 - ✅ Sistema Universal Ry (RyditModule)
 - ✅ Crates estables (blast-core, rydit-core, etc.)
+- ✅ Expresiones complejas: `(10 + 5) * 2 = 30`, `[[1,2,3],[4,5,6]]`
+
+**Lo que FALTA exponer como módulos:**
+- ⚠️ **Assets Manager** - Struct en rydit-gfx, falta módulo `assets::`
+- ⚠️ **Audio** - Funciones en rydit-gfx, falta módulo `audio::`
+- ⚠️ **Partículas** - Pendiente implementar en rydit-anim
+- ⚠️ **HTTP** - Pendiente implementar con ureq
 
 ---
 

@@ -1252,6 +1252,123 @@ pub fn evaluar_expr(
                 return Valor::Error("csv::parse_no_headers() requiere CSV (texto)".to_string());
             }
 
+            // --- ASSETS MANAGER (v0.5.1) ---
+            // assets::load(id, path) - Cargar textura
+            if name == "assets::load" && args.len() == 2 {
+                use crate::modules::assets;
+                
+                // Evaluar ID
+                let id_val = evaluar_expr(&args[0], executor, funcs);
+                let id = match id_val {
+                    Valor::Texto(s) => s,
+                    Valor::Num(n) => n.to_string(),
+                    _ => return Valor::Error("assets::load() el primer argumento debe ser un ID (texto)".to_string()),
+                };
+
+                // Evaluar path
+                let path_val = evaluar_expr(&args[1], executor, funcs);
+                let path = match path_val {
+                    Valor::Texto(s) => s,
+                    _ => return Valor::Error("assets::load() el segundo argumento debe ser el path (texto)".to_string()),
+                };
+
+                // Cargar textura
+                match rydit_gfx::Assets::load_texture_from_path(&path) {
+                    Ok(texture) => {
+                        let assets = assets::get_assets();
+                        let mut assets_ref = assets.borrow_mut();
+                        assets_ref.insert_texture(id.clone(), texture);
+                        println!("[ASSETS] Textura '{}' cargada desde '{}'", id, path);
+                        return Valor::Texto(format!("assets::load() - '{}' cargado exitosamente", id));
+                    }
+                    Err(e) => return Valor::Error(format!("assets::load() Error: {}", e)),
+                }
+            }
+
+            // assets::sprite(id, path) - Alias de load
+            if name == "assets::sprite" && args.len() == 2 {
+                use crate::modules::assets;
+                
+                // Evaluar ID
+                let id_val = evaluar_expr(&args[0], executor, funcs);
+                let id = match id_val {
+                    Valor::Texto(s) => s,
+                    Valor::Num(n) => n.to_string(),
+                    _ => return Valor::Error("assets::sprite() el primer argumento debe ser un ID (texto)".to_string()),
+                };
+
+                // Evaluar path
+                let path_val = evaluar_expr(&args[1], executor, funcs);
+                let path = match path_val {
+                    Valor::Texto(s) => s,
+                    _ => return Valor::Error("assets::sprite() el segundo argumento debe ser el path (texto)".to_string()),
+                };
+
+                // Cargar textura
+                match rydit_gfx::Assets::load_texture_from_path(&path) {
+                    Ok(texture) => {
+                        let assets = assets::get_assets();
+                        let mut assets_ref = assets.borrow_mut();
+                        assets_ref.insert_texture(id.clone(), texture);
+                        println!("[ASSETS] Sprite '{}' cargado desde '{}'", id, path);
+                        return Valor::Texto(format!("assets::sprite() - '{}' cargado exitosamente", id));
+                    }
+                    Err(e) => return Valor::Error(format!("assets::sprite() Error: {}", e)),
+                }
+            }
+
+            // assets::exists(id) - Verificar si existe textura
+            if name == "assets::exists" && args.len() == 1 {
+                use crate::modules::assets;
+                
+                let id_val = evaluar_expr(&args[0], executor, funcs);
+                let id = match id_val {
+                    Valor::Texto(s) => s,
+                    Valor::Num(n) => n.to_string(),
+                    _ => return Valor::Error("assets::exists() el argumento debe ser el ID".to_string()),
+                };
+
+                let assets = assets::get_assets();
+                let assets_ref = assets.borrow();
+                
+                if assets_ref.has_texture(&id) {
+                    return Valor::Bool(true);
+                } else {
+                    return Valor::Bool(false);
+                }
+            }
+
+            // assets::unload(id) - Descargar textura
+            if name == "assets::unload" && args.len() == 1 {
+                use crate::modules::assets;
+                
+                let id_val = evaluar_expr(&args[0], executor, funcs);
+                let id = match id_val {
+                    Valor::Texto(s) => s,
+                    Valor::Num(n) => n.to_string(),
+                    _ => return Valor::Error("assets::unload() el argumento debe ser el ID".to_string()),
+                };
+
+                let assets = assets::get_assets();
+                let mut assets_ref = assets.borrow_mut();
+                
+                if assets_ref.unload_texture(&id) {
+                    println!("[ASSETS] Textura '{}' descargada", id);
+                    return Valor::Texto(format!("assets::unload() - '{}' descargado", id));
+                } else {
+                    return Valor::Error(format!("assets::unload() La textura '{}' no existe", id));
+                }
+            }
+
+            // assets::count() - Cantidad de texturas cargadas
+            if name == "assets::count" {
+                use crate::modules::assets;
+                
+                let assets = assets::get_assets();
+                let assets_ref = assets.borrow();
+                return Valor::Num(assets_ref.texture_count() as f64);
+            }
+
             // --- STATISTICS: MEAN ---
             if name == "stats::mean" && args.len() == 1 {
                 if let Valor::Array(arr) = evaluar_expr(&args[0], executor, funcs) {

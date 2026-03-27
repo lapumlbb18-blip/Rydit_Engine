@@ -14,6 +14,7 @@ mod module;
 mod repl;
 // mod science;  ← AHORA ES CRATE EXTERNO: use rydit_science::ScienceModule;
 mod tests;
+mod modules; // ← MÓDULOS EXTENSIBLES (assets, audio, particles, http)
 
 // Re-exportar funciones del módulo eval
 pub use eval::evaluar_expr;
