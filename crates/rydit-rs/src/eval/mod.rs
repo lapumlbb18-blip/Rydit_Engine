@@ -2112,6 +2112,18 @@ pub fn evaluar_expr(
                 return entity::player_move_right(args, executor, funcs);
             }
 
+            // player::move_up(id) - Mover arriba
+            if name == "player::move_up" && args.len() == 1 {
+                use crate::modules::entity;
+                return entity::player_move_up(args, executor, funcs);
+            }
+
+            // player::move_down(id) - Mover abajo
+            if name == "player::move_down" && args.len() == 1 {
+                use crate::modules::entity;
+                return entity::player_move_down(args, executor, funcs);
+            }
+
             // player::jump(id) - Saltar
             if name == "player::jump" && args.len() == 1 {
                 use crate::modules::entity;

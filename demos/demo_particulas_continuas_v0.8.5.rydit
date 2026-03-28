@@ -1,0 +1,64 @@
+# DEMO PARTÍCULAS CONTINUAS v0.8.5 - RyDit Engine
+# Sistema de partículas de fuego constante
+
+shield.init
+
+dark.slot frame = 0
+
+ryda frame < 10000 {
+    draw.rect(0, 0, 800, 600, "negro")
+    draw.text("PARTICULAS CONTINUAS", 260, 20, 30, "blanco")
+
+    dark.slot y1 = 500
+    dark.slot y2 = 500
+    dark.slot y3 = 500
+    dark.slot y4 = 500
+    dark.slot y5 = 500
+    dark.slot y6 = 500
+    dark.slot y7 = 500
+    dark.slot y8 = 500
+    dark.slot y9 = 500
+    dark.slot y10 = 500
+
+    dark.slot y1 = y1 - 3
+    dark.slot y2 = y2 - 4
+    dark.slot y3 = y3 - 5
+    dark.slot y4 = y4 - 3
+    dark.slot y5 = y5 - 4
+    dark.slot y6 = y6 - 5
+    dark.slot y7 = y7 - 3
+    dark.slot y8 = y8 - 4
+    dark.slot y9 = y9 - 5
+    dark.slot y10 = y10 - 6
+
+    onif y1 < 50 { dark.slot y1 = 500 }
+    onif y2 < 50 { dark.slot y2 = 500 }
+    onif y3 < 50 { dark.slot y3 = 500 }
+    onif y4 < 50 { dark.slot y4 = 500 }
+    onif y5 < 50 { dark.slot y5 = 500 }
+    onif y6 < 50 { dark.slot y6 = 500 }
+    onif y7 < 50 { dark.slot y7 = 500 }
+    onif y8 < 50 { dark.slot y8 = 500 }
+    onif y9 < 50 { dark.slot y9 = 500 }
+    onif y10 < 50 { dark.slot y10 = 500 }
+
+    draw.circle(300, y1, 8, "rojo")
+    draw.circle(320, y2, 8, "naranja")
+    draw.circle(340, y3, 8, "amarillo")
+    draw.circle(360, y4, 8, "rojo")
+    draw.circle(380, y5, 8, "naranja")
+    draw.circle(400, y6, 8, "amarillo")
+    draw.circle(420, y7, 8, "rojo")
+    draw.circle(440, y8, 8, "naranja")
+    draw.circle(460, y9, 8, "amarillo")
+    draw.circle(480, y10, 8, "rojo")
+
+    draw.rect(320, 520, 160, 80, "gris")
+    dark.slot brillo = 15 + (frame % 10)
+    draw.circle(400, 500, brillo, "amarillo")
+
+    draw.text("Frame: " + frame, 10, 580, 20, "cyan")
+    draw.text("ESC: Salir", 700, 580, 20, "amarillo")
+
+    dark.slot frame = frame + 1
+}

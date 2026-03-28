@@ -1,0 +1,298 @@
+# DEMO FUEGO Y ESTRELLAS v0.8.5 - RyDit Engine
+# Sistema complejo de partículas + cielo estrellado
+
+shield.init
+
+dark.slot frame = 0
+dark.slot px = 400
+dark.slot py = 520
+
+# 20 partículas de fuego
+dark.slot f1_y = 520
+dark.slot f2_y = 520
+dark.slot f3_y = 520
+dark.slot f4_y = 520
+dark.slot f5_y = 520
+dark.slot f6_y = 520
+dark.slot f7_y = 520
+dark.slot f8_y = 520
+dark.slot f9_y = 520
+dark.slot f10_y = 520
+dark.slot f11_y = 520
+dark.slot f12_y = 520
+dark.slot f13_y = 520
+dark.slot f14_y = 520
+dark.slot f15_y = 520
+dark.slot f16_y = 520
+dark.slot f17_y = 520
+dark.slot f18_y = 520
+dark.slot f19_y = 520
+dark.slot f20_y = 520
+
+# 30 estrellas con posiciones fijas
+dark.slot e1_x = 50
+dark.slot e1_y = 50
+dark.slot e2_x = 150
+dark.slot e2_y = 80
+dark.slot e3_x = 300
+dark.slot e3_y = 30
+dark.slot e4_x = 500
+dark.slot e4_y = 60
+dark.slot e5_x = 650
+dark.slot e5_y = 40
+dark.slot e6_x = 750
+dark.slot e6_y = 90
+dark.slot e7_x = 100
+dark.slot e7_y = 150
+dark.slot e8_x = 400
+dark.slot e8_y = 120
+dark.slot e9_x = 700
+dark.slot e9_y = 140
+dark.slot e10_x = 250
+dark.slot e10_y = 100
+dark.slot e11_x = 550
+dark.slot e11_y = 160
+dark.slot e12_x = 80
+dark.slot e12_y = 200
+dark.slot e13_x = 350
+dark.slot e13_y = 180
+dark.slot e14_x = 600
+dark.slot e14_y = 200
+dark.slot e15_x = 720
+dark.slot e15_y = 220
+dark.slot e16_x = 180
+dark.slot e16_y = 240
+dark.slot e17_x = 450
+dark.slot e17_y = 220
+dark.slot e18_x = 280
+dark.slot e18_y = 260
+dark.slot e19_x = 520
+dark.slot e19_y = 240
+dark.slot e20_x = 680
+dark.slot e20_y = 280
+dark.slot e21_x = 120
+dark.slot e21_y = 300
+dark.slot e22_x = 380
+dark.slot e22_y = 280
+dark.slot e23_x = 620
+dark.slot e23_y = 320
+dark.slot e24_x = 200
+dark.slot e24_y = 340
+dark.slot e25_x = 480
+dark.slot e25_y = 360
+dark.slot e26_x = 750
+dark.slot e26_y = 340
+dark.slot e27_x = 90
+dark.slot e27_y = 380
+dark.slot e28_x = 320
+dark.slot e28_y = 400
+dark.slot e29_x = 560
+dark.slot e29_y = 380
+dark.slot e30_x = 700
+dark.slot e30_y = 420
+
+ryda frame < 10000 {
+    # Cielo nocturno
+    draw.rect(0, 0, 800, 600, "azul_muy_oscuro")
+
+    # ========================================================================
+    # ESTRELLAS (parpadean)
+    # ========================================================================
+    dark.slot brillo = (frame % 20) / 20.0
+    
+    draw.circle(e1_x, e1_y, 1 + brillo, "blanco")
+    draw.circle(e2_x, e2_y, 1 + brillo, "blanco")
+    draw.circle(e3_x, e3_y, 2 - brillo, "blanco")
+    draw.circle(e4_x, e4_y, 1 + brillo, "amarillo")
+    draw.circle(e5_x, e5_y, 2 - brillo, "blanco")
+    draw.circle(e6_x, e6_y, 1 + brillo, "blanco")
+    draw.circle(e7_x, e7_y, 1 + brillo, "amarillo")
+    draw.circle(e8_x, e8_y, 2 - brillo, "blanco")
+    draw.circle(e9_x, e9_y, 1 + brillo, "blanco")
+    draw.circle(e10_x, e10_y, 1 + brillo, "amarillo")
+    draw.circle(e11_x, e11_y, 2 - brillo, "blanco")
+    draw.circle(e12_x, e12_y, 1 + brillo, "blanco")
+    draw.circle(e13_x, e13_y, 1 + brillo, "blanco")
+    draw.circle(e14_x, e14_y, 2 - brillo, "amarillo")
+    draw.circle(e15_x, e15_y, 1 + brillo, "blanco")
+    draw.circle(e16_x, e16_y, 1 + brillo, "blanco")
+    draw.circle(e17_x, e17_y, 2 - brillo, "blanco")
+    draw.circle(e18_x, e18_y, 1 + brillo, "amarillo")
+    draw.circle(e19_x, e19_y, 1 + brillo, "blanco")
+    draw.circle(e20_x, e20_y, 2 - brillo, "blanco")
+    draw.circle(e21_x, e21_y, 1 + brillo, "blanco")
+    draw.circle(e22_x, e22_y, 1 + brillo, "amarillo")
+    draw.circle(e23_x, e23_y, 2 - brillo, "blanco")
+    draw.circle(e24_x, e24_y, 1 + brillo, "blanco")
+    draw.circle(e25_x, e25_y, 1 + brillo, "blanco")
+    draw.circle(e26_x, e26_y, 2 - brillo, "amarillo")
+    draw.circle(e27_x, e27_y, 1 + brillo, "blanco")
+    draw.circle(e28_x, e28_y, 1 + brillo, "blanco")
+    draw.circle(e29_x, e29_y, 2 - brillo, "amarillo")
+    draw.circle(e30_x, e30_y, 1 + brillo, "blanco")
+
+    # Luna
+    draw.circle(700, 80, 40, "gris_claro")
+    draw.circle(710, 75, 35, "azul_muy_oscuro")
+
+    # ========================================================================
+    # PARTÍCULAS DE FUEGO (20 partículas - 4 columnas)
+    # ========================================================================
+    
+    # Columna 1 (5 partículas)
+    dark.slot f1_y = f1_y - 3
+    dark.slot f2_y = f2_y - 4
+    dark.slot f3_y = f3_y - 5
+    dark.slot f4_y = f4_y - 3
+    dark.slot f5_y = f5_y - 4
+    
+    onif f1_y < 100 { dark.slot f1_y = 520 }
+    onif f2_y < 100 { dark.slot f2_y = 520 }
+    onif f3_y < 100 { dark.slot f3_y = 520 }
+    onif f4_y < 100 { dark.slot f4_y = 520 }
+    onif f5_y < 100 { dark.slot f5_y = 520 }
+    
+    onif f1_y > 350 { draw.circle(350, f1_y, 10, "rojo") }
+    onif f1_y <= 350 { onif f1_y > 250 { draw.circle(350, f1_y, 9, "naranja") } }
+    onif f1_y <= 250 { draw.circle(350, f1_y, 8, "amarillo") }
+    
+    onif f2_y > 350 { draw.circle(365, f2_y, 9, "rojo") }
+    onif f2_y <= 350 { onif f2_y > 250 { draw.circle(365, f2_y, 8, "naranja") } }
+    onif f2_y <= 250 { draw.circle(365, f2_y, 7, "amarillo") }
+    
+    onif f3_y > 350 { draw.circle(380, f3_y, 11, "rojo") }
+    onif f3_y <= 350 { onif f3_y > 250 { draw.circle(380, f3_y, 10, "naranja") } }
+    onif f3_y <= 250 { draw.circle(380, f3_y, 9, "amarillo") }
+    
+    onif f4_y > 350 { draw.circle(395, f4_y, 8, "rojo") }
+    onif f4_y <= 350 { onif f4_y > 250 { draw.circle(395, f4_y, 7, "naranja") } }
+    onif f4_y <= 250 { draw.circle(395, f4_y, 6, "amarillo") }
+    
+    onif f5_y > 350 { draw.circle(410, f5_y, 10, "rojo") }
+    onif f5_y <= 350 { onif f5_y > 250 { draw.circle(410, f5_y, 9, "naranja") } }
+    onif f5_y <= 250 { draw.circle(410, f5_y, 8, "amarillo") }
+
+    # Columna 2 (5 partículas)
+    dark.slot f6_y = f6_y - 5
+    dark.slot f7_y = f7_y - 6
+    dark.slot f8_y = f8_y - 4
+    dark.slot f9_y = f9_y - 3
+    dark.slot f10_y = f10_y - 5
+    
+    onif f6_y < 100 { dark.slot f6_y = 520 }
+    onif f7_y < 100 { dark.slot f7_y = 520 }
+    onif f8_y < 100 { dark.slot f8_y = 520 }
+    onif f9_y < 100 { dark.slot f9_y = 520 }
+    onif f10_y < 100 { dark.slot f10_y = 520 }
+    
+    onif f6_y > 350 { draw.circle(430, f6_y, 10, "rojo") }
+    onif f6_y <= 350 { onif f6_y > 250 { draw.circle(430, f6_y, 9, "naranja") } }
+    onif f6_y <= 250 { draw.circle(430, f6_y, 8, "amarillo") }
+    
+    onif f7_y > 350 { draw.circle(445, f7_y, 9, "rojo") }
+    onif f7_y <= 350 { onif f7_y > 250 { draw.circle(445, f7_y, 8, "naranja") } }
+    onif f7_y <= 250 { draw.circle(445, f7_y, 7, "amarillo") }
+    
+    onif f8_y > 350 { draw.circle(460, f8_y, 11, "rojo") }
+    onif f8_y <= 350 { onif f8_y > 250 { draw.circle(460, f8_y, 10, "naranja") } }
+    onif f8_y <= 250 { draw.circle(460, f8_y, 9, "amarillo") }
+    
+    onif f9_y > 350 { draw.circle(475, f9_y, 8, "rojo") }
+    onif f9_y <= 350 { onif f9_y > 250 { draw.circle(475, f9_y, 7, "naranja") } }
+    onif f9_y <= 250 { draw.circle(475, f9_y, 6, "amarillo") }
+    
+    onif f10_y > 350 { draw.circle(490, f10_y, 10, "rojo") }
+    onif f10_y <= 350 { onif f10_y > 250 { draw.circle(490, f10_y, 9, "naranja") } }
+    onif f10_y <= 250 { draw.circle(490, f10_y, 8, "amarillo") }
+
+    # Columna 3 (5 partículas)
+    dark.slot f11_y = f11_y - 4
+    dark.slot f12_y = f12_y - 6
+    dark.slot f13_y = f13_y - 3
+    dark.slot f14_y = f14_y - 5
+    dark.slot f15_y = f15_y - 4
+    
+    onif f11_y < 100 { dark.slot f11_y = 520 }
+    onif f12_y < 100 { dark.slot f12_y = 520 }
+    onif f13_y < 100 { dark.slot f13_y = 520 }
+    onif f14_y < 100 { dark.slot f14_y = 520 }
+    onif f15_y < 100 { dark.slot f15_y = 520 }
+    
+    onif f11_y > 350 { draw.circle(320, f11_y, 9, "rojo") }
+    onif f11_y <= 350 { onif f11_y > 250 { draw.circle(320, f11_y, 8, "naranja") } }
+    onif f11_y <= 250 { draw.circle(320, f11_y, 7, "amarillo") }
+    
+    onif f12_y > 350 { draw.circle(520, f12_y, 10, "rojo") }
+    onif f12_y <= 350 { onif f12_y > 250 { draw.circle(520, f12_y, 9, "naranja") } }
+    onif f12_y <= 250 { draw.circle(520, f12_y, 8, "amarillo") }
+    
+    onif f13_y > 350 { draw.circle(340, f13_y, 8, "rojo") }
+    onif f13_y <= 350 { onif f13_y > 250 { draw.circle(340, f13_y, 7, "naranja") } }
+    onif f13_y <= 250 { draw.circle(340, f13_y, 6, "amarillo") }
+    
+    onif f14_y > 350 { draw.circle(500, f14_y, 11, "rojo") }
+    onif f14_y <= 350 { onif f14_y > 250 { draw.circle(500, f14_y, 10, "naranja") } }
+    onif f14_y <= 250 { draw.circle(500, f14_y, 9, "amarillo") }
+    
+    onif f15_y > 350 { draw.circle(360, f15_y, 9, "rojo") }
+    onif f15_y <= 350 { onif f15_y > 250 { draw.circle(360, f15_y, 8, "naranja") } }
+    onif f15_y <= 250 { draw.circle(360, f15_y, 7, "amarillo") }
+
+    # Columna 4 (5 partículas)
+    dark.slot f16_y = f16_y - 3
+    dark.slot f17_y = f17_y - 4
+    dark.slot f18_y = f18_y - 5
+    dark.slot f19_y = f19_y - 6
+    dark.slot f20_y = f20_y - 4
+    
+    onif f16_y < 100 { dark.slot f16_y = 520 }
+    onif f17_y < 100 { dark.slot f17_y = 520 }
+    onif f18_y < 100 { dark.slot f18_y = 520 }
+    onif f19_y < 100 { dark.slot f19_y = 520 }
+    onif f20_y < 100 { dark.slot f20_y = 520 }
+    
+    onif f16_y > 350 { draw.circle(380, f16_y, 10, "rojo") }
+    onif f16_y <= 350 { onif f16_y > 250 { draw.circle(380, f16_y, 9, "naranja") } }
+    onif f16_y <= 250 { draw.circle(380, f16_y, 8, "amarillo") }
+    
+    onif f17_y > 350 { draw.circle(420, f17_y, 9, "rojo") }
+    onif f17_y <= 350 { onif f17_y > 250 { draw.circle(420, f17_y, 8, "naranja") } }
+    onif f17_y <= 250 { draw.circle(420, f17_y, 7, "amarillo") }
+    
+    onif f18_y > 350 { draw.circle(460, f18_y, 11, "rojo") }
+    onif f18_y <= 350 { onif f18_y > 250 { draw.circle(460, f18_y, 10, "naranja") } }
+    onif f18_y <= 250 { draw.circle(460, f18_y, 9, "amarillo") }
+    
+    onif f19_y > 350 { draw.circle(500, f19_y, 8, "rojo") }
+    onif f19_y <= 350 { onif f19_y > 250 { draw.circle(500, f19_y, 7, "naranja") } }
+    onif f19_y <= 250 { draw.circle(500, f19_y, 6, "amarillo") }
+    
+    onif f20_y > 350 { draw.circle(540, f20_y, 10, "rojo") }
+    onif f20_y <= 350 { onif f20_y > 250 { draw.circle(540, f20_y, 9, "naranja") } }
+    onif f20_y <= 250 { draw.circle(540, f20_y, 8, "amarillo") }
+
+    # ========================================================================
+    # BASE DEL EMISOR (hoguera)
+    # ========================================================================
+    draw.rect(300, 530, 200, 70, "marron")
+    draw.rect(320, 540, 160, 50, "gris_oscuro")
+    
+    # Troncos
+    draw.rect(340, 550, 120, 15, "marron")
+    draw.rect(360, 540, 80, 12, "marron")
+
+    # Brillo de la hoguera
+    dark.slot radio_brillo = 30 + (frame % 15)
+    draw.circle(400, 520, radio_brillo, "naranja")
+    draw.circle(400, 520, radio_brillo + 10, "rojo")
+
+    # ========================================================================
+    # TEXTO E INFO
+    # ========================================================================
+    draw.text("FUEGO Y ESTRELLAS v0.8.5", 270, 20, 28, "blanco")
+    draw.text("30 estrellas + 20 partículas de fuego", 240, 50, 18, "gris")
+    draw.text("Frame: " + frame, 10, 580, 20, "cyan")
+    draw.text("ESC: Salir", 700, 580, 20, "amarillo")
+
+    dark.slot frame = frame + 1
+}

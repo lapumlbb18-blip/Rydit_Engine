@@ -1,0 +1,82 @@
+shield.init
+import math
+
+# Jugador
+dark.slot tanque_x = 400
+dark.slot tanque_y = 300
+
+# Balas - AGREGAMOS ESTO
+dark.slot bala_x = 0
+dark.slot bala_y = 0
+dark.slot bala_vx = 0
+dark.slot bala_vy = 0
+dark.slot bala_activa = 0
+
+# Game loop
+dark.slot frame = 0
+ryda frame < 1000 {
+    # Fondo negro
+    draw.rect(0, 0, 800, 600, "negro")
+    
+    # Grid
+    draw.line(400, 0, 400, 600, "gris")
+    draw.line(0, 300, 800, 300, "gris")
+    
+    # Input
+    dark.slot mouse_x = input::mouse_x()
+    dark.slot mouse_y = input::mouse_y()
+    dark.slot click = input::is_mouse_button_pressed(0)
+    
+    # Calcular ángulo
+    dark.slot dx = mouse_x - tanque_x
+    dark.slot dy = mouse_y - tanque_y
+    dark.slot angulo = math::atan2(dy, dx)
+    
+    # LÓGICA DE DISPARO - AGREGAMOS ESTO
+    onif click == 1 and bala_activa == 0 {
+        bala_activa = 1
+        bala_x = tanque_x
+        bala_y = tanque_y
+        bala_vx = math::cos(angulo) * 10
+        bala_vy = math::sin(angulo) * 10
+        voz "¡Disparo!"
+    }
+    
+    # Actualizar bala
+    onif bala_activa == 1 {
+        bala_x = bala_x + bala_vx
+        bala_y = bala_y + bala_vy
+        
+        # Desactivar si sale de pantalla
+        onif bala_x < 0 or bala_x > 800 or bala_y < 0 or bala_y > 600 {
+            bala_activa = 0
+        }
+    }
+    
+    # Dibujar tanque
+    draw.circle(tanque_x, tanque_y, 30, "verde")
+    
+    # Dibujar torreta
+    dark.slot torreta_x = tanque_x + math::cos(angulo) * 40
+    dark.slot torreta_y = tanque_y + math::sin(angulo) * 40
+    draw.line_thick(tanque_x, tanque_y, torreta_x, torreta_y, 10, "lima")
+    
+    # Dibujar mouse
+    draw.circle(mouse_x, mouse_y, 10, "rojo")
+    
+    # DIBUJAR BALA - AGREGAMOS ESTO
+    onif bala_activa == 1 {
+        draw.circle(bala_x, bala_y, 8, "amarillo")
+        draw.text("BALA", bala_x - 15, bala_y - 20, 12, "amarillo")
+    }
+    
+    # Texto
+    draw.text("TANK CON BALAS v0.8.5", 280, 30, 24, "blanco")
+    draw.text("Click para disparar", 300, 60, 18, "amarillo")
+    draw.text("Frame: " + frame, 10, 10, 20, "gris")
+    draw.text("Bala activa: " + bala_activa, 10, 40, 18, "verde")
+    
+    dark.slot frame = frame + 1
+}
+
+voz "Final"

@@ -50,6 +50,12 @@ pub fn ejecutar_programa_gfx(
     funcs: &mut HashMap<String, (Vec<String>, Vec<lizer::Stmt>)>,
     gfx: &mut RyditGfx,
 ) {
+    // Inicializar debug log
+    rydit_gfx::debug_log::debug_init(
+        "/data/data/com.termux/files/home/shield-project/rydit_debug.log",
+    );
+    rydit_gfx::debug_log::debug_info("=== INICIANDO GAME LOOP ===");
+
     // Estado del input
     let mut input = InputEstado::new();
 
@@ -57,37 +63,215 @@ pub fn ejecutar_programa_gfx(
     let mut loaded_modules: HashSet<String> = HashSet::new();
     let mut importing_stack: Vec<String> = Vec::new();
 
-    // Game loop principal
-    while !gfx.should_close() {
-        // Input primero (Rust = Arquitecto)
-        input.actualizar(gfx);
-        let escape = gfx.is_key_pressed(rydit_gfx::Key::Escape);
+    rydit_gfx::debug_log::debug_log(&format!(
+        "Program has {} statements",
+        program.statements.len()
+    ));
 
-        // Iniciar dibujo
-        {
-            let mut d = gfx.begin_draw();
-            d.clear(crate::ColorRydit::Negro);
+    eprintln!(
+        "[EXECUTOR GFX] Program has {} statements",
+        program.statements.len()
+    );
+    for (i, stmt) in program.statements.iter().enumerate() {
+        eprintln!("[EXECUTOR GFX] Statement {}: {:?}", i, stmt);
+    }
 
-            // Ejecutar programa en cada frame
-            for stmt in &program.statements {
+    // Ejecutar statements iniciales (UNA vez) EXCEPTO While/Blocks que son game loops
+    for stmt in &program.statements {
+        match stmt {
+            // While y Blocks son game loops - NO ejecutar aquí
+            lizer::Stmt::While { .. } | lizer::Stmt::Block(_) => {
+                rydit_gfx::debug_log::debug_info("Statement es game loop (While/Block)");
+            }
+            // Todo lo demás es inicialización
+            _ => {
+                rydit_gfx::debug_log::debug_log("Ejecutando statement inicial");
                 ejecutar_stmt_gfx(
                     stmt,
                     executor,
                     funcs,
-                    &mut d,
+                    &mut gfx.begin_draw(),
                     &mut input,
                     &mut loaded_modules,
                     &mut importing_stack,
                 );
             }
-
-            // FPS counter
-            d.draw_text("RyDit v0.0.9", 10, 10, 20, crate::ColorRydit::Blanco);
         }
-        // end_draw automático cuando d sale de scope
+    }
 
-        if escape {
-            break;
+    // Buscar el primer While o Block como game loop principal
+    let mut found_loop = false;
+    for stmt in &program.statements {
+        match stmt {
+            lizer::Stmt::While { condition, body } => {
+                found_loop = true;
+                rydit_gfx::debug_log::debug_info("=== ENCONTRADO GAME LOOP WHILE ===");
+                rydit_gfx::debug_log::debug_log(&format!("Body tiene {} statements", body.len()));
+
+                // El While ES el game loop principal
+                let mut frame_count = 0;
+                loop {
+                    // Input primero
+                    input.actualizar(gfx);
+                    let escape = gfx.is_key_pressed(rydit_gfx::Key::Escape);
+
+                    // Verificar condición del While
+                    let cond_val =
+                        crate::evaluar_expr_gfx_for_loop(condition, executor, &input, funcs);
+                    let es_verdad = match cond_val {
+                        blast_core::Valor::Num(n) => n != 0.0,
+                        blast_core::Valor::Bool(b) => b,
+                        _ => false,
+                    };
+
+                    if !es_verdad || escape {
+                        rydit_gfx::debug_log::debug_log(&format!(
+                            "Saliendo del loop - frame={}, escape={}",
+                            frame_count, escape
+                        ));
+                        break;
+                    }
+
+                    // Ejecutar body del While
+                    {
+                        {
+                            let mut d = gfx.begin_draw();
+                            d.clear(crate::ColorRydit::Negro);
+
+                            eprintln!("[EXECUTOR] Body tiene {} statements", body.len());
+                            for (i, s) in body.iter().enumerate() {
+                                eprintln!("[EXECUTOR] Statement {}: {:?}", i, s);
+                            }
+
+                            for s in body {
+                                eprintln!("[EXECUTOR] Ejecutando statement...");
+                                let break_signal = ejecutar_stmt_gfx(
+                                    s,
+                                    executor,
+                                    funcs,
+                                    &mut d,
+                                    &mut input,
+                                    &mut loaded_modules,
+                                    &mut importing_stack,
+                                );
+                                if break_signal == Some(true) {
+                                    rydit_gfx::debug_log::debug_log("Break detectado en body");
+                                    break;
+                                }
+                            }
+
+                            // FPS counter + debug info
+                            d.draw_text("RyDit v0.8.5", 10, 10, 20, crate::ColorRydit::Blanco);
+                            d.draw_text(
+                                &format!("Frame: {}", frame_count),
+                                10,
+                                40,
+                                20,
+                                crate::ColorRydit::Verde,
+                            );
+
+                            // Drop explícito del DrawHandle para forzar buffer swap
+                            drop(d);
+                        }
+                        eprintln!(
+                            "[EXECUTOR] Frame {} completado - DrawHandle dropped",
+                            frame_count
+                        );
+                    }
+
+                    frame_count += 1;
+
+                    // Log cada 10 frames
+                    if frame_count % 10 == 0 {
+                        rydit_gfx::debug_log::debug_log_frame(&format!(
+                            "Frame {} completado",
+                            frame_count
+                        ));
+                    }
+
+                    if escape {
+                        break;
+                    }
+                }
+                rydit_gfx::debug_log::debug_log(&format!(
+                    "Game loop terminado - frames totales: {}",
+                    frame_count
+                ));
+                break; // Solo un game loop principal
+            }
+            lizer::Stmt::Block(stmts) => {
+                found_loop = true;
+                // Block es game loop - ejecutar en cada frame
+                while !gfx.should_close() {
+                    input.actualizar(gfx);
+                    let escape = gfx.is_key_pressed(rydit_gfx::Key::Escape);
+
+                    {
+                        let mut d = gfx.begin_draw();
+                        d.clear(crate::ColorRydit::Negro);
+
+                        for s in stmts {
+                            let break_signal = ejecutar_stmt_gfx(
+                                s,
+                                executor,
+                                funcs,
+                                &mut d,
+                                &mut input,
+                                &mut loaded_modules,
+                                &mut importing_stack,
+                            );
+                            if break_signal == Some(true) {
+                                break;
+                            }
+                        }
+
+                        d.draw_text("RyDit v0.8.5", 10, 10, 20, crate::ColorRydit::Blanco);
+                    }
+
+                    if escape {
+                        break;
+                    }
+                }
+                break; // Solo un game loop principal
+            }
+            _ => {}
+        }
+    }
+
+    // Si no hay game loop explícito, usar el game loop por defecto
+    if !found_loop {
+        while !gfx.should_close() {
+            input.actualizar(gfx);
+            let escape = gfx.is_key_pressed(rydit_gfx::Key::Escape);
+
+            {
+                let mut d = gfx.begin_draw();
+                d.clear(crate::ColorRydit::Negro);
+
+                // Ejecutar todos los statements que no son While/Block
+                for stmt in &program.statements {
+                    match stmt {
+                        lizer::Stmt::While { .. } | lizer::Stmt::Block(_) => {}
+                        _ => {
+                            ejecutar_stmt_gfx(
+                                stmt,
+                                executor,
+                                funcs,
+                                &mut d,
+                                &mut input,
+                                &mut loaded_modules,
+                                &mut importing_stack,
+                            );
+                        }
+                    }
+                }
+
+                d.draw_text("RyDit v0.8.5", 10, 10, 20, crate::ColorRydit::Blanco);
+            }
+
+            if escape {
+                break;
+            }
         }
     }
 }

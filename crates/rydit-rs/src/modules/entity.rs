@@ -724,6 +724,82 @@ pub fn player_move_right(
     }
 }
 
+/// player::move_up(id) - Mover arriba
+pub fn player_move_up(
+    args: &[Expr],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
+    if args.len() != 1 {
+        return Valor::Error("player::move_up() requiere 1 argumento: id".to_string());
+    }
+    
+    let id_val = evaluar_expr(&args[0], executor, funcs);
+    let id = match id_val {
+        Valor::Texto(s) => s,
+        _ => return Valor::Error("player::move_up() id debe ser texto".to_string()),
+    };
+    
+    let em = get_entity_manager();
+    let mut em_ref = em.borrow_mut();
+    
+    if let Some(entity) = em_ref.get_mut(&id) {
+        if entity.entity_type != "player" {
+            return Valor::Error(format!("entity '{}' no es de tipo 'player'", id));
+        }
+        
+        let speed = match entity.get_data("speed") {
+            Some(Valor::Num(s)) => *s as f32,
+            _ => 200.0,
+        };
+        
+        entity.vy = -speed;
+        entity.set_data("state", Valor::Texto("run".to_string()));
+        
+        Valor::Texto(format!("player::move_up('{}') - vy={}", id, entity.vy))
+    } else {
+        Valor::Error(format!("player::move_up() La entidad '{}' no existe", id))
+    }
+}
+
+/// player::move_down(id) - Mover abajo
+pub fn player_move_down(
+    args: &[Expr],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
+    if args.len() != 1 {
+        return Valor::Error("player::move_down() requiere 1 argumento: id".to_string());
+    }
+    
+    let id_val = evaluar_expr(&args[0], executor, funcs);
+    let id = match id_val {
+        Valor::Texto(s) => s,
+        _ => return Valor::Error("player::move_down() id debe ser texto".to_string()),
+    };
+    
+    let em = get_entity_manager();
+    let mut em_ref = em.borrow_mut();
+    
+    if let Some(entity) = em_ref.get_mut(&id) {
+        if entity.entity_type != "player" {
+            return Valor::Error(format!("entity '{}' no es de tipo 'player'", id));
+        }
+        
+        let speed = match entity.get_data("speed") {
+            Some(Valor::Num(s)) => *s as f32,
+            _ => 200.0,
+        };
+        
+        entity.vy = speed;
+        entity.set_data("state", Valor::Texto("run".to_string()));
+        
+        Valor::Texto(format!("player::move_down('{}') - vy={}", id, entity.vy))
+    } else {
+        Valor::Error(format!("player::move_down() La entidad '{}' no existe", id))
+    }
+}
+
 /// player::jump(id) - Saltar
 pub fn player_jump(
     args: &[Expr],

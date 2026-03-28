@@ -1150,11 +1150,14 @@ impl Parser {
         let mut statements = Vec::new();
 
         while self.pos < self.tokens.len() {
+            let pos_antes = self.pos; // Guardar posición actual
             if let Some(stmt) = self.parse_statement()? {
                 statements.push(stmt);
             } else {
-                // Token no es un statement válido, avanzar
-                self.pos += 1;
+                // Solo avanzar si parse_statement() no consumió el token
+                if self.pos == pos_antes {
+                    self.pos += 1;
+                }
             }
         }
 
@@ -1212,8 +1215,9 @@ impl Parser {
                 }
             }
             Token::Comentario(_) => {
-                // No avanzar self.pos aquí - el bucle de parse() ya lo hace cuando retornamos Ok(None)
-                Ok(None)
+                // Solo avanzar el token, el bucle parse() se encargará del resto
+                self.pos += 1;
+                Ok(None) // El bucle de parse() avanzará al siguiente token
             }
             _ => {
                 // Token no es un statement válido, avanzar
@@ -1240,17 +1244,14 @@ impl Parser {
                 then_body = stmts;
             }
         } else {
-            // Statements sueltos (hasta blelse o comando de control)
+            // Statements sueltos (hasta blelse o fin del bloque padre)
             while self.pos < self.tokens.len() {
                 // blelse termina el then
                 if matches!(self.tokens[self.pos], Token::Blelse) {
                     break;
                 }
-                // Otros comandos de control también terminan el then
-                if matches!(
-                    self.tokens[self.pos],
-                    Token::Onif | Token::Ryda | Token::Cada
-                ) {
+                // Llave de cierre termina el bloque actual
+                if matches!(self.tokens[self.pos], Token::LlaveDer) {
                     break;
                 }
                 if let Some(stmt) = self.parse_statement()? {
@@ -1279,10 +1280,8 @@ impl Parser {
                 // Statements sueltos
                 let mut body = Vec::new();
                 while self.pos < self.tokens.len() {
-                    if matches!(
-                        self.tokens[self.pos],
-                        Token::Onif | Token::Ryda | Token::Cada | Token::Rytmo
-                    ) {
+                    // Llave de cierre termina el bloque actual
+                    if matches!(self.tokens[self.pos], Token::LlaveDer) {
                         break;
                     }
                     if let Some(stmt) = self.parse_statement()? {
@@ -1311,7 +1310,7 @@ impl Parser {
         // Parsear condición
         let condition = self.parse_expression()?;
 
-        // Parsear cuerpo: puede ser un bloque { } o un solo statement
+        // Parsear cuerpo: puede ser un bloque { } o statements sueltos
         let body =
             if self.pos < self.tokens.len() && matches!(self.tokens[self.pos], Token::LlaveIzq) {
                 // Es un bloque - usar parse_block
@@ -1321,12 +1320,21 @@ impl Parser {
                     vec![]
                 }
             } else {
-                // Solo un statement
-                if let Some(stmt) = self.parse_statement()? {
-                    vec![stmt]
-                } else {
-                    vec![]
+                // Statements sueltos - parsear hasta encontrar LlaveDer o fin
+                let mut statements = Vec::new();
+                while self.pos < self.tokens.len() {
+                    // Si encontramos llave de cierre, paramos
+                    if matches!(self.tokens[self.pos], Token::LlaveDer) {
+                        break;
+                    }
+                    // Parsear siguiente statement
+                    if let Some(stmt) = self.parse_statement()? {
+                        statements.push(stmt);
+                    } else {
+                        break;
+                    }
                 }
+                statements
             };
 
         Ok(Some(Stmt::While { condition, body }))
@@ -1417,7 +1425,6 @@ impl Parser {
                 statements.push(stmt);
             } else {
                 // Token no es un statement válido, avanzar al siguiente
-                // Esto puede pasar con tokens de expresión sueltos
                 self.pos += 1;
             }
         }
@@ -2680,12 +2687,14 @@ mod parser_tests {
         let program = parser.parse().unwrap();
 
         assert_eq!(program.statements.len(), 1);
-        if let Stmt::Assign { value, .. } = &program.statements[0] {
-            if let Expr::Array(elements) = value {
-                assert_eq!(elements.len(), 3);
-                if let Expr::Num(n) = &elements[0] {
-                    assert_eq!(*n, 10.0);
-                }
+        if let Stmt::Assign {
+            value: Expr::Array(elements),
+            ..
+        } = &program.statements[0]
+        {
+            assert_eq!(elements.len(), 3);
+            if let Expr::Num(n) = &elements[0] {
+                assert_eq!(*n, 10.0);
             }
         }
     }
@@ -2698,12 +2707,14 @@ mod parser_tests {
         let program = parser.parse().unwrap();
 
         assert_eq!(program.statements.len(), 1);
-        if let Stmt::Assign { value, .. } = &program.statements[0] {
-            if let Expr::Array(outer) = value {
-                assert_eq!(outer.len(), 2); // 2 filas
-                if let Expr::Array(inner) = &outer[0] {
-                    assert_eq!(inner.len(), 2); // 2 columnas
-                }
+        if let Stmt::Assign {
+            value: Expr::Array(outer),
+            ..
+        } = &program.statements[0]
+        {
+            assert_eq!(outer.len(), 2); // 2 filas
+            if let Expr::Array(inner) = &outer[0] {
+                assert_eq!(inner.len(), 2); // 2 columnas
             }
         }
     }
@@ -3011,5 +3022,260 @@ voz x"#;
         let tokens = Lizer::new("€£¥").scan();
         // Debería generar error de carácter inesperado
         assert!(tokens.iter().any(|t| matches!(t, Token::Error(_))));
+    }
+
+    // ========================================================================
+    // TESTS V0.8.5 - BLOQUES ANIDADOS (FIX CRÍTICO)
+    // ========================================================================
+
+    #[test]
+    fn test_onif_anidado_simple() {
+        // onif anidado sin bloques explícitos
+        let tokens = Lizer::new("onif x { onif y { voz \"hola\" } }").scan();
+        let mut parser = Parser::new(tokens);
+        let program = parser.parse().unwrap();
+
+        assert_eq!(program.statements.len(), 1);
+
+        // Verificar estructura anidada
+        if let Stmt::If { then_body, .. } = &program.statements[0] {
+            assert_eq!(then_body.len(), 1);
+            if let Stmt::If {
+                then_body: inner_body,
+                ..
+            } = &then_body[0]
+            {
+                assert_eq!(inner_body.len(), 1);
+            } else {
+                panic!("El statement interno no es un If");
+            }
+        } else {
+            panic!("El statement externo no es un If");
+        }
+    }
+
+    #[test]
+    fn test_onif_anidado_con_bloques() {
+        // onif anidado con bloques explícitos
+        let tokens = Lizer::new("onif x { { onif y { voz \"hola\" } } }").scan();
+        let mut parser = Parser::new(tokens);
+        let program = parser.parse().unwrap();
+
+        assert_eq!(program.statements.len(), 1);
+
+        if let Stmt::If { then_body, .. } = &program.statements[0] {
+            assert_eq!(then_body.len(), 1);
+        }
+    }
+
+    #[test]
+    fn test_onif_triple_anidado() {
+        // Triple anidamiento como en demo_audio_particulas.rydit
+        let tokens = Lizer::new("onif a { onif b { onif c { voz \"test\" } } }").scan();
+        let mut parser = Parser::new(tokens);
+        let program = parser.parse().unwrap();
+
+        assert_eq!(program.statements.len(), 1);
+
+        if let Stmt::If { then_body, .. } = &program.statements[0] {
+            assert_eq!(then_body.len(), 1);
+            if let Stmt::If {
+                then_body: mid_body,
+                ..
+            } = &then_body[0]
+            {
+                assert_eq!(mid_body.len(), 1);
+                if let Stmt::If {
+                    then_body: inner_body,
+                    ..
+                } = &mid_body[0]
+                {
+                    assert_eq!(inner_body.len(), 1);
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn test_onif_anidado_con_belse() {
+        // onif anidado con cláusula else
+        let tokens = Lizer::new(
+            "onif x { onif y { voz \"si\" } blelse { voz \"no\" } } blelse { voz \"externo no\" }",
+        )
+        .scan();
+        let mut parser = Parser::new(tokens);
+        let program = parser.parse().unwrap();
+
+        assert_eq!(program.statements.len(), 1);
+
+        if let Stmt::If {
+            then_body,
+            else_body,
+            ..
+        } = &program.statements[0]
+        {
+            assert_eq!(then_body.len(), 1);
+            assert!(else_body.is_some());
+            assert_eq!(else_body.as_ref().unwrap().len(), 1);
+        }
+    }
+
+    #[test]
+    fn test_ryda_anidado() {
+        // ryda anidado
+        let tokens = Lizer::new("ryda x < 10 { ryda y < 5 { voz x } }").scan();
+        let mut parser = Parser::new(tokens);
+        let program = parser.parse().unwrap();
+
+        assert_eq!(program.statements.len(), 1);
+
+        if let Stmt::While { body, .. } = &program.statements[0] {
+            assert_eq!(body.len(), 1);
+            if let Stmt::While {
+                body: inner_body, ..
+            } = &body[0]
+            {
+                assert_eq!(inner_body.len(), 1);
+            }
+        }
+    }
+
+    #[test]
+    fn test_onif_en_ryda() {
+        // onif dentro de ryda
+        let tokens = Lizer::new("ryda x < 10 { onif x > 5 { voz \"mayor\" } }").scan();
+        let mut parser = Parser::new(tokens);
+        let program = parser.parse().unwrap();
+
+        assert_eq!(program.statements.len(), 1);
+
+        if let Stmt::While { body, .. } = &program.statements[0] {
+            assert_eq!(body.len(), 1);
+            if let Stmt::If { .. } = &body[0] {
+                // Correcto
+            } else {
+                panic!("El statement interno no es un If");
+            }
+        }
+    }
+
+    #[test]
+    fn test_ryda_en_onif() {
+        // ryda dentro de onif
+        let tokens = Lizer::new("onif x > 0 { ryda i < 10 { voz i } }").scan();
+        let mut parser = Parser::new(tokens);
+        let program = parser.parse().unwrap();
+
+        assert_eq!(program.statements.len(), 1);
+
+        if let Stmt::If { then_body, .. } = &program.statements[0] {
+            assert_eq!(then_body.len(), 1);
+            if let Stmt::While { .. } = &then_body[0] {
+                // Correcto
+            } else {
+                panic!("El statement interno no es un While");
+            }
+        }
+    }
+
+    #[test]
+    fn test_cada_anidado() {
+        // cada anidado
+        let tokens = Lizer::new("cada x en [1,2] { cada y en [3,4] { voz x } }").scan();
+        let mut parser = Parser::new(tokens);
+        let program = parser.parse().unwrap();
+
+        assert_eq!(program.statements.len(), 1);
+
+        if let Stmt::ForEach { body, .. } = &program.statements[0] {
+            assert_eq!(body.len(), 1);
+            if let Stmt::ForEach {
+                body: inner_body, ..
+            } = &body[0]
+            {
+                assert_eq!(inner_body.len(), 1);
+            }
+        }
+    }
+
+    #[test]
+    fn test_mixto_anidado_complejo() {
+        // Test complejo como en demo_audio_particulas.rydit
+        let script = r#"
+onif click {
+    onif click_anterior == 0 {
+        onif mx > 50 and mx < 190 {
+            playing = not playing
+            onif playing {
+                audio::beep(600, 100)
+                voz "Play"
+            } blelse {
+                audio::beep(300, 100)
+                voz "Pausa"
+            }
+        }
+    }
+}
+"#;
+        let tokens = Lizer::new(script).scan();
+        let mut parser = Parser::new(tokens);
+        let program = parser.parse();
+
+        assert!(program.is_ok(), "Error al parsear: {:?}", program.err());
+        let program = program.unwrap();
+
+        assert_eq!(program.statements.len(), 1);
+
+        // Verificar profundidad de anidamiento
+        if let Stmt::If { then_body, .. } = &program.statements[0] {
+            assert!(
+                !then_body.is_empty(),
+                "Debe haber al menos 1 statement en el then_body"
+            );
+        }
+    }
+
+    #[test]
+    fn test_funcion_anidada_en_onif() {
+        // Función definida dentro de un onif (raro pero válido)
+        let tokens = Lizer::new("onif x { rytmo test() { voz \"hola\" } }").scan();
+        let mut parser = Parser::new(tokens);
+        let program = parser.parse().unwrap();
+
+        assert_eq!(program.statements.len(), 1);
+
+        if let Stmt::If { then_body, .. } = &program.statements[0] {
+            assert_eq!(then_body.len(), 1);
+            if let Stmt::Function { name, .. } = &then_body[0] {
+                assert_eq!(name, "test");
+            } else {
+                panic!("El statement interno no es una función");
+            }
+        }
+    }
+
+    #[test]
+    fn test_onif_multiple_secuencial() {
+        // Múltiples onifs secuenciales (no anidados)
+        let tokens =
+            Lizer::new("onif x { voz \"x\" } onif y { voz \"y\" } onif z { voz \"z\" }").scan();
+        let mut parser = Parser::new(tokens);
+        let program = parser.parse().unwrap();
+
+        assert_eq!(program.statements.len(), 3);
+    }
+
+    #[test]
+    fn test_onif_sin_bloque_con_multiple_statements() {
+        // onif sin bloque pero con múltiples statements
+        let tokens = Lizer::new("onif x voz \"a\" voz \"b\"").scan();
+        let mut parser = Parser::new(tokens);
+        let program = parser.parse().unwrap();
+
+        assert_eq!(program.statements.len(), 1);
+
+        if let Stmt::If { then_body, .. } = &program.statements[0] {
+            assert_eq!(then_body.len(), 2);
+        }
     }
 }

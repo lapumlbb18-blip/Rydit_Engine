@@ -29,7 +29,7 @@ fn main() {
             d.clear(ColorRydit::Negro);
 
             // Dibujar círculo rojo en el centro (animado)
-            let radius = 50 + (frame % 20) as i32;
+            let radius = 50 + (frame % 20);
             d.draw_circle(400, 300, radius, ColorRydit::Rojo);
 
             // Dibujar rectángulo verde

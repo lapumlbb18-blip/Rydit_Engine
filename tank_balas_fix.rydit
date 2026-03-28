@@ -1,0 +1,63 @@
+shield.init
+import math
+
+dark.slot tanque_x = 400
+dark.slot tanque_y = 300
+dark.slot bala_x = 0
+dark.slot bala_y = 0
+dark.slot bala_vx = 0
+dark.slot bala_vy = 0
+dark.slot bala_activa = 0
+dark.slot frame = 0
+
+ryda frame < 1000 {
+    draw.rect(0, 0, 800, 600, "negro")
+    draw.line(400, 0, 400, 600, "gris")
+    draw.line(0, 300, 800, 300, "gris")
+    
+    dark.slot mouse_x = input::mouse_x()
+    dark.slot mouse_y = input::mouse_y()
+    dark.slot click = input::is_mouse_button_pressed(0)
+    
+    dark.slot dx = mouse_x - tanque_x
+    dark.slot dy = mouse_y - tanque_y
+    dark.slot angulo = math::atan2(dy, dx)
+    
+    # DISPARO - SIN 'and', usar onif anidado
+    onif click == 1 {
+        onif bala_activa == 0 {
+            bala_activa = 1
+            bala_x = tanque_x
+            bala_y = tanque_y
+            bala_vx = math::cos(angulo) * 10
+            bala_vy = math::sin(angulo) * 10
+            voz "Disparo"
+        }
+    }
+    
+    # Actualizar bala
+    onif bala_activa == 1 {
+        bala_x = bala_x + bala_vx
+        bala_y = bala_y + bala_vy
+        onif bala_x < 0 or bala_x > 800 or bala_y < 0 or bala_y > 600 {
+            bala_activa = 0
+        }
+    }
+    
+    draw.circle(tanque_x, tanque_y, 30, "verde")
+    dark.slot tx = tanque_x + math::cos(angulo) * 40
+    dark.slot ty = tanque_y + math::sin(angulo) * 40
+    draw.line_thick(tanque_x, tanque_y, tx, ty, 10, "lima")
+    draw.circle(mouse_x, mouse_y, 10, "rojo")
+    
+    onif bala_activa == 1 {
+        draw.circle(bala_x, bala_y, 8, "amarillo")
+    }
+    
+    draw.text("Frame: " + frame, 10, 10, 20, "blanco")
+    draw.text("Bala: " + bala_activa, 10, 40, 18, "verde")
+    
+    frame = frame + 1
+}
+
+voz "Final"

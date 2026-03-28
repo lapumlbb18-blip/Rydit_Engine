@@ -58,7 +58,7 @@ impl ScriptMetadata {
 
         for line in content.lines() {
             let line = line.trim();
-            
+
             // Buscar líneas de metadata: __name__ = "value"
             if line.starts_with("__") && line.contains('=') {
                 let parts: Vec<&str> = line.splitn(2, '=').collect();
@@ -97,7 +97,7 @@ pub fn extract_exports(content: &str) -> Vec<ExportedFunction> {
 
     while let Some(line) = lines.next() {
         let line = line.trim();
-        
+
         // Buscar: export funcion nombre(params) {
         if line.starts_with("export funcion") || line.starts_with("export rytmo") {
             if let Some(func) = parse_function(line, &mut lines) {
@@ -117,14 +117,14 @@ fn parse_function(
     // Extraer nombre y parámetros: export funcion nombre(p1, p2) {
     let start = line.find("funcion").or_else(|| line.find("rytmo"))?;
     let rest = &line[start + 7..].trim();
-    
+
     // nombre(params) {
     let paren_start = rest.find('(')?;
     let paren_end = rest.find(')')?;
-    
+
     let name = rest[..paren_start].trim().to_string();
     let params_str = &rest[paren_start + 1..paren_end];
-    
+
     let params: Vec<String> = params_str
         .split(',')
         .map(|p| p.trim().to_string())
@@ -154,7 +154,7 @@ fn parse_function(
 pub struct ScriptModule {
     metadata: ScriptMetadata,
     exports: Vec<ExportedFunction>,
-    #[allow(dead_code)]  // Reservado para implementación futura de runtime
+    #[allow(dead_code)] // Reservado para implementación futura de runtime
     source_code: String,
 }
 
@@ -162,11 +162,10 @@ impl ScriptModule {
     /// Cargar módulo desde archivo
     pub fn from_file<P: AsRef<Path>>(path: P) -> Result<Self, ScriptModuleError> {
         let path = path.as_ref();
-        let content = fs::read_to_string(path)
-            .map_err(|e| ScriptModuleError {
-                code: "FILE_ERROR".to_string(),
-                message: format!("No se pudo leer el archivo: {}", e),
-            })?;
+        let content = fs::read_to_string(path).map_err(|e| ScriptModuleError {
+            code: "FILE_ERROR".to_string(),
+            message: format!("No se pudo leer el archivo: {}", e),
+        })?;
 
         Ok(Self::from_source(&content))
     }
@@ -212,10 +211,11 @@ impl RyditModule for ScriptModule {
 
     fn register(&self) -> HashMap<&'static str, &'static str> {
         let mut cmds = HashMap::new();
-        
+
         for export in &self.exports {
             let name: &'static str = Box::leak(export.name.clone().into_boxed_str());
-            let description: &'static str = Box::leak(format!("Función exportada: {}", export.name).into_boxed_str());
+            let description: &'static str =
+                Box::leak(format!("Función exportada: {}", export.name).into_boxed_str());
             cmds.insert(name, description);
         }
 
@@ -224,7 +224,8 @@ impl RyditModule for ScriptModule {
 
     fn execute(&self, command: &str, _params: Value) -> ModuleResult {
         // Buscar la función exportada
-        let _func = self.exports
+        let _func = self
+            .exports
             .iter()
             .find(|f| f.name == command)
             .ok_or_else(|| ModuleError {
@@ -235,7 +236,7 @@ impl RyditModule for ScriptModule {
         // NOTA: Aquí iría la lógica para ejecutar el script RyDit
         // En la implementación completa, usaríamos el evaluator de rydit-rs
         // para parsear y ejecutar el código fuente del script
-        
+
         Ok(Value::String(format!(
             "[ScriptModule] Función '{}' lista para ejecutar (runtime pendiente)",
             command
@@ -248,7 +249,9 @@ impl RyditModule for ScriptModule {
         ModuleMetadata::new()
             .with_name(Box::leak(self.metadata.name.clone().into_boxed_str()))
             .with_version(Box::leak(self.metadata.version.clone().into_boxed_str()))
-            .with_description(Box::leak(self.metadata.description.clone().into_boxed_str()))
+            .with_description(Box::leak(
+                self.metadata.description.clone().into_boxed_str(),
+            ))
             .with_license(Box::leak(self.metadata.license.clone().into_boxed_str()))
     }
 }
@@ -300,7 +303,7 @@ funcion helper() {
     #[test]
     fn test_script_metadata() {
         let metadata = ScriptMetadata::from_script(TEST_SCRIPT);
-        
+
         assert_eq!(metadata.name, "test_mod");
         assert_eq!(metadata.version, "1.0.0");
         assert_eq!(metadata.description, "Módulo de prueba");
@@ -311,7 +314,7 @@ funcion helper() {
     #[test]
     fn test_extract_exports() {
         let exports = extract_exports(TEST_SCRIPT);
-        
+
         assert_eq!(exports.len(), 2);
         assert_eq!(exports[0].name, "saludar");
         assert_eq!(exports[0].params, vec!["nombre"]);
@@ -322,7 +325,7 @@ funcion helper() {
     #[test]
     fn test_script_module_from_source() {
         let module = ScriptModule::from_source(TEST_SCRIPT);
-        
+
         assert_eq!(module.name(), "test_mod");
         assert_eq!(module.exports().len(), 2);
         assert_eq!(module.metadata().description, "Módulo de prueba");
@@ -332,7 +335,7 @@ funcion helper() {
     fn test_script_module_register() {
         let module = ScriptModule::from_source(TEST_SCRIPT);
         let cmds = module.register();
-        
+
         assert!(cmds.contains_key("saludar"));
         assert!(cmds.contains_key("sumar"));
         assert!(!cmds.contains_key("helper")); // No exportada

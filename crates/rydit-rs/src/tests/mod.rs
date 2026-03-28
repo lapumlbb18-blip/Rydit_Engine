@@ -429,7 +429,7 @@ mod warning_tests {
         let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
 
         // Write inicial
-        std::fs::write("test_append.txt", "Linea 1");
+        let _ = std::fs::write("test_append.txt", "Linea 1");
 
         // Append
         let append_args = vec![
@@ -458,7 +458,7 @@ mod warning_tests {
         let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
 
         // Crear archivo
-        std::fs::write("test_exists.txt", "test");
+        let _ = std::fs::write("test_exists.txt", "test");
 
         // Exists - true
         let exists_args = vec![Expr::Texto("test_exists.txt".to_string())];
@@ -489,7 +489,7 @@ mod warning_tests {
         let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
 
         // Crear archivo
-        std::fs::write("test_delete.txt", "para eliminar");
+        let _ = std::fs::write("test_delete.txt", "para eliminar");
 
         // Delete
         let delete_args = vec![Expr::Texto("test_delete.txt".to_string())];
@@ -847,7 +847,7 @@ mod warning_tests {
         if let Valor::Num(amp) = result {
             // La amplitud debería estar entre -1 y 1
             assert!(
-                amp >= -1.0 && amp <= 1.0,
+                (-1.0..=1.0).contains(&amp),
                 "La amplitud debería estar entre -1 y 1, fue {}",
                 amp
             );

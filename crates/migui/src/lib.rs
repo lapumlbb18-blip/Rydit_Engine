@@ -1281,7 +1281,7 @@ mod tests {
             1.0,
             Rect::new(100.0, 40.0, 200.0, 20.0),
         );
-        assert!(value >= 0.0 && value <= 1.0);
+        assert!((0.0..=1.0).contains(&value));
     }
 
     #[test]

@@ -1,0 +1,61 @@
+# DEMO ASSETS + AUDIO v0.8.5 - RyDit Engine
+# Carga sprite y emite sonido
+
+shield.init
+
+dark.slot frame = 0
+dark.slot sonido_reproducido = 0
+
+# Cargar sprite del tanque
+assets::load("tanque", "logo_icon_asst/sprites/tank_16x16.png")
+
+# Cargar otro sprite
+assets::load("caja", "logo_icon_asst/sprites/crate_8x8.png")
+
+ryda frame < 10000 {
+    # Fondo azul oscuro
+    draw.rect(0, 0, 800, 600, "azul_oscuro")
+
+    # Título
+    draw.text("DEMO ASSETS + AUDIO v0.8.5", 240, 20, 30, "blanco")
+    draw.text("Sprites cargados con assets::load()", 250, 50, 20, "gris")
+
+    # ========================================================================
+    # DIBUJAR SPRITES CARGADOS
+    # ========================================================================
+    
+    # Dibujar tanque en el centro (escalado 4x para que se vea mejor)
+    assets::draw_scaled("tanque", 350, 250, 4, "blanco")
+    
+    # Dibujar caja en diferentes posiciones
+    assets::draw("caja", 200, 300, "blanco")
+    assets::draw("caja", 600, 300, "blanco")
+    assets::draw("caja", 200, 400, "blanco")
+    assets::draw("caja", 600, 400, "blanco")
+
+    # ========================================================================
+    # AUDIO - Beep cada 2 segundos (aprox frame 120)
+    # ========================================================================
+    onif sonido_reproducido == 0 {
+        onif frame > 0 and frame % 120 == 0 {
+            audio::beep(440, 100)
+            dark.slot sonido_reproducido = 1
+        }
+    }
+    onif frame % 120 == 0 {
+        dark.slot sonido_reproducido = 0
+    }
+
+    # ========================================================================
+    # INFORMACIÓN
+    # ========================================================================
+    draw.text("Frame: " + frame, 10, 580, 20, "cyan")
+    draw.text("Sprites: tanque, caja", 150, 580, 20, "verde")
+    draw.text("ESC: Salir", 700, 580, 20, "amarillo")
+    
+    # Estado de carga
+    dark.slot cargados = assets::count()
+    draw.text("Assets cargados: " + cargados, 10, 20, 20, "amarillo")
+
+    dark.slot frame = frame + 1
+}

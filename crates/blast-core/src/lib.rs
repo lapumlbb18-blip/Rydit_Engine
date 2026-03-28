@@ -177,6 +177,30 @@ impl Default for Executor {
     }
 }
 
+// Legacy - para compatibilidad
+pub struct BlastCore {
+    pub activo: bool,
+}
+
+impl BlastCore {
+    pub fn despertar() -> Self {
+        println!("[BLAST-CORE]: Motor de audio en guardia.");
+        Self { activo: true }
+    }
+
+    pub fn ignite(&self, sonido: &str) {
+        if self.activo {
+            println!("[BLAST-CORE]: Ejecutando ráfaga -> {}", sonido);
+        }
+    }
+
+    pub fn shock_wave(&self) {
+        if self.activo {
+            println!("[BLAST-CORE]: Impacto sónico detectado.");
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -287,7 +311,7 @@ mod tests {
     fn test_input_texto() {
         // Test que verifica que input() puede retornar texto
         let input_str = "hola";
-        if let Ok(_) = input_str.parse::<f64>() {
+        if input_str.parse::<f64>().is_ok() {
             panic!("No debería parsear como número");
         }
         // Se retorna como texto
@@ -447,29 +471,5 @@ mod tests {
         // Persistentes siguen ahí
         assert_eq!(executor.leer("x"), Some(Valor::Num(10.0)));
         assert_eq!(executor.leer("$precio"), Some(Valor::Num(99.99)));
-    }
-}
-
-// Legacy - para compatibilidad
-pub struct BlastCore {
-    pub activo: bool,
-}
-
-impl BlastCore {
-    pub fn despertar() -> Self {
-        println!("[BLAST-CORE]: Motor de audio en guardia.");
-        Self { activo: true }
-    }
-
-    pub fn ignite(&self, sonido: &str) {
-        if self.activo {
-            println!("[BLAST-CORE]: Ejecutando ráfaga -> {}", sonido);
-        }
-    }
-
-    pub fn shock_wave(&self) {
-        if self.activo {
-            println!("[BLAST-CORE]: Impacto sónico detectado.");
-        }
     }
 }

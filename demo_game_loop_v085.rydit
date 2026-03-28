@@ -1,0 +1,219 @@
+# 🎮 Demo Game Loop v0.8.5
+# Test integral: bloques anidados + input + expresiones + draw
+
+shield.init
+
+# =====================
+# INICIALIZACIÓN (UNA VEZ)
+# =====================
+dark.slot frame = 0
+dark.slot score = 0
+dark.slot vidas = 3
+dark.slot nivel = 1
+dark.slot jugando = 1
+dark.slot pausa = 0
+
+# Jugador
+dark.slot jugador_x = 400
+dark.slot jugador_y = 300
+dark.slot velocidad = 5
+dark.slot tamaño = 30
+
+# Enemigos
+dark.slot enemigo_x = 100
+dark.slot enemigo_y = 100
+dark.slot enemigo_vel_x = 2
+dark.slot enemigo_vel_y = 2
+
+# Mensajes iniciales (solo una vez)
+voz "=== DEMO GAME LOOP v0.8.5 ==="
+voz "Controles:"
+voz "  Flechas: Mover jugador"
+voz "  ESPACIO: Disparar"
+voz "  ENTER: Pausa"
+voz "  ESC: Salir"
+voz ""
+
+# =====================
+# GAME LOOP (ryda = game loop)
+# =====================
+ryda frame < 10000 {
+    # FONDO
+    draw.rect(0, 0, 800, 600, "negro")
+    
+    # =====================
+    # INPUT
+    # =====================
+    dark.slot mx = input::mouse_x()
+    dark.slot my = input::mouse_y()
+    dark.slot click = input::is_mouse_button_pressed(0)
+    
+    # =====================
+    # LÓGICA - PAUSA
+    # =====================
+    onif tecla_presionada("enter") {
+        # Pequeño delay para evitar rebote
+        onif frame % 10 == 0 {
+            pausa = not pausa
+            onif pausa {
+                voz "Pausa"
+            } blelse {
+                voz "Continuar"
+            }
+        }
+    }
+    
+    # =====================
+    # LÓGICA - JUGADOR (solo si no hay pausa)
+    # =====================
+    onif not pausa {
+        # Movimiento con flechas
+        onif tecla_presionada("arrow_up") {
+            jugador_y = jugador_y - velocidad
+            onif jugador_y < tamaño {
+                jugador_y = tamaño
+            }
+        }
+        
+        onif tecla_presionada("arrow_down") {
+            jugador_y = jugador_y + velocidad
+            onif jugador_y > 600 - tamaño {
+                jugador_y = 600 - tamaño
+            }
+        }
+        
+        onif tecla_presionada("arrow_left") {
+            jugador_x = jugador_x - velocidad
+            onif jugador_x < tamaño {
+                jugador_x = tamaño
+            }
+        }
+        
+        onif tecla_presionada("arrow_right") {
+            jugador_x = jugador_x + velocidad
+            onif jugador_x > 800 - tamaño {
+                jugador_x = 800 - tamaño
+            }
+        }
+        
+        # Disparo
+        onif tecla_presionada("space") {
+            onif frame % 15 == 0 {
+                score = score + 10
+                voz "Disparo! Score: " + score
+            }
+        }
+        
+        # =====================
+        # LÓGICA - ENEMIGO
+        # =====================
+        enemigo_x = enemigo_x + enemigo_vel_x
+        enemigo_y = enemigo_y + enemigo_vel_y
+        
+        # Rebote en paredes
+        onif enemigo_x <= 0 or enemigo_x >= 700 {
+            enemigo_vel_x = -enemigo_vel_x
+        }
+        onif enemigo_y <= 0 or enemigo_y >= 500 {
+            enemigo_vel_y = -enemigo_vel_y
+        }
+        
+        # =====================
+        # COLISIÓN
+        # =====================
+        dark.slot dx = jugador_x - enemigo_x
+        dark.slot dy = jugador_y - enemigo_y
+        # Valor absoluto simple
+        onif dx < 0 {
+            dx = -dx
+        }
+        onif dy < 0 {
+            dy = -dy
+        }
+        
+        onif dx < 30 and dy < 30 {
+            # Colisión detectada
+            vidas = vidas - 1
+            voz "Colisión! Vidas: " + vidas
+            onif vidas <= 0 {
+                voz "GAME OVER - Score final: " + score
+                voz "Nivel alcanzado: " + nivel
+                break
+            }
+            # Resetear posiciones
+            jugador_x = 400
+            jugador_y = 300
+            enemigo_x = 100
+            enemigo_y = 100
+        }
+        
+        # =====================
+        # NIVELES
+        # =====================
+        onif score >= nivel * 100 {
+            nivel = nivel + 1
+            velocidad = velocidad + 1
+            enemigo_vel_x = enemigo_vel_x * 1.2
+            enemigo_vel_y = enemigo_vel_y * 1.2
+            voz "Nivel " + nivel + "!"
+        }
+    }
+    
+    # =====================
+    # RENDER - JUGADOR
+    # =====================
+    draw.rect(jugador_x - 15, jugador_y - 15, tamaño, tamaño, "azul")
+    draw.rectangle_lines(jugador_x - 15, jugador_y - 15, tamaño, tamaño, 2, "blanco")
+    
+    # =====================
+    # RENDER - ENEMIGO
+    # =====================
+    draw.circle(enemigo_x, enemigo_y, 20, "rojo")
+    draw.circle(enemigo_x, enemigo_y, 15, "naranja")
+    
+    # =====================
+    # RENDER - UI
+    # =====================
+    # Título
+    draw.text("DEMO GAME LOOP v0.8.5", 250, 10, 20, "amarillo")
+    
+    # Score y nivel
+    draw.text("Score: " + score, 10, 40, 18, "verde")
+    draw.text("Nivel: " + nivel, 150, 40, 18, "verde")
+    draw.text("Vidas: " + vidas, 280, 40, 18, "rojo")
+    
+    # Estado
+    onif pausa {
+        draw.rect(250, 250, 300, 100, "azul")
+        draw.rectangle_lines(250, 250, 300, 100, 3, "blanco")
+        draw.text("PAUSA", 350, 290, 30, "blanco")
+    }
+    
+    # =====================
+    # RENDER - INFO TÉCNICA
+    # =====================
+    draw.text("Frame: " + frame, 10, 560, 14, "gris")
+    draw.text("Mouse: (" + mx + ", " + my + ")", 10, 580, 14, "gris")
+    draw.text("Jugador: (" + jugador_x + ", " + jugador_y + ")", 150, 560, 14, "gris")
+    draw.text("Enemigo: (" + enemigo_x + ", " + enemigo_y + ")", 150, 580, 14, "gris")
+    draw.text("ESC - Salir", 680, 580, 14, "gris")
+    
+    # =====================
+    # SALIDA
+    # =====================
+    onif tecla_presionada("escape") {
+        voz "Saliendo..."
+        voz "Score final: " + score
+        voz "Frames jugados: " + frame
+        break
+    }
+    
+    # INCREMENTAR FRAME (CRUCIAL!)
+    dark.slot frame = frame + 1
+}
+
+# =====================
+# FINAL
+# =====================
+voz "=== DEMO FINALIZADO ==="
+voz "Gracias por jugar!"

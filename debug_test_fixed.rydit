@@ -1,0 +1,47 @@
+shield.init
+dark.slot frame = 0
+dark.slot x = 400
+dark.slot y = 300
+dark.slot velocidad = 5
+dark.slot rebote = 0  # Flag para evitar rebote múltiple
+
+ryda frame < 200 {
+    # Fondo
+    draw.rect(0, 0, 800, 600, "negro")
+    
+    # Dibujar jugador
+    draw.circle(x, y, 30, "azul")
+    
+    # Mover
+    x = x + velocidad
+    
+    # Rebote con flag
+    onif x > 750 and rebote == 0 {
+        velocidad = -velocidad
+        dark.slot rebote = 1
+        voz "Rebotó derecha"
+    }
+    onif x < 50 and rebote == 0 {
+        velocidad = -velocidad
+        dark.slot rebote = 1
+        voz "Rebotó izquierda"
+    }
+    
+    # Resetear rebote cuando está en el medio
+    onif x > 100 and x < 700 {
+        dark.slot rebote = 0
+    }
+    
+    # Debug en pantalla
+    draw.text("Frame: " + frame, 10, 10, 20, "blanco")
+    draw.text("x: " + x, 10, 40, 20, "verde")
+    draw.text("vel: " + velocidad, 10, 70, 20, "amarillo")
+    
+    onif tecla_presionada("escape") {
+        break
+    }
+    
+    dark.slot frame = frame + 1
+}
+
+voz "Final - Frames: " + frame

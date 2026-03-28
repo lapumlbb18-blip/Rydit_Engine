@@ -1,0 +1,61 @@
+# Demo Simplificado - Sin particles/audio
+shield.init
+
+dark.slot frame = 0
+dark.slot playing = 0
+dark.slot mx = 0
+dark.slot my = 0
+
+ryda frame < 100 {
+    # Fondo
+    draw.rect(0, 0, 800, 600, "negro")
+    
+    # Mouse
+    dark.slot mx = input::mouse_x()
+    dark.slot my = input::mouse_y()
+    
+    # Titulo
+    draw.text("Demo Simplificado", 280, 20, 24, "amarillo")
+    
+    # Estado
+    onif playing {
+        draw.text("REPRODUCIENDO", 50, 80, 22, "verde")
+    } blelse {
+        draw.text("PAUSA", 50, 80, 22, "rojo")
+    }
+    
+    # Boton Play/Pause
+    draw.rect(50, 160, 140, 50, "azul")
+    draw.rectangle_lines(50, 160, 140, 50, 2, "blanco")
+    onif playing {
+        draw.text("PAUSE", 85, 175, 20, "blanco")
+    } blelse {
+        draw.text("PLAY", 95, 175, 20, "blanco")
+    }
+    
+    # Input - Click en boton
+    dark.slot click = input::is_mouse_button_pressed(0)
+    onif click {
+        onif mx > 50 and mx < 190 and my > 160 and my < 210 {
+            playing = not playing
+        }
+    }
+    
+    # Input - Teclas
+    onif tecla_presionada("space") {
+        playing = not playing
+    }
+    
+    onif tecla_presionada("escape") {
+        voz "Saliendo..."
+        break
+    }
+    
+    # Info
+    draw.text("Frame: " + frame, 20, 550, 16, "gris")
+    draw.text("Mouse: " + mx + ", " + my, 20, 570, 16, "gris")
+    
+    dark.slot frame = frame + 1
+}
+
+voz "Demo Finalizado - Frames: " + frame

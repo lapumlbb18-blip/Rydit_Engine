@@ -1,0 +1,119 @@
+# Demo Complejo - Test Integral v0.8.5
+# Prueba: bloques anidados + input + expresiones complejas + draw.text
+
+shield.init
+
+dark.slot frame = 0
+dark.slot score = 0
+dark.slot nivel = 1
+dark.slot jugando = 1
+
+# Variables de jugador
+dark.slot jugador_x = 400
+dark.slot jugador_y = 300
+dark.slot velocidad = 5
+
+# Mensajes iniciales
+voz "=== Demo Complejo v0.8.5 ==="
+voz "Controles: Flechas + ESPACIO + ENTER"
+voz ""
+
+ryda frame < 5000 {
+    # Fondo
+    draw.rect(0, 0, 800, 600, "negro")
+    
+    # TITULO CON EXPRESION
+    dark.slot titulo = "Demo: " + "Bloques + Input"
+    draw.text(titulo, 280, 20, 24, "amarillo")
+    
+    # INFO CON EXPRESIONES
+    onif jugando {
+        # Bloque anidado nivel 1
+        dark.slot info_frame = "Frame: " + frame
+        draw.text(info_frame, 20, 60, 18, "blanco")
+        
+        onif score > 0 {
+            # Bloque anidado nivel 2
+            dark.slot info_score = "Score: " + score + " | Nivel: " + nivel
+            draw.text(info_score, 20, 85, 18, "verde")
+            
+            onif nivel > 1 {
+                # Bloque anidado nivel 3
+                draw.text("¡Nivel Avanzado!", 20, 110, 16, "naranja")
+            }
+        } blelse {
+            draw.text("Score: 0 - ¡Empieza a jugar!", 20, 85, 18, "rojo")
+        }
+    } blelse {
+        draw.text("Juego en PAUSA", 20, 60, 20, "rojo")
+    }
+    
+    # JUGADOR
+    draw.circle(jugador_x, jugador_y, 25, "azul")
+    draw.text("Jugador", jugador_x - 35, jugador_y - 40, 14, "blanco")
+    
+    # INPUT - MOVIMIENTO
+    onif jugando {
+        # Flecha arriba
+        onif tecla_presionada("arrow_up") {
+            dark.slot jugador_y = jugador_y - velocidad
+            onif jugador_y < 25 {
+                dark.slot jugador_y = 25
+            }
+        }
+        
+        # Flecha abajo
+        onif tecla_presionada("arrow_down") {
+            dark.slot jugador_y = jugador_y + velocidad
+            onif jugador_y > 575 {
+                dark.slot jugador_y = 575
+            }
+        }
+        
+        # Flecha izquierda
+        onif tecla_presionada("arrow_left") {
+            dark.slot jugador_x = jugador_x - velocidad
+            onif jugador_x < 25 {
+                dark.slot jugador_x = 25
+            }
+        }
+        
+        # Flecha derecha
+        onif tecla_presionada("arrow_right") {
+            dark.slot jugador_x = jugador_x + velocidad
+            onif jugador_x > 775 {
+                dark.slot jugador_x = 775
+            }
+        }
+        
+        # ESPACIO - Sumar puntos
+        onif tecla_presionada("space") {
+            dark.slot score = score + 10
+            dark.slot nivel = 1 + (score / 100)
+        }
+        
+        # ENTER - Pausa
+        onif tecla_presionada("enter") {
+            dark.slot jugando = not jugando
+            onif jugando {
+                voz "Continuar"
+            } blelse {
+                voz "Pausa"
+            }
+        }
+    }
+    
+    # POSICION CON FORMATO
+    dark.slot pos_texto = "X: " + jugador_x + " Y: " + jugador_y
+    draw.text(pos_texto, 20, 550, 16, "gris")
+    
+    # CONTROLES
+    draw.text("Flechas: Mover | ESPACIO: +10 pts | ENTER: Pausa | ESC: Salir", 150, 575, 14, "gris")
+    
+    # Incrementar frame
+    dark.slot frame = frame + 1
+}
+
+voz "=== Demo Finalizado ==="
+voz "Score final: " + score
+voz "Nivel alcanzado: " + nivel

@@ -210,22 +210,37 @@ mod tests {
         assert_eq!(ColorRyDit::from_str("RED").unwrap(), ColorRyDit::Rojo);
         assert_eq!(ColorRyDit::from_str("verde").unwrap(), ColorRyDit::Verde);
         assert_eq!(ColorRyDit::from_str("azul").unwrap(), ColorRyDit::Azul);
-        assert_eq!(ColorRyDit::from_str("amarillo").unwrap(), ColorRyDit::Amarillo);
+        assert_eq!(
+            ColorRyDit::from_str("amarillo").unwrap(),
+            ColorRyDit::Amarillo
+        );
         assert_eq!(ColorRyDit::from_str("blanco").unwrap(), ColorRyDit::Blanco);
         assert_eq!(ColorRyDit::from_str("otro").unwrap(), ColorRyDit::Negro);
 
         // Tests v0.2.0 - Nuevos colores
         assert_eq!(ColorRyDit::from_str("cyan").unwrap(), ColorRyDit::Cyan);
-        assert_eq!(ColorRyDit::from_str("magenta").unwrap(), ColorRyDit::Magenta);
-        assert_eq!(ColorRyDit::from_str("naranja").unwrap(), ColorRyDit::Naranja);
+        assert_eq!(
+            ColorRyDit::from_str("magenta").unwrap(),
+            ColorRyDit::Magenta
+        );
+        assert_eq!(
+            ColorRyDit::from_str("naranja").unwrap(),
+            ColorRyDit::Naranja
+        );
         assert_eq!(ColorRyDit::from_str("rosa").unwrap(), ColorRyDit::Rosa);
         assert_eq!(ColorRyDit::from_str("morado").unwrap(), ColorRyDit::Morado);
         assert_eq!(ColorRyDit::from_str("cafe").unwrap(), ColorRyDit::Cafe);
         assert_eq!(ColorRyDit::from_str("gris").unwrap(), ColorRyDit::Gris);
         assert_eq!(ColorRyDit::from_str("lima").unwrap(), ColorRyDit::Lima);
-        assert_eq!(ColorRyDit::from_str("azuloscuro").unwrap(), ColorRyDit::AzulOscuro);
+        assert_eq!(
+            ColorRyDit::from_str("azuloscuro").unwrap(),
+            ColorRyDit::AzulOscuro
+        );
         assert_eq!(ColorRyDit::from_str("oliva").unwrap(), ColorRyDit::Oliva);
-        assert_eq!(ColorRyDit::from_str("turquesa").unwrap(), ColorRyDit::Turquesa);
+        assert_eq!(
+            ColorRyDit::from_str("turquesa").unwrap(),
+            ColorRyDit::Turquesa
+        );
         assert_eq!(ColorRyDit::from_str("vino").unwrap(), ColorRyDit::Vino);
     }
 
@@ -382,8 +397,14 @@ mod tests {
         assert_eq!(ColorRyDit::from_str("azul").unwrap(), ColorRyDit::Azul);
         assert_eq!(ColorRyDit::from_str("BLUE").unwrap(), ColorRyDit::Azul);
 
-        assert_eq!(ColorRyDit::from_str("amarillo").unwrap(), ColorRyDit::Amarillo);
-        assert_eq!(ColorRyDit::from_str("yellow").unwrap(), ColorRyDit::Amarillo);
+        assert_eq!(
+            ColorRyDit::from_str("amarillo").unwrap(),
+            ColorRyDit::Amarillo
+        );
+        assert_eq!(
+            ColorRyDit::from_str("yellow").unwrap(),
+            ColorRyDit::Amarillo
+        );
 
         assert_eq!(ColorRyDit::from_str("blanco").unwrap(), ColorRyDit::Blanco);
         assert_eq!(ColorRyDit::from_str("WHITE").unwrap(), ColorRyDit::Blanco);
@@ -392,18 +413,33 @@ mod tests {
         assert_eq!(ColorRyDit::from_str("BLACK").unwrap(), ColorRyDit::Negro);
 
         // Variantes con guiones y espacios
-        assert_eq!(ColorRyDit::from_str("azuloscuro").unwrap(), ColorRyDit::AzulOscuro);
-        assert_eq!(ColorRyDit::from_str("azul oscuro").unwrap(), ColorRyDit::AzulOscuro);
-        assert_eq!(ColorRyDit::from_str("navy").unwrap(), ColorRyDit::AzulOscuro);
+        assert_eq!(
+            ColorRyDit::from_str("azuloscuro").unwrap(),
+            ColorRyDit::AzulOscuro
+        );
+        assert_eq!(
+            ColorRyDit::from_str("azul oscuro").unwrap(),
+            ColorRyDit::AzulOscuro
+        );
+        assert_eq!(
+            ColorRyDit::from_str("navy").unwrap(),
+            ColorRyDit::AzulOscuro
+        );
     }
 
     #[test]
     fn test_color_desconocido_retorna_negro() {
         // Colores desconocidos deben retornar Negro
-        assert_eq!(ColorRyDit::from_str("color_raro").unwrap(), ColorRyDit::Negro);
+        assert_eq!(
+            ColorRyDit::from_str("color_raro").unwrap(),
+            ColorRyDit::Negro
+        );
         assert_eq!(ColorRyDit::from_str("").unwrap(), ColorRyDit::Negro);
         assert_eq!(ColorRyDit::from_str("123").unwrap(), ColorRyDit::Negro);
-        assert_eq!(ColorRyDit::from_str("transparente").unwrap(), ColorRyDit::Negro);
+        assert_eq!(
+            ColorRyDit::from_str("transparente").unwrap(),
+            ColorRyDit::Negro
+        );
     }
 
     #[test]

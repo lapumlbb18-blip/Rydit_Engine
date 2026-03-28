@@ -95,8 +95,13 @@ impl ParticleSystem {
             let vy = -(rand_f64() * 3.0 + 2.0);
             let life = rand_f64() * 0.5 + 0.5;
             let size = rand_f64() * 4.0 + 2.0;
-            let color = if rand_f64() > 0.5 { "naranja" } else { "amarillo" };
-            self.particles.push(Particle::new(x, y, vx, vy, life, size, color));
+            let color = if rand_f64() > 0.5 {
+                "naranja"
+            } else {
+                "amarillo"
+            };
+            self.particles
+                .push(Particle::new(x, y, vx, vy, life, size, color));
         }
     }
 
@@ -106,7 +111,8 @@ impl ParticleSystem {
             let vy = -(rand_f64() * 1.5 + 0.5);
             let life = rand_f64() * 0.8 + 0.2;
             let size = rand_f64() * 6.0 + 4.0;
-            self.particles.push(Particle::new(x, y, vx, vy, life, size, "gris"));
+            self.particles
+                .push(Particle::new(x, y, vx, vy, life, size, "gris"));
         }
     }
 
@@ -118,7 +124,8 @@ impl ParticleSystem {
             let vy = angle.sin() * speed;
             let life = rand_f64() * 0.3 + 0.2;
             let size = rand_f64() * 2.0 + 1.0;
-            self.particles.push(Particle::new(x, y, vx, vy, life, size, "amarillo"));
+            self.particles
+                .push(Particle::new(x, y, vx, vy, life, size, "amarillo"));
         }
     }
 
@@ -131,7 +138,8 @@ impl ParticleSystem {
             let life = rand_f64() * 0.4 + 0.2;
             let size = rand_f64() * 3.0 + 2.0;
             let color = if rand_f64() > 0.5 { "naranja" } else { "rojo" };
-            self.particles.push(Particle::new(x, y, vx, vy, life, size, color));
+            self.particles
+                .push(Particle::new(x, y, vx, vy, life, size, color));
         }
     }
 
@@ -141,7 +149,8 @@ impl ParticleSystem {
             let vy = rand_f64() * 3.0 + 5.0;
             let life = 1.0;
             let size = rand_f64() * 8.0 + 4.0;
-            self.particles.push(Particle::new(x, y, vx, vy, life, size, "azul"));
+            self.particles
+                .push(Particle::new(x, y, vx, vy, life, size, "azul"));
         }
     }
 
@@ -151,7 +160,8 @@ impl ParticleSystem {
             let vy = (rand_f64() - 0.5) * 2.0;
             let life = rand_f64() * 0.5 + 0.5;
             let size = rand_f64() * 4.0 + 2.0;
-            self.particles.push(Particle::new(x, y, vx, vy, life, size, "blanco"));
+            self.particles
+                .push(Particle::new(x, y, vx, vy, life, size, "blanco"));
         }
     }
 }

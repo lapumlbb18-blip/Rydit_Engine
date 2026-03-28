@@ -139,19 +139,17 @@ impl DynamicModuleLoader {
         self.timestamp += 1;
 
         // Cargar biblioteca
-        let lib = unsafe { Library::new(path.as_ref()) }
-            .map_err(|e| LoaderError {
-                code: "LOAD_ERROR".to_string(),
-                message: format!("No se pudo cargar la biblioteca: {}", e),
-            })?;
+        let lib = unsafe { Library::new(path.as_ref()) }.map_err(|e| LoaderError {
+            code: "LOAD_ERROR".to_string(),
+            message: format!("No se pudo cargar la biblioteca: {}", e),
+        })?;
 
         // Buscar símbolo `create_module`
         let create_module: libloading::Symbol<unsafe extern "C" fn() -> *mut dyn RyditModule> =
-            unsafe { lib.get(b"create_module") }
-                .map_err(|e| LoaderError {
-                    code: "SYMBOL_NOT_FOUND".to_string(),
-                    message: format!("Símbolo 'create_module' no encontrado: {}", e),
-                })?;
+            unsafe { lib.get(b"create_module") }.map_err(|e| LoaderError {
+                code: "SYMBOL_NOT_FOUND".to_string(),
+                message: format!("Símbolo 'create_module' no encontrado: {}", e),
+            })?;
 
         // Crear instancia del módulo
         let module_ptr = create_module();
@@ -267,7 +265,7 @@ impl Default for DynamicModuleLoader {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use rydit_core::{RyditModule, ModuleResult};
+    use rydit_core::{ModuleResult, RyditModule};
 
     // Módulo de prueba
     struct TestModule;
@@ -411,7 +409,9 @@ mod tests {
             loaded_at: 1,
         };
 
-        loader.loaded_modules.insert("test_module".to_string(), info.clone());
+        loader
+            .loaded_modules
+            .insert("test_module".to_string(), info.clone());
 
         let retrieved_info = loader.get_module_info("test_module").unwrap();
         assert_eq!(retrieved_info.name, info.name);

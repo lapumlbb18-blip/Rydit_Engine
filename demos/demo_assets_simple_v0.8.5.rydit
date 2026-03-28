@@ -1,0 +1,44 @@
+# DEMO ASSETS SIMPLE v0.8.5 - RyDit Engine
+# Test de carga de sprites
+
+shield.init
+
+dark.slot frame = 0
+dark.slot cargado = 0
+
+ryda frame < 10000 {
+    # Fondo negro
+    draw.rect(0, 0, 800, 600, "negro")
+
+    # Título
+    draw.text("TEST ASSETS v0.8.5", 280, 20, 30, "blanco")
+
+    # Intentar cargar sprite
+    onif frame == 10 {
+        dark.slot resultado = assets::load("tanque", "logo_icon_asst/sprites/tank_16x16.png")
+        draw.text("Cargando sprite...", 10, 100, 20, "amarillo")
+        dark.slot cargado = 1
+    }
+
+    # Mostrar resultado
+    onif cargado == 1 {
+        draw.text("Sprite cargado!", 10, 150, 20, "verde")
+    }
+
+    # Dibujar sprite si existe
+    onif frame > 50 {
+        assets::draw("tanque", 350, 250, "blanco")
+    }
+
+    # Dibujar círculo de test (para verificar que draw funciona)
+    dark.slot radio = 20 + (frame % 30)
+    draw.circle(400, 300, radio, "rojo")
+    draw.circle(400, 300, 10, "amarillo")
+
+    # Info
+    draw.text("Frame: " + frame, 10, 580, 20, "cyan")
+    draw.text("Circulo = draw funciona", 150, 580, 20, "verde")
+    draw.text("ESC: Salir", 700, 580, 20, "amarillo")
+
+    dark.slot frame = frame + 1
+}

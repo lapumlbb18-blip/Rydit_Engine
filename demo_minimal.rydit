@@ -1,0 +1,30 @@
+# Demo Minimalista Game Loop
+shield.init
+
+dark.slot frame = 0
+dark.slot x = 400
+
+voz "Inicio"
+
+ryda frame < 100 {
+    draw.rect(0, 0, 800, 600, "negro")
+    draw.circle(x, 300, 30, "azul")
+    draw.text("Frame: " + frame, 10, 10, 20, "blanco")
+    draw.text("x: " + x, 10, 40, 20, "blanco")
+    
+    # Movimiento simple
+    x = x + 1
+    onif x > 700 {
+        x = 100
+    }
+    
+    # Salir con escape
+    onif tecla_presionada("escape") {
+        voz "Saliendo"
+        break
+    }
+    
+    dark.slot frame = frame + 1
+}
+
+voz "Final - Frames: " + frame
