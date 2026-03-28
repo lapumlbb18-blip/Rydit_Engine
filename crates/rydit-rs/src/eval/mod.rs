@@ -2006,6 +2006,154 @@ pub fn evaluar_expr(
                 return camera::camera_reset(args, executor, funcs);
             }
 
+            // ========================================================================
+            // ENTITY SYSTEM (v0.9.0)
+            // ========================================================================
+
+            // entity::create(type, x, y) - Crear entidad
+            if name == "entity::create" && args.len() == 3 {
+                use crate::modules::entity;
+                return entity::entity_create(args, executor, funcs);
+            }
+
+            // entity::destroy(id) - Destruir entidad
+            if name == "entity::destroy" && args.len() == 1 {
+                use crate::modules::entity;
+                return entity::entity_destroy(args, executor, funcs);
+            }
+
+            // entity::get_by_type(type) - Obtener IDs por tipo
+            if name == "entity::get_by_type" && args.len() == 1 {
+                use crate::modules::entity;
+                return entity::entity_get_by_type(args, executor, funcs);
+            }
+
+            // entity::count() - Contar entidades activas
+            if name == "entity::count" {
+                use crate::modules::entity;
+                return entity::entity_count(args, executor, funcs);
+            }
+
+            // entity::count_by_type(type) - Contar por tipo
+            if name == "entity::count_by_type" && args.len() == 1 {
+                use crate::modules::entity;
+                return entity::entity_count_by_type(args, executor, funcs);
+            }
+
+            // entity::get_all() - Obtener todas las entidades activas
+            if name == "entity::get_all" {
+                use crate::modules::entity;
+                return entity::entity_get_all(args, executor, funcs);
+            }
+
+            // entity::set_position(id, x, y) - Establecer posición
+            if name == "entity::set_position" && args.len() == 3 {
+                use crate::modules::entity;
+                return entity::entity_set_position(args, executor, funcs);
+            }
+
+            // entity::get_position(id) - Obtener posición
+            if name == "entity::get_position" && args.len() == 1 {
+                use crate::modules::entity;
+                return entity::entity_get_position(args, executor, funcs);
+            }
+
+            // entity::set_sprite(id, sprite_id) - Establecer sprite
+            if name == "entity::set_sprite" && args.len() == 2 {
+                use crate::modules::entity;
+                return entity::entity_set_sprite(args, executor, funcs);
+            }
+
+            // entity::set_collidable(id, collidable) - Establecer colisión
+            if name == "entity::set_collidable" && args.len() == 2 {
+                use crate::modules::entity;
+                return entity::entity_set_collidable(args, executor, funcs);
+            }
+
+            // entity::is_collidable(id) - Verificar colisión
+            if name == "entity::is_collidable" && args.len() == 1 {
+                use crate::modules::entity;
+                return entity::entity_is_collidable(args, executor, funcs);
+            }
+
+            // entity::set_active(id, active) - Activar/desactivar
+            if name == "entity::set_active" && args.len() == 2 {
+                use crate::modules::entity;
+                return entity::entity_set_active(args, executor, funcs);
+            }
+
+            // entity::is_active(id) - Verificar si está activa
+            if name == "entity::is_active" && args.len() == 1 {
+                use crate::modules::entity;
+                return entity::entity_is_active(args, executor, funcs);
+            }
+
+            // player::set_speed(id, speed) - Velocidad
+            if name == "player::set_speed" && args.len() == 2 {
+                use crate::modules::entity;
+                return entity::player_set_speed(args, executor, funcs);
+            }
+
+            // player::get_speed(id) - Obtener velocidad
+            if name == "player::get_speed" && args.len() == 1 {
+                use crate::modules::entity;
+                return entity::player_get_speed(args, executor, funcs);
+            }
+
+            // player::move_left(id) - Mover izquierda
+            if name == "player::move_left" && args.len() == 1 {
+                use crate::modules::entity;
+                return entity::player_move_left(args, executor, funcs);
+            }
+
+            // player::move_right(id) - Mover derecha
+            if name == "player::move_right" && args.len() == 1 {
+                use crate::modules::entity;
+                return entity::player_move_right(args, executor, funcs);
+            }
+
+            // player::jump(id) - Saltar
+            if name == "player::jump" && args.len() == 1 {
+                use crate::modules::entity;
+                return entity::player_jump(args, executor, funcs);
+            }
+
+            // player::apply_gravity(id) - Aplicar gravedad
+            if name == "player::apply_gravity" && args.len() == 1 {
+                use crate::modules::entity;
+                return entity::player_apply_gravity(args, executor, funcs);
+            }
+
+            // player::get_state(id) - Obtener estado
+            if name == "player::get_state" && args.len() == 1 {
+                use crate::modules::entity;
+                return entity::player_get_state(args, executor, funcs);
+            }
+
+            // player::is_grounded(id) - Verificar suelo
+            if name == "player::is_grounded" && args.len() == 1 {
+                use crate::modules::entity;
+                return entity::player_is_grounded(args, executor, funcs);
+            }
+
+            // player::set_health(id, health) - Establecer vida
+            if name == "player::set_health" && args.len() == 2 {
+                use crate::modules::entity;
+                return entity::player_set_health(args, executor, funcs);
+            }
+
+            // player::get_health(id) - Obtener vida
+            if name == "player::get_health" && args.len() == 1 {
+                use crate::modules::entity;
+                return entity::player_get_health(args, executor, funcs);
+            }
+
+            // player::take_damage(id, amount) - Recibir daño
+            if name == "player::take_damage" && args.len() == 2 {
+                use crate::modules::entity;
+                return entity::player_take_damage(args, executor, funcs);
+            }
+
             // --- INPUT MAP (v0.5.1) ---
             // input_map::register(combo, action) - Registrar combinación
             if name == "input_map::register" && args.len() == 2 {
