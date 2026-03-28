@@ -2154,6 +2154,78 @@ pub fn evaluar_expr(
                 return entity::player_take_damage(args, executor, funcs);
             }
 
+            // enemy::set_ai_type(id, ai_type) - Tipo de IA
+            if name == "enemy::set_ai_type" && args.len() == 2 {
+                use crate::modules::entity;
+                return entity::enemy_set_ai_type(args, executor, funcs);
+            }
+
+            // enemy::set_patrol_points(id, points) - Puntos de patrulla
+            if name == "enemy::set_patrol_points" && args.len() == 2 {
+                use crate::modules::entity;
+                return entity::enemy_set_patrol_points(args, executor, funcs);
+            }
+
+            // enemy::set_detection_range(id, range) - Rango de detección
+            if name == "enemy::set_detection_range" && args.len() == 2 {
+                use crate::modules::entity;
+                return entity::enemy_set_detection_range(args, executor, funcs);
+            }
+
+            // enemy::update_ai(id, player_id) - Actualizar IA
+            if name == "enemy::update_ai" && args.len() == 2 {
+                use crate::modules::entity;
+                return entity::enemy_update_ai(args, executor, funcs);
+            }
+
+            // enemy::is_alerted(id) - Verificar alerta
+            if name == "enemy::is_alerted" && args.len() == 1 {
+                use crate::modules::entity;
+                return entity::enemy_is_alerted(args, executor, funcs);
+            }
+
+            // enemy::set_health(id, health) - Vida
+            if name == "enemy::set_health" && args.len() == 2 {
+                use crate::modules::entity;
+                return entity::enemy_set_health(args, executor, funcs);
+            }
+
+            // enemy::set_damage(id, damage) - Daño
+            if name == "enemy::set_damage" && args.len() == 2 {
+                use crate::modules::entity;
+                return entity::enemy_set_damage(args, executor, funcs);
+            }
+
+            // enemy::set_reward(id, coins) - Recompensa
+            if name == "enemy::set_reward" && args.len() == 2 {
+                use crate::modules::entity;
+                return entity::enemy_set_reward(args, executor, funcs);
+            }
+
+            // boss::set_phases(id, phases) - Establecer fases
+            if name == "boss::set_phases" && args.len() == 2 {
+                use crate::modules::entity;
+                return entity::boss_set_phases(args, executor, funcs);
+            }
+
+            // boss::get_current_phase(id) - Fase actual
+            if name == "boss::get_current_phase" && args.len() == 1 {
+                use crate::modules::entity;
+                return entity::boss_get_current_phase(args, executor, funcs);
+            }
+
+            // boss::transition_to_phase(id, phase) - Transición de fase
+            if name == "boss::transition_to_phase" && args.len() == 2 {
+                use crate::modules::entity;
+                return entity::boss_transition_to_phase(args, executor, funcs);
+            }
+
+            // boss::set_arena_bounds(id, min_x, min_y, max_x, max_y) - Arena
+            if name == "boss::set_arena_bounds" && args.len() == 5 {
+                use crate::modules::entity;
+                return entity::boss_set_arena_bounds(args, executor, funcs);
+            }
+
             // --- INPUT MAP (v0.5.1) ---
             // input_map::register(combo, action) - Registrar combinación
             if name == "input_map::register" && args.len() == 2 {

@@ -1003,6 +1003,512 @@ pub fn player_take_damage(
 }
 
 // ============================================================================
+// ENEMY COMPONENT
+// ============================================================================
+
+/// enemy::set_ai_type(id, ai_type) - Establecer tipo de IA
+pub fn enemy_set_ai_type(
+    args: &[Expr],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
+    if args.len() != 2 {
+        return Valor::Error("enemy::set_ai_type() requiere 2 argumentos: id, ai_type".to_string());
+    }
+    
+    let id_val = evaluar_expr(&args[0], executor, funcs);
+    let ai_type_val = evaluar_expr(&args[1], executor, funcs);
+    
+    let id = match id_val {
+        Valor::Texto(s) => s,
+        _ => return Valor::Error("enemy::set_ai_type() id debe ser texto".to_string()),
+    };
+    
+    let ai_type = match ai_type_val {
+        Valor::Texto(s) => s,
+        _ => return Valor::Error("enemy::set_ai_type() ai_type debe ser texto".to_string()),
+    };
+    
+    // Validar tipo de IA
+    if !["patrol", "chase", "stationary"].contains(&ai_type.as_str()) {
+        return Valor::Error("enemy::set_ai_type() usa: patrol, chase, stationary".to_string());
+    }
+    
+    let em = get_entity_manager();
+    let mut em_ref = em.borrow_mut();
+    
+    if let Some(entity) = em_ref.get_mut(&id) {
+        if entity.entity_type != "enemy" {
+            return Valor::Error(format!("entity '{}' no es de tipo 'enemy'", id));
+        }
+        entity.set_data("ai_type", Valor::Texto(ai_type.clone()));
+        Valor::Texto(format!("enemy::set_ai_type('{}', '{}')", id, ai_type))
+    } else {
+        Valor::Error(format!("enemy::set_ai_type() La entidad '{}' no existe", id))
+    }
+}
+
+/// enemy::set_patrol_points(id, [(x1,y1), (x2,y2)]) - Establecer puntos de patrulla
+pub fn enemy_set_patrol_points(
+    args: &[Expr],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
+    if args.len() != 2 {
+        return Valor::Error("enemy::set_patrol_points() requiere 2 argumentos: id, points".to_string());
+    }
+    
+    let id_val = evaluar_expr(&args[0], executor, funcs);
+    let points_val = evaluar_expr(&args[1], executor, funcs);
+    
+    let id = match id_val {
+        Valor::Texto(s) => s,
+        _ => return Valor::Error("enemy::set_patrol_points() id debe ser texto".to_string()),
+    };
+    
+    // Guardar puntos como Valor (array de arrays)
+    let em = get_entity_manager();
+    let mut em_ref = em.borrow_mut();
+    
+    if let Some(entity) = em_ref.get_mut(&id) {
+        if entity.entity_type != "enemy" {
+            return Valor::Error(format!("entity '{}' no es de tipo 'enemy'", id));
+        }
+        entity.set_data("patrol_points", points_val.clone());
+        Valor::Texto(format!("enemy::set_patrol_points('{}', ...)", id))
+    } else {
+        Valor::Error(format!("enemy::set_patrol_points() La entidad '{}' no existe", id))
+    }
+}
+
+/// enemy::set_detection_range(id, range) - Establecer rango de detección
+pub fn enemy_set_detection_range(
+    args: &[Expr],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
+    if args.len() != 2 {
+        return Valor::Error("enemy::set_detection_range() requiere 2 argumentos: id, range".to_string());
+    }
+    
+    let id_val = evaluar_expr(&args[0], executor, funcs);
+    let range_val = evaluar_expr(&args[1], executor, funcs);
+    
+    let id = match id_val {
+        Valor::Texto(s) => s,
+        _ => return Valor::Error("enemy::set_detection_range() id debe ser texto".to_string()),
+    };
+    
+    let range = match range_val {
+        Valor::Num(n) => n,
+        _ => return Valor::Error("enemy::set_detection_range() range debe ser número".to_string()),
+    };
+    
+    let em = get_entity_manager();
+    let mut em_ref = em.borrow_mut();
+    
+    if let Some(entity) = em_ref.get_mut(&id) {
+        if entity.entity_type != "enemy" {
+            return Valor::Error(format!("entity '{}' no es de tipo 'enemy'", id));
+        }
+        entity.set_data("detection_range", Valor::Num(range));
+        Valor::Texto(format!("enemy::set_detection_range('{}', {})", id, range))
+    } else {
+        Valor::Error(format!("enemy::set_detection_range() La entidad '{}' no existe", id))
+    }
+}
+
+/// enemy::update_ai(id, player_id) - Actualizar IA del enemigo
+pub fn enemy_update_ai(
+    args: &[Expr],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
+    if args.len() != 2 {
+        return Valor::Error("enemy::update_ai() requiere 2 argumentos: id, player_id".to_string());
+    }
+    
+    let id_val = evaluar_expr(&args[0], executor, funcs);
+    let player_id_val = evaluar_expr(&args[1], executor, funcs);
+    
+    let id = match id_val {
+        Valor::Texto(s) => s,
+        _ => return Valor::Error("enemy::update_ai() id debe ser texto".to_string()),
+    };
+    
+    let player_id = match player_id_val {
+        Valor::Texto(s) => s,
+        _ => return Valor::Error("enemy::update_ai() player_id debe ser texto".to_string()),
+    };
+    
+    let em = get_entity_manager();
+    let mut em_ref = em.borrow_mut();
+    
+    if let Some(entity) = em_ref.get_mut(&id) {
+        if entity.entity_type != "enemy" {
+            return Valor::Error(format!("entity '{}' no es de tipo 'enemy'", id));
+        }
+        
+        // Obtener tipo de IA
+        let ai_type = match entity.get_data("ai_type") {
+            Some(Valor::Texto(t)) => t.clone(),
+            _ => "patrol".to_string(),
+        };
+        
+        // Obtener posición del jugador
+        let player_em = get_entity_manager();
+        let player_ref = player_em.borrow();
+        let player = player_ref.get(&player_id);
+        
+        if let Some(player_entity) = player {
+            let dx = player_entity.x - entity.x;
+            let dy = player_entity.y - entity.y;
+            let distance = (dx * dx + dy * dy).sqrt();
+            
+            let detection_range = match entity.get_data("detection_range") {
+                Some(Valor::Num(r)) => *r as f32,
+                _ => 200.0,
+            };
+            
+            if ai_type == "chase" || (ai_type == "patrol" && distance < detection_range) {
+                // Perseguir jugador
+                let speed = match entity.get_data("speed") {
+                    Some(Valor::Num(s)) => *s as f32,
+                    _ => 100.0,
+                };
+                
+                let dt = 0.016;
+                if dx.abs() > 1.0 {
+                    entity.vx = (dx / distance) * speed;
+                    entity.x += entity.vx * dt;
+                }
+                if dy.abs() > 1.0 {
+                    entity.vy = (dy / distance) * speed;
+                    entity.y += entity.vy * dt;
+                }
+                
+                entity.set_data("state", Valor::Texto("chase".to_string()));
+                
+                return Valor::Texto(format!("enemy::update_ai('{}') - chasing player, dist={:.1}", id, distance));
+            }
+        }
+        
+        entity.set_data("state", Valor::Texto(ai_type.clone()));
+        Valor::Texto(format!("enemy::update_ai('{}') - state={}", id, ai_type))
+    } else {
+        Valor::Error(format!("enemy::update_ai() La entidad '{}' no existe", id))
+    }
+}
+
+/// enemy::is_alerted(id) - Verificar si está alerta
+pub fn enemy_is_alerted(
+    args: &[Expr],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
+    if args.len() != 1 {
+        return Valor::Error("enemy::is_alerted() requiere 1 argumento: id".to_string());
+    }
+    
+    let id_val = evaluar_expr(&args[0], executor, funcs);
+    let id = match id_val {
+        Valor::Texto(s) => s,
+        _ => return Valor::Error("enemy::is_alerted() id debe ser texto".to_string()),
+    };
+    
+    let em = get_entity_manager();
+    let em_ref = em.borrow();
+    
+    if let Some(entity) = em_ref.get(&id) {
+        if let Some(Valor::Texto(state)) = entity.get_data("state") {
+            Valor::Bool(state == "chase" || state == "attack")
+        } else {
+            Valor::Bool(false)
+        }
+    } else {
+        Valor::Error(format!("enemy::is_alerted() La entidad '{}' no existe", id))
+    }
+}
+
+/// enemy::set_health(id, health) - Establecer vida
+pub fn enemy_set_health(
+    args: &[Expr],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
+    if args.len() != 2 {
+        return Valor::Error("enemy::set_health() requiere 2 argumentos: id, health".to_string());
+    }
+    
+    let id_val = evaluar_expr(&args[0], executor, funcs);
+    let health_val = evaluar_expr(&args[1], executor, funcs);
+    
+    let id = match id_val {
+        Valor::Texto(s) => s,
+        _ => return Valor::Error("enemy::set_health() id debe ser texto".to_string()),
+    };
+    
+    let health = match health_val {
+        Valor::Num(n) => n,
+        _ => return Valor::Error("enemy::set_health() health debe ser número".to_string()),
+    };
+    
+    let em = get_entity_manager();
+    let mut em_ref = em.borrow_mut();
+    
+    if let Some(entity) = em_ref.get_mut(&id) {
+        if entity.entity_type != "enemy" {
+            return Valor::Error(format!("entity '{}' no es de tipo 'enemy'", id));
+        }
+        entity.set_data("health", Valor::Num(health));
+        Valor::Texto(format!("enemy::set_health('{}', {})", id, health))
+    } else {
+        Valor::Error(format!("enemy::set_health() La entidad '{}' no existe", id))
+    }
+}
+
+/// enemy::set_damage(id, damage) - Establecer daño
+pub fn enemy_set_damage(
+    args: &[Expr],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
+    if args.len() != 2 {
+        return Valor::Error("enemy::set_damage() requiere 2 argumentos: id, damage".to_string());
+    }
+    
+    let id_val = evaluar_expr(&args[0], executor, funcs);
+    let damage_val = evaluar_expr(&args[1], executor, funcs);
+    
+    let id = match id_val {
+        Valor::Texto(s) => s,
+        _ => return Valor::Error("enemy::set_damage() id debe ser texto".to_string()),
+    };
+    
+    let damage = match damage_val {
+        Valor::Num(n) => n,
+        _ => return Valor::Error("enemy::set_damage() damage debe ser número".to_string()),
+    };
+    
+    let em = get_entity_manager();
+    let mut em_ref = em.borrow_mut();
+    
+    if let Some(entity) = em_ref.get_mut(&id) {
+        if entity.entity_type != "enemy" {
+            return Valor::Error(format!("entity '{}' no es de tipo 'enemy'", id));
+        }
+        entity.set_data("damage", Valor::Num(damage));
+        Valor::Texto(format!("enemy::set_damage('{}', {})", id, damage))
+    } else {
+        Valor::Error(format!("enemy::set_damage() La entidad '{}' no existe", id))
+    }
+}
+
+/// enemy::set_reward(id, coins) - Establecer recompensa de monedas
+pub fn enemy_set_reward(
+    args: &[Expr],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
+    if args.len() != 2 {
+        return Valor::Error("enemy::set_reward() requiere 2 argumentos: id, coins".to_string());
+    }
+    
+    let id_val = evaluar_expr(&args[0], executor, funcs);
+    let coins_val = evaluar_expr(&args[1], executor, funcs);
+    
+    let id = match id_val {
+        Valor::Texto(s) => s,
+        _ => return Valor::Error("enemy::set_reward() id debe ser texto".to_string()),
+    };
+    
+    let coins = match coins_val {
+        Valor::Num(n) => n,
+        _ => return Valor::Error("enemy::set_reward() coins debe ser número".to_string()),
+    };
+    
+    let em = get_entity_manager();
+    let mut em_ref = em.borrow_mut();
+    
+    if let Some(entity) = em_ref.get_mut(&id) {
+        if entity.entity_type != "enemy" {
+            return Valor::Error(format!("entity '{}' no es de tipo 'enemy'", id));
+        }
+        entity.set_data("reward", Valor::Num(coins));
+        Valor::Texto(format!("enemy::set_reward('{}', {})", id, coins))
+    } else {
+        Valor::Error(format!("enemy::set_reward() La entidad '{}' no existe", id))
+    }
+}
+
+// ============================================================================
+// BOSS COMPONENT
+// ============================================================================
+
+/// boss::set_phases(id, ["phase1", "phase2"]) - Establecer fases
+pub fn boss_set_phases(
+    args: &[Expr],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
+    if args.len() != 2 {
+        return Valor::Error("boss::set_phases() requiere 2 argumentos: id, phases".to_string());
+    }
+    
+    let id_val = evaluar_expr(&args[0], executor, funcs);
+    let phases_val = evaluar_expr(&args[1], executor, funcs);
+    
+    let id = match id_val {
+        Valor::Texto(s) => s,
+        _ => return Valor::Error("boss::set_phases() id debe ser texto".to_string()),
+    };
+    
+    let em = get_entity_manager();
+    let mut em_ref = em.borrow_mut();
+    
+    if let Some(entity) = em_ref.get_mut(&id) {
+        if entity.entity_type != "boss" {
+            return Valor::Error(format!("entity '{}' no es de tipo 'boss'", id));
+        }
+        entity.set_data("phases", phases_val.clone());
+        Valor::Texto(format!("boss::set_phases('{}', ...)", id))
+    } else {
+        Valor::Error(format!("boss::set_phases() La entidad '{}' no existe", id))
+    }
+}
+
+/// boss::get_current_phase(id) - Obtener fase actual
+pub fn boss_get_current_phase(
+    args: &[Expr],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
+    if args.len() != 1 {
+        return Valor::Error("boss::get_current_phase() requiere 1 argumento: id".to_string());
+    }
+    
+    let id_val = evaluar_expr(&args[0], executor, funcs);
+    let id = match id_val {
+        Valor::Texto(s) => s,
+        _ => return Valor::Error("boss::get_current_phase() id debe ser texto".to_string()),
+    };
+    
+    let em = get_entity_manager();
+    let em_ref = em.borrow();
+    
+    if let Some(entity) = em_ref.get(&id) {
+        if let Some(Valor::Texto(phase)) = entity.get_data("current_phase") {
+            Valor::Texto(phase.clone())
+        } else {
+            Valor::Texto("phase1".to_string())
+        }
+    } else {
+        Valor::Error(format!("boss::get_current_phase() La entidad '{}' no existe", id))
+    }
+}
+
+/// boss::transition_to_phase(id, phase) - Transición de fase
+pub fn boss_transition_to_phase(
+    args: &[Expr],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
+    if args.len() != 2 {
+        return Valor::Error("boss::transition_to_phase() requiere 2 argumentos: id, phase".to_string());
+    }
+    
+    let id_val = evaluar_expr(&args[0], executor, funcs);
+    let phase_val = evaluar_expr(&args[1], executor, funcs);
+    
+    let id = match id_val {
+        Valor::Texto(s) => s,
+        _ => return Valor::Error("boss::transition_to_phase() id debe ser texto".to_string()),
+    };
+    
+    let phase = match phase_val {
+        Valor::Texto(s) => s,
+        _ => return Valor::Error("boss::transition_to_phase() phase debe ser texto".to_string()),
+    };
+    
+    let em = get_entity_manager();
+    let mut em_ref = em.borrow_mut();
+    
+    if let Some(entity) = em_ref.get_mut(&id) {
+        if entity.entity_type != "boss" {
+            return Valor::Error(format!("entity '{}' no es de tipo 'boss'", id));
+        }
+        entity.set_data("current_phase", Valor::Texto(phase.clone()));
+        
+        // Verificar si es fase enraged
+        if phase == "enraged" || phase == "phase2" {
+            entity.set_data("is_enraged", Valor::Bool(true));
+        }
+        
+        Valor::Texto(format!("boss::transition_to_phase('{}', '{}')", id, phase))
+    } else {
+        Valor::Error(format!("boss::transition_to_phase() La entidad '{}' no existe", id))
+    }
+}
+
+/// boss::set_arena_bounds(id, min_x, min_y, max_x, max_y) - Establecer límites de arena
+pub fn boss_set_arena_bounds(
+    args: &[Expr],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
+    if args.len() != 5 {
+        return Valor::Error("boss::set_arena_bounds() requiere 5 argumentos: id, min_x, min_y, max_x, max_y".to_string());
+    }
+    
+    let id_val = evaluar_expr(&args[0], executor, funcs);
+    let min_x_val = evaluar_expr(&args[1], executor, funcs);
+    let min_y_val = evaluar_expr(&args[2], executor, funcs);
+    let max_x_val = evaluar_expr(&args[3], executor, funcs);
+    let max_y_val = evaluar_expr(&args[4], executor, funcs);
+    
+    let id = match id_val {
+        Valor::Texto(s) => s,
+        _ => return Valor::Error("boss::set_arena_bounds() id debe ser texto".to_string()),
+    };
+    
+    let min_x = match min_x_val {
+        Valor::Num(n) => n as f32,
+        _ => return Valor::Error("boss::set_arena_bounds() min_x debe ser número".to_string()),
+    };
+    
+    let min_y = match min_y_val {
+        Valor::Num(n) => n as f32,
+        _ => return Valor::Error("boss::set_arena_bounds() min_y debe ser número".to_string()),
+    };
+    
+    let max_x = match max_x_val {
+        Valor::Num(n) => n as f32,
+        _ => return Valor::Error("boss::set_arena_bounds() max_x debe ser número".to_string()),
+    };
+    
+    let max_y = match max_y_val {
+        Valor::Num(n) => n as f32,
+        _ => return Valor::Error("boss::set_arena_bounds() max_y debe ser número".to_string()),
+    };
+    
+    let em = get_entity_manager();
+    let mut em_ref = em.borrow_mut();
+    
+    if let Some(entity) = em_ref.get_mut(&id) {
+        if entity.entity_type != "boss" {
+            return Valor::Error(format!("entity '{}' no es de tipo 'boss'", id));
+        }
+        entity.set_data("arena_min_x", Valor::Num(min_x as f64));
+        entity.set_data("arena_min_y", Valor::Num(min_y as f64));
+        entity.set_data("arena_max_x", Valor::Num(max_x as f64));
+        entity.set_data("arena_max_y", Valor::Num(max_y as f64));
+        Valor::Texto(format!("boss::set_arena_bounds('{}', {}, {}, {}, {})", id, min_x, min_y, max_x, max_y))
+    } else {
+        Valor::Error(format!("boss::set_arena_bounds() La entidad '{}' no existe", id))
+    }
+}
+
+// ============================================================================
 // TESTS
 // ============================================================================
 
