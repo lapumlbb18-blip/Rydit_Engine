@@ -1509,6 +1509,440 @@ pub fn boss_set_arena_bounds(
 }
 
 // ============================================================================
+// COLLISION SYSTEM (FASE 2D)
+// ============================================================================
+
+/// collision::check_rect_rect(x1,y1,w1,h1, x2,y2,w2,h2) - Colisión rectángulo
+pub fn collision_check_rect_rect(
+    args: &[Expr],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
+    if args.len() != 8 {
+        return Valor::Error("collision::check_rect_rect() requiere 8 argumentos".to_string());
+    }
+    
+    let vals: Vec<f32> = args.iter().map(|arg| {
+        match evaluar_expr(arg, executor, funcs) {
+            Valor::Num(n) => n as f32,
+            _ => 0.0,
+        }
+    }).collect();
+    
+    let (x1, y1, w1, h1, x2, y2, w2, h2) = (vals[0], vals[1], vals[2], vals[3], vals[4], vals[5], vals[6], vals[7]);
+    
+    // AABB collision detection
+    let collision = x1 < x2 + w2 && x1 + w1 > x2 && y1 < y2 + h2 && y1 + h1 > y2;
+    
+    Valor::Bool(collision)
+}
+
+/// collision::check_circle_circle(x1,y1,r1, x2,y2,r2) - Colisión círculo
+pub fn collision_check_circle_circle(
+    args: &[Expr],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
+    if args.len() != 6 {
+        return Valor::Error("collision::check_circle_circle() requiere 6 argumentos".to_string());
+    }
+    
+    let vals: Vec<f32> = args.iter().map(|arg| {
+        match evaluar_expr(arg, executor, funcs) {
+            Valor::Num(n) => n as f32,
+            _ => 0.0,
+        }
+    }).collect();
+    
+    let (x1, y1, r1, x2, y2, r2) = (vals[0], vals[1], vals[2], vals[3], vals[4], vals[5]);
+    
+    let dx = x2 - x1;
+    let dy = y2 - y1;
+    let distance = (dx * dx + dy * dy).sqrt();
+    let collision = distance < (r1 + r2);
+    
+    Valor::Bool(collision)
+}
+
+/// collision::check_rect_circle(rx,ry,rw,rh, cx,cy,cr) - Colisión rect-círculo
+pub fn collision_check_rect_circle(
+    args: &[Expr],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
+    if args.len() != 7 {
+        return Valor::Error("collision::check_rect_circle() requiere 7 argumentos".to_string());
+    }
+    
+    let vals: Vec<f32> = args.iter().map(|arg| {
+        match evaluar_expr(arg, executor, funcs) {
+            Valor::Num(n) => n as f32,
+            _ => 0.0,
+        }
+    }).collect();
+    
+    let (rx, ry, rw, rh, cx, cy, cr) = (vals[0], vals[1], vals[2], vals[3], vals[4], vals[5], vals[6]);
+    
+    // Find closest point on rect to circle center
+    let closest_x = cx.max(rx).min(rx + rw);
+    let closest_y = cy.max(ry).min(ry + rh);
+    
+    let dx = cx - closest_x;
+    let dy = cy - closest_y;
+    let collision = (dx * dx + dy * dy) < (cr * cr);
+    
+    Valor::Bool(collision)
+}
+
+/// collision::check_point_rect(px,py, rx,ry,rw,rh) - Punto en rectángulo
+pub fn collision_check_point_rect(
+    args: &[Expr],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
+    if args.len() != 6 {
+        return Valor::Error("collision::check_point_rect() requiere 6 argumentos".to_string());
+    }
+    
+    let vals: Vec<f32> = args.iter().map(|arg| {
+        match evaluar_expr(arg, executor, funcs) {
+            Valor::Num(n) => n as f32,
+            _ => 0.0,
+        }
+    }).collect();
+    
+    let (px, py, rx, ry, rw, rh) = (vals[0], vals[1], vals[2], vals[3], vals[4], vals[5]);
+    
+    let collision = px >= rx && px <= rx + rw && py >= ry && py <= ry + rh;
+    
+    Valor::Bool(collision)
+}
+
+/// collision::check(id1, id2) - Colisión entre entidades
+pub fn collision_check(
+    args: &[Expr],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
+    if args.len() != 2 {
+        return Valor::Error("collision::check() requiere 2 argumentos: id1, id2".to_string());
+    }
+    
+    let id1_val = evaluar_expr(&args[0], executor, funcs);
+    let id2_val = evaluar_expr(&args[1], executor, funcs);
+    
+    let id1 = match id1_val {
+        Valor::Texto(s) => s,
+        _ => return Valor::Error("collision::check() id1 debe ser texto".to_string()),
+    };
+    
+    let id2 = match id2_val {
+        Valor::Texto(s) => s,
+        _ => return Valor::Error("collision::check() id2 debe ser texto".to_string()),
+    };
+    
+    let em = get_entity_manager();
+    let em_ref = em.borrow();
+    
+    let entity1 = em_ref.get(&id1);
+    let entity2 = em_ref.get(&id2);
+    
+    if let (Some(e1), Some(e2)) = (entity1, entity2) {
+        // Usar colisión rectángulo simple
+        let collision = e1.x < e2.x + e2.width && e1.x + e1.width > e2.x &&
+                       e1.y < e2.y + e2.height && e1.y + e1.height > e2.y;
+        Valor::Bool(collision)
+    } else {
+        Valor::Error("collision::check() Una o ambas entidades no existen".to_string())
+    }
+}
+
+// ============================================================================
+// AREA2D SYSTEM (Godot-style)
+// ============================================================================
+
+thread_local! {
+    static AREA2D_MANAGER: Rc<RefCell<Area2DManager>> = Rc::new(RefCell::new(Area2DManager::new()));
+}
+
+/// Área 2D para detección de colisiones
+#[derive(Debug, Clone)]
+pub struct Area2D {
+    pub id: String,
+    pub x: f32,
+    pub y: f32,
+    pub width: f32,
+    pub height: f32,
+    pub is_active: bool,
+}
+
+impl Area2D {
+    pub fn new(id: &str, x: f32, y: f32, w: f32, h: f32) -> Self {
+        Self {
+            id: id.to_string(),
+            x, y,
+            width: w,
+            height: h,
+            is_active: true,
+        }
+    }
+}
+
+/// Gestor de áreas 2D
+pub struct Area2DManager {
+    areas: HashMap<String, Area2D>,
+    next_id: u32,
+}
+
+impl Area2DManager {
+    pub fn new() -> Self {
+        Self {
+            areas: HashMap::new(),
+            next_id: 0,
+        }
+    }
+    
+    pub fn create(&mut self, x: f32, y: f32, w: f32, h: f32) -> String {
+        let id = format!("area2d_{}", self.next_id);
+        self.next_id += 1;
+        let area = Area2D::new(&id, x, y, w, h);
+        self.areas.insert(id.clone(), area);
+        id
+    }
+    
+    pub fn set_position(&mut self, id: &str, x: f32, y: f32) -> bool {
+        if let Some(area) = self.areas.get_mut(id) {
+            area.x = x;
+            area.y = y;
+            true
+        } else {
+            false
+        }
+    }
+    
+    pub fn get_position(&self, id: &str) -> Option<(f32, f32)> {
+        self.areas.get(id).map(|a| (a.x, a.y))
+    }
+    
+    pub fn check(&self, id1: &str, id2: &str) -> Option<bool> {
+        if let (Some(a1), Some(a2)) = (self.areas.get(id1), self.areas.get(id2)) {
+            if !a1.is_active || !a2.is_active {
+                return Some(false);
+            }
+            let collision = a1.x < a2.x + a2.width && a1.x + a1.width > a2.x &&
+                           a1.y < a2.y + a2.height && a1.y + a1.height > a2.y;
+            Some(collision)
+        } else {
+            None
+        }
+    }
+    
+    pub fn get_overlapping(&self, id: &str) -> Vec<String> {
+        let mut overlapping = Vec::new();
+        if let Some(area1) = self.areas.get(id) {
+            for (id2, area2) in &self.areas {
+                if id2 != id && area2.is_active {
+                    let collision = area1.x < area2.x + area2.width && area1.x + area1.width > area2.x &&
+                                   area1.y < area2.y + area2.height && area1.y + area1.height > area2.y;
+                    if collision {
+                        overlapping.push(id2.clone());
+                    }
+                }
+            }
+        }
+        overlapping
+    }
+    
+    pub fn destroy(&mut self, id: &str) -> bool {
+        self.areas.remove(id).is_some()
+    }
+}
+
+impl Default for Area2DManager {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// area2d::create(x, y, w, h) - Crear área 2D
+pub fn area2d_create(
+    args: &[Expr],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
+    if args.len() != 4 {
+        return Valor::Error("area2d::create() requiere 4 argumentos: x, y, w, h".to_string());
+    }
+    
+    let vals: Vec<f32> = args.iter().map(|arg| {
+        match evaluar_expr(arg, executor, funcs) {
+            Valor::Num(n) => n as f32,
+            _ => 0.0,
+        }
+    }).collect();
+    
+    let (x, y, w, h) = (vals[0], vals[1], vals[2], vals[3]);
+    
+    let am = get_area2d_manager();
+    let mut am_ref = am.borrow_mut();
+    let id = am_ref.create(x, y, w, h);
+    
+    Valor::Texto(id)
+}
+
+/// area2d::set_position(id, x, y) - Mover área
+pub fn area2d_set_position(
+    args: &[Expr],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
+    if args.len() != 3 {
+        return Valor::Error("area2d::set_position() requiere 3 argumentos: id, x, y".to_string());
+    }
+    
+    let id_val = evaluar_expr(&args[0], executor, funcs);
+    let x_val = evaluar_expr(&args[1], executor, funcs);
+    let y_val = evaluar_expr(&args[2], executor, funcs);
+    
+    let id = match id_val {
+        Valor::Texto(s) => s,
+        _ => return Valor::Error("area2d::set_position() id debe ser texto".to_string()),
+    };
+    
+    let x = match x_val {
+        Valor::Num(n) => n as f32,
+        _ => return Valor::Error("area2d::set_position() x debe ser número".to_string()),
+    };
+    
+    let y = match y_val {
+        Valor::Num(n) => n as f32,
+        _ => return Valor::Error("area2d::set_position() y debe ser número".to_string()),
+    };
+    
+    let am = get_area2d_manager();
+    let mut am_ref = am.borrow_mut();
+    
+    if am_ref.set_position(&id, x, y) {
+        Valor::Texto(format!("area2d::set_position('{}', {}, {})", id, x, y))
+    } else {
+        Valor::Error(format!("area2d::set_position() El área '{}' no existe", id))
+    }
+}
+
+/// area2d::get_position(id) - Obtener posición
+pub fn area2d_get_position(
+    args: &[Expr],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
+    if args.len() != 1 {
+        return Valor::Error("area2d::get_position() requiere 1 argumento: id".to_string());
+    }
+    
+    let id_val = evaluar_expr(&args[0], executor, funcs);
+    let id = match id_val {
+        Valor::Texto(s) => s,
+        _ => return Valor::Error("area2d::get_position() id debe ser texto".to_string()),
+    };
+    
+    let am = get_area2d_manager();
+    let am_ref = am.borrow();
+    
+    if let Some((x, y)) = am_ref.get_position(&id) {
+        Valor::Array(vec![Valor::Num(x as f64), Valor::Num(y as f64)])
+    } else {
+        Valor::Error(format!("area2d::get_position() El área '{}' no existe", id))
+    }
+}
+
+/// area2d::check(id1, id2) - Verificar colisión entre áreas
+pub fn area2d_check(
+    args: &[Expr],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
+    if args.len() != 2 {
+        return Valor::Error("area2d::check() requiere 2 argumentos: id1, id2".to_string());
+    }
+    
+    let id1_val = evaluar_expr(&args[0], executor, funcs);
+    let id2_val = evaluar_expr(&args[1], executor, funcs);
+    
+    let id1 = match id1_val {
+        Valor::Texto(s) => s,
+        _ => return Valor::Error("area2d::check() id1 debe ser texto".to_string()),
+    };
+    
+    let id2 = match id2_val {
+        Valor::Texto(s) => s,
+        _ => return Valor::Error("area2d::check() id2 debe ser texto".to_string()),
+    };
+    
+    let am = get_area2d_manager();
+    let am_ref = am.borrow();
+    
+    match am_ref.check(&id1, &id2) {
+        Some(collision) => Valor::Bool(collision),
+        None => Valor::Error("area2d::check() Una o ambas áreas no existen".to_string()),
+    }
+}
+
+/// area2d::get_overlapping(id) - Obtener áreas que se superponen
+pub fn area2d_get_overlapping(
+    args: &[Expr],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
+    if args.len() != 1 {
+        return Valor::Error("area2d::get_overlapping() requiere 1 argumento: id".to_string());
+    }
+    
+    let id_val = evaluar_expr(&args[0], executor, funcs);
+    let id = match id_val {
+        Valor::Texto(s) => s,
+        _ => return Valor::Error("area2d::get_overlapping() id debe ser texto".to_string()),
+    };
+    
+    let am = get_area2d_manager();
+    let am_ref = am.borrow();
+    let ids = am_ref.get_overlapping(&id);
+    
+    let result: Vec<Valor> = ids.into_iter().map(Valor::Texto).collect();
+    Valor::Array(result)
+}
+
+/// area2d::destroy(id) - Destruir área
+pub fn area2d_destroy(
+    args: &[Expr],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
+    if args.len() != 1 {
+        return Valor::Error("area2d::destroy() requiere 1 argumento: id".to_string());
+    }
+    
+    let id_val = evaluar_expr(&args[0], executor, funcs);
+    let id = match id_val {
+        Valor::Texto(s) => s,
+        _ => return Valor::Error("area2d::destroy() id debe ser texto".to_string()),
+    };
+    
+    let am = get_area2d_manager();
+    let mut am_ref = am.borrow_mut();
+    
+    if am_ref.destroy(&id) {
+        Valor::Texto(format!("area2d::destroy() - '{}' destruida", id))
+    } else {
+        Valor::Error(format!("area2d::destroy() El área '{}' no existe", id))
+    }
+}
+
+/// Obtener referencia al Area2D Manager global
+pub fn get_area2d_manager() -> Rc<RefCell<Area2DManager>> {
+    AREA2D_MANAGER.with(|a| a.clone())
+}
+
+// ============================================================================
 // TESTS
 // ============================================================================
 

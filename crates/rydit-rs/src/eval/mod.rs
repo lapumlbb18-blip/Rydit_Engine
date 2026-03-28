@@ -2226,6 +2226,76 @@ pub fn evaluar_expr(
                 return entity::boss_set_arena_bounds(args, executor, funcs);
             }
 
+            // ========================================================================
+            // COLLISION SYSTEM (FASE 2D)
+            // ========================================================================
+
+            // collision::check_rect_rect(...) - Colisión rectángulo
+            if name == "collision::check_rect_rect" && args.len() == 8 {
+                use crate::modules::entity;
+                return entity::collision_check_rect_rect(args, executor, funcs);
+            }
+
+            // collision::check_circle_circle(...) - Colisión círculo
+            if name == "collision::check_circle_circle" && args.len() == 6 {
+                use crate::modules::entity;
+                return entity::collision_check_circle_circle(args, executor, funcs);
+            }
+
+            // collision::check_rect_circle(...) - Colisión rect-círculo
+            if name == "collision::check_rect_circle" && args.len() == 7 {
+                use crate::modules::entity;
+                return entity::collision_check_rect_circle(args, executor, funcs);
+            }
+
+            // collision::check_point_rect(...) - Punto en rectángulo
+            if name == "collision::check_point_rect" && args.len() == 6 {
+                use crate::modules::entity;
+                return entity::collision_check_point_rect(args, executor, funcs);
+            }
+
+            // collision::check(id1, id2) - Colisión entre entidades
+            if name == "collision::check" && args.len() == 2 {
+                use crate::modules::entity;
+                return entity::collision_check(args, executor, funcs);
+            }
+
+            // area2d::create(x, y, w, h) - Crear área 2D
+            if name == "area2d::create" && args.len() == 4 {
+                use crate::modules::entity;
+                return entity::area2d_create(args, executor, funcs);
+            }
+
+            // area2d::set_position(id, x, y) - Mover área
+            if name == "area2d::set_position" && args.len() == 3 {
+                use crate::modules::entity;
+                return entity::area2d_set_position(args, executor, funcs);
+            }
+
+            // area2d::get_position(id) - Obtener posición
+            if name == "area2d::get_position" && args.len() == 1 {
+                use crate::modules::entity;
+                return entity::area2d_get_position(args, executor, funcs);
+            }
+
+            // area2d::check(id1, id2) - Verificar colisión
+            if name == "area2d::check" && args.len() == 2 {
+                use crate::modules::entity;
+                return entity::area2d_check(args, executor, funcs);
+            }
+
+            // area2d::get_overlapping(id) - Obtener áreas superpuestas
+            if name == "area2d::get_overlapping" && args.len() == 1 {
+                use crate::modules::entity;
+                return entity::area2d_get_overlapping(args, executor, funcs);
+            }
+
+            // area2d::destroy(id) - Destruir área
+            if name == "area2d::destroy" && args.len() == 1 {
+                use crate::modules::entity;
+                return entity::area2d_destroy(args, executor, funcs);
+            }
+
             // --- INPUT MAP (v0.5.1) ---
             // input_map::register(combo, action) - Registrar combinación
             if name == "input_map::register" && args.len() == 2 {
