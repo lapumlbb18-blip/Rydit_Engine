@@ -1,218 +1,201 @@
-# 🛣️ RyDit Engine - Roadmap
+# 🛡️ RyDit - ROADMAP COMPLETO
 
-**Versión Actual:** v0.7.34 (4 CRATES PUBLICADOS EN CRATES.IO ✅)
-**Próxima Versión:** v0.8.0 (Linux/Windows builds + más features)
-**Última Actualización:** 2026-03-26
-
----
-
-## 📍 Versión Actual: v0.7.34 - 4 CRATES PUBLICADOS ✅
-
-### ✅ Completado en esta sesión
-
-- [x] **rydit-core** v0.7.34 - Trait RyditModule + Registry (4 tests) ✅ PUBLICADO
-- [x] **rydit-science** v0.7.34 - Bezier + Stats + Geometry (21 tests) ✅ PUBLICADO
-- [x] **rydit-physics** v0.7.34 - Projectile + NBody (6 tests) ✅ PUBLICADO
-- [x] **rydit-anim** v0.7.34 - Easing + Squash/Stretch (9 tests) ✅ PUBLICADO
-- [x] **Geometría** - 5 ilusiones ópticas implementadas (Penrose, Cube, Spiral, Müller-Lyer, Ponzo)
-- [x] **Demo visual** - Funcionando en Termux-X11 (800x600 @ 60 FPS)
-- [x] **crates.io** - 4 crates publicados oficialmente
-- [x] **Documentación** - READMEs + ejemplos + guía de publicación
-
-### 📊 Métricas Actuales
-
-| Crate | Tests | Líneas | Estado |
-|-------|-------|--------|--------|
-| rydit-core | 4 | ~150 | ✅ PUBLICADO v0.7.34 |
-| rydit-science | 21 | ~450 | ✅ PUBLICADO v0.7.34 |
-| rydit-physics | 6 | ~200 | ✅ PUBLICADO v0.7.34 |
-| rydit-anim | 9 | ~280 | ✅ PUBLICADO v0.7.34 |
-| rydit-rs | 53 | ~5,000 | ✅ Binario local |
-| **Total** | **~93** | **~6,080** | **✅ 4 crates en crates.io** |
-
-### ⚠️ Pendiente
-
-- [ ] rydit-geometry (ilusiones ópticas)
-- [ ] Publicación en crates.io
-- [ ] Linux/Windows builds
+**Última actualización**: 2026-03-28
+**Versión actual**: v0.8.7 ✅ HTTP + WebSocket COMPILADO
+**Próxima versión**: v0.9.0 - Parser Maduro
 
 ---
 
-## 🎯 Próxima Versión: v0.7.3.x - rydit-geometry
+## 📊 PROGRESO ACTUAL
 
-### Objetivos Principales
+### Puntuación: 9.5/10 ✅
 
-1. **Implementar geometría** - Ilusiones ópticas reales
-2. **Tests visuales** - Validar con Termux-X11
-3. **Integrar con LAZOS** - Comandos JSON-RPC
+| Categoría | Progreso | Estado |
+|-----------|----------|--------|
+| **Parser** | 85% | ✅ Funcional |
+| **Executor** | 100% | ✅ Completo |
+| **Módulos** | 95% | ✅ Casi completo |
+| **Tests** | 100% | ✅ 260+ passing |
+| **Documentación** | 90% | ✅ Completa |
+| **Demos** | 60% | ⚠️ Faltan complejos |
 
-### Features Planeadas
+---
 
-```rust
-// geometry::penrose - Triángulo imposible
-echo '{"method":"geometry::penrose","params":[400,300,100]}' | rydit-rs --lazos
+## 🎯 VERSIONES COMPLETADAS
 
-// geometry::impossible_cube - Cubo imposible
-echo '{"method":"geometry::impossible_cube","params":[400,300,80]}' | rydit-rs --lazos
+### ✅ v0.8.7 - HTTP + WebSocket (2026-03-28)
+**Funciones agregadas**: 10
+- `http::get()`, `http::post()`, `http::put()`, `http::delete()`
+- `ws::connect()`, `ws::send()`, `ws::recv()`, `ws::disconnect()`, `ws::is_connected()`, `ws::get_url()`
 
-// geometry::spiral - Espiral de Fraser
-echo '{"method":"geometry::spiral","params":[400,300,10,150,5]}' | rydit-rs --lazos
+**Crate nuevo**: `rydit-http`
+- ureq v2.9 + tungstenite v0.21
+- 7 tests passing
+- Compilado exitosamente en Termux
+
+**Conectividad**: 100% ✅
+- Local: LAZOS (JSON-RPC stdin/stdout)
+- Remota HTTP: HTTP/HTTPS
+- Remota WS: WebSocket real-time
+
+### ✅ v0.8.6 - CSV Data Science (2026-03-28)
+**Funciones agregadas**: 13
+- `csv::read()`, `csv::write()`, `csv::to_json()`, `csv::from_json()`
+- `csv::filter()`, `csv::columns()`, `csv::row_count()`, `csv::col_count()`
+- `csv::join()`, `csv::group_by()`, `csv::aggregate()`
+- `csv::parse()`, `csv::parse_no_headers()` (existentes)
+
+**Módulo**: `modules/csv.rs` (885 líneas)
+
+### ✅ v0.8.5 - Input Map + Audio + Particles (2026-03-27)
+**Funciones agregadas**: 25
+- Input Map: 8 funciones (`press`, `release`, `is_pressed`, etc.)
+- Audio: 12 funciones (`beep`, `load`, `play`, etc.)
+- Particles: 5 efectos (fire, smoke, spark, explosion, rain)
+
+### ✅ v0.8.2 - Sistema Universal Ry (2026-03-26)
+**Features**:
+- ModuleMetadata struct + builder pattern
+- RyditModule trait extendido
+- ModuleRegistry mejorado
+- DynamicModuleLoader para carga dinámica
+- Hot reload en REPL
+- Scripts como módulos
+
+### ✅ v0.7.3.x - Split en Crates (2026-03-26)
+**Crates creados**:
+- rydit-core (trait + registry)
+- rydit-science (Bezier + Stats)
+- rydit-physics (Projectile + NBody)
+- rydit-anim (Easing + Squash/Stretch)
+
+---
+
+## 🔮 PRÓXIMAS VERSIONES
+
+### v0.9.0 - Parser Maduro (2-3 semanas)
+**Prioridad**: 🔴 CRÍTICA
+
+**Features**:
+- [ ] Refactorizar `lizer/src/lib.rs` completo
+- [ ] Comentarios en cualquier posición (>220 chars)
+- [ ] Expresiones complejas sin límites
+- [ ] Arrays multidimensionales reales
+- [ ] Paréntesis que funcionen SIEMPRE
+
+**Impacto**: 7/10 → 9/10
+
+### v0.9.5 - rydit-gfx Maduro (1-2 semanas)
+**Prioridad**: 🟡 MEDIA
+
+**Features**:
+- [ ] Assets Draw real (integración game loop)
+- [ ] Soporte multi-ventana
+- [ ] Hardware acceleration correcta
+- [ ] Fallback software si Zink falla
+
+**Impacto**: 8/10 → 9/10
+
+### v1.0.0 - Release Estable (2-3 meses)
+**Prioridad**: 🔴 CRÍTICA
+
+**Features**:
+- [ ] Parser 100% robusto
+- [ ] 20+ demos complejos funcionando
+- [ ] Documentación completa
+- [ ] Tests de integración
+- [ ] Binarios estables (Linux + Windows + Android)
+
+**Impacto**: 9/10 → 10/10 ✅
+
+---
+
+## 📈 MÉTRICAS DE PROGRESO
+
+### Líneas de Código
+| Versión | Líneas Rust | Crates | Tests | Binario |
+|---------|-------------|--------|-------|---------|
+| v0.5.0 | ~12,000 | 9 | 157 | ~1.7 MB |
+| v0.8.5 | ~19,500 | 12 | 211 | ~1.7 MB |
+| v0.8.6 | ~20,400 | 12 | 250 | ~1.7 MB |
+| v0.8.7 | ~21,300 | 13 | 260 | ~1.8 MB |
+| v1.0.0 | ~25,000 | 13 | 300+ | ~2.0 MB |
+
+### Funciones por Módulo
+| Módulo | v0.5.0 | v0.8.5 | v0.8.6 | v0.8.7 | v1.0.0 |
+|--------|--------|--------|--------|--------|--------|
+| Audio | 0 | 12 | 12 | 12 | 12 |
+| Particles | 0 | 5 | 5 | 5 | 5 |
+| Input Map | 0 | 4 | 8 | 8 | 8 |
+| CSV | 2 | 2 | 13 | 13 | 13 |
+| HTTP | 0 | 0 | 0 | 10 | 10 |
+| WebSocket | 0 | 0 | 0 | 6 | 6 |
+| Assets | 0 | 3 | 5 | 5 | 5 |
+| **TOTAL** | **2** | **26** | **46** | **59** | **64** |
+
+---
+
+## 🎨 DEMOS PENDIENTES
+
+### v0.9.0 - Parser Maduro
+- [ ] `demo_parser_complejo.rydit` - Expresiones anidadas
+- [ ] `demo_arrays_multidimensionales.rydit` - Matrices 3D
+- [ ] `demo_comentarios.rydit` - Comentarios >220 chars
+
+### v1.0.0 - Release Estable
+- [ ] `demo_http_api.rydit` - Consumir API REST
+- [ ] `demo_websocket_chat.rydit` - Chat en tiempo real
+- [ ] `demo_csv_analisis.rydit` - Análisis de datos CSV
+- [ ] `demo_juego_completo.rydit` - Juego con todos los features
+- [ ] `demo_lazos_python.rydit` - Integración LAZOS + Python
+
+---
+
+## 🏆 OBJETIVOS A LARGO PLAZO
+
+### 2026 Q2 (Abril-Junio)
+- [ ] v1.0.0 Release estable
+- [ ] Documentación completa en español
+- [ ] 20+ demos funcionales
+- [ ] Tutoriales en YouTube
+
+### 2026 Q3 (Julio-Septiembre)
+- [ ] v1.1.0 - WebSocket async (tokio)
+- [ ] v1.2.0 - Multiplayer real-time
+- [ ] v1.3.0 - Editor visual (opcional)
+
+### 2026 Q4 (Octubre-Diciembre)
+- [ ] v2.0.0 - 3D básico (raylib 3D)
+- [ ] v2.1.0 - Shaders GLSL custom
+- [ ] v2.2.0 - ECS (Entity Component System)
+
+---
+
+## 📝 NOTAS DE VERSIÓN
+
+### Convenciones de Versionamiento
+```
+v0.MAJOR.MINOR.PATCH
+v0.8.7 → Minor release (features nuevos)
+v0.9.0 → Minor release (parser maduro)
+v1.0.0 → Major release (estable)
 ```
 
-### Criterios de Aceptación
-
-- [ ] 3 ilusiones implementadas (Penrose, Cube, Spiral)
-- [ ] 6+ tests passing
-- [ ] Demo visual funcional en Termux-X11
-- [ ] Backup + Commit + Push
-
-### Tiempo Estimado
-
-2-3 horas de desarrollo
-
----
-
-## 🚀 Versión: v0.8.0.0 - Ecosistema Ry (Crates.io + Multi-plataforma)
-
-### Objetivos Principales
-
-1. **Publicación crates.io** - 4 crates disponibles
-2. **Linux native** - Build en Linux
-3. **Windows native** - Build en Windows
-4. **CI/CD** - GitHub Actions
-
-### Features Planeadas
-
-#### Publicación crates.io
-- [ ] rydit-core (primero, sin dependencias externas)
-- [ ] rydit-science (depende de rydit-core)
-- [ ] rydit-physics (depende de rydit-core)
-- [ ] rydit-anim (depende de rydit-core)
-
-#### Multi-plataforma
-- [ ] rydit-linux (binario Linux)
-- [ ] rydit-windows (binario Windows .exe)
-- [ ] GitHub Actions (build automático)
-
-#### Documentación
-- [ ] docs.rs para cada crate
-- [ ] README en inglés
-- [ ] Ejemplos de uso
-
-### Criterios de Aceptación
-
-- [ ] 4 crates en crates.io
-- [ ] Binarios Linux + Windows funcionales
-- [ ] CI/CD verde (tests passing)
-- [ ] Documentación completa
-
-### Tiempo Estimado
-
-4-6 semanas de desarrollo
-
----
-
-## 🔮 Versiones Futuras
-
-### v0.9.0.0 - Expansión (2-3 meses)
-
-- [ ] **ry-web** - WebAssembly (correr en navegador)
-- [ ] **HTTP nativo** - Sin Python bridge
-- [ ] **WebSocket** - Comunicación en tiempo real
-- [ ] **Git integration** - Control de versiones embebido
-
-### v1.0.0 - Release Estable (6-8 meses)
-
-- [ ] **API estable** - Sin breaking changes
-- [ ] **20+ demos** - Ejemplos reales
-- [ ] **Documentación completa** - Libro/tutorial
-- [ ] **Tutoriales YouTube** - Canal oficial
-- [ ] **Comunidad activa** - Discord, contribuidores
-
-### v2.0.0 - IDE RyDit (1 año)
-
-- [ ] **Editor integrado** - Syntax highlighting
-- [ ] **Debugger** - Breakpoints, step-through
-- [ ] **Profiler** - Performance analysis
-- [ ] **Asset manager** - Sprites, sonidos
-
----
-
-## 📊 Comparativa de Versiones
-
-| Versión | Fecha | Tests | Crates | Estado |
-|---------|-------|-------|--------|--------|
-| v0.7.2.0 | 2026-03-25 | 68 | 1 (monolito) | ✅ LAZOS |
-| v0.7.3.0 | 2026-03-26 | 72 | 2 (core + science) | ✅ Split inicia |
-| v0.7.3.1 | 2026-03-26 | 72 | 3 (+ physics) | ✅ Extracción |
-| v0.7.3.2 | 2026-03-26 | 72 | 4 (+ anim) | ✅ Completado |
-| v0.7.3.3 | 2026-03-26 | 81 | 4 | ✅ GitHub |
-| v0.7.3.x | Próxima | 87+ | 5 | ⏳ Geometry |
-| v0.8.0.0 | 4-6 semanas | 100+ | 4 + crates.io | 🔮 Multi-platform |
-| v1.0.0 | 6-8 meses | 500+ | 20+ | 🔮 Production |
-
----
-
-## 🎯 Métricas de Éxito
-
-### Código
-- ✅ **81 tests** passing
-- ✅ **~5,930 líneas** en crates
-- ✅ **4 crates** independientes
-- ✅ **730 KB** binario release
-
-### Comunidad (Objetivos v1.0.0)
-- 🔮 **1,000+** stars GitHub
-- 🔮 **50+** contribuidores
-- 🔮 **100+** demos de comunidad
-- 🔮 **10,000+** descargas crates.io
-
-### Plataforma (Objetivos v1.0.0)
-- 🔮 Android (Termux) ✅ Nativo
-- 🔮 Linux ✅ Nativo
-- 🔮 Windows ✅ Nativo
-- 🔮 Web (WASM) 🔮 En desarrollo
-- 🔮 iOS ⏳ Futuro
-
----
-
-## 📝 Notas de Desarrollo
-
-### Filosofía RyDit
-
-1. **Mobile-First Real** - Nació en Android, no portado
-2. **Ligero y Portable** - <1 MB, sin dependencias pesadas
-3. **Educativo** - Código abierto, lenguaje en español
-4. **David vs Goliat** - 6,000 líneas bien escritas > 500,000 líneas
-5. **Rendimiento Estable** - Sin calentamiento, RAM <100 MB, 60 FPS
-
-### Lecciones Aprendidas
-
-✅ **Lo que funcionó:**
-- Punto de restauración git antes de cambios grandes
-- Backup local + Google Drive después de cada crate
-- Tests primero - validar antes y después
-- Extracción incremental - un crate por vez
-- Commit messages descriptivos
-
-⚠️ **Desafíos:**
-- `eval/mod.rs` usa `Valor` (blast_core), no `serde_json::Value`
-- `lazos.rs` tenía funciones hardcodeadas
-- Termux-X11 requerido para tests visuales
-
-🚀 **Mejoras Futuras:**
-- Unificar `Valor` ↔ `serde_json::Value` conversion
-- Usar módulos en lazos.rs en vez de funciones hardcodeadas
-- Implementar CI/CD con GitHub Actions
+### Criterios de Release
+- ✅ Todos los tests passing
+- ✅ 0 warnings clippy críticos
+- ✅ cargo fmt aplicado
+- ✅ Documentación actualizada
+- ✅ Demos funcionales
 
 ---
 
 <div align="center">
 
-**🛡️ RyDit Engine Roadmap**
+**🛡️ RyDit v0.8.7 - 9.5/10**
 
-*v0.7.3.3 ✅ | 81 tests | 4 crates | GitHub actualizado*
+*HTTP + WebSocket ✅ | CSV ✅ | Input Map ✅ | 260+ tests | 0 warnings*
 
-**Próximo: v0.7.3.x → rydit-geometry | v0.8.0.0 → crates.io**
+**Próximo: v0.9.0 - Parser Maduro → v1.0.0 Release Estable**
 
 </div>

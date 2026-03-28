@@ -207,6 +207,54 @@ pub fn evaluar_expr(
                 }
             }
 
+            // ================================================================
+            // ALIAS SIN PREFIJO math:: (para compatibilidad con demos)
+            // ================================================================
+
+            // sin(x) - Alias de math::sin(x)
+            if name == "sin" && args.len() == 1 {
+                if let Valor::Num(x) = evaluar_expr(&args[0], executor, funcs) {
+                    return Valor::Num(x.sin());
+                } else {
+                    return Valor::Error("sin() requiere número".to_string());
+                }
+            }
+
+            // cos(x) - Alias de math::cos(x)
+            if name == "cos" && args.len() == 1 {
+                if let Valor::Num(x) = evaluar_expr(&args[0], executor, funcs) {
+                    return Valor::Num(x.cos());
+                } else {
+                    return Valor::Error("cos() requiere número".to_string());
+                }
+            }
+
+            // tan(x) - Alias de math::tan(x)
+            if name == "tan" && args.len() == 1 {
+                if let Valor::Num(x) = evaluar_expr(&args[0], executor, funcs) {
+                    return Valor::Num(x.tan());
+                } else {
+                    return Valor::Error("tan() requiere número".to_string());
+                }
+            }
+
+            // sqrt(x) - Alias de math::sqrt(x)
+            if name == "sqrt" && args.len() == 1 {
+                if let Valor::Num(x) = evaluar_expr(&args[0], executor, funcs) {
+                    if x >= 0.0 {
+                        return Valor::Num(x.sqrt());
+                    } else {
+                        return Valor::Error("sqrt() requiere número >= 0".to_string());
+                    }
+                } else {
+                    return Valor::Error("sqrt() requiere número".to_string());
+                }
+            }
+
+            // ================================================================
+            // FIN ALIAS MATH
+            // ================================================================
+
             // ========== FUNCIONES STRING (v0.1.2) ==========
             // Soporte para strings::length, strings::upper, etc.
             if (name == "__str_length" || name == "strings::length") && args.len() == 1 {
@@ -1252,24 +1300,237 @@ pub fn evaluar_expr(
                 return Valor::Error("csv::parse_no_headers() requiere CSV (texto)".to_string());
             }
 
+            // --- CSV MODULE (v0.8.6) ---
+            // csv::read(path) - Leer CSV desde archivo
+            if name == "csv::read" && args.len() == 1 {
+                use crate::modules::csv;
+                return csv::csv_read(args, executor, funcs);
+            }
+
+            // csv::write(data, path) - Escribir CSV a archivo
+            if name == "csv::write" && args.len() == 2 {
+                use crate::modules::csv;
+                return csv::csv_write(args, executor, funcs);
+            }
+
+            // csv::to_json(csv_text) - Convertir CSV a JSON
+            if name == "csv::to_json" && args.len() == 1 {
+                use crate::modules::csv;
+                return csv::csv_to_json(args, executor, funcs);
+            }
+
+            // csv::from_json(json_text) - Convertir JSON a CSV
+            if name == "csv::from_json" && args.len() == 1 {
+                use crate::modules::csv;
+                return csv::csv_from_json(args, executor, funcs);
+            }
+
+            // csv::filter(data, column, value) - Filtrar filas
+            if name == "csv::filter" && args.len() == 3 {
+                use crate::modules::csv;
+                return csv::csv_filter(args, executor, funcs);
+            }
+
+            // csv::columns(data) - Obtener columnas
+            if name == "csv::columns" && args.len() == 1 {
+                use crate::modules::csv;
+                return csv::csv_columns(args, executor, funcs);
+            }
+
+            // csv::row_count(data) - Contar filas
+            if name == "csv::row_count" && args.len() == 1 {
+                use crate::modules::csv;
+                return csv::csv_row_count(args, executor, funcs);
+            }
+
+            // csv::col_count(data) - Contar columnas
+            if name == "csv::col_count" && args.len() == 1 {
+                use crate::modules::csv;
+                return csv::csv_col_count(args, executor, funcs);
+            }
+
+            // csv::join(csv1, csv2, column) - Unir CSVs
+            if name == "csv::join" && args.len() == 3 {
+                use crate::modules::csv;
+                return csv::csv_join(args, executor, funcs);
+            }
+
+            // csv::group_by(data, column) - Agrupar datos
+            if name == "csv::group_by" && args.len() == 2 {
+                use crate::modules::csv;
+                return csv::csv_group_by(args, executor, funcs);
+            }
+
+            // csv::aggregate(data, column, operation) - Agregar datos
+            if name == "csv::aggregate" && args.len() == 3 {
+                use crate::modules::csv;
+                return csv::csv_aggregate(args, executor, funcs);
+            }
+
+            // --- HTTP + WEBSOCKET (v0.8.7) ---
+            // http::get(url) - GET request
+            if name == "http::get" && args.len() == 1 {
+                use crate::eval::evaluar_expr;
+                let url_val = evaluar_expr(&args[0], executor, funcs);
+                let url = match url_val {
+                    Valor::Texto(s) => s,
+                    _ => return Valor::Error("http::get() url debe ser texto".to_string()),
+                };
+                return match rydit_http::http_get(&url) {
+                    Ok(response) => Valor::Texto(response),
+                    Err(e) => Valor::Error(e),
+                };
+            }
+
+            // http::post(url, data) - POST request
+            if name == "http::post" && args.len() == 2 {
+                use crate::eval::evaluar_expr;
+                let url_val = evaluar_expr(&args[0], executor, funcs);
+                let data_val = evaluar_expr(&args[1], executor, funcs);
+                let url = match url_val {
+                    Valor::Texto(s) => s,
+                    _ => return Valor::Error("http::post() url debe ser texto".to_string()),
+                };
+                let data = match data_val {
+                    Valor::Texto(s) => s,
+                    Valor::Num(n) => n.to_string(),
+                    _ => {
+                        return Valor::Error(
+                            "http::post() data debe ser texto o número".to_string(),
+                        )
+                    }
+                };
+                return match rydit_http::http_post(&url, &data) {
+                    Ok(response) => Valor::Texto(response),
+                    Err(e) => Valor::Error(e),
+                };
+            }
+
+            // http::put(url, data) - PUT request
+            if name == "http::put" && args.len() == 2 {
+                use crate::eval::evaluar_expr;
+                let url_val = evaluar_expr(&args[0], executor, funcs);
+                let data_val = evaluar_expr(&args[1], executor, funcs);
+                let url = match url_val {
+                    Valor::Texto(s) => s,
+                    _ => return Valor::Error("http::put() url debe ser texto".to_string()),
+                };
+                let data = match data_val {
+                    Valor::Texto(s) => s,
+                    Valor::Num(n) => n.to_string(),
+                    _ => {
+                        return Valor::Error("http::put() data debe ser texto o número".to_string())
+                    }
+                };
+                return match rydit_http::http_put(&url, &data) {
+                    Ok(response) => Valor::Texto(response),
+                    Err(e) => Valor::Error(e),
+                };
+            }
+
+            // http::delete(url) - DELETE request
+            if name == "http::delete" && args.len() == 1 {
+                use crate::eval::evaluar_expr;
+                let url_val = evaluar_expr(&args[0], executor, funcs);
+                let url = match url_val {
+                    Valor::Texto(s) => s,
+                    _ => return Valor::Error("http::delete() url debe ser texto".to_string()),
+                };
+                return match rydit_http::http_delete(&url) {
+                    Ok(response) => Valor::Texto(response),
+                    Err(e) => Valor::Error(e),
+                };
+            }
+
+            // ws::connect(url) - Conectar a WebSocket
+            if name == "ws::connect" && args.len() == 1 {
+                use crate::eval::evaluar_expr;
+                let url_val = evaluar_expr(&args[0], executor, funcs);
+                let url = match url_val {
+                    Valor::Texto(s) => s,
+                    _ => return Valor::Error("ws::connect() url debe ser texto".to_string()),
+                };
+                return match rydit_http::ws_connect(&url) {
+                    Ok(msg) => Valor::Texto(msg),
+                    Err(e) => Valor::Error(e),
+                };
+            }
+
+            // ws::disconnect() - Desconectar WebSocket
+            if name == "ws::disconnect" {
+                return match rydit_http::ws_disconnect() {
+                    Ok(msg) => Valor::Texto(msg),
+                    Err(e) => Valor::Error(e),
+                };
+            }
+
+            // ws::send(message) - Enviar mensaje
+            if name == "ws::send" && args.len() == 1 {
+                use crate::eval::evaluar_expr;
+                let msg_val = evaluar_expr(&args[0], executor, funcs);
+                let msg = match msg_val {
+                    Valor::Texto(s) => s,
+                    Valor::Num(n) => n.to_string(),
+                    _ => {
+                        return Valor::Error(
+                            "ws::send() message debe ser texto o número".to_string(),
+                        )
+                    }
+                };
+                return match rydit_http::ws_send(&msg) {
+                    Ok(msg) => Valor::Texto(msg),
+                    Err(e) => Valor::Error(e),
+                };
+            }
+
+            // ws::recv() - Recibir mensaje
+            if name == "ws::recv" {
+                return match rydit_http::ws_recv() {
+                    Ok(msg) => Valor::Texto(msg),
+                    Err(e) => Valor::Error(e),
+                };
+            }
+
+            // ws::is_connected() - Verificar conexión
+            if name == "ws::is_connected" {
+                return Valor::Bool(rydit_http::ws_is_connected());
+            }
+
+            // ws::get_url() - Obtener URL actual
+            if name == "ws::get_url" {
+                return match rydit_http::ws_get_url() {
+                    Some(url) => Valor::Texto(url),
+                    None => Valor::Vacio,
+                };
+            }
+
             // --- ASSETS MANAGER (v0.5.1) ---
             // assets::load(id, path) - Cargar textura
             if name == "assets::load" && args.len() == 2 {
                 use crate::modules::assets;
-                
+
                 // Evaluar ID
                 let id_val = evaluar_expr(&args[0], executor, funcs);
                 let id = match id_val {
                     Valor::Texto(s) => s,
                     Valor::Num(n) => n.to_string(),
-                    _ => return Valor::Error("assets::load() el primer argumento debe ser un ID (texto)".to_string()),
+                    _ => {
+                        return Valor::Error(
+                            "assets::load() el primer argumento debe ser un ID (texto)".to_string(),
+                        )
+                    }
                 };
 
                 // Evaluar path
                 let path_val = evaluar_expr(&args[1], executor, funcs);
                 let path = match path_val {
                     Valor::Texto(s) => s,
-                    _ => return Valor::Error("assets::load() el segundo argumento debe ser el path (texto)".to_string()),
+                    _ => {
+                        return Valor::Error(
+                            "assets::load() el segundo argumento debe ser el path (texto)"
+                                .to_string(),
+                        )
+                    }
                 };
 
                 // Cargar textura
@@ -1279,7 +1540,10 @@ pub fn evaluar_expr(
                         let mut assets_ref = assets.borrow_mut();
                         assets_ref.insert_texture(id.clone(), texture);
                         println!("[ASSETS] Textura '{}' cargada desde '{}'", id, path);
-                        return Valor::Texto(format!("assets::load() - '{}' cargado exitosamente", id));
+                        return Valor::Texto(format!(
+                            "assets::load() - '{}' cargado exitosamente",
+                            id
+                        ));
                     }
                     Err(e) => return Valor::Error(format!("assets::load() Error: {}", e)),
                 }
@@ -1288,20 +1552,30 @@ pub fn evaluar_expr(
             // assets::sprite(id, path) - Alias de load
             if name == "assets::sprite" && args.len() == 2 {
                 use crate::modules::assets;
-                
+
                 // Evaluar ID
                 let id_val = evaluar_expr(&args[0], executor, funcs);
                 let id = match id_val {
                     Valor::Texto(s) => s,
                     Valor::Num(n) => n.to_string(),
-                    _ => return Valor::Error("assets::sprite() el primer argumento debe ser un ID (texto)".to_string()),
+                    _ => {
+                        return Valor::Error(
+                            "assets::sprite() el primer argumento debe ser un ID (texto)"
+                                .to_string(),
+                        )
+                    }
                 };
 
                 // Evaluar path
                 let path_val = evaluar_expr(&args[1], executor, funcs);
                 let path = match path_val {
                     Valor::Texto(s) => s,
-                    _ => return Valor::Error("assets::sprite() el segundo argumento debe ser el path (texto)".to_string()),
+                    _ => {
+                        return Valor::Error(
+                            "assets::sprite() el segundo argumento debe ser el path (texto)"
+                                .to_string(),
+                        )
+                    }
                 };
 
                 // Cargar textura
@@ -1311,7 +1585,10 @@ pub fn evaluar_expr(
                         let mut assets_ref = assets.borrow_mut();
                         assets_ref.insert_texture(id.clone(), texture);
                         println!("[ASSETS] Sprite '{}' cargado desde '{}'", id, path);
-                        return Valor::Texto(format!("assets::sprite() - '{}' cargado exitosamente", id));
+                        return Valor::Texto(format!(
+                            "assets::sprite() - '{}' cargado exitosamente",
+                            id
+                        ));
                     }
                     Err(e) => return Valor::Error(format!("assets::sprite() Error: {}", e)),
                 }
@@ -1320,17 +1597,21 @@ pub fn evaluar_expr(
             // assets::exists(id) - Verificar si existe textura
             if name == "assets::exists" && args.len() == 1 {
                 use crate::modules::assets;
-                
+
                 let id_val = evaluar_expr(&args[0], executor, funcs);
                 let id = match id_val {
                     Valor::Texto(s) => s,
                     Valor::Num(n) => n.to_string(),
-                    _ => return Valor::Error("assets::exists() el argumento debe ser el ID".to_string()),
+                    _ => {
+                        return Valor::Error(
+                            "assets::exists() el argumento debe ser el ID".to_string(),
+                        )
+                    }
                 };
 
                 let assets = assets::get_assets();
                 let assets_ref = assets.borrow();
-                
+
                 if assets_ref.has_texture(&id) {
                     return Valor::Bool(true);
                 } else {
@@ -1341,17 +1622,21 @@ pub fn evaluar_expr(
             // assets::unload(id) - Descargar textura
             if name == "assets::unload" && args.len() == 1 {
                 use crate::modules::assets;
-                
+
                 let id_val = evaluar_expr(&args[0], executor, funcs);
                 let id = match id_val {
                     Valor::Texto(s) => s,
                     Valor::Num(n) => n.to_string(),
-                    _ => return Valor::Error("assets::unload() el argumento debe ser el ID".to_string()),
+                    _ => {
+                        return Valor::Error(
+                            "assets::unload() el argumento debe ser el ID".to_string(),
+                        )
+                    }
                 };
 
                 let assets = assets::get_assets();
                 let mut assets_ref = assets.borrow_mut();
-                
+
                 if assets_ref.unload_texture(&id) {
                     println!("[ASSETS] Textura '{}' descargada", id);
                     return Valor::Texto(format!("assets::unload() - '{}' descargado", id));
@@ -1363,10 +1648,147 @@ pub fn evaluar_expr(
             // assets::count() - Cantidad de texturas cargadas
             if name == "assets::count" {
                 use crate::modules::assets;
-                
+
                 let assets = assets::get_assets();
                 let assets_ref = assets.borrow();
                 return Valor::Num(assets_ref.texture_count() as f64);
+            }
+
+            // assets::draw(id, x, y) - Dibujar textura en posición
+            if name == "assets::draw" && args.len() >= 3 {
+                use crate::modules::assets;
+                use rydit_gfx::ColorRydit;
+                use std::str::FromStr;
+                use v_shield::ffi;
+
+                let id_val = evaluar_expr(&args[0], executor, funcs);
+                let x_val = evaluar_expr(&args[1], executor, funcs);
+                let y_val = evaluar_expr(&args[2], executor, funcs);
+
+                let id = match id_val {
+                    Valor::Texto(s) => s,
+                    Valor::Num(n) => n.to_string(),
+                    _ => return Valor::Error("assets::draw() el ID debe ser texto".to_string()),
+                };
+
+                let x = match x_val {
+                    Valor::Num(n) => n as f32,
+                    _ => return Valor::Error("assets::draw() x debe ser número".to_string()),
+                };
+
+                let y = match y_val {
+                    Valor::Num(n) => n as f32,
+                    _ => return Valor::Error("assets::draw() y debe ser número".to_string()),
+                };
+
+                // Color opcional (default: blanco)
+                let color = if args.len() >= 4 {
+                    let color_val = evaluar_expr(&args[3], executor, funcs);
+                    match color_val {
+                        Valor::Texto(c) => ColorRydit::from_str(&c).unwrap_or(ColorRydit::Blanco),
+                        _ => ColorRydit::Blanco,
+                    }
+                } else {
+                    ColorRydit::Blanco
+                };
+
+                // Dibujar usando FFI de raylib directamente
+                let assets = assets::get_assets();
+                let assets_ref = assets.borrow();
+
+                if let Some(texture) = assets_ref.get_texture(&id) {
+                    unsafe {
+                        ffi::DrawTexture(**texture, x as i32, y as i32, color.to_color().into());
+                    }
+                    return Valor::Texto(format!(
+                        "assets::draw() - '{}' dibujado en ({}, {})",
+                        id, x, y
+                    ));
+                } else {
+                    return Valor::Error(format!("assets::draw() La textura '{}' no existe", id));
+                }
+            }
+
+            // assets::draw_scaled(id, x, y, scale) - Dibujar textura escalada
+            if name == "assets::draw_scaled" && args.len() >= 4 {
+                use crate::modules::assets;
+                use rydit_gfx::ColorRydit;
+                use std::str::FromStr;
+                use v_shield::ffi;
+
+                let id_val = evaluar_expr(&args[0], executor, funcs);
+                let x_val = evaluar_expr(&args[1], executor, funcs);
+                let y_val = evaluar_expr(&args[2], executor, funcs);
+                let scale_val = evaluar_expr(&args[3], executor, funcs);
+
+                let id = match id_val {
+                    Valor::Texto(s) => s,
+                    Valor::Num(n) => n.to_string(),
+                    _ => {
+                        return Valor::Error(
+                            "assets::draw_scaled() el ID debe ser texto".to_string(),
+                        )
+                    }
+                };
+
+                let x = match x_val {
+                    Valor::Num(n) => n as f32,
+                    _ => {
+                        return Valor::Error("assets::draw_scaled() x debe ser número".to_string())
+                    }
+                };
+
+                let y = match y_val {
+                    Valor::Num(n) => n as f32,
+                    _ => {
+                        return Valor::Error("assets::draw_scaled() y debe ser número".to_string())
+                    }
+                };
+
+                let scale = match scale_val {
+                    Valor::Num(n) => n as f32,
+                    _ => {
+                        return Valor::Error(
+                            "assets::draw_scaled() scale debe ser número".to_string(),
+                        )
+                    }
+                };
+
+                // Color opcional
+                let color = if args.len() >= 5 {
+                    let color_val = evaluar_expr(&args[4], executor, funcs);
+                    match color_val {
+                        Valor::Texto(c) => ColorRydit::from_str(&c).unwrap_or(ColorRydit::Blanco),
+                        _ => ColorRydit::Blanco,
+                    }
+                } else {
+                    ColorRydit::Blanco
+                };
+
+                // Dibujar escalado usando FFI
+                let assets = assets::get_assets();
+                let assets_ref = assets.borrow();
+
+                if let Some(texture) = assets_ref.get_texture(&id) {
+                    unsafe {
+                        ffi::DrawTextureEx(
+                            **texture,
+                            ffi::Vector2 { x, y },
+                            0.0,
+                            scale,
+                            color.to_color().into(),
+                        );
+                    }
+                    return Valor::Texto(format!(
+                        "assets::draw_scaled() - '{}' dibujado en ({}, {}) con escala {}",
+                        id, x, y, scale
+                    ));
+                } else {
+                    return Valor::Error(format!(
+                        "assets::draw_scaled() La textura '{}' no existe",
+                        id
+                    ));
+                }
             }
 
             // --- AUDIO MANAGER (v0.5.1) ---
@@ -1377,7 +1799,7 @@ pub fn evaluar_expr(
             }
 
             // audio::click() - Sonido de click UI
-            if name == "audio::click" && args.len() == 0 {
+            if name == "audio::click" && args.is_empty() {
                 use crate::modules::audio;
                 return audio::audio_click(args, executor, funcs);
             }
@@ -1471,6 +1893,30 @@ pub fn evaluar_expr(
             if name == "input_map::count" {
                 use crate::modules::input_map;
                 return input_map::input_map_count(args, executor, funcs);
+            }
+
+            // input_map::press(key) - Registrar tecla presionada
+            if name == "input_map::press" && args.len() == 1 {
+                use crate::modules::input_map;
+                return input_map::input_map_press(args, executor, funcs);
+            }
+
+            // input_map::release(key) - Registrar tecla soltada
+            if name == "input_map::release" && args.len() == 1 {
+                use crate::modules::input_map;
+                return input_map::input_map_release(args, executor, funcs);
+            }
+
+            // input_map::is_pressed(action) - Verificar si acción está presionada
+            if name == "input_map::is_pressed" && args.len() == 1 {
+                use crate::modules::input_map;
+                return input_map::input_map_is_pressed(args, executor, funcs);
+            }
+
+            // input_map::get_active() - Obtener acciones activas
+            if name == "input_map::get_active" {
+                use crate::modules::input_map;
+                return input_map::input_map_get_active(args, executor, funcs);
             }
 
             // --- STATISTICS: MEAN ---
@@ -1677,7 +2123,8 @@ pub fn evaluar_expr(
                         "<rect width='{}' height='{}' fill='white'/>",
                         w, h
                     ));
-                    let first_y = h - padding
+                    let first_y = h
+                        - padding
                         - ((nums[0] - min_val) / range * (h - 2 * padding) as f64) as i32;
                     let mut path = format!(
                         "<polyline points='{},{}' fill='none' stroke='blue' stroke-width='2'/>",

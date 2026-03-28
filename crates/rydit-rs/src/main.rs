@@ -13,14 +13,16 @@ mod module;
 // mod physics;  ← AHORA ES CRATE EXTERNO: use rydit_physics::PhysicsModule;
 mod repl;
 // mod science;  ← AHORA ES CRATE EXTERNO: use rydit_science::ScienceModule;
-mod tests;
-mod modules; // ← MÓDULOS EXTENSIBLES (assets, audio, particles, http)
+mod modules;
+mod tests; // ← MÓDULOS EXTENSIBLES (assets, audio, particles, http)
 
 // Re-exportar funciones del módulo eval
 pub use eval::evaluar_expr;
 
 // Re-exportar helpers de config y json
-pub use config::{cargar_modulo, configurar_entorno_termux, configurar_display, mostrar_configuracion};
+pub use config::{
+    cargar_modulo, configurar_display, configurar_entorno_termux, mostrar_configuracion,
+};
 pub use json_helpers::{valor_rydit_a_serde, valor_serde_a_rydit};
 
 // Re-exportar ejecutores
@@ -530,7 +532,13 @@ pub fn ejecutar_stmt(
             let texto_str = match &texto_val {
                 Valor::Texto(t) => t.clone(),
                 Valor::Num(n) => n.to_string(),
-                Valor::Bool(b) => if *b { "verdadero".to_string() } else { "falso".to_string() },
+                Valor::Bool(b) => {
+                    if *b {
+                        "verdadero".to_string()
+                    } else {
+                        "falso".to_string()
+                    }
+                }
                 _ => "[texto]".to_string(),
             };
 
@@ -727,6 +735,15 @@ impl InputEstado {
     }
 
     fn actualizar(&mut self, gfx: &RyditGfx) {
+        // Leer estado anterior para detectar cambios
+        let prev_arrow_up = self.arrow_up;
+        let prev_arrow_down = self.arrow_down;
+        let prev_arrow_left = self.arrow_left;
+        let prev_arrow_right = self.arrow_right;
+        let prev_space = self.space;
+        let prev_enter = self.enter;
+
+        // Actualizar estado de teclas
         self.arrow_up = gfx.is_key_pressed(Key::ArrowUp);
         self.arrow_down = gfx.is_key_pressed(Key::ArrowDown);
         self.arrow_left = gfx.is_key_pressed(Key::ArrowLeft);
@@ -741,6 +758,31 @@ impl InputEstado {
         self.mouse_left = gfx.is_mouse_button_pressed(0);
         self.mouse_right = gfx.is_mouse_button_pressed(1);
         self.mouse_middle = gfx.is_mouse_button_pressed(2);
+
+        // Sincronizar con Input Map
+        use crate::modules::input_map;
+        let input_map_state = input_map::get_input_map();
+        let mut map_ref = input_map_state.borrow_mut();
+
+        // Función auxiliar para actualizar una tecla
+        macro_rules! actualizar_tecla {
+            ($prev:expr, $curr:expr, $nombre:expr) => {
+                if $prev && !$curr {
+                    map_ref.release_key(&$nombre);
+                }
+                if !$prev && $curr {
+                    map_ref.press_key(&$nombre);
+                }
+            };
+        }
+
+        // Actualizar todas las teclas
+        actualizar_tecla!(prev_arrow_up, self.arrow_up, "arrow_up");
+        actualizar_tecla!(prev_arrow_down, self.arrow_down, "arrow_down");
+        actualizar_tecla!(prev_arrow_left, self.arrow_left, "arrow_left");
+        actualizar_tecla!(prev_arrow_right, self.arrow_right, "arrow_right");
+        actualizar_tecla!(prev_space, self.space, "space");
+        actualizar_tecla!(prev_enter, self.enter, "enter");
     }
 
     fn es_presionada(&self, tecla: &str) -> bool {
@@ -775,6 +817,21 @@ fn ejecutar_stmt_gfx(
         }
         Stmt::Assign { name, value } => {
             let valor = evaluar_expr_gfx(value, executor, input, funcs);
+            // Log asignaciones importantes ANTES de guardar (para evitar move)
+            if name == "x"
+                || name == "y"
+                || name == "velocidad"
+                || name == "frame"
+                || name == "click"
+                || name == "mx"
+                || name == "my"
+                || name == "balas"
+                || name == "tanque_x"
+                || name == "tanque_y"
+                || name == "angulo"
+            {
+                rydit_gfx::debug_log::debug_log(&format!("Asignación: {} = {:?}", name, valor));
+            }
             executor.guardar(name, valor);
         }
         Stmt::IndexAssign {
@@ -821,7 +878,9 @@ fn ejecutar_stmt_gfx(
             then_body,
             else_body,
         } => {
+            rydit_gfx::debug_log::debug_log("Ejecutando If statement");
             let cond_val = evaluar_expr_gfx(condition, executor, input, funcs);
+            rydit_gfx::debug_log::debug_log(&format!("Condición evalúa a: {:?}", cond_val));
             let es_verdad = match cond_val {
                 Valor::Num(n) => n != 0.0,
                 Valor::Bool(b) => b,
@@ -829,8 +888,9 @@ fn ejecutar_stmt_gfx(
             };
 
             if es_verdad {
+                rydit_gfx::debug_log::debug_log("Condición VERDADERA - ejecutando then_body");
                 for s in then_body {
-                    ejecutar_stmt_gfx(
+                    let break_signal = ejecutar_stmt_gfx(
                         s,
                         executor,
                         funcs,
@@ -839,10 +899,14 @@ fn ejecutar_stmt_gfx(
                         loaded_modules,
                         importing_stack,
                     );
+                    if break_signal == Some(true) {
+                        return Some(true);
+                    }
                 }
             } else if let Some(else_stmts) = else_body {
+                rydit_gfx::debug_log::debug_log("Condición FALSA - ejecutando else_body");
                 for s in else_stmts {
-                    ejecutar_stmt_gfx(
+                    let break_signal = ejecutar_stmt_gfx(
                         s,
                         executor,
                         funcs,
@@ -851,6 +915,9 @@ fn ejecutar_stmt_gfx(
                         loaded_modules,
                         importing_stack,
                     );
+                    if break_signal == Some(true) {
+                        return Some(true);
+                    }
                 }
             }
         }
@@ -874,7 +941,7 @@ fn ejecutar_stmt_gfx(
                 }
 
                 for s in body {
-                    ejecutar_stmt_gfx(
+                    let break_signal = ejecutar_stmt_gfx(
                         s,
                         executor,
                         funcs,
@@ -883,6 +950,10 @@ fn ejecutar_stmt_gfx(
                         loaded_modules,
                         importing_stack,
                     );
+                    // Verificar señal de break
+                    if break_signal == Some(true) {
+                        return Some(true); // Propagar break al padre
+                    }
                 }
                 iterations += 1;
             }
@@ -897,7 +968,7 @@ fn ejecutar_stmt_gfx(
                 for item in arr {
                     executor.guardar(var, item.clone());
                     for s in body {
-                        ejecutar_stmt_gfx(
+                        let break_signal = ejecutar_stmt_gfx(
                             s,
                             executor,
                             funcs,
@@ -906,13 +977,16 @@ fn ejecutar_stmt_gfx(
                             loaded_modules,
                             importing_stack,
                         );
+                        if break_signal == Some(true) {
+                            return Some(true);
+                        }
                     }
                 }
             }
         }
         Stmt::Block(stmts) => {
             for s in stmts {
-                ejecutar_stmt_gfx(
+                let break_signal = ejecutar_stmt_gfx(
                     s,
                     executor,
                     funcs,
@@ -921,6 +995,9 @@ fn ejecutar_stmt_gfx(
                     loaded_modules,
                     importing_stack,
                 );
+                if break_signal == Some(true) {
+                    return Some(true);
+                }
             }
         }
         Stmt::Function { name, params, body } => {
@@ -1108,12 +1185,24 @@ fn ejecutar_stmt_gfx(
         }
         // Comandos de dibujo - dibujan realmente en la ventana
         Stmt::DrawCircle { x, y, radio, color } => {
-            let x_val = evaluar_expr(x, executor, funcs);
-            let y_val = evaluar_expr(y, executor, funcs);
-            let radio_val = evaluar_expr(radio, executor, funcs);
+            eprintln!(
+                "[DEBUG GFX] DrawCircle: x={:?}, y={:?}, radio={:?}, color={}",
+                x, y, radio, color
+            );
+            let x_val = evaluar_expr_gfx(x, executor, input, funcs);
+            let y_val = evaluar_expr_gfx(y, executor, input, funcs);
+            let radio_val = evaluar_expr_gfx(radio, executor, input, funcs);
             let color_val = ColorRydit::from_str(color).unwrap_or(ColorRydit::Blanco);
+            eprintln!(
+                "[DEBUG GFX] DrawCircle evaluado: x={:?}, y={:?}, radio={:?}",
+                x_val, y_val, radio_val
+            );
 
             if let (Valor::Num(x), Valor::Num(y), Valor::Num(radio)) = (x_val, y_val, radio_val) {
+                eprintln!(
+                    "[DEBUG GFX] Dibujando círculo en ({}, {}) radio={}",
+                    x as i32, y as i32, radio as i32
+                );
                 d.draw_circle(x as i32, y as i32, radio as i32, color_val);
             }
         }
@@ -1124,10 +1213,10 @@ fn ejecutar_stmt_gfx(
             alto,
             color,
         } => {
-            let x_val = evaluar_expr(x, executor, funcs);
-            let y_val = evaluar_expr(y, executor, funcs);
-            let ancho_val = evaluar_expr(ancho, executor, funcs);
-            let alto_val = evaluar_expr(alto, executor, funcs);
+            let x_val = evaluar_expr_gfx(x, executor, input, funcs);
+            let y_val = evaluar_expr_gfx(y, executor, input, funcs);
+            let ancho_val = evaluar_expr_gfx(ancho, executor, input, funcs);
+            let alto_val = evaluar_expr_gfx(alto, executor, input, funcs);
             let color_val = ColorRydit::from_str(color).unwrap_or(ColorRydit::Blanco);
 
             if let (Valor::Num(x), Valor::Num(y), Valor::Num(ancho), Valor::Num(alto)) =
@@ -1143,10 +1232,10 @@ fn ejecutar_stmt_gfx(
             y2,
             color,
         } => {
-            let x1_val = evaluar_expr(x1, executor, funcs);
-            let y1_val = evaluar_expr(y1, executor, funcs);
-            let x2_val = evaluar_expr(x2, executor, funcs);
-            let y2_val = evaluar_expr(y2, executor, funcs);
+            let x1_val = evaluar_expr_gfx(x1, executor, input, funcs);
+            let y1_val = evaluar_expr_gfx(y1, executor, input, funcs);
+            let x2_val = evaluar_expr_gfx(x2, executor, input, funcs);
+            let y2_val = evaluar_expr_gfx(y2, executor, input, funcs);
             let color_val = ColorRydit::from_str(color).unwrap_or(ColorRydit::Blanco);
 
             if let (Valor::Num(x1), Valor::Num(y1), Valor::Num(x2), Valor::Num(y2)) =
@@ -1162,17 +1251,23 @@ fn ejecutar_stmt_gfx(
             tamano,
             color,
         } => {
-            let texto_val = evaluar_expr(texto, executor, funcs);
-            let x_val = evaluar_expr(x, executor, funcs);
-            let y_val = evaluar_expr(y, executor, funcs);
-            let tamano_val = evaluar_expr(tamano, executor, funcs);
+            let texto_val = evaluar_expr_gfx(texto, executor, input, funcs);
+            let x_val = evaluar_expr_gfx(x, executor, input, funcs);
+            let y_val = evaluar_expr_gfx(y, executor, input, funcs);
+            let tamano_val = evaluar_expr_gfx(tamano, executor, input, funcs);
             let color_val = ColorRydit::from_str(color).unwrap_or(ColorRydit::Blanco);
 
             // Convertir texto a string (puede ser Texto o Num convertido)
             let texto_str = match &texto_val {
                 Valor::Texto(t) => t.clone(),
                 Valor::Num(n) => n.to_string(),
-                Valor::Bool(b) => if *b { "verdadero".to_string() } else { "falso".to_string() },
+                Valor::Bool(b) => {
+                    if *b {
+                        "verdadero".to_string()
+                    } else {
+                        "falso".to_string()
+                    }
+                }
                 _ => "[texto]".to_string(),
             };
 
@@ -1190,12 +1285,12 @@ fn ejecutar_stmt_gfx(
             v3_y,
             color,
         } => {
-            let v1_x_val = evaluar_expr(v1_x, executor, funcs);
-            let v1_y_val = evaluar_expr(v1_y, executor, funcs);
-            let v2_x_val = evaluar_expr(v2_x, executor, funcs);
-            let v2_y_val = evaluar_expr(v2_y, executor, funcs);
-            let v3_x_val = evaluar_expr(v3_x, executor, funcs);
-            let v3_y_val = evaluar_expr(v3_y, executor, funcs);
+            let v1_x_val = evaluar_expr_gfx(v1_x, executor, input, funcs);
+            let v1_y_val = evaluar_expr_gfx(v1_y, executor, input, funcs);
+            let v2_x_val = evaluar_expr_gfx(v2_x, executor, input, funcs);
+            let v2_y_val = evaluar_expr_gfx(v2_y, executor, input, funcs);
+            let v3_x_val = evaluar_expr_gfx(v3_x, executor, input, funcs);
+            let v3_y_val = evaluar_expr_gfx(v3_y, executor, input, funcs);
             let color_val = ColorRydit::from_str(color).unwrap_or(ColorRydit::Blanco);
 
             if let (
@@ -1222,10 +1317,10 @@ fn ejecutar_stmt_gfx(
             outer_radius,
             color,
         } => {
-            let center_x_val = evaluar_expr(center_x, executor, funcs);
-            let center_y_val = evaluar_expr(center_y, executor, funcs);
-            let inner_radius_val = evaluar_expr(inner_radius, executor, funcs);
-            let outer_radius_val = evaluar_expr(outer_radius, executor, funcs);
+            let center_x_val = evaluar_expr_gfx(center_x, executor, input, funcs);
+            let center_y_val = evaluar_expr_gfx(center_y, executor, input, funcs);
+            let inner_radius_val = evaluar_expr_gfx(inner_radius, executor, input, funcs);
+            let outer_radius_val = evaluar_expr_gfx(outer_radius, executor, input, funcs);
             let color_val = ColorRydit::from_str(color).unwrap_or(ColorRydit::Blanco);
 
             if let (Valor::Num(cx), Valor::Num(cy), Valor::Num(ir), Valor::Num(or)) = (
@@ -1244,10 +1339,10 @@ fn ejecutar_stmt_gfx(
             alto,
             color,
         } => {
-            let x_val = evaluar_expr(x, executor, funcs);
-            let y_val = evaluar_expr(y, executor, funcs);
-            let ancho_val = evaluar_expr(ancho, executor, funcs);
-            let alto_val = evaluar_expr(alto, executor, funcs);
+            let x_val = evaluar_expr_gfx(x, executor, input, funcs);
+            let y_val = evaluar_expr_gfx(y, executor, input, funcs);
+            let ancho_val = evaluar_expr_gfx(ancho, executor, input, funcs);
+            let alto_val = evaluar_expr_gfx(alto, executor, input, funcs);
             let color_val = ColorRydit::from_str(color).unwrap_or(ColorRydit::Blanco);
 
             if let (Valor::Num(x), Valor::Num(y), Valor::Num(ancho), Valor::Num(alto)) =
@@ -1263,10 +1358,10 @@ fn ejecutar_stmt_gfx(
             radius_v,
             color,
         } => {
-            let center_x_val = evaluar_expr(center_x, executor, funcs);
-            let center_y_val = evaluar_expr(center_y, executor, funcs);
-            let radius_h_val = evaluar_expr(radius_h, executor, funcs);
-            let radius_v_val = evaluar_expr(radius_v, executor, funcs);
+            let center_x_val = evaluar_expr_gfx(center_x, executor, input, funcs);
+            let center_y_val = evaluar_expr_gfx(center_y, executor, input, funcs);
+            let radius_h_val = evaluar_expr_gfx(radius_h, executor, input, funcs);
+            let radius_v_val = evaluar_expr_gfx(radius_v, executor, input, funcs);
             let color_val = ColorRydit::from_str(color).unwrap_or(ColorRydit::Blanco);
 
             if let (Valor::Num(cx), Valor::Num(cy), Valor::Num(rh), Valor::Num(rv)) =
@@ -1283,11 +1378,11 @@ fn ejecutar_stmt_gfx(
             thick,
             color,
         } => {
-            let x1_val = evaluar_expr(x1, executor, funcs);
-            let y1_val = evaluar_expr(y1, executor, funcs);
-            let x2_val = evaluar_expr(x2, executor, funcs);
-            let y2_val = evaluar_expr(y2, executor, funcs);
-            let thick_val = evaluar_expr(thick, executor, funcs);
+            let x1_val = evaluar_expr_gfx(x1, executor, input, funcs);
+            let y1_val = evaluar_expr_gfx(y1, executor, input, funcs);
+            let x2_val = evaluar_expr_gfx(x2, executor, input, funcs);
+            let y2_val = evaluar_expr_gfx(y2, executor, input, funcs);
+            let thick_val = evaluar_expr_gfx(thick, executor, input, funcs);
             let color_val = ColorRydit::from_str(color).unwrap_or(ColorRydit::Blanco);
 
             if let (
@@ -1322,7 +1417,7 @@ pub fn valor_a_bool(val: &Valor) -> bool {
     }
 }
 #[allow(clippy::only_used_in_recursion)]
-fn evaluar_expr_gfx(
+pub fn evaluar_expr_gfx(
     expr: &Expr,
     executor: &mut Executor,
     input: &InputEstado,
@@ -1480,9 +1575,17 @@ fn evaluar_expr_gfx(
 
             // math::sin(x) - Seno (x en radianes)
             if (name == "__math_sin" || name == "math::sin") && args.len() == 1 {
-                if let Valor::Num(x) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
+                eprintln!(
+                    "[DEBUG] math::sin() llamado con args.len() = {}",
+                    args.len()
+                );
+                let arg_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
+                eprintln!("[DEBUG] math::sin() argumento = {:?}", arg_val);
+                if let Valor::Num(x) = arg_val {
+                    eprintln!("[DEBUG] math::sin({}) = {}", x, x.sin());
                     return Valor::Num(x.sin());
                 } else {
+                    eprintln!("[DEBUG] math::sin() ERROR: no es número");
                     return Valor::Error("math::sin() requiere número".to_string());
                 }
             }
@@ -1533,6 +1636,54 @@ fn evaluar_expr_gfx(
                     return Valor::Error("math::rad2deg() requiere número".to_string());
                 }
             }
+
+            // ================================================================
+            // ALIAS SIN PREFIJO math:: (para compatibilidad con demos)
+            // ================================================================
+
+            // sin(x) - Alias de math::sin(x)
+            if name == "sin" && args.len() == 1 {
+                if let Valor::Num(x) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
+                    return Valor::Num(x.sin());
+                } else {
+                    return Valor::Error("sin() requiere número".to_string());
+                }
+            }
+
+            // cos(x) - Alias de math::cos(x)
+            if name == "cos" && args.len() == 1 {
+                if let Valor::Num(x) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
+                    return Valor::Num(x.cos());
+                } else {
+                    return Valor::Error("cos() requiere número".to_string());
+                }
+            }
+
+            // tan(x) - Alias de math::tan(x)
+            if name == "tan" && args.len() == 1 {
+                if let Valor::Num(x) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
+                    return Valor::Num(x.tan());
+                } else {
+                    return Valor::Error("tan() requiere número".to_string());
+                }
+            }
+
+            // sqrt(x) - Alias de math::sqrt(x)
+            if name == "sqrt" && args.len() == 1 {
+                if let Valor::Num(x) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
+                    if x >= 0.0 {
+                        return Valor::Num(x.sqrt());
+                    } else {
+                        return Valor::Error("sqrt() requiere número >= 0".to_string());
+                    }
+                } else {
+                    return Valor::Error("sqrt() requiere número".to_string());
+                }
+            }
+
+            // ================================================================
+            // FIN ALIAS MATH - evaluar_expr_gfx
+            // ================================================================
 
             // ========== FUNCIONES STRING (v0.1.2) ==========
             // Soporte para strings::length, strings::upper, etc.
@@ -3681,6 +3832,16 @@ pub fn ejecutar_stmt_migui(
         _ => {}
     }
     (None, None)
+}
+
+// Wrapper para evaluar expresiones en game loops (público para executor.rs)
+pub fn evaluar_expr_gfx_for_loop(
+    expr: &Expr,
+    executor: &mut Executor,
+    input: &InputEstado,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> blast_core::Valor {
+    evaluar_expr_gfx(expr, executor, input, funcs)
 }
 
 // Tests movidos a: crates/rydit-rs/src/tests/mod.rs

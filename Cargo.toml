@@ -13,6 +13,7 @@ members = [
     "crates/migui",
     "crates/rydit-loader",
     "crates/rydit-script",
+    "crates/rydit-http",  # HTTP + WebSocket
 ]
 
 # =============================================================================

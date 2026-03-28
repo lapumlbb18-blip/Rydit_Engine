@@ -3,6 +3,7 @@
 
 pub mod assets;
 pub mod audio;
+pub mod csv;
 pub mod input_map;
 
 // Próximos módulos:
