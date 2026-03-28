@@ -1654,6 +1654,42 @@ pub fn evaluar_expr(
                 return Valor::Num(assets_ref.texture_count() as f64);
             }
 
+            // assets::set_position(id, x, y) - Actualizar posición
+            if name == "assets::set_position" && args.len() == 3 {
+                use crate::modules::assets;
+                return assets::assets_set_position(args, executor, funcs);
+            }
+
+            // assets::set_rotation(id, angle) - Rotar sprite
+            if name == "assets::set_rotation" && args.len() == 2 {
+                use crate::modules::assets;
+                return assets::assets_set_rotation(args, executor, funcs);
+            }
+
+            // assets::set_scale(id, scale_x, scale_y) - Escalar sprite
+            if name == "assets::set_scale" && args.len() == 3 {
+                use crate::modules::assets;
+                return assets::assets_set_scale(args, executor, funcs);
+            }
+
+            // assets::set_color(id, color) - Cambiar color/tinte
+            if name == "assets::set_color" && args.len() == 2 {
+                use crate::modules::assets;
+                return assets::assets_set_color(args, executor, funcs);
+            }
+
+            // assets::set_flip(id, horizontal, vertical) - Flip
+            if name == "assets::set_flip" && args.len() == 3 {
+                use crate::modules::assets;
+                return assets::assets_set_flip(args, executor, funcs);
+            }
+
+            // assets::set_origin(id, origin_x, origin_y) - Punto de origen
+            if name == "assets::set_origin" && args.len() == 3 {
+                use crate::modules::assets;
+                return assets::assets_set_origin(args, executor, funcs);
+            }
+
             // assets::draw(id, x, y) - Dibujar textura en posición
             if name == "assets::draw" && args.len() >= 3 {
                 use crate::modules::assets;

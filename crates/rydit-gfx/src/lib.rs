@@ -38,6 +38,9 @@
 // Módulo de partículas v0.5.3
 pub mod particles;
 
+// Módulo de debug log v0.8.5
+pub mod debug_log;
+
 use raylib::consts::KeyboardKey;
 use raylib::prelude::*;
 
@@ -678,6 +681,10 @@ impl RyditGfx {
 
         println!("[RYDIT-GFX]: Ventana creada {}x{}", width, height);
         println!("[RYDIT-GFX]: Rust = Arquitecto, Raylib = Pincel");
+        println!(
+            "[RYDIT-GFX]: DISPLAY={}",
+            std::env::var("DISPLAY").unwrap_or_else(|_| "NO SET".to_string())
+        );
 
         Self {
             handle,
@@ -739,26 +746,38 @@ impl RyditGfx {
 
     /// Dibujar círculo
     pub fn draw_circle(&mut self, x: i32, y: i32, radius: i32, color: ColorRydit) {
-        let mut d = self.begin_draw();
-        d.draw_circle(x, y, radius, color);
+        {
+            let mut d = self.begin_draw();
+            d.draw_circle(x, y, radius, color);
+            drop(d);  // ← Flush EXPLÍCITO para Zink/Vulkan
+        }
     }
 
     /// Dibujar rectángulo
     pub fn draw_rect(&mut self, x: i32, y: i32, w: i32, h: i32, color: ColorRydit) {
-        let mut d = self.begin_draw();
-        d.draw_rectangle(x, y, w, h, color);
+        {
+            let mut d = self.begin_draw();
+            d.draw_rectangle(x, y, w, h, color);
+            drop(d);  // ← Flush EXPLÍCITO para Zink/Vulkan
+        }
     }
 
     /// Dibujar línea
     pub fn draw_line(&mut self, x1: i32, y1: i32, x2: i32, y2: i32, color: ColorRydit) {
-        let mut d = self.begin_draw();
-        d.draw_line(x1, y1, x2, y2, color);
+        {
+            let mut d = self.begin_draw();
+            d.draw_line(x1, y1, x2, y2, color);
+            drop(d);  // ← Flush EXPLÍCITO para Zink/Vulkan
+        }
     }
 
     /// Dibujar texto
     pub fn draw_text(&mut self, text: &str, x: i32, y: i32, size: i32, color: ColorRydit) {
-        let mut d = self.begin_draw();
-        d.draw_text(text, x, y, size, color);
+        {
+            let mut d = self.begin_draw();
+            d.draw_text(text, x, y, size, color);
+            drop(d);  // ← Flush EXPLÍCITO para Zink/Vulkan
+        }
     }
 
     /// Verificar tecla presionada
@@ -914,7 +933,6 @@ impl<'a> DrawHandle<'a> {
         color: ColorRydit,
     ) {
         // Simplificación: dibujamos solo el círculo exterior
-        // draw_ring de raylib requiere parámetros adicionales (start/end angle)
         self.draw
             .draw_circle(center.0, center.1, outer_radius as f32, color.to_color());
     }
@@ -927,7 +945,6 @@ impl<'a> DrawHandle<'a> {
         radius_v: i32,
         color: ColorRydit,
     ) {
-        // raylib draw_ellipse: (centerX, centerY, radiusH, radiusV, color)
         self.draw.draw_ellipse(
             center.0,
             center.1,
@@ -950,10 +967,6 @@ impl<'a> DrawHandle<'a> {
         self.draw.draw_line_ex(start, end, thick, color.to_color());
     }
 
-    // ========================================================================
-    // FUNCIONES DRAW V0.3.0 - ROTACIÓN
-    // ========================================================================
-
     /// Dibujar rectángulo rotado
     pub fn draw_rectangle_pro(
         &mut self,
@@ -970,11 +983,7 @@ impl<'a> DrawHandle<'a> {
             .draw_rectangle_pro(rect, origin, angle, color.to_color());
     }
 
-    // ========================================================================
-    // FUNCIONES DRAW V0.5.1 - TEXTURAS
-    // ========================================================================
-
-    /// Dibujar textura en pantalla
+    /// Dibujar textura avanzada
     pub fn draw_texture_ex(
         &mut self,
         texture: &Texture2D,
@@ -1057,9 +1066,12 @@ impl Assets {
     /// # Arguments (en orden):
     /// 1. `d` - Draw handle de raylib
     /// 2. `id` - ID del sprite cargado
-    /// 3-4. `x, y` - Posición en pantalla
-    /// 5-6. `_w, _h` - Dimensiones (actualmente no usadas)
+    ///    3-4. `x, y` - Posición en pantalla
+    ///    5-6. `_w, _h` - Dimensiones (actualmente no usadas)
     /// 7. `color` - Color de tinte
+    ///
+    /// # Nota
+    /// Los parámetros `_w` y `_h` son reservados para futura implementación de escalado.
     #[allow(clippy::too_many_arguments)]
     pub fn draw_texture(
         &self,
@@ -1124,118 +1136,6 @@ impl Assets {
 impl Default for Assets {
     fn default() -> Self {
         Self::new()
-    }
-}
-
-// ============================================================================
-// TESTS
-// ============================================================================
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_color_from_str() {
-        assert_eq!(ColorRydit::from_str("rojo").unwrap(), ColorRydit::Rojo);
-        assert_eq!(ColorRydit::from_str("RED").unwrap(), ColorRydit::Rojo);
-        assert_eq!(ColorRydit::from_str("verde").unwrap(), ColorRydit::Verde);
-        assert_eq!(ColorRydit::from_str("azul").unwrap(), ColorRydit::Azul);
-        assert_eq!(ColorRydit::from_str("amarillo").unwrap(), ColorRydit::Amarillo);
-        assert_eq!(ColorRydit::from_str("blanco").unwrap(), ColorRydit::Blanco);
-        assert_eq!(ColorRydit::from_str("negro").unwrap(), ColorRydit::Negro);
-        assert_eq!(ColorRydit::from_str("desconocido").unwrap(), ColorRydit::Blanco);
-    }
-
-    #[test]
-    fn test_key_to_raylib() {
-        // Solo verificamos que no panic
-        let _ = Key::Escape.to_raylib();
-        let _ = Key::Space.to_raylib();
-        let _ = Key::A.to_raylib();
-        let _ = Key::Num0.to_raylib();
-    }
-
-    #[test]
-    fn test_color_to_color() {
-        let color = ColorRydit::Rojo.to_color();
-        assert_eq!(color.r, 230);
-        assert_eq!(color.g, 41);
-        assert_eq!(color.b, 55);
-        assert_eq!(color.a, 255);
-    }
-
-    // ========================================================================
-    // TESTS V0.1.9 - GRÁFICOS Y COLORES
-    // ========================================================================
-
-    #[test]
-    fn test_draw_circle_colores() {
-        // Verificar que todos los colores básicos funcionan
-        let colores = vec!["rojo", "verde", "azul", "amarillo", "blanco", "negro"];
-
-        for color_str in colores {
-            let color_rydit = ColorRydit::from_str(color_str).unwrap();
-            let color = color_rydit.to_color();
-            // Solo verificamos que el alpha sea 255 (completamente opaco)
-            assert_eq!(color.a, 255, "Color {} debe tener alpha 255", color_str);
-        }
-    }
-
-    #[test]
-    fn test_draw_rect_dimensiones() {
-        // Verificar conversión de dimensiones para rectángulos
-        // Las dimensiones son enteros en raylib
-        let x: i32 = 100;
-        let y: i32 = 200;
-        let ancho: i32 = 50;
-        let alto: i32 = 75;
-
-        // Verificamos que los valores se mantienen
-        assert_eq!(x, 100);
-        assert_eq!(y, 200);
-        assert_eq!(ancho, 50);
-        assert_eq!(alto, 75);
-
-        // Un rectángulo con estas dimensiones debería ser válido
-        let rect = raylib::prelude::Rectangle::new(x as f32, y as f32, ancho as f32, alto as f32);
-        assert_eq!(rect.x, 100.0);
-        assert_eq!(rect.y, 200.0);
-        assert!((rect.width - 50.0).abs() < 0.01);
-        assert!((rect.height - 75.0).abs() < 0.01);
-    }
-
-    // ========================================================================
-    // TESTS V0.3.0 - INPUT MOUSE AVANZADO
-    // ========================================================================
-
-    #[test]
-    fn test_mouse_functions_exist() {
-        // Solo verificamos que las funciones existen y compilan
-        // No podemos probar mouse real sin ventana
-        let _ = RyditGfx::new("Test", 800, 600);
-        // gfx.get_mouse_position()  // Retorna (i32, i32)
-        // gfx.is_mouse_button_pressed(0)  // Retorna bool
-        // gfx.get_mouse_wheel()  // Retorna (f32, f32)
-    }
-
-    #[test]
-    fn test_mouse_button_mapping() {
-        // Verificar mapeo de botones
-        assert_eq!(0, 0); // Left button index
-        assert_eq!(1, 1); // Right button index
-        assert_eq!(2, 2); // Middle button index
-    }
-
-    // ========================================================================
-    // TESTS V0.4.1 - MIGUI BACKEND
-    // ========================================================================
-
-    #[test]
-    fn test_migui_backend_exists() {
-        // Verificar que RyditGfx implementa MiguiBackend
-        let _ = RyditGfx::new("Test", 800, 600);
-        // El backend existe y compila
     }
 }
 
@@ -1342,5 +1242,123 @@ impl RyditGfx {
                 }
             }
         }
+    }
+}
+
+// ============================================================================
+// TESTS
+// ============================================================================
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_color_from_str() {
+        assert_eq!(ColorRydit::from_str("rojo").unwrap(), ColorRydit::Rojo);
+        assert_eq!(ColorRydit::from_str("RED").unwrap(), ColorRydit::Rojo);
+        assert_eq!(ColorRydit::from_str("verde").unwrap(), ColorRydit::Verde);
+        assert_eq!(ColorRydit::from_str("azul").unwrap(), ColorRydit::Azul);
+        assert_eq!(
+            ColorRydit::from_str("amarillo").unwrap(),
+            ColorRydit::Amarillo
+        );
+        assert_eq!(ColorRydit::from_str("blanco").unwrap(), ColorRydit::Blanco);
+        assert_eq!(ColorRydit::from_str("negro").unwrap(), ColorRydit::Negro);
+        assert_eq!(
+            ColorRydit::from_str("desconocido").unwrap(),
+            ColorRydit::Blanco
+        );
+    }
+
+    #[test]
+    fn test_key_to_raylib() {
+        // Solo verificamos que no panic
+        let _ = Key::Escape.to_raylib();
+        let _ = Key::Space.to_raylib();
+        let _ = Key::A.to_raylib();
+        let _ = Key::Num0.to_raylib();
+    }
+
+    #[test]
+    fn test_color_to_color() {
+        let color = ColorRydit::Rojo.to_color();
+        assert_eq!(color.r, 230);
+        assert_eq!(color.g, 41);
+        assert_eq!(color.b, 55);
+        assert_eq!(color.a, 255);
+    }
+
+    // ========================================================================
+    // TESTS V0.1.9 - GRÁFICOS Y COLORES
+    // ========================================================================
+
+    #[test]
+    fn test_draw_circle_colores() {
+        // Verificar que todos los colores básicos funcionan
+        let colores = vec!["rojo", "verde", "azul", "amarillo", "blanco", "negro"];
+
+        for color_str in colores {
+            let color_rydit = ColorRydit::from_str(color_str).unwrap();
+            let color = color_rydit.to_color();
+            // Solo verificamos que el alpha sea 255 (completamente opaco)
+            assert_eq!(color.a, 255, "Color {} debe tener alpha 255", color_str);
+        }
+    }
+
+    #[test]
+    fn test_draw_rect_dimensiones() {
+        // Verificar conversión de dimensiones para rectángulos
+        // Las dimensiones son enteros en raylib
+        let x: i32 = 100;
+        let y: i32 = 200;
+        let ancho: i32 = 50;
+        let alto: i32 = 75;
+
+        // Verificamos que los valores se mantienen
+        assert_eq!(x, 100);
+        assert_eq!(y, 200);
+        assert_eq!(ancho, 50);
+        assert_eq!(alto, 75);
+
+        // Un rectángulo con estas dimensiones debería ser válido
+        let rect = raylib::prelude::Rectangle::new(x as f32, y as f32, ancho as f32, alto as f32);
+        assert_eq!(rect.x, 100.0);
+        assert_eq!(rect.y, 200.0);
+        assert!((rect.width - 50.0).abs() < 0.01);
+        assert!((rect.height - 75.0).abs() < 0.01);
+    }
+
+    // ========================================================================
+    // TESTS V0.3.0 - INPUT MOUSE AVANZADO
+    // ========================================================================
+
+    #[test]
+    fn test_mouse_functions_exist() {
+        // Solo verificamos que las funciones existen y compilan
+        // No podemos probar mouse real sin ventana
+        let _ = RyditGfx::new("Test", 800, 600);
+        // gfx.get_mouse_position()  // Retorna (i32, i32)
+        // gfx.is_mouse_button_pressed(0)  // Retorna bool
+        // gfx.get_mouse_wheel()  // Retorna (f32, f32)
+    }
+
+    #[test]
+    fn test_mouse_button_mapping() {
+        // Verificar mapeo de botones
+        assert_eq!(0, 0); // Left button index
+        assert_eq!(1, 1); // Right button index
+        assert_eq!(2, 2); // Middle button index
+    }
+
+    // ========================================================================
+    // TESTS V0.4.1 - MIGUI BACKEND
+    // ========================================================================
+
+    #[test]
+    fn test_migui_backend_exists() {
+        // Verificar que RyditGfx implementa MiguiBackend
+        let _ = RyditGfx::new("Test", 800, 600);
+        // El backend existe y compila
     }
 }
