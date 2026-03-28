@@ -2019,6 +2019,438 @@ pub fn get_area2d_manager() -> Rc<RefCell<Area2DManager>> {
 }
 
 // ============================================================================
+// TRAP COMPONENT (FASE 2C)
+// ============================================================================
+
+/// trap::set_type(id, type) - Establecer tipo de trampa
+pub fn trap_set_type(
+    args: &[Expr],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
+    if args.len() != 2 {
+        return Valor::Error("trap::set_type() requiere 2 argumentos: id, type".to_string());
+    }
+    
+    let id_val = evaluar_expr(&args[0], executor, funcs);
+    let type_val = evaluar_expr(&args[1], executor, funcs);
+    
+    let id = match id_val {
+        Valor::Texto(s) => s,
+        _ => return Valor::Error("trap::set_type() id debe ser texto".to_string()),
+    };
+    
+    let trap_type = match type_val {
+        Valor::Texto(s) => s,
+        _ => return Valor::Error("trap::set_type() type debe ser texto".to_string()),
+    };
+    
+    // Validar tipo
+    if !["spike", "arrow", "fire", "falling", "saw"].contains(&trap_type.as_str()) {
+        return Valor::Error("trap::set_type() usa: spike, arrow, fire, falling, saw".to_string());
+    }
+    
+    let em = get_entity_manager();
+    let mut em_ref = em.borrow_mut();
+    
+    if let Some(entity) = em_ref.get_mut(&id) {
+        if entity.entity_type != "trap" {
+            return Valor::Error(format!("entity '{}' no es de tipo 'trap'", id));
+        }
+        entity.set_data("trap_type", Valor::Texto(trap_type.clone()));
+        Valor::Texto(format!("trap::set_type('{}', '{}')", id, trap_type))
+    } else {
+        Valor::Error(format!("trap::set_type() La entidad '{}' no existe", id))
+    }
+}
+
+/// trap::set_damage(id, damage) - Establecer daño
+pub fn trap_set_damage(
+    args: &[Expr],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
+    if args.len() != 2 {
+        return Valor::Error("trap::set_damage() requiere 2 argumentos: id, damage".to_string());
+    }
+    
+    let id_val = evaluar_expr(&args[0], executor, funcs);
+    let damage_val = evaluar_expr(&args[1], executor, funcs);
+    
+    let id = match id_val {
+        Valor::Texto(s) => s,
+        _ => return Valor::Error("trap::set_damage() id debe ser texto".to_string()),
+    };
+    
+    let damage = match damage_val {
+        Valor::Num(n) => n,
+        _ => return Valor::Error("trap::set_damage() damage debe ser número".to_string()),
+    };
+    
+    let em = get_entity_manager();
+    let mut em_ref = em.borrow_mut();
+    
+    if let Some(entity) = em_ref.get_mut(&id) {
+        if entity.entity_type != "trap" {
+            return Valor::Error(format!("entity '{}' no es de tipo 'trap'", id));
+        }
+        entity.set_data("damage", Valor::Num(damage));
+        Valor::Texto(format!("trap::set_damage('{}', {})", id, damage))
+    } else {
+        Valor::Error(format!("trap::set_damage() La entidad '{}' no existe", id))
+    }
+}
+
+/// trap::set_trigger_range(id, range) - Rango de activación
+pub fn trap_set_trigger_range(
+    args: &[Expr],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
+    if args.len() != 2 {
+        return Valor::Error("trap::set_trigger_range() requiere 2 argumentos: id, range".to_string());
+    }
+    
+    let id_val = evaluar_expr(&args[0], executor, funcs);
+    let range_val = evaluar_expr(&args[1], executor, funcs);
+    
+    let id = match id_val {
+        Valor::Texto(s) => s,
+        _ => return Valor::Error("trap::set_trigger_range() id debe ser texto".to_string()),
+    };
+    
+    let range = match range_val {
+        Valor::Num(n) => n,
+        _ => return Valor::Error("trap::set_trigger_range() range debe ser número".to_string()),
+    };
+    
+    let em = get_entity_manager();
+    let mut em_ref = em.borrow_mut();
+    
+    if let Some(entity) = em_ref.get_mut(&id) {
+        if entity.entity_type != "trap" {
+            return Valor::Error(format!("entity '{}' no es de tipo 'trap'", id));
+        }
+        entity.set_data("trigger_range", Valor::Num(range));
+        Valor::Texto(format!("trap::set_trigger_range('{}', {})", id, range))
+    } else {
+        Valor::Error(format!("trap::set_trigger_range() La entidad '{}' no existe", id))
+    }
+}
+
+/// trap::set_visible(id, visible) - Hacer visible/invisible
+pub fn trap_set_visible(
+    args: &[Expr],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
+    if args.len() != 2 {
+        return Valor::Error("trap::set_visible() requiere 2 argumentos: id, visible".to_string());
+    }
+    
+    let id_val = evaluar_expr(&args[0], executor, funcs);
+    let visible_val = evaluar_expr(&args[1], executor, funcs);
+    
+    let id = match id_val {
+        Valor::Texto(s) => s,
+        _ => return Valor::Error("trap::set_visible() id debe ser texto".to_string()),
+    };
+    
+    let visible = match visible_val {
+        Valor::Bool(b) => b,
+        Valor::Num(n) => n != 0.0,
+        _ => return Valor::Error("trap::set_visible() visible debe ser bool o número".to_string()),
+    };
+    
+    let em = get_entity_manager();
+    let mut em_ref = em.borrow_mut();
+    
+    if let Some(entity) = em_ref.get_mut(&id) {
+        if entity.entity_type != "trap" {
+            return Valor::Error(format!("entity '{}' no es de tipo 'trap'", id));
+        }
+        entity.set_data("visible", Valor::Bool(visible));
+        Valor::Texto(format!("trap::set_visible('{}', {})", id, visible))
+    } else {
+        Valor::Error(format!("trap::set_visible() La entidad '{}' no existe", id))
+    }
+}
+
+/// trap::is_triggered(id) - Verificar si está activada
+pub fn trap_is_triggered(
+    args: &[Expr],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
+    if args.len() != 1 {
+        return Valor::Error("trap::is_triggered() requiere 1 argumento: id".to_string());
+    }
+    
+    let id_val = evaluar_expr(&args[0], executor, funcs);
+    let id = match id_val {
+        Valor::Texto(s) => s,
+        _ => return Valor::Error("trap::is_triggered() id debe ser texto".to_string()),
+    };
+    
+    let em = get_entity_manager();
+    let em_ref = em.borrow();
+    
+    if let Some(entity) = em_ref.get(&id) {
+        if let Some(Valor::Bool(triggered)) = entity.get_data("is_triggered") {
+            Valor::Bool(*triggered)
+        } else {
+            Valor::Bool(false)
+        }
+    } else {
+        Valor::Error(format!("trap::is_triggered() La entidad '{}' no existe", id))
+    }
+}
+
+/// trap::activate(id) - Activar trampa
+pub fn trap_activate(
+    args: &[Expr],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
+    if args.len() != 1 {
+        return Valor::Error("trap::activate() requiere 1 argumento: id".to_string());
+    }
+    
+    let id_val = evaluar_expr(&args[0], executor, funcs);
+    let id = match id_val {
+        Valor::Texto(s) => s,
+        _ => return Valor::Error("trap::activate() id debe ser texto".to_string()),
+    };
+    
+    let em = get_entity_manager();
+    let mut em_ref = em.borrow_mut();
+    
+    if let Some(entity) = em_ref.get_mut(&id) {
+        if entity.entity_type != "trap" {
+            return Valor::Error(format!("entity '{}' no es de tipo 'trap'", id));
+        }
+        entity.set_data("is_triggered", Valor::Bool(true));
+        Valor::Texto(format!("trap::activate() - '{}' activada", id))
+    } else {
+        Valor::Error(format!("trap::activate() La entidad '{}' no existe", id))
+    }
+}
+
+/// trap::reset(id) - Resetear trampa
+pub fn trap_reset(
+    args: &[Expr],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
+    if args.len() != 1 {
+        return Valor::Error("trap::reset() requiere 1 argumento: id".to_string());
+    }
+    
+    let id_val = evaluar_expr(&args[0], executor, funcs);
+    let id = match id_val {
+        Valor::Texto(s) => s,
+        _ => return Valor::Error("trap::reset() id debe ser texto".to_string()),
+    };
+    
+    let em = get_entity_manager();
+    let mut em_ref = em.borrow_mut();
+    
+    if let Some(entity) = em_ref.get_mut(&id) {
+        if entity.entity_type != "trap" {
+            return Valor::Error(format!("entity '{}' no es de tipo 'trap'", id));
+        }
+        entity.set_data("is_triggered", Valor::Bool(false));
+        Valor::Texto(format!("trap::reset() - '{}' reseteada", id))
+    } else {
+        Valor::Error(format!("trap::reset() La entidad '{}' no existe", id))
+    }
+}
+
+// ============================================================================
+// COIN COMPONENT (FASE 2C)
+// ============================================================================
+
+/// coin::set_value(id, value) - Establecer valor de moneda
+pub fn coin_set_value(
+    args: &[Expr],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
+    if args.len() != 2 {
+        return Valor::Error("coin::set_value() requiere 2 argumentos: id, value".to_string());
+    }
+    
+    let id_val = evaluar_expr(&args[0], executor, funcs);
+    let value_val = evaluar_expr(&args[1], executor, funcs);
+    
+    let id = match id_val {
+        Valor::Texto(s) => s,
+        _ => return Valor::Error("coin::set_value() id debe ser texto".to_string()),
+    };
+    
+    let value = match value_val {
+        Valor::Num(n) => n,
+        _ => return Valor::Error("coin::set_value() value debe ser número".to_string()),
+    };
+    
+    let em = get_entity_manager();
+    let mut em_ref = em.borrow_mut();
+    
+    if let Some(entity) = em_ref.get_mut(&id) {
+        if entity.entity_type != "coin" {
+            return Valor::Error(format!("entity '{}' no es de tipo 'coin'", id));
+        }
+        entity.set_data("value", Valor::Num(value));
+        Valor::Texto(format!("coin::set_value('{}', {})", id, value))
+    } else {
+        Valor::Error(format!("coin::set_value() La entidad '{}' no existe", id))
+    }
+}
+
+/// coin::set_type(id, type) - Tipo de moneda
+pub fn coin_set_type(
+    args: &[Expr],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
+    if args.len() != 2 {
+        return Valor::Error("coin::set_type() requiere 2 argumentos: id, type".to_string());
+    }
+    
+    let id_val = evaluar_expr(&args[0], executor, funcs);
+    let type_val = evaluar_expr(&args[1], executor, funcs);
+    
+    let id = match id_val {
+        Valor::Texto(s) => s,
+        _ => return Valor::Error("coin::set_type() id debe ser texto".to_string()),
+    };
+    
+    let coin_type = match type_val {
+        Valor::Texto(s) => s,
+        _ => return Valor::Error("coin::set_type() type debe ser texto".to_string()),
+    };
+    
+    // Validar tipo
+    if !["bronze", "silver", "gold", "gem", "diamond"].contains(&coin_type.as_str()) {
+        return Valor::Error("coin::set_type() usa: bronze, silver, gold, gem, diamond".to_string());
+    }
+    
+    let em = get_entity_manager();
+    let mut em_ref = em.borrow_mut();
+    
+    if let Some(entity) = em_ref.get_mut(&id) {
+        if entity.entity_type != "coin" {
+            return Valor::Error(format!("entity '{}' no es de tipo 'coin'", id));
+        }
+        entity.set_data("coin_type", Valor::Texto(coin_type.clone()));
+        Valor::Texto(format!("coin::set_type('{}', '{}')", id, coin_type))
+    } else {
+        Valor::Error(format!("coin::set_type() La entidad '{}' no existe", id))
+    }
+}
+
+/// coin::get_value(id) - Obtener valor
+pub fn coin_get_value(
+    args: &[Expr],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
+    if args.len() != 1 {
+        return Valor::Error("coin::get_value() requiere 1 argumento: id".to_string());
+    }
+    
+    let id_val = evaluar_expr(&args[0], executor, funcs);
+    let id = match id_val {
+        Valor::Texto(s) => s,
+        _ => return Valor::Error("coin::get_value() id debe ser texto".to_string()),
+    };
+    
+    let em = get_entity_manager();
+    let em_ref = em.borrow();
+    
+    if let Some(entity) = em_ref.get(&id) {
+        if let Some(Valor::Num(value)) = entity.get_data("value") {
+            Valor::Num(*value)
+        } else {
+            Valor::Num(5.0)  // default
+        }
+    } else {
+        Valor::Error(format!("coin::get_value() La entidad '{}' no existe", id))
+    }
+}
+
+/// coin::collect(id, player_id) - Recolectar moneda
+pub fn coin_collect(
+    args: &[Expr],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
+    if args.len() != 2 {
+        return Valor::Error("coin::collect() requiere 2 argumentos: id, player_id".to_string());
+    }
+    
+    let id_val = evaluar_expr(&args[0], executor, funcs);
+    let _player_id_val = evaluar_expr(&args[1], executor, funcs);
+    
+    let id = match id_val {
+        Valor::Texto(s) => s,
+        _ => return Valor::Error("coin::collect() id debe ser texto".to_string()),
+    };
+    
+    let em = get_entity_manager();
+    let mut em_ref = em.borrow_mut();
+    
+    if let Some(entity) = em_ref.get_mut(&id) {
+        if entity.entity_type != "coin" {
+            return Valor::Error(format!("entity '{}' no es de tipo 'coin'", id));
+        }
+        
+        let value = match entity.get_data("value") {
+            Some(Valor::Num(v)) => *v,
+            _ => 5.0,
+        };
+        
+        // Marcar como recolectada
+        entity.set_data("is_collected", Valor::Bool(true));
+        entity.is_active = false;
+        
+        Valor::Texto(format!("coin::collect() - '{}' recolectada (+{} coins)", id, value))
+    } else {
+        Valor::Error(format!("coin::collect() La entidad '{}' no existe", id))
+    }
+}
+
+/// coin::is_collected(id) - Verificar si fue recolectada
+pub fn coin_is_collected(
+    args: &[Expr],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
+    if args.len() != 1 {
+        return Valor::Error("coin::is_collected() requiere 1 argumento: id".to_string());
+    }
+    
+    let id_val = evaluar_expr(&args[0], executor, funcs);
+    let id = match id_val {
+        Valor::Texto(s) => s,
+        _ => return Valor::Error("coin::is_collected() id debe ser texto".to_string()),
+    };
+    
+    let em = get_entity_manager();
+    let em_ref = em.borrow();
+    
+    if let Some(entity) = em_ref.get(&id) {
+        if let Some(Valor::Bool(collected)) = entity.get_data("is_collected") {
+            Valor::Bool(*collected)
+        } else {
+            Valor::Bool(false)
+        }
+    } else {
+        Valor::Error(format!("coin::is_collected() La entidad '{}' no existe", id))
+    }
+}
+
+// ============================================================================
 // TESTS
 // ============================================================================
 

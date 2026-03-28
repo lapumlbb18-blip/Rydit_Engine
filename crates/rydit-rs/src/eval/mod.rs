@@ -2308,6 +2308,86 @@ pub fn evaluar_expr(
                 return entity::area2d_destroy(args, executor, funcs);
             }
 
+            // ========================================================================
+            // TRAP COMPONENT (FASE 2C)
+            // ========================================================================
+
+            // trap::set_type(id, type) - Tipo de trampa
+            if name == "trap::set_type" && args.len() == 2 {
+                use crate::modules::entity;
+                return entity::trap_set_type(args, executor, funcs);
+            }
+
+            // trap::set_damage(id, damage) - Daño
+            if name == "trap::set_damage" && args.len() == 2 {
+                use crate::modules::entity;
+                return entity::trap_set_damage(args, executor, funcs);
+            }
+
+            // trap::set_trigger_range(id, range) - Rango
+            if name == "trap::set_trigger_range" && args.len() == 2 {
+                use crate::modules::entity;
+                return entity::trap_set_trigger_range(args, executor, funcs);
+            }
+
+            // trap::set_visible(id, visible) - Visible/invisible
+            if name == "trap::set_visible" && args.len() == 2 {
+                use crate::modules::entity;
+                return entity::trap_set_visible(args, executor, funcs);
+            }
+
+            // trap::is_triggered(id) - Verificar activación
+            if name == "trap::is_triggered" && args.len() == 1 {
+                use crate::modules::entity;
+                return entity::trap_is_triggered(args, executor, funcs);
+            }
+
+            // trap::activate(id) - Activar
+            if name == "trap::activate" && args.len() == 1 {
+                use crate::modules::entity;
+                return entity::trap_activate(args, executor, funcs);
+            }
+
+            // trap::reset(id) - Resetear
+            if name == "trap::reset" && args.len() == 1 {
+                use crate::modules::entity;
+                return entity::trap_reset(args, executor, funcs);
+            }
+
+            // ========================================================================
+            // COIN COMPONENT (FASE 2C)
+            // ========================================================================
+
+            // coin::set_value(id, value) - Valor de moneda
+            if name == "coin::set_value" && args.len() == 2 {
+                use crate::modules::entity;
+                return entity::coin_set_value(args, executor, funcs);
+            }
+
+            // coin::set_type(id, type) - Tipo de moneda
+            if name == "coin::set_type" && args.len() == 2 {
+                use crate::modules::entity;
+                return entity::coin_set_type(args, executor, funcs);
+            }
+
+            // coin::get_value(id) - Obtener valor
+            if name == "coin::get_value" && args.len() == 1 {
+                use crate::modules::entity;
+                return entity::coin_get_value(args, executor, funcs);
+            }
+
+            // coin::collect(id, player_id) - Recolectar
+            if name == "coin::collect" && args.len() == 2 {
+                use crate::modules::entity;
+                return entity::coin_collect(args, executor, funcs);
+            }
+
+            // coin::is_collected(id) - Verificar recolección
+            if name == "coin::is_collected" && args.len() == 1 {
+                use crate::modules::entity;
+                return entity::coin_is_collected(args, executor, funcs);
+            }
+
             // --- INPUT MAP (v0.5.1) ---
             // input_map::register(combo, action) - Registrar combinación
             if name == "input_map::register" && args.len() == 2 {
