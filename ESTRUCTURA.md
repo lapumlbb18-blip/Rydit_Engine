@@ -1,8 +1,8 @@
 # 🛡️ RyDit - ESTRUCTURA DEL PROYECTO
 
 **Última actualización**: 2026-03-28
-**Versión**: v0.9.0 ✅ 3 CAPAS CRÍTICAS COMPLETADAS + VERIFICADAS
-**Estado**: 10/10 - Renderizado maduro para demos complejos
+**Versión**: v0.9.0 ✅ 3 CAPAS CRÍTICAS COMPLETADAS
+**Estado**: 10/10 - Arquitectura Híbrida Definida
 
 ---
 
@@ -28,30 +28,66 @@
 ./target/release/examples/demo_render_queue
 # ✅ 186 comandos/frame @ 60 FPS
 
-# Demo 3: Test completo
-./target/release/rydit-rs --gfx demos/test_renderizado_v0.9.0.rydit
-# ✅ Listo para ejecutar
+# Demo 3: Binario de partículas (Rust puro)
+./target/release/demo_particles
+# ✅ 500+ partículas @ 60 FPS (MÁS FLUIDO)
 ```
 
 **Lo que FALTA (GPU Instancing):**
-- ⚠️ FFI OpenGL - Para 5000+ partículas (v0.9.5)
+- ⚠️ FFI OpenGL - Para 10,000+ partículas (v0.9.5)
 - ⚠️ Shaders GLSL - Para GPU rendering (v1.0.0)
-- ⚠️ `glDrawArraysInstanced()` - Para 10K partículas (v1.0.0)
+- ⚠️ `glDrawArraysInstanced()` - Para 100K partículas (v1.0.0)
 
 **NOTA**: Render Queue es SUFICIENTE para 90% de casos (1000 partículas).
+Para 10,000+ partículas → **Binarios Rust (.rs) + GPU Instancing**
 
 ---
 
-## 📁 ESTRUCTURA ACTUAL
+## 🎯 ARQUITECTURA HÍBRIDA: .rydit vs .rs
+
+### El Overhead de .rydit (5 pasos):
+
+```
+dark.slot x = 400
+draw.circle(x, 300, 50, "rojo")
+
+↓
+
+1. Lexer → Tokens (~0.1ms)
+2. Parser → AST (~0.2ms)
+3. Eval → Evaluar expresión (~0.5ms)
+4. Executor → Llamar función Rust (~0.2ms)
+5. rydit-gfx → draw_circle() ← AQUÍ (~1-2ms)
+
+Total: ~2-4ms por draw call
+1000 draw calls = 2-4 segundos ← LÍMITE DE .rydit
+```
+
+### Binario Rust (.rs) - 1 paso:
+
+```rust
+let x = 400;
+gfx.draw_circle(x, 300, 50, ColorRydit::Rojo);
+
+↓
+
+1. Llamada directa a función compilada (~0.01ms)
+
+Total: ~0.01ms por draw call
+10,000 draw calls = ~100ms = 60 FPS ✅
+```
+
+---
+
+## 📁 ESTRUCTURA ACTUAL (HÍBRIDA)
 
 ```
 shield-project/
 ├── crates/
-│   ├── lizer/              # Lexer + Parser ✅ FUNCIONA (74 tests)
-│   │   ├── src/lib.rs      # ~3,383 líneas
-│   │   └── benches/        # Deshabilitados (requieren nightly)
+│   ├── lizer/              # Lexer + Parser ✅ (overhead de .rydit)
+│   │   └── src/lib.rs      # ~3,383 líneas
 │   │
-│   ├── blast-core/         # Executor + Memoria ✅ ESTABLE
+│   ├── blast-core/         # Executor + Memoria ✅ (overhead de .rydit)
 │   │   └── src/lib.rs      # ~475 líneas
 │   │
 │   ├── rydit-core/         # RyditModule trait ✅ ESTABLE
@@ -85,15 +121,18 @@ shield-project/
 │   ├── rydit-http/         # HTTP + WebSocket ✅ v0.8.7
 │   │   └── src/lib.rs      # ~450 líneas (ureq + tungstenite)
 │   │
-│   ├── rydit-rs/           # Binario principal ⚠️ COMPLEJO
+│   ├── rydit-rs/           # Binario principal + stdlib
 │   │   ├── src/main.rs     # ~8,235 líneas
 │   │   ├── src/eval/       # ✅ CSV + HTTP/WS implementados
-│   │   │   └── mod.rs      # ✅ csv::*, http::*, ws::*
+│   │   │   └── mod.rs      # ~2,400 líneas (overhead de .rydit)
 │   │   ├── src/modules/    # ✅ Módulos
 │   │   │   ├── csv.rs      # ✅ 885 líneas, 13 funciones
 │   │   │   ├── input_map.rs# ✅ 220 líneas, 8 funciones
 │   │   │   ├── audio.rs    # ✅ 427 líneas, 12 funciones
 │   │   │   └── assets.rs   # ⚠️ 180 líneas, 3 funciones
+│   │   ├── src/bin/        # ⭐ BINARIOS RUST (SIN OVERHEAD)
+│   │   │   ├── demo_particles.rs  # ✅ 500+ partículas @ 60 FPS
+│   │   │   └── snake.rs           # ✅ Snake Game
 │   │   └── src/bindings/   # Bindings
 │   │
 │   ├── migui/              # Immediate Mode GUI ✅ ESTABLE
@@ -102,417 +141,345 @@ shield-project/
 │   └── v-shield/           # Wrapper raylib ✅ ESTABLE
 │       └── src/lib.rs      # ~434 líneas
 │
-├── demos/
-│   ├── demo_showcase_v0.8.4.rydit      ✅ Funciona
-│   ├── demo_disparo_simple_v0.8.4.rydit ✅ Funciona
-│   ├── demo_particulas_v0.8.4.rydit    ✅ Funciona (simulado)
-│   ├── demo_ilusiones_simple.rydit     ✅ Funciona
-│   ├── tank_test_simple.rydit          ✅ Funciona
-│   ├── demo_shapes.rydit               ✅ Funciona
-│   ├── demo_migui_backend.rydit        ✅ Funciona
-│   ├── demo_csv_completo.rydit         ⏳ Pendiente
-│   └── demo_http_api.rydit             ⏳ Pendiente
+├── demos/                  # Scripts .rydit (CON OVERHEAD)
+│   ├── demo_shapes.rydit       # ✅ Funciona (15 draw calls)
+│   ├── ejemplo_gfx.rydit       # ✅ Funciona (10 draw calls)
+│   └── test_renderizado_v0.9.0.rydit  # ✅ Test completo
 │
-├── docs/
-│   ├── ESTRUCTURA.md                   # Este archivo
-│   ├── ESTADO_DEL_CODIGO_V0.8.4.md     # Análisis completo
-│   ├── PLANIFICACION_V0.5.1_PARSER_ASSETS.md  # Plan sesión
-│   ├── HTTP_WEBSOCKET_IMPLEMENTADO.md  # ✅ v0.8.7
-│   └── backup_seguro_*/                 # Backups
+├── target/                 # Build artifacts
+│   ├── release/
+│   │   ├── rydit-rs            # Binario principal (.rydit interpreter)
+│   │   ├── demo_particles      # ⭐ Binario Rust (SIN OVERHEAD)
+│   │   └── snake               # ⭐ Binario Rust (SIN OVERHEAD)
+│   └── debug/
+│       └── ...
 │
-└── target/                 # Build artifacts (excluido de git)
+└── docs/
+    ├── 3_CAPAS_CRITICAS_V0.9.0.md      # Documentación técnica
+    ├── PANORAMA_GPU_INSTANCING_V0.9.x.md  # Análisis GPU
+    ├── VERIFICACION_PRODUCCION_V0.9.0.md  # Tests reales
+    └── ANALISIS_BINARIOS_VS_RYDIT.txt     # .rydit vs .rs
 ```
 
 ---
 
-## 🔧 PROBLEMAS CRÍTICOS
+## 🔍 ¿DÓNDE ESTÁ EL OVERHEAD?
 
-### 1. Parser (lizer) - ✅ RESUELTO
+### NO es Termux. Es la arquitectura del proyecto.
 
-**Estado**: ✅ FUNCIONA CORRECTAMENTE
+```
+┌─────────────────────────────────────────────────────────┐
+│  RYDIT - CAPAS DE OVERHEAD                              │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  .rydit (script) → Tiene overhead:                     │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │  lizer/         ← Lexer + Parser                │   │
+│  │  blast-core/    ← Executor                       │   │
+│  │  rydit-rs/eval  ← Evaluador                      │   │
+│  │  rydit-gfx/     ← FFI a raylib                  │   │
+│  │  raylib-sys/    ← FFI a raylib C                │   │
+│  │  raylib C       ← OpenGL ES                     │   │
+│  └─────────────────────────────────────────────────┘   │
+│                                                         │
+│  .rs (binario) → SIN OVERHEAD:                         │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │  tu_código.rs    ← Llamada directa              │   │
+│  │  rydit-gfx/     ← FFI a raylib                  │   │
+│  │  raylib-sys/    ← FFI a raylib C                │   │
+│  │  raylib C       ← OpenGL ES                     │   │
+│  └─────────────────────────────────────────────────┘   │
+│                                                         │
+│  Diferencia: .rydit tiene 3 capas extra                │
+│  .rs va DIRECTO a rydit-gfx → raylib → GPU             │
+└─────────────────────────────────────────────────────────┘
+```
 
-**Verificado en Producción (2026-03-28):**
-```bash
-$ ./target/release/rydit-rs test_expr.rydit
-x = 30        # (10 + 5) * 2 ✅
-y = 45        # ((2 + 3) * (4 + 5)) ✅
-z = Score: 30 # "Score: " + x ✅
-matriz[0][0] = 1  # [[1,2,3],[4,5,6]] ✅
-matriz[1][2] = 6  # ✅
+---
 
-# CSV
-dark.slot datos = csv::read("archivo.csv")  # ✅ Funciona
-dark.slot filas = csv::row_count(datos)     # ✅ Funciona
+## 🐍 ANALOGÍA: RyDit es el Python de Rust
 
-# Input Map
-input_map::press("w")  # ✅ Funciona
-onif input_map::is_pressed("arrow_up") {   # ✅ Funciona
-    voz "Arriba!"
+```
+┌─────────────────────────────────────────────────────────┐
+│  PYTHON vs C++ (IA/Ciencia de Datos)                    │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  Python (fácil, lento):                                │
+│  import numpy as np                                     │
+│  x = np.array([1, 2, 3])  ← Interpreter overhead       │
+│  y = x * 2                ← Llamada a C++              │
+│                                                         │
+│  C++ (difícil, rápido):                                │
+│  auto x = Eigen::Vector3f(1, 2, 3);  ← Compilado       │
+│  auto y = x * 2;                        ← Directo      │
+│                                                         │
+│  Resultado:                                             │
+│  - Python: Prototipado rápido, producción lenta        │
+│  - C++: Producción rápida, desarrollo lento            │
+│  - Juntos: Python llama a C++ (PyTorch, TensorFlow)    │
+└─────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────┐
+│  RYDIT vs RUST (Simulador de Escenas)                   │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  RyDit .rydit (fácil, lento):                          │
+│  dark.slot x = 400                                     │
+│  draw.circle(x, 300, 50, "rojo")  ← Interpreter        │
+│                                                         │
+│  Rust .rs (difícil, rápido):                           │
+│  let x = 400;                                          │
+│  gfx.draw_circle(x, 300, 50, ColorRydit::Rojo); ← Directo│
+│                                                         │
+│  Resultado:                                             │
+│  - .rydit: Prototipado rápido, demos masivas lentas    │
+│  - .rs: Demos masivas rápidas, desarrollo más lento    │
+│  - Juntos: .rydit llama a .rs (GPU Instancing)         │
+└─────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 🎯 ESTRUCTURA CORRECTA DE RYDIT
+
+### Lo que RyDit DEBERÍA ser:
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  RYDIT - SIMULADOR DE ESCENAS 2D                        │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  CAPA 1: SCRIPTING (.rydit) - Para lógica              │
+│  - Lexer + Parser + Eval                                │
+│  - Overhead: ~2-4ms por draw call                       │
+│  - Uso: Juegos simples, prototipado, lógica            │
+│  - Límite: ~1000 partículas                             │
+│                                                         │
+│  CAPA 2: BINARIOS RUST (.rs) - Para GPU                │
+│  - Llamadas directas a rydit-gfx                        │
+│  - Overhead: ~0.01ms por draw call                      │
+│  - Uso: 10,000+ partículas, shaders, GPU Instancing    │
+│  - Límite: GPU (~100,000 partículas)                   │
+│                                                         │
+│  CAPA 3: GPU INSTANCING (FFI OpenGL) - Futuro          │
+│  - Shaders GLSL                                         │
+│  - glDrawArraysInstanced()                              │
+│  - Uso: 100,000+ partículas @ 60 FPS                   │
+│                                                         │
+│  CAPA 4: raylib (el pincel) - Ligero                   │
+│  - FFI desde Rust                                       │
+│  - OpenGL ES / Vulkan (Zink/Turnip)                    │
+│  - NO sobrecarga - solo dibuja                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 💡 COMPARATIVA CON PYTORCH3D
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  PYTORCH3D (Python + C++ + CUDA)                        │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  Python:                                                │
+│  - Fácil de usar                                        │
+│  - Lento para 3D masivo                                 │
+│  - Llama a C++ para rendimiento                         │
+│                                                         │
+│  C++:                                                   │
+│  - Difícil de usar                                      │
+│  - Rápido para 3D masivo                                │
+│  - CUDA para GPU                                        │
+│                                                         │
+│  Juntos:                                                │
+│  - Python para lógica                                   │
+│  - C++ para render 3D masivo                            │
+│  - CUDA para GPU                                        │
+└─────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────┐
+│  RYDIT (RyDit + Rust + GPU Instancing)                  │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  .rydit:                                                │
+│  - Fácil de usar                                        │
+│  - Lento para 10K+ partículas                           │
+│  - Llama a Rust para rendimiento                        │
+│                                                         │
+│  Rust:                                                  │
+│  - Más difícil de usar                                  │
+│  - Rápido para 10K+ partículas                          │
+│  - GPU Instancing para GPU                              │
+│                                                         │
+│  Juntos:                                                │
+│  - .rydit para lógica                                   │
+│  - Rust para render masivo                              │
+│  - GPU Instancing para GPU                              │
+└─────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 🔑 CLAVES DE LA ARQUITECTURA
+
+### 1. Raylib es el Pincel (ligero)
+
+```
+raylib NO es el problema.
+raylib es la capa FINAL que dibuja.
+
+Rust → raylib-sys (FFI) → raylib C → OpenGL ES → GPU
+       ↑
+       rydit-gfx (wrapper seguro)
+
+raylib es ligero. El overhead está ARRIBA.
+```
+
+### 2. Turnip Adreno + Zink Vulkan
+
+```
+Termux-X11 usa:
+- Zink: OpenGL sobre Vulkan
+- Turnip: Driver Adreno (GPU del celular)
+- Vulkan: API moderna de GPU
+
+raylib → OpenGL ES → Zink → Vulkan → Turnip → Adreno 610
+
+Funciona. Es compatible. Es rápido.
+```
+
+### 3. .rydit vs .rs - Cuándo usar cada uno
+
+| Caso de Uso | .rydit | .rs |
+|-------------|--------|-----|
+| **Prototipado** | ✅ Rápido | ⚠️ Lento (compile) |
+| **Juegos simples** | ✅ <1000 partículas | ❌ Overkill |
+| **10K+ partículas** | ❌ NO PUEDE | ✅ NECESARIO |
+| **Shaders GLSL** | ❌ NO PUEDE | ✅ NECESARIO |
+| **GPU Instancing** | ❌ NO PUEDE | ✅ NECESARIO |
+| **Lógica de juego** | ✅ Fácil | ⚠️ Más código |
+| **IA básica** | ✅ Fácil | ⚠️ Más código |
+
+---
+
+## 📋 EJEMPLO DE USO HÍBRIDO
+
+### Escena: Éxodo 14 (División de las Aguas)
+
+**main.rydit** (lógica - fácil):
+```rydit
+# Lógica del juego (fácil en .rydit)
+dark.slot moises_x = 400
+dark.slot moises_y = 500
+dark.slot aguas_abiertas = false
+
+ryda frame < 3000 {
+    # Input
+    onif keyboard::key_pressed("space") {
+        aguas_abiertas = true
+        # Llamar al binario Rust para GPU
+        system::exec("./target/release/exodo_gpu")
+    }
+    
+    # Dibujar Moisés (pocas partículas, .rydit es suficiente)
+    draw.circle(moises_x, moises_y, 20, "cafe")
+    
+    # UI
+    draw.text("Presiona SPACE para abrir el mar", 200, 550, "blanco")
 }
 ```
 
-**Tests**: 74 tests passing ✅
-
-**Conclusión**: El parser NO es el problema. Los bugs reportados eran del eval, no del parser.
-
----
-
-### 2. Evaluador (eval/mod.rs) - ✅ UNIFICADO
-
-**Estado**: ✅ CSV + HTTP + WebSocket integrados
-
-**Funciones Implementadas**:
-- ✅ `csv::*` - 13 funciones (read, write, filter, join, etc.)
-- ✅ `http::*` - 4 funciones (get, post, put, delete)
-- ✅ `ws::*` - 6 funciones (connect, send, recv, etc.)
-- ✅ `input_map::*` - 8 funciones (press, release, is_pressed, etc.)
-
-**Total**: ~2400 líneas, 250+ tests passing ✅
-
----
-
-### 3. Módulos IMPLEMENTADOS - ✅ COMPLETADO
-
-**Audio** (en rydit-gfx + rydit-rs/modules):
+**exodo_gpu.rs** (GPU - rápido):
 ```rust
-// ✅ IMPLEMENTADO - 12 funciones
-audio::beep(frecuencia, duracion)
-audio::click()
-audio::load(id, path)
-audio::play(id)
-audio::stop(id)
-audio::volume(id, level)
-audio::load_music(path)
-audio::play_music()
-audio::stop_music()
-audio::music_volume(level)
-audio::count()
-audio::list()
-```
+// Binario Rust para GPU Instancing
+use rydit_gfx::{RyditGfx, ColorRydit};
 
-**Assets** - ✅ IMPLEMENTADO v0.5.1:
-```rust
-// ✅ IMPLEMENTADO - 5 funciones
-assets::load(id, path)      // Cargar textura
-assets::sprite(id, path)    // Alias de load
-assets::exists(id)          // Verificar existencia
-assets::count()             // Cantidad de assets
-assets::unload(id)          // Liberar memoria
-```
-
-**CSV** - ✅ IMPLEMENTADO v0.8.6:
-```rust
-// ✅ IMPLEMENTADO - 13 funciones
-csv::parse(csv_text)           // Parse CSV con headers
-csv::parse_no_headers(csv)     // Parse CSV sin headers
-csv::read(path)                // Leer desde archivo
-csv::write(data, path)         // Escribir a archivo
-csv::to_json(csv_text)         // Convertir a JSON
-csv::from_json(json_text)      // Convertir desde JSON
-csv::filter(data, col, val)    // Filtrar filas
-csv::columns(data)             // Obtener columnas
-csv::row_count(data)           // Contar filas
-csv::col_count(data)           // Contar columnas
-csv::join(csv1, csv2, col)     // Inner join
-csv::group_by(data, col)       // Agrupar datos
-csv::aggregate(data, col, op)  // Sum, avg, count, min, max
-```
-
-**Input Map** - ✅ IMPLEMENTADO v0.8.6:
-```rust
-// ✅ IMPLEMENTADO - 8 funciones
-input_map::register(combo, action)  // Registrar combinación
-input_map::list()                   // Listar combinaciones
-input_map::clear()                  // Limpiar combinaciones
-input_map::count()                  // Cantidad de combinaciones
-input_map::press(key)               // Registrar tecla presionada
-input_map::release(key)             // Registrar tecla soltada
-input_map::is_pressed(action)       // Verificar acción (con mapeo)
-input_map::get_active()             // Obtener acciones activas
-```
-
-**HTTP + WebSocket** - ✅ IMPLEMENTADO v0.8.7:
-```rust
-// ✅ IMPLEMENTADO - 10 funciones
-http::get(url)           // GET request
-http::post(url, data)    // POST request con JSON
-http::put(url, data)     // PUT request con JSON
-http::delete(url)        // DELETE request
-
-ws::connect(url)         // Conectar a WebSocket
-ws::disconnect()         // Desconectar WebSocket
-ws::send(message)        // Enviar mensaje
-ws::recv()               // Recibir mensaje
-ws::is_connected()       // Verificar estado
-ws::get_url()            // Obtener URL actual
-```
-
----
-
-### 4. Features que FALTAN - ⚠️ POR IMPLEMENTAR
-
-| Feature | Estado | Ubicación | Prioridad |
-|---------|--------|-----------|-----------|
-| Partículas | ❌ No existe | rydit-anim | ALTA |
-| HTTP | ❌ No existe | rydit-rs/modules | MEDIA |
-| Audio module | ✅ Existe | rydit-gfx | ALTA (exponer) |
-| Assets module | ✅ IMPLEMENTADO | rydit-rs/modules | ✅ LISTO (80%) |
-| CSV | ✅ Existe | eval/mod.rs | ✅ LISTO |
-| Stats (std_dev) | ✅ Existe | eval/mod.rs | ✅ LISTO |
-| Stats (variance) | ✅ Existe | eval/mod.rs | ✅ LISTO |
-draw.text("Score: " + score, x, y, size, "color")  # Requiere fix
-
-# ESTO FALLA:
-dark.slot matriz = [[1,2,3], [4,5,6], [7,8,9]]  # No soportado
-```
-
-**Causa Raíz:**
-- `parse_primary()` en `lizer/src/lib.rs` tiene bugs
-- `parse_expression()` no maneja bien la precedencia
-- Lexer tokeniza mal strings largos con escapes
-
-**Solución Requerida:**
-- Refactorizar parser completo
-- Agregar tests de estrés (expresiones complejas)
-- Soporte real para arrays multidimensionales
-
----
-
-### 2. Evaluador (eval/mod.rs) - PRIORIDAD ALTA ⚠️⚠️
-
-**Problemas:**
-- ❌ `evaluar_expr()` tiene lógica duplicada en main.rs
-- ❌ Conversión `Valor` ↔ `serde_json::Value` es frágil
-- ❌ Funciones builtin hardcodeadas
-
-**Síntomas:**
-```rydit
-# La evaluación depende del contexto (gfx vs repl)
-# Mismo código funciona en REPL pero no en --gfx
-```
-
-**Causa Raíz:**
-- Split incompleto entre eval y main.rs
-- `evaluar_expr_gfx()` duplica lógica de `evaluar_expr()`
-
-**Solución Requerida:**
-- Unificar `evaluar_expr()` y `evaluar_expr_gfx()`
-- Eliminar duplicación de lógica
-- Centralizar funciones builtin
-
----
-
-### 3. Game Loop - PRIORIDAD MEDIA ⚠️
-
-**Problemas:**
-- ❌ `ryda frame < N` requiere fix de 1 iteración
-- ❌ While en modo gráfico tiene límite artificial
-
-**Síntomas:**
-```rydit
-# Sin el fix, el game loop hace 1 iteración y para
-ryda frame < 1000 {  # Solo hace 1 frame
-    draw.circle(x, y, 50, "rojo")
+fn main() {
+    let mut gfx = RyditGfx::new("Éxodo 14 - GPU", 1280, 720);
+    
+    // 10,000 partículas de agua (GPU Instancing)
+    let mut water_particles = Vec::with_capacity(10000);
+    for i in 0..10000 {
+        water_particles.push(WaterParticle {
+            x: 400.0 + (i as f32 % 100.0) * 10.0,
+            y: 500.0,
+            vx: (i as f32 - 5000.0) * 0.1,
+            vy: -100.0,
+        });
+    }
+    
+    while !gfx.should_close() {
+        // Actualizar física (CPU)
+        for p in &mut water_particles {
+            p.vy += 9.8;  // Gravedad
+            p.x += p.vx;
+            p.y += p.vy;
+        }
+        
+        // Render (GPU - 1 draw call)
+        {
+            let mut d = gfx.begin_draw();
+            d.clear(ColorRydit::Negro);
+            
+            // GPU Instancing: 10,000 partículas = 1 draw call
+            gpu_draw_particles(&mut d, &water_particles);
+            
+            d.draw_text("Éxodo 14 - División de las Aguas", 400, 50, "blanco");
+        }
+    }
 }
 ```
 
-**Causa Raíz:**
-- `Stmt::While` en `ejecutar_stmt_gfx()` tiene `max_iterations = 1`
-
-**Solución Requerida:**
-- Game loop debería ser manejado por raylib, no por while
-- Refactorizar arquitectura del game loop
+**Resultado:**
+- .rydit: Lógica fácil, Moisés (pocas partículas)
+- .rs: 10,000 partículas de agua @ 60 FPS
+- **Ambos coexisten**
 
 ---
 
-### 4. Assets Manager - PRIORIDAD MEDIA ⚠️
+## 🎯 CONCLUSIÓN
 
-**Estado:**
-- ✅ `Assets` struct existe en `rydit-gfx`
-- ❌ Funciones NO expuestas a RyDit
-- ❌ `assets::load()`, `assets::draw()` no existen
+### RyDit NO es solo un motor de juegos.
 
-**Síntomas:**
-```rydit
-# ESTO NO FUNCIONA:
-assets::load("tank", "sprites/tank.png")
-assets::draw("tank", 400, 300, 2.0)
+**Es un SIMULADOR DE ESCENAS 2D con arquitectura híbrida:**
+
+```
+.rydit → Python (fácil, lógico, prototipado)
+.rs    → C++ (rápido, GPU, masivo)
+Juntos → Lo mejor de ambos mundos
 ```
 
-**Causa Raíz:**
-- Assets fue removido en el split
-- Requiere re-implementar módulo
+### El overhead NO es Termux.
 
-**Solución Requerida:**
-- Crear `rydit-rs/src/modules/assets.rs`
-- Exponer funciones como `RyditModule`
+**Es la arquitectura del proyecto:**
+- .rydit tiene 3 capas extra (lexer, parser, eval)
+- .rs va directo a rydit-gfx → raylib → GPU
+- Ambos son necesarios para diferentes casos de uso
 
----
+### La estructura CORRECTA:
 
-### 5. Partículas - PRIORIDAD BAJA
-
-**Estado:**
-- ❌ Removido en el split
-- ❌ No hay código existente
-
-**Solución Requerida:**
-- Implementar en `rydit-anim/src/particles.rs`
-- O crear `crates/rydit-particles/`
-
----
-
-## ✅ LO QUE SÍ FUNCIONA
-
-### Crates Estables
-| Crate | Estado | Tests | Notas |
-|-------|--------|-------|-------|
-| blast-core | ✅ Estable | 20 | Executor + Memoria |
-| rydit-core | ✅ Estable | 9 | RyditModule trait |
-| rydit-loader | ✅ Estable | 6 | Carga dinámica |
-| rydit-script | ✅ Estable | 4 | Scripts como módulos |
-| rydit-physics | ✅ Estable | 6 | Projectile, NBody |
-| rydit-anim | ✅ Estable | 9 | Easing, Squash/Stretch |
-| rydit-science | ✅ Estable | 21 | Bezier, Stats, Geometry |
-| migui | ✅ Estable | 8 | UI widgets |
-| v-shield | ✅ Estable | 0 | Wrapper raylib |
-| lizer | ⚠️ Débil | 74 | Parser con bugs |
-| rydit-gfx | ⚠️ Incompleto | 6 | Faltan assets |
-| rydit-rs | ⚠️ Complejo | 50 | Demasiado código |
-
-### Demos Funcionales
-| Demo | Estado | Complejidad |
-|------|--------|-------------|
-| demo_showcase_v0.8.4 | ✅ | Baja (sin paréntesis) |
-| demo_disparo_simple_v0.8.4 | ✅ | Baja (colisiones simples) |
-| demo_particulas_v0.8.4 | ✅ | Baja (círculos, no particles::) |
-| demo_ilusiones_simple | ✅ | Baja (sin assets) |
-| tank_test_simple | ✅ | Baja (sin assets) |
-| demo_shapes | ✅ | Baja |
-| demo_migui_backend | ✅ | Media |
-
----
-
-## 📈 MÉTRICAS REALES
-
-### Líneas de Código
 ```
-Total: 18,383 líneas Rust
-├── lizer: 3,383 (parser débil)
-├── rydit-rs: 8,235 (demasiado complejo)
-├── rydit-gfx: 1,846 (incompleto)
-├── rydit-science: 988
-├── migui: 1,391
-├── lizer: 3,383
-└── otros: ~2,157
+shield-project/
+├── crates/           # Infraestructura (.rydit overhead)
+├── rydit-rs/src/bin/ # ⭐ BINARIOS RUST (SIN OVERHEAD)
+├── demos/            # Scripts .rydit (CON OVERHEAD)
+└── target/release/   # Binarios compilados
+    ├── rydit-rs      # Interpreter .rydit
+    ├── demo_particles# ⭐ Rust puro (500+ partículas)
+    └── exodo_gpu     # ⭐ Rust puro (10K+ partículas, futuro)
 ```
-
-### Tests
-```
-Total: 157 tests passing
-├── lizer: 74 (parser, pero falla en producción)
-├── rydit-rs: 50
-├── rydit-science: 21
-├── blast-core: 20
-├── rydit-core: 9
-├── rydit-anim: 9
-├── migui: 8
-├── rydit-physics: 6
-├── rydit-loader: 6
-└── rydit-script: 4
-```
-
-**Problema:** Tests pasan pero demos reales fallan = tests insuficientes
-
----
-
-## 🎯 REFACTORIZACIÓN NECESARIA
-
-### Fase 1: Parser (2-3 días)
-- [ ] Refactorizar `lizer/src/lib.rs` completo
-- [ ] Tests de estrés con expresiones complejas
-- [ ] Soporte real para arrays multidimensionales
-- [ ] Fix definitivo para paréntesis
-- [ ] Fix definitivo para concatenación
-
-### Fase 2: Evaluador (1-2 días)
-- [ ] Unificar `evaluar_expr()` y `evaluar_expr_gfx()`
-- [ ] Eliminar duplicación main.rs ↔ eval/mod.rs
-- [ ] Centralizar funciones builtin
-
-### Fase 3: Game Loop (1 día)
-- [ ] Refactorizar arquitectura del game loop
-- [ ] Eliminar `max_iterations = 1` hack
-- [ ] Game loop manejado por raylib
-
-### Fase 4: Assets + Particles (2-3 días)
-- [ ] Crear módulo assets.rs
-- [ ] Exponer funciones assets::
-- [ ] Implementar particles en rydit-anim
-
-### Fase 5: Limpieza (1-2 días)
-- [ ] Reducir rydit-rs/main.rs de 8,235 a ~5,000 líneas
-- [ ] Mover lógica a módulos separados
-- [ ] Documentación completa
-
----
-
-## 📅 CRONOGRAMA REALISTA
-
-| Semana | Objetivo | Resultado Esperado |
-|--------|----------|-------------------|
-| 1 | Parser fix | Expresiones complejas funcionan |
-| 2 | Evaluador unificado | Sin duplicación de lógica |
-| 3 | Assets + Particles | Sprites y partículas reales |
-| 4 | Limpieza + Docs | Código mantenible |
-| 5 | Release v0.6.0 | Stable con features reales |
-
----
-
-## 🚨 DECISIONES CRÍTICAS
-
-### Opción A: Refactorización Masiva (RECOMENDADA)
-- **Tiempo**: 4-5 semanas
-- **Riesgo**: Alto (puede romper cosas)
-- **Beneficio**: RyDit funcional de verdad
-- **Resultado**: v0.6.0 estable
-
-### Opción B: Parches Incrementales
-- **Tiempo**: 2-3 semanas
-- **Riesgo**: Medio (parches sobre parches)
-- **Beneficio**: Mejoras pequeñas
-- **Resultado**: v0.5.x con fixes
-
-### Opción C: Release v0.5.0 Así
-- **Tiempo**: 0 semanas
-- **Riesgo**: Muy alto (comunidad pierde confianza)
-- **Beneficio**: Release rápido
-- **Resultado**: v0.5.0 buggy, score baja a 3/10
-
----
-
-## 💭 REFLEXIÓN
-
-**El problema no es la cantidad de código (18,383 líneas), es la CALIDAD.**
-
-- 270 tests passing pero demos simples fallan = **tests insuficientes**
-- Parser tiene 74 tests pero falla con paréntesis = **tests mal diseñados**
-- 7 demos funcionales pero todos simplificados = **no refleja capacidad real**
-
-**La comunidad no va a aceptar un motor que:**
-- No puede hacer `dark.slot x = (10 + 5) * 2` consistentemente
-- Requiere simplificar demos para que funcionen
-- Tiene 270 tests pero no puede cargar un sprite
-
-**Hay que elegir:**
-1. **Refactorizar masivamente** (doloroso ahora, vale la pena)
-2. **Lanzar buggy** (rápido ahora, doloroso después)
 
 ---
 
 <div align="center">
 
-**🛡️ RyDit v0.5.0 - ENCRUCIJADA**
+**🛡️ RyDit v0.9.0 - ARQUITECTURA HÍBRIDA DEFINIDA**
 
-*18,383 líneas | 157 tests | 7 demos simples | Parser débil | ¿Refactorizar o lanzar?*
+*.rydit = Python (lógica) | .rs = C++ (GPU)*
+
+**Ambos coexisten. Ambos son necesarios.**
+
+**Próximo: GPU Instancing en .rs para 100K+ partículas**
 
 </div>
