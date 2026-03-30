@@ -1,0 +1,33 @@
+demo: módulo dinámico de ejemplo para Sistema Universal Ry ✅
+
+RESUMEN:
+- Módulo Rust compilable como biblioteca dinámica (.so)
+- 7 comandos: saludar, despedir, sumar, multiplicar, pi, cuadrado, info
+- 8 tests passing
+- README completo con instrucciones de uso
+
+ARCHIVOS NUEVOS:
+demos/modulo_ejemplo/
+├── Cargo.toml (cdylib, independiente)
+├── README.md (instrucciones completas)
+└── src/lib.rs (implementación + tests)
+
+CARACTERÍSTICAS:
+- Implementa RyditModule trait
+- Metadata completa (nombre, versión, descripción, license)
+- Función exportada create_module() para carga dinámica
+- Compatible con rydit-loader v0.8.2
+
+COMANDOS DISPONIBLES (LAZOS):
+echo '{"method":"saludar","params":["Rust"]}' | rydit-rs --lazos
+echo '{"method":"sumar","params":[5, 3]}' | rydit-rs --lazos
+echo '{"method":"pi","params":[]}' | rydit-rs --lazos
+echo '{"method":"info","params":[]}' | rydit-rs --lazos
+
+MÉTRICAS:
+- Tamaño: 532 KB
+- Tests: 8 passing
+- Build time: ~50s
+- Comandos: 7 disponibles
+
+PRÓXIMO: Integración completa en REPL + hot reload demo

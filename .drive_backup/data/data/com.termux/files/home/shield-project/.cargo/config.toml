@@ -1,0 +1,7 @@
+# Configuración local para RyDit Engine
+# Deshabilitar sccache por problemas de permisos en Termux
+
+[build]
+# Sobrescribir RUSTC_WRAPPER para deshabilitar sccache
+# Esto ignora la variable de entorno global
+rustc-wrapper = ""

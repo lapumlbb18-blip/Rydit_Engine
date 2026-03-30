@@ -1,0 +1,6 @@
+shield.init
+dark.slot f = 0
+ryda f < 10 {
+    dark.slot f = f + 1
+    draw.line(50, 50, 200, 50, "blanco")
+}

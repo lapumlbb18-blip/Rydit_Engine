@@ -1,0 +1,15 @@
+Backup Seguro - RyDit Engine
+=============================
+Fecha: Wed Mar 25 05:43:12 -04 2026
+Versión: antes_lazos
+Commit: 8aa1de3
+
+Archivos respaldados:
+Cargo.toml
+METADATA.txt
+README.md
+eval
+main.rs
+tests
+
+Motivo del backup: Implementación Protocolo LAZOS

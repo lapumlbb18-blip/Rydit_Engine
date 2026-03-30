@@ -1,0 +1,58 @@
+// io module - standard input/output library
+// v0.1.4 - Shield Project
+
+// read_file(path) -> file content
+rytmo read_file(path) {
+    return __file_read(path)
+}
+
+// write_file(path, content) -> 1 if success
+rytmo write_file(path, content) {
+    return __file_write(path, content)
+}
+
+// file_exists(path) -> true/false
+rytmo file_exists(path) {
+    return __file_exists(path)
+}
+
+// append_file(path, content) -> 1 if success
+rytmo append_file(path, content) {
+    onif __file_exists(path) {
+        dark.slot existente = __file_read(path)
+        return __file_write(path, existente + content)
+    } else {
+        return __file_write(path, content)
+    }
+}
+
+// print(text) -> print without newline
+rytmo print(text) {
+    voz text
+}
+
+// println(text) -> print with newline
+rytmo println(text) {
+    voz text
+}
+
+// Nuevas funciones v0.1.4
+// mkdir(path) -> 1 if success
+rytmo mkdir(path) {
+    return __dir_mkdir(path)
+}
+
+// remove(path) -> 1 if success
+rytmo remove(path) {
+    return __file_remove(path)
+}
+
+// rename(old, new) -> 1 if success
+rytmo rename(old, new) {
+    return __file_rename(old, new)
+}
+
+// copy(src, dst) -> 1 if success
+rytmo copy(src, dst) {
+    return __file_copy(src, dst)
+}

@@ -1,0 +1,8 @@
+# @nombre "Nivel 2 - Transición"
+# @musica "victoria.mp3"
+# @dificultad "medio"
+
+# Nivel 2 - Después de la transición
+# Archivo de ejemplo para demostrar transición entre niveles
+
+# Este nivel se carga cuando el usuario presiona 'N' en el nivel 1

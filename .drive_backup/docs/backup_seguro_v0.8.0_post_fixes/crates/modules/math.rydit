@@ -1,0 +1,94 @@
+rytmo sumar(a, b) {
+    return a + b
+}
+
+rytmo restar(a, b) {
+    return a - b
+}
+
+rytmo multiplicar(a, b) {
+    return a * b
+}
+
+rytmo dividir(a, b) {
+    onif b == 0 {
+        return 0
+    }
+    return a / b
+}
+
+rytmo pow(base, exponente) {
+    dark.slot resultado = 1
+    dark.slot i = 0
+    ryda i < exponente {
+        dark.slot resultado = resultado * base
+        dark.slot i = i + 1
+    }
+    return resultado
+}
+
+rytmo abs(valor) {
+    onif valor < 0 {
+        return 0 - valor
+    }
+    return valor
+}
+
+rytmo min(a, b) {
+    onif a < b {
+        return a
+    }
+    return b
+}
+
+rytmo max(a, b) {
+    onif a > b {
+        return a
+    }
+    return b
+}
+
+# =============================================================================
+# FUNCIONES MATH AVANZADAS - V0.3.0 (Tank Combat)
+# =============================================================================
+
+# sqrt(x) - Raíz cuadrada (builtin)
+# Usar: math::sqrt(x)
+
+# sin(x) - Seno (x en radianes) (builtin)
+# Usar: math::sin(x)
+
+# cos(x) - Coseno (x en radianes) (builtin)
+# Usar: math::cos(x)
+
+# tan(x) - Tangente (x en radianes) (builtin)
+# Usar: math::tan(x)
+
+# atan2(y, x) - Arcotangente (retorna radianes) (builtin)
+# Usar: math::atan2(y, x)
+
+# deg2rad(x) - Convertir grados a radianes (builtin)
+# Usar: math::deg2rad(x)
+
+# rad2deg(x) - Convertir radianes a grados (builtin)
+# Usar: math::rad2deg(x)
+
+# Funciones helper para Tank Combat
+rytmo distancia(x1, y1, x2, y2) {
+    dark.slot dx = x2 - x1
+    dark.slot dy = y2 - y1
+    return sqrt(dx*dx + dy*dy)
+}
+
+rytmo angulo_hacia(x1, y1, x2, y2) {
+    dark.slot dx = x2 - x1
+    dark.slot dy = y2 - y1
+    return atan2(dy, dx)
+}
+
+rytmo rotar_hacia(x, y, angulo, distancia) {
+    return [
+        x + cos(angulo) * distancia,
+        y + sin(angulo) * distancia
+    ]
+}

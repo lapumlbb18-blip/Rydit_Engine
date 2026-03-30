@@ -1,0 +1,88 @@
+// ============================================================================
+// DEMO MIGUI V0.4.0 - Immediate Mode GUI para RyDit
+// ============================================================================
+// Ejecutar: rydit-rs --migui demos/demo_migui.rydit
+// ============================================================================
+
+// Variables de estado
+contador = 0
+slider_valor = 50
+texto = "Hola Migui"
+checkbox_estado = false
+ventana_abierta = true
+
+// Función para dibujar la UI principal
+fn dibujar_ui() {
+    // Panel de fondo
+    migui::panel("panel_fondo", 10, 10, 300, 400, "panel")
+    
+    // Título
+    migui::label("lbl_titulo", "DEMO MIGUI V0.4.0", 20, 20, 280, 30)
+    
+    // Contador con botones
+    migui::label("lbl_contador", "Contador:", 20, 60, 100, 30)
+    
+    si = migui::button("btn_menos", "-", 120, 60, 40, 30)
+    si {
+        contador = contador - 1
+    }
+    
+    migui::label("lbl_valor_cont", str(contador), 170, 60, 50, 30)
+    
+    si = migui::button("btn_mas", "+", 230, 60, 40, 30)
+    si {
+        contador = contador + 1
+    }
+    
+    // Slider
+    migui::label("lbl_slider", "Slider:", 20, 110, 100, 30)
+    slider_valor = migui::slider("slider_demo", slider_valor, 0, 100, 120, 110, 160, 30)
+    
+    // Checkbox
+    cambio = migui::checkbox("chk_demo", "Activar opción", checkbox_estado, 20, 160, 200, 30)
+    si cambio {
+        checkbox_estado = !checkbox_estado
+    }
+    
+    // Textbox
+    migui::label("lbl_texto", "Texto:", 20, 210, 100, 30)
+    texto = migui::textbox("txt_demo", texto, 20, 240, 260, 35)
+    
+    // Mostrar posición del mouse
+    mx = migui::mouse_x()
+    my = migui::mouse_y()
+    migui::label("lbl_mouse", str("Mouse: ") + str(mx) + ", " + str(my), 20, 290, 260, 30)
+    
+    // Botón que muestra mensaje
+    si = migui::button("btn_saludar", "Saludar", 20, 330, 120, 35)
+    si {
+        print("¡" + texto + "!")
+    }
+    
+    // Botón para abrir ventana
+    si = migui::button("btn_ventana", "Abrir ventana", 150, 330, 130, 35)
+    si {
+        ventana_abierta = true
+    }
+}
+
+// Función para dibujar ventana flotante
+fn dibujar_ventana() {
+    si = migui::window("ventana_demo", "Ventana Flotante", ventana_abierta, 350, 50, 300, 200)
+    si {
+        // Contenido de la ventana
+        migui::label("lbl_ventana", "Esta es una ventana arrastrable", 360, 90, 280, 30)
+        migui::label("lbl_info", "Arrastra desde la barra azul", 360, 120, 280, 30)
+        
+        si = migui::button("btn_cerrar", "Cerrar", 360, 160, 100, 30)
+        si {
+            ventana_abierta = false
+        }
+    }
+}
+
+// Loop principal - se ejecuta en cada frame
+{
+    dibujar_ui()
+    dibujar_ventana()
+}

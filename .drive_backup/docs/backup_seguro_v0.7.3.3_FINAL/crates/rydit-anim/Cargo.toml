@@ -1,0 +1,11 @@
+[package]
+name = "rydit-anim"
+version = "0.7.3"
+edition = "2021"
+description = "Módulo de animación para RyDit - 12 principios de Disney"
+license = "MIT"
+
+[dependencies]
+rydit-core = { path = "../rydit-core" }
+serde_json = "1.0"
+serde = { version = "1.0", features = ["derive"] }

@@ -1,0 +1,14 @@
+[package]
+name = "rydit-gfx"
+version = "0.10.0"
+edition = "2021"
+description = "RyDit Graphics Layer - ECS + rlgl integration"
+links = "raylib"
+
+[dependencies]
+raylib = { version = "5.5.1", default-features = false, features = ["nobuild"] }
+migui = { path = "../migui" }
+rydit-ecs = { path = "../rydit-ecs" }  # ✅ v0.10.0: ECS integration
+
+[build-dependencies]
+pkg-config = "0.3"

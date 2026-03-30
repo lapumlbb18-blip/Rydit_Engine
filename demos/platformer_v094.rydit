@@ -1,0 +1,175 @@
+# 🛡️ RyDit v0.9.4 - Demo Platformer Simple
+# Demo: Platformer 2D demostrando todas las features de v0.9.4
+
+# ============================================================================
+# CONFIGURACIÓN INICIAL
+# ============================================================================
+
+window::set_title("RyDit v0.9.4 - Platformer")
+window::set_size(800, 600)
+window::set_fps_limit(60)
+
+# ============================================================================
+# VARIABLES
+# ============================================================================
+
+dark.slot frame = 0
+dark.slot jugador_x = 100
+dark.slot jugador_y = 400
+dark.slot jugador_vy = 0
+dark.slot en_suelo = 0
+dark.slot gravedad = 800
+dark.slot fuerza_salto = -350
+dark.slot velocidad = 150
+
+# ============================================================================
+# CREAR TILEMAP
+# ============================================================================
+
+tilemap::create(25, 19, 32)
+
+# Suelo
+tilemap::fill_rect(0, 17, 25, 2, 1)
+
+# Paredes
+tilemap::fill_rect(0, 0, 1, 19, 2)
+tilemap::fill_rect(24, 0, 1, 19, 2)
+
+# Plataformas
+tilemap::fill_rect(4, 13, 5, 1, 3)
+tilemap::fill_rect(12, 11, 5, 1, 3)
+tilemap::fill_rect(2, 8, 4, 1, 3)
+tilemap::fill_rect(18, 7, 4, 1, 3)
+tilemap::fill_rect(8, 4, 6, 1, 3)
+tilemap::fill_rect(20, 13, 3, 1, 3)
+
+# Meta
+tilemap::fill_rect(23, 16, 1, 1, 4)
+
+# ============================================================================
+# GAME LOOP
+# ============================================================================
+
+ryda frame < 100000 {
+    
+    # INPUT
+    dark.slot input_x = 0
+    onif tecla_presionada("arrow_right") {
+        input_x = 1
+    }
+    onif tecla_presionada("arrow_left") {
+        input_x = -1
+    }
+    
+    # Salto
+    onif tecla_presionada("space") {
+        onif en_suelo == 1 {
+            jugador_vy = fuerza_salto
+            en_suelo = 0
+        }
+    }
+    
+    # FÍSICAS
+    jugador_x = jugador_x + input_x * velocidad * 0.016
+    jugador_vy = jugador_vy + gravedad * 0.016
+    jugador_y = jugador_y + jugador_vy * 0.016
+    
+    # COLISIÓN SUELO (simple)
+    dark.slot tile_abajo = tilemap::get_tile(
+        matematica::floor((jugador_x + 16) / 32),
+        matematica::floor((jugador_y + 32) / 32)
+    )
+    
+    onif tile_abajo > 0 && jugador_vy > 0 {
+        jugador_y = matematica::floor((jugador_y + 32) / 32) * 32 - 32
+        jugador_vy = 0
+        en_suelo = 1
+    } {
+        onif tile_abajo == 0 {
+            en_suelo = 0
+        }
+    }
+    
+    # COLISIÓN PAREDES
+    dark.slot tile_izq = tilemap::get_tile(
+        matematica::floor(jugador_x / 32),
+        matematica::floor((jugador_y + 16) / 32)
+    )
+    dark.slot tile_der = tilemap::get_tile(
+        matematica::floor((jugador_x + 31) / 32),
+        matematica::floor((jugador_y + 16) / 32)
+    )
+    
+    onif tile_izq > 0 {
+        jugador_x = matematica::floor(jugador_x / 32) * 32 + 32
+    }
+    onif tile_der > 0 {
+        jugador_x = matematica::floor((jugador_x + 31) / 32) * 32 - 32
+    }
+    
+    # LÍMITES DEL NIVEL
+    onif jugador_x < 32 {
+        jugador_x = 32
+    }
+    onif jugador_x > 24 * 32 - 32 {
+        jugador_x = 24 * 32 - 32
+    }
+    
+    # MUERTE POR CAÍDA
+    onif jugador_y > 600 {
+        jugador_x = 100
+        jugador_y = 400
+        jugador_vy = 0
+    }
+    
+    # CÁMARA
+    dark.slot cam_x = jugador_x - 384
+    onif cam_x < 0 { cam_x = 0 }
+    onif cam_x > 25 * 32 - 800 { cam_x = 25 * 32 - 800 }
+    camera::set_position(cam_x, 0)
+    
+    # DIBUJAR
+    tilemap::draw()
+    
+    # Jugador (rojo)
+    dibujar.rect(jugador_x, jugador_y, 32, 32, "rojo")
+    
+    # Ojos
+    onif input_x >= 0 {
+        dibujar.rect(jugador_x + 20, jugador_y + 8, 6, 6, "blanco")
+    } {
+        dibujar.rect(jugador_x + 6, jugador_y + 8, 6, 6, "blanco")
+    }
+    
+    # UI
+    texto "RyDit v0.9.4 - Platformer Demo" en 10, 10, tamano 18, color "blanco"
+    texto "Flechas: Mover | Space: Saltar | R: Reiniciar | F: Fullscreen" en 10, 35, tamano 12, color "gris"
+    texto "FPS: " + fps() en 10, 55, tamano 14, color "verde"
+    texto "Pos: (" + jugador_x + ", " + jugador_y + ")" en 10, 75, tamano 12, color "amarillo"
+    
+    # Victoria
+    onif jugador_x > 23 * 32 && jugador_y > 16 * 32 {
+        dibujar.rect(200, 200, 400, 200, "azul")
+        texto "¡NIVEL COMPLETADO!" en 230, 280, tamano 24, color "amarillo"
+        texto "Presiona R para reiniciar" en 220, 320, tamano 16, color "blanco"
+    }
+    
+    # REINICIAR
+    onif tecla_presionada("r") {
+        jugador_x = 100
+        jugador_y = 400
+        jugador_vy = 0
+    }
+    
+    # FULLSCREEN
+    onif tecla_presionada("f") {
+        window::toggle_fullscreen()
+    }
+    
+    # SALIR
+    onif tecla_presionada("escape") {
+        romper
+    }
+    
+    frame = frame + 1
+}

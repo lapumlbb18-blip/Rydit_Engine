@@ -1,0 +1,33 @@
+shield.init
+dark.slot f = 0
+dark.slot x = 400
+dark.slot y = 300
+
+ryda f < 10000 {
+    dark.slot f = f + 1
+    
+    # Mover con flechas
+    onif tecla_presionada("arrow_up") {
+        dark.slot y = y - 5
+    }
+    onif tecla_presionada("arrow_down") {
+        dark.slot y = y + 5
+    }
+    onif tecla_presionada("arrow_left") {
+        dark.slot x = x - 5
+    }
+    onif tecla_presionada("arrow_right") {
+        dark.slot x = x + 5
+    }
+    
+    # Dibujar - USAR draw.* NO dibujar.*
+    draw.circle(x, y, 50, "rojo")
+    draw.text("HOLA RYDIT", 350, 100, 30, "blanco")
+    draw.text("Frame: " + f, 10, 10, 20, "verde")
+    draw.text("FPS: " + fps(), 10, 40, 20, "amarillo")
+    
+    # Salir con ESC
+    onif tecla_presionada("escape") {
+        romper
+    }
+}

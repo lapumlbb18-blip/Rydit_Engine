@@ -1,0 +1,14 @@
+# json module - parseo y generacion de JSON
+# v0.1.5 - Shield Project
+
+# parse(json_string) -> Valor Rydit
+# Convierte string JSON a valor Rydit (array, numero, bool, etc.)
+rytmo parse(json_string) {
+    return __json_parse(json_string)
+}
+
+# stringify(valor) -> string JSON
+# Convierte valor Rydit a string JSON
+rytmo stringify(valor) {
+    return __json_stringify(valor)
+}

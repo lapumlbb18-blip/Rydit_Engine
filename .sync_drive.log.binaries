@@ -1,0 +1,15 @@
+🛡️ Binarios compilados encontrados:
+====================================
+
+[0;32mRelease binaries:[0m
+  - demo_particles (276K)
+  - rydit-rs (3.1M)
+  - demo_particles.d (4.0K)
+  - ecs_demo_10k (272K)
+  - ecs_demo_10k.d (4.0K)
+
+[1;33mEjemplos:[0m
+  - demo (276K)
+  - demo_render_queue (284K)
+  - demo-7f1e60760a007024 (276K)
+  - demo_render_queue-e58446d76b0886f9 (284K)

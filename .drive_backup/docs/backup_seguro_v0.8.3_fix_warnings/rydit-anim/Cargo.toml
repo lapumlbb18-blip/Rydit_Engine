@@ -1,0 +1,17 @@
+[package]
+name = "rydit-anim"
+version = "0.7.34"
+edition = "2021"
+description = "Animation module for RyDit - Easing functions, Squash & Stretch, Disney principles"
+license = "MIT"
+repository = "https://github.com/lapumlbb18-blip/Rydit_Engine"
+homepage = "https://github.com/lapumlbb18-blip/Rydit_Engine"
+documentation = "https://docs.rs/rydit-anim"
+readme = "../../README.md"
+keywords = ["animation", "easing", "game-engine", "disney", "interpolation"]
+categories = ["game-development", "graphics"]
+
+[dependencies]
+rydit-core = { version = "0.8.2", path = "../rydit-core" }
+serde_json = "1.0"
+serde = { version = "1.0", features = ["derive"] }

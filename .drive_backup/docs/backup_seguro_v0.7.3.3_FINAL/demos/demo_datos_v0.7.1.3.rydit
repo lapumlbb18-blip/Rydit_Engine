@@ -1,0 +1,144 @@
+# DEMO CIENCIA DE DATOS - RyDit v0.7.1.3
+# Demostración de CSV, estadísticas y gráficos
+
+# ============================================================================
+# 1. PARSE DE CSV
+# ============================================================================
+
+print("=== PARSE DE CSV ===")
+
+dark.slot csv_data = "nombre,edad,ciudad
+Juan,25,Ciudad de México
+María,30,Buenos Aires
+Carlos,35,Madrid
+Ana,28,Bogotá"
+
+dark.slot datos = csv::parse(csv_data)
+
+print("Datos parseados (" + datos.len() + " filas):")
+dark.slot i = 0
+mientras i < datos.len() {
+    dark.slot fila = datos[i]
+    print("  Fila " + i + ": " + fila[0] + ", " + fila[1] + ", " + fila[2])
+    i = i + 1
+}
+
+# ============================================================================
+# 2. ESTADÍSTICAS BÁSICAS
+# ============================================================================
+
+print("\n=== ESTADÍSTICAS ===")
+
+# Crear array de datos numéricos
+dark.slot edades = [25, 30, 35, 28, 22, 40, 33, 27, 31, 29]
+
+dark.slot media = stats::mean(edades)
+dark.slot mediana = stats::median(edades)
+dark.slot desv_std = stats::std_dev(edades)
+dark.slot minimo = stats::min(edades)
+dark.slot maximo = stats::max(edades)
+
+print("Edades: [25, 30, 35, 28, 22, 40, 33, 27, 31, 29]")
+print("  Media: " + media + " años")
+print("  Mediana: " + mediana + " años")
+print("  Desviación estándar: " + desv_std + " años")
+print("  Mínimo: " + minimo + " años")
+print("  Máximo: " + maximo + " años")
+
+# ============================================================================
+# 3. ANÁLISIS DE DATOS CSV
+# ============================================================================
+
+print("\n=== ANÁLISIS DE CSV ===")
+
+# CSV con datos numéricos
+dark.slot csv_numerico = "mes,ventas,gastos
+Ene,1000,800
+Feb,1200,850
+Mar,950,780
+Abr,1100,820
+May,1300,900"
+
+dark.slot datos_fin = csv::parse(csv_numerico)
+
+# Extraer ventas
+dark.slot ventas = []
+dark.slot j = 1  # Empezar después del header
+mientras j < datos_fin.len() {
+    dark.slot fila = datos_fin[j]
+    # Convertir string a número (asumiendo formato válido)
+    dark.slot venta_num = fila[1].numero()
+    ventas.push(venta_num)
+    j = j + 1
+}
+
+dark.slot ventas_media = stats::mean(ventas)
+dark.slot ventas_max = stats::max(ventas)
+dark.slot ventas_min = stats::min(ventas)
+
+print("Ventas mensuales:")
+print("  Media: $" + ventas_media)
+print("  Máxima: $" + ventas_max)
+print("  Mínima: $" + ventas_min)
+
+# ============================================================================
+# 4. GRÁFICO ASCII
+# ============================================================================
+
+print("\n=== GRÁFICO ASCII DE VENTAS ===")
+
+dark.slot grafico = plot::ascii_chart(ventas, 40)
+print(grafico)
+
+# ============================================================================
+# 5. GRÁFICO SVG
+# ============================================================================
+
+print("\n=== GRÁFICO SVG ===")
+
+dark.slot svg_grafico = plot::svg_chart(ventas, 300, 200)
+print("SVG generado (" + svg_grafico.len() + " caracteres):")
+print(svg_grafico)
+
+# ============================================================================
+# 6. EJEMPLO: ANÁLISIS DE TEMPERATURAS
+# ============================================================================
+
+print("\n=== ANÁLISIS DE TEMPERATURAS ===")
+
+# Temperaturas diarias (°C)
+dark.slot temperaturas = [22, 24, 23, 25, 27, 26, 28, 30, 29, 28, 27, 26]
+
+dark.slot temp_media = stats::mean(temperaturas)
+dark.slot temp_mediana = stats::median(temperaturas)
+dark.slot temp_desv = stats::std_dev(temperaturas)
+
+print("Temperaturas diarias: " + temperaturas)
+print("  Media: " + temp_media + "°C")
+print("  Mediana: " + temp_mediana + "°C")
+print("  Desviación estándar: " + temp_desv + "°C")
+
+# Gráfico de temperaturas
+print("\nGráfico de temperaturas:")
+dark.slot temp_grafico = plot::ascii_chart(temperaturas, 50)
+print(temp_grafico)
+
+# ============================================================================
+# 7. CSV SIN HEADERS
+# ============================================================================
+
+print("\n=== CSV SIN HEADERS ===")
+
+dark.slot csv_sin_headers = "1,2,3
+4,5,6
+7,8,9"
+
+dark.slot datos_sin_headers = csv::parse_no_headers(csv_sin_headers)
+print("Datos sin headers:")
+dark.slot k = 0
+mientras k < datos_sin_headers.len() {
+    print("  " + datos_sin_headers[k])
+    k = k + 1
+}
+
+print("\n¡Demo de ciencia de datos completada!")

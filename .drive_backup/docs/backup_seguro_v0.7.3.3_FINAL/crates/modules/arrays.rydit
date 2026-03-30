@@ -1,0 +1,59 @@
+# arrays module - utilidades de arrays
+# v0.1.4 - Shield Project
+
+rytmo length(lista) {
+    dark.slot contador = 0
+    cada _ en lista {
+        dark.slot contador = contador + 1
+    }
+    return contador
+}
+
+rytmo get(lista, indice) {
+    return lista[indice]
+}
+
+rytmo contains(lista, valor) {
+    cada elemento en lista {
+        onif elemento == valor {
+            return 1
+        }
+    }
+    return 0
+}
+
+rytmo index_of(lista, valor) {
+    dark.slot indice = 0
+    cada elemento en lista {
+        onif elemento == valor {
+            return indice
+        }
+        dark.slot indice = indice + 1
+    }
+    return -1
+}
+
+# Nuevas funciones v0.1.4 (builtins de Rust)
+rytmo push(lista, elemento) {
+    return __array_push(lista, elemento)
+}
+
+rytmo pop(lista) {
+    return __array_pop(lista)
+}
+
+rytmo shift(lista) {
+    return __array_shift(lista)
+}
+
+rytmo unshift(lista, elemento) {
+    return __array_unshift(lista, elemento)
+}
+
+rytmo slice(lista, inicio, fin) {
+    return __array_slice(lista, inicio, fin)
+}
+
+rytmo reverse(lista) {
+    return __array_reverse(lista)
+}

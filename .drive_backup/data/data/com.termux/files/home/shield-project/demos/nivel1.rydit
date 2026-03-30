@@ -1,0 +1,19 @@
+# @nombre "Nivel 1 - Prueba"
+# @musica "batalla.mp3"
+# @dificultad "facil"
+
+# Nivel 1 - Plataforma básica
+# Este archivo es solo metadata del nivel
+# El Level Manager lo carga para obtener información
+
+# Configuración del nivel
+# En el futuro, esto definirá:
+# - Tilemap a cargar
+# - Entidades a spawnear
+# - Posición inicial del jugador
+# - Música de fondo
+
+# Checkpoints iniciales (se registran al cargar)
+# level::set_checkpoint("inicio", 100, 100)
+# level::set_checkpoint("medio", 400, 300)
+# level::set_checkpoint("final", 700, 500)

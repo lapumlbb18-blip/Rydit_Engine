@@ -1,0 +1,89 @@
+# colisiones module - Detección de colisiones 2D
+# v0.3.0 - Tank Combat
+
+# =============================================================================
+# CÍRCULO VS CÍRCULO
+# =============================================================================
+rytmo circulo_circulo(x1, y1, r1, x2, y2, r2) {
+    dark.slot dx = x2 - x1
+    dark.slot dy = y2 - y1
+    dark.slot distancia = sqrt(dx*dx + dy*dy)
+    
+    # Si la distancia es menor que la suma de los radios, hay colisión
+    onif distancia < (r1 + r2) {
+        return 1
+    }
+    return 0
+}
+
+# =============================================================================
+# CÍRCULO VS RECTÁNGULO
+# =============================================================================
+rytmo circulo_rect(cx, cy, cradio, rx, ry, rw, rh) {
+    # Encontrar el punto más cercano en el rectángulo al centro del círculo
+    dark.slot test_x = cx
+    dark.slot test_y = cy
+    
+    # Clampear a los bordes del rectángulo
+    onif cx < rx {
+        dark.slot test_x = rx
+    } blelse onif cx > (rx + rw) {
+        dark.slot test_x = rx + rw
+    }
+    
+    onif cy < ry {
+        dark.slot test_y = ry
+    } blelse onif cy > (ry + rh) {
+        dark.slot test_y = ry + rh
+    }
+    
+    # Calcular distancia desde el punto más cercano
+    dark.slot dist_x = cx - test_x
+    dark.slot dist_y = cy - test_y
+    dark.slot distancia = sqrt(dist_x*dist_x + dist_y*dist_y)
+    
+    # Si la distancia es menor que el radio, hay colisión
+    onif distancia < cradio {
+        return 1
+    }
+    return 0
+}
+
+# =============================================================================
+# RECTÁNGULO VS RECTÁNGULO (AABB)
+# =============================================================================
+rytmo rect_rect(x1, y1, w1, h1, x2, y2, w2, h2) {
+    # Colisión AABB simple
+    onif (x1 < (x2 + w2)) and (x2 < (x1 + w1)) {
+        onif (y1 < (y2 + h2)) and (y2 < (y1 + h1)) {
+            return 1
+        }
+    }
+    return 0
+}
+
+# =============================================================================
+# PUNTO VS CÍRCULO
+# =============================================================================
+rytmo punto_circulo(px, py, cx, cy, cradio) {
+    dark.slot dx = px - cx
+    dark.slot dy = py - cy
+    dark.slot distancia = sqrt(dx*dx + dy*dy)
+    
+    onif distancia < cradio {
+        return 1
+    }
+    return 0
+}
+
+# =============================================================================
+# PUNTO VS RECTÁNGULO
+# =============================================================================
+rytmo punto_rect(px, py, rx, ry, rw, rh) {
+    onif (px >= rx) and (px <= (rx + rw)) {
+        onif (py >= ry) and (py <= (ry + rh)) {
+            return 1
+        }
+    }
+    return 0
+}

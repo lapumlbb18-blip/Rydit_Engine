@@ -1,0 +1,10 @@
+[package]
+name = "rydit-core"
+version = "0.7.3"
+edition = "2021"
+description = "Core trait and registry for RyDit modules"
+license = "MIT"
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"

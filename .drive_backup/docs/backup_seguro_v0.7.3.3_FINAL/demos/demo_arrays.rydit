@@ -1,0 +1,89 @@
+# Demo Arrays - RyDit v0.1.7
+# Mostrar funciones de arrays
+
+shield.init
+import arrays
+
+voz "========================================"
+voz "  DEMO ARRAYS - RyDit v0.1.7"
+voz "========================================"
+voz ""
+
+# Length
+voz "=== arrays::length() ==="
+dark.slot mi_array = [10, 20, 30, 40, 50]
+dark.slot len = arrays::length(mi_array)
+voz "Array: " + mi_array
+voz "Length: " + len
+voz ""
+
+# Get
+voz "=== arrays::get() ==="
+dark.slot elemento = arrays::get(mi_array, 2)
+voz "Get indice 2: " + elemento
+voz ""
+
+# Contains
+voz "=== arrays::contains() ==="
+dark.slot existe = arrays::contains(mi_array, 30)
+dark.slot no_existe = arrays::contains(mi_array, 99)
+voz "Contains 30: " + existe
+voz "Contains 99: " + no_existe
+voz ""
+
+# Index of
+voz "=== arrays::index_of() ==="
+dark.slot indice = arrays::index_of(mi_array, 40)
+voz "Index of 40: " + indice
+voz ""
+
+# Push
+voz "=== arrays::push() ==="
+dark.slot nuevo_array = arrays::push(mi_array, 60)
+voz "Original: " + mi_array
+voz "Push 60: " + nuevo_array
+voz ""
+
+# Pop
+voz "=== arrays::pop() ==="
+dark.slot array_pop = [1, 2, 3, 4, 5]
+dark.slot popped = arrays::pop(array_pop)
+voz "Array: " + array_pop
+voz "Pop: " + popped
+voz ""
+
+# Shift
+voz "=== arrays::shift() ==="
+dark.slot array_shift = [1, 2, 3, 4, 5]
+dark.slot shifted = arrays::shift(array_shift)
+voz "Array: " + array_shift
+voz "Shift: " + shifted
+voz ""
+
+# Unshift
+voz "=== arrays::unshift() ==="
+dark.slot array_unshift = [2, 3, 4]
+dark.slot nuevo = arrays::unshift(array_unshift, 1)
+voz "Original: " + array_unshift
+voz "Unshift 1: " + nuevo
+voz ""
+
+# Slice
+voz "=== arrays::slice() ==="
+dark.slot array_slice = [1, 2, 3, 4, 5, 6]
+dark.slot sliceado = arrays::slice(array_slice, 1, 4)
+voz "Array: " + array_slice
+voz "Slice(1, 4): " + sliceado
+voz ""
+
+# Reverse
+voz "=== arrays::reverse() ==="
+dark.slot array_reverse = [1, 2, 3, 4, 5]
+dark.slot invertido = arrays::reverse(array_reverse)
+voz "Original: " + array_reverse
+voz "Reverse: " + invertido
+voz ""
+
+voz "========================================"
+voz "  DEMO ARRAYS COMPLETADO"
+voz "========================================"

@@ -1,0 +1,51 @@
+# strings module - manipulacion de strings
+# v0.1.4 - Shield Project
+
+rytmo length(s) {
+    return __str_length(s)
+}
+
+rytmo upper(s) {
+    return __str_upper(s)
+}
+
+rytmo lower(s) {
+    return __str_lower(s)
+}
+
+rytmo concat(a, b) {
+    return __str_concat(a, b)
+}
+
+rytmo trim(s) {
+    return __str_trim(s)
+}
+
+rytmo substr(s, inicio, longitud) {
+    return __str_substr(s, inicio, longitud)
+}
+
+rytmo replace(s, buscar, reemplazar) {
+    return __str_replace(s, buscar, reemplazar)
+}
+
+# Nuevas funciones v0.1.4
+rytmo split(s, separador) {
+    return __str_split(s, separador)
+}
+
+rytmo starts_with(s, prefijo) {
+    return __str_starts_with(s, prefijo)
+}
+
+rytmo ends_with(s, sufijo) {
+    return __str_ends_with(s, sufijo)
+}
+
+rytmo replace_all(s, buscar, reemplazar) {
+    return __str_replace_all(s, buscar, reemplazar)
+}
+
+rytmo join(separador, array) {
+    return __str_join(separador, array)
+}

@@ -1,0 +1,100 @@
+# Demo completo para Termux-X11
+# Prueba: Render Queue + Físicas + Input + Textos
+shield.init
+dark.slot f = 0
+dark.slot x = 400
+dark.slot y = 300
+dark.slot vx = 0
+dark.slot vy = 0
+dark.slot gravedad = 0.5
+
+ryda f < 10000 {
+    dark.slot f = f + 1
+    
+    # Input
+    onif tecla_presionada("arrow_left") {
+        dark.slot vx = -5
+    }
+    onif tecla_presionada("arrow_right") {
+        dark.slot vx = 5
+    }
+    onif tecla_presionada("arrow_up") {
+        dark.slot vy = -8
+    }
+    onif tecla_presionada("space") {
+        dark.slot vy = -10
+    }
+    
+    # Físicas simples
+    dark.slot vy = vy + gravedad
+    dark.slot x = x + vx
+    dark.slot y = y + vy
+    
+    # Fricción
+    dark.slot vx = vx * 0.95
+    
+    # Límites de pantalla
+    onif x < 50 {
+        dark.slot x = 50
+        dark.slot vx = -vx * 0.8
+    }
+    onif x > 750 {
+        dark.slot x = 750
+        dark.slot vx = -vx * 0.8
+    }
+    onif y > 550 {
+        dark.slot y = 550
+        dark.slot vy = -vy * 0.8
+    }
+    onif y < 50 {
+        dark.slot y = 50
+        dark.slot vy = -vy * 0.8
+    }
+    
+    # === RENDERIZADO ===
+    
+    # Limpiar pantalla
+    draw.rect(0, 0, 800, 600, "negro")
+    
+    # Dibujar suelo
+    draw.rect(0, 550, 800, 50, "gris")
+    
+    # Dibujar pelota (círculo principal)
+    draw.circle(x, y, 50, "rojo")
+    
+    # Dibujar borde de pelota
+    draw.circle(x, y, 48, "blanco")
+    draw.circle(x, y, 45, "rojo")
+    
+    # Dibujar texto de info
+    draw.text("DEMO RYDIT v0.9.4", 280, 20, 24, "amarillo")
+    draw.text("Termux-X11 + Zink + Render Queue", 240, 50, 16, "cyan")
+    
+    # Estadísticas
+    draw.text("FPS: " + fps(), 10, 10, 20, "verde")
+    draw.text("Frame: " + f, 10, 35, 16, "blanco")
+    draw.text("X: " + x, 10, 55, 14, "blanco")
+    draw.text("Y: " + y, 10, 75, 14, "blanco")
+    draw.text("VX: " + vx, 10, 95, 14, "blanco")
+    draw.text("VY: " + vy, 10, 115, 14, "blanco")
+    
+    # Controles
+    draw.text("CONTROLES:", 600, 10, 16, "cyan")
+    draw.text("← → : Mover", 600, 35, 14, "blanco")
+    draw.text("↑ SPACE : Saltar", 600, 55, 14, "blanco")
+    draw.text("ESC : Salir", 600, 75, 14, "blanco")
+    
+    # Dibujar múltiples círculos (test de render queue)
+    dark.slot i = 0
+    ryda i < 20 {
+        dark.slot i = i + 1
+        dark.slot cx = 50 + (i * 35)
+        dark.slot cy = 200 + (f * 0.5 + i * 10) % 150
+        draw.circle(cx, cy, 15, "azul")
+    }
+    
+    # Salir
+    onif tecla_presionada("escape") {
+        romper
+    }
+}

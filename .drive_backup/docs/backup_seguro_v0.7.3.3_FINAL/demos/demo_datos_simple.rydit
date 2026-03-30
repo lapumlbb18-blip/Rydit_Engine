@@ -1,0 +1,38 @@
+# DEMO CIENCIA DE DATOS SIMPLE - RyDit v0.7.1.3
+
+io::print("=== ESTADÍSTICAS ===")
+
+dark.slot datos = [25, 30, 35, 28, 22, 40, 33, 27, 31, 29]
+
+dark.slot media = stats::mean(datos)
+dark.slot mediana = stats::median(datos)
+dark.slot desv = stats::std_dev(datos)
+dark.slot minimo = stats::min(datos)
+dark.slot maximo = stats::max(datos)
+
+io::print("Datos: [25, 30, 35, 28, 22, 40, 33, 27, 31, 29]")
+io::print("  Media: " + media)
+io::print("  Mediana: " + mediana)
+io::print("  Desviación estándar: " + desv)
+io::print("  Mínimo: " + minimo)
+io::print("  Máximo: " + maximo)
+
+io::print("\n=== CSV ===")
+
+dark.slot csv_data = "nombre,edad
+Juan,25
+Maria,30
+Carlos,35"
+
+dark.slot filas = csv::parse(csv_data)
+io::print("Filas parseadas: " + filas.len())
+io::print("Fila 1: " + filas[0][0] + ", " + filas[0][1])
+io::print("Fila 2: " + filas[1][0] + ", " + filas[1][1])
+
+io::print("\n=== GRÁFICO ASCII ===")
+
+dark.slot ventas = [100, 150, 200, 180, 220, 250, 230, 270]
+dark.slot grafico = plot::ascii_chart(ventas, 40)
+io::print(grafico)
+
+io::print("¡Demo de datos completada!")

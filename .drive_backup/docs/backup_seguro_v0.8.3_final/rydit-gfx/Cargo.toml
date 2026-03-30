@@ -1,0 +1,13 @@
+[package]
+name = "rydit-gfx"
+version = "0.1.0"
+edition = "2021"
+description = "RyDit Graphics Layer - Sync entre Rust (arquitecto) y Raylib (pincel)"
+links = "raylib"
+
+[dependencies]
+raylib = { version = "5.5.1", default-features = false, features = ["nobuild"] }
+migui = { path = "../migui" }
+
+[build-dependencies]
+pkg-config = "0.3"

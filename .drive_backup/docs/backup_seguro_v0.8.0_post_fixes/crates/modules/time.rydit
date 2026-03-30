@@ -1,0 +1,13 @@
+# time module - tiempo y fechas
+# v0.1.6 - Shield Project
+# Usa std::time - sin dependencias externas
+
+# now() -> timestamp UNIX (segundos desde 1970-01-01)
+rytmo now() {
+    return __time_now()
+}
+
+# sleep(ms) -> pausa la ejecucion por milisegundos
+rytmo sleep(ms) {
+    return __time_sleep(ms)
+}

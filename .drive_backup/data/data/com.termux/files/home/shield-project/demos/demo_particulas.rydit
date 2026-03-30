@@ -1,0 +1,146 @@
+# demo_particulas.rydit - v0.9.2
+# Demo de partículas para scripts .rydit
+# Ejecutar: ./target/release/rydit-rs --gfx demos/demo_particulas.rydit
+#
+# Controles:
+#   F - Crear/remover fuego
+#   S - Crear/remover chispas
+#   H - Crear/remover humo
+#   E - Explosión en posición del mouse
+#   G - Cambiar gravedad
+#   ESC - Salir
+#
+# Comparar con: cargo run --bin demo_particles
+
+shield.init
+
+# Variables de estado
+dark.slot frame = 0
+dark.slot fuego_activo = 1
+dark.slot chispas_activas = 0
+dark.slot humo_activo = 0
+dark.slot gravedad_y = -50
+
+# Inicializar sistema de partículas
+# particles::create_emitter(nombre, x, y, rate)
+particles::create_emitter("fuego", 400, 500, 30)
+particles::set_emitter_type("fuego", "fuego")
+
+particles::create_emitter("humo", 400, 480, 10)
+particles::set_emitter_type("humo", "humo")
+
+particles::create_emitter("chispas", 200, 300, 50)
+particles::set_emitter_type("chispas", "chispas")
+
+# Configurar gravedad inicial (hacia arriba para fuego)
+particles::set_gravity(0, gravedad_y)
+
+# Game loop principal
+ryda frame < 100000 {
+    # Actualizar frame
+    dark.slot frame = frame + 1
+    
+    # Obtener delta time (para físicas consistentes)
+    # __DT__ se actualiza automáticamente en executor.rs
+    dark.slot dt = __DT__
+    
+    # Input: F - Toggle fuego
+    onif tecla_presionada("f") {
+        onif fuego_activo == 1 {
+            particles::remove_emitter("fuego")
+            dark.slot fuego_activo = 0
+        } si_no {
+            particles::create_emitter("fuego", 400, 500, 30)
+            particles::set_emitter_type("fuego", "fuego")
+            dark.slot fuego_activo = 1
+        }
+    }
+    
+    # Input: S - Toggle chispas
+    onif tecla_presionada("s") {
+        onif chispas_activas == 1 {
+            particles::remove_emitter("chispas")
+            dark.slot chispas_activas = 0
+        } si_no {
+            particles::create_emitter("chispas", 200, 300, 50)
+            particles::set_emitter_type("chispas", "chispas")
+            dark.slot chispas_activas = 1
+        }
+    }
+    
+    # Input: H - Toggle humo
+    onif tecla_presionada("h") {
+        onif humo_activo == 1 {
+            particles::remove_emitter("humo")
+            dark.slot humo_activo = 0
+        } si_no {
+            particles::create_emitter("humo", 400, 480, 10)
+            particles::set_emitter_type("humo", "humo")
+            dark.slot humo_activo = 1
+        }
+    }
+    
+    # Input: E - Explosión en posición del mouse
+    onif tecla_presionada("e") {
+        dark.slot mx = mouse_x
+        dark.slot my = mouse_y
+        particles::create_emitter("explosion", mx, my, 500)
+        particles::set_emitter_type("explosion", "explosión")
+    }
+    
+    # Input: G - Cambiar gravedad
+    onif tecla_presionada("g") {
+        onif gravedad_y < 0 {
+            particles::set_gravity(0, 50)
+            dark.slot gravedad_y = 50
+        } si_no {
+            particles::set_gravity(0, -50)
+            dark.slot gravedad_y = -50
+        }
+    }
+    
+    # Input: ESC - Salir
+    onif tecla_presionada("escape") {
+        break
+    }
+    
+    # ✅ v0.9.2: Actualizar partículas con delta time REAL
+    # Esto hace que las partículas sean frame-independent
+    particles::update(dt)
+    
+    # Dibujar partículas
+    # (se dibujan automáticamente después de queue.execute())
+    particles::draw()
+    
+    # UI - Contador de partículas
+    dark.slot particulas_count = particles::particle_count()
+    
+    # Dibujar UI con RenderQueue
+    dibujar.texto("=== RyDit Partículas v0.9.2 ===", 10, 10, 20, "blanco")
+    dibujar.texto("FPS: " + frame, 10, 35, 16, "verde")
+    dibujar.texto("Partículas: " + particulas_count, 10, 55, 16, "amarillo")
+    dibujar.texto("DT: " + dt, 10, 75, 16, "cyan")
+    dibujar.texto("F: Fuego | S: Chispas | H: Humo | E: Explosión | G: Gravedad", 10, 580, 16, "gris")
+    
+    # Estado de emisores
+    onif fuego_activo == 1 {
+        dibujar.texto("[ACTIVO] Fuego", 10, 100, 14, "rojo")
+    } si_no {
+        dibujar.texto("[INACTIVO] Fuego", 10, 100, 14, "gris")
+    }
+    
+    onif chispas_activas == 1 {
+        dibujar.texto("[ACTIVO] Chispas", 10, 120, 14, "amarillo")
+    } si_no {
+        dibujar.texto("[INACTIVO] Chispas", 10, 120, 14, "gris")
+    }
+    
+    onif humo_activo == 1 {
+        dibujar.texto("[ACTIVO] Humo", 10, 140, 14, "gris")
+    } si_no {
+        dibujar.texto("[INACTIVO] Humo", 10, 140, 14, "gris")
+    }
+}
+
+# Fin del script
+dark.slot mensaje = "Demo finalizado"

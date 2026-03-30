@@ -1,0 +1,333 @@
+# 🛡️ RyDit v0.9.4 - Demo Platformer Completo
+# Demo: Platformer 2D con todas las features de v0.9.4
+# Usa: Entity System, Cámara, Tilemap, Colisiones, Level Manager, Window Manager
+
+# ============================================================================
+# CONFIGURACIÓN INICIAL
+# ============================================================================
+
+# Configurar ventana
+window::set_title("RyDit v0.9.4 - Platformer Demo")
+window::set_size(800, 600)
+window::set_fps_limit(60)
+window::set_vsync(1)
+
+# ============================================================================
+# VARIABLES GLOBALES
+# ============================================================================
+
+dark.slot frame = 0
+dark.slot jugador_x = 100
+dark.slot jugador_y = 400
+dark.slot jugador_vx = 0
+dark.slot jugador_vy = 0
+dark.slot en_suelo = 0
+dark.slot gravedad = 500
+dark.slot fuerza_salto = -400
+dark.slot velocidad_movimiento = 200
+
+# Tamaño del jugador
+dark.slot jugador_ancho = 32
+dark.slot jugador_alto = 32
+
+# ============================================================================
+# CREAR TILEMAP - NIVEL
+# ============================================================================
+
+# Crear tilemap de 25x20 tiles (800x640 con tiles de 32px)
+tilemap::create(25, 20, 32)
+
+# Suelo (fila 18-19)
+tilemap::fill_rect(0, 18, 25, 2, 1)
+
+# Paredes laterales
+tilemap::fill_rect(0, 0, 1, 20, 2)
+tilemap::fill_rect(24, 0, 1, 20, 2)
+
+# Plataformas
+tilemap::fill_rect(5, 14, 4, 1, 3)  # Plataforma 1
+tilemap::fill_rect(12, 12, 5, 1, 3) # Plataforma 2
+tilemap::fill_rect(3, 9, 3, 1, 3)   # Plataforma 3
+tilemap::fill_rect(18, 8, 4, 1, 3)  # Plataforma 4
+tilemap::fill_rect(8, 5, 6, 1, 3)   # Plataforma 5
+
+# Escalera de plataformas
+tilemap::fill_rect(15, 15, 2, 1, 3)
+tilemap::fill_rect(17, 13, 2, 1, 3)
+tilemap::fill_rect(19, 11, 2, 1, 3)
+tilemap::fill_rect(21, 9, 2, 1, 3)
+
+# Meta final (bandera)
+tilemap::fill_rect(23, 17, 1, 1, 4)
+
+# ============================================================================
+# CREAR ÁREAS DE COLISIÓN
+# ============================================================================
+
+# Área de meta
+area2d::create("meta", 23 * 32, 17 * 32, 32, 32)
+
+# Área de peligro (lava) - fila 19
+area2d::create("lava", 1 * 32, 19 * 32 + 16, 22 * 32, 16)
+area2d::set_active("lava", 0)  # Desactivada por defecto
+
+# ============================================================================
+# CREAR JUGADOR (ENTITY)
+# ============================================================================
+
+entity::create("player", jugador_x, jugador_y)
+entity::set_sprite("player", "jugador")
+entity::set_size("player", jugador_ancho, jugador_alto)
+
+# ============================================================================
+# CONFIGURAR CÁMARA
+# ============================================================================
+
+camera::set_position(0, 0)
+camera::set_zoom(1)
+
+# ============================================================================
+# VARIABLES DE ESTADO
+# ============================================================================
+
+dark.slot nivel_completado = 0
+dark.slot jugador_muerto = 0
+dark.slot checkpoint_x = 100
+dark.slot checkpoint_y = 400
+
+# ============================================================================
+# GAME LOOP PRINCIPAL
+# ============================================================================
+
+ryda frame < 100000 {
+    
+    # =========================================================================
+    # INPUT DEL JUGADOR
+    # =========================================================================
+    
+    # Movimiento horizontal
+    dark.slot input_x = 0
+    
+    onif tecla_presionada("arrow_right") {
+        input_x = 1
+    }
+    onif tecla_presionada("arrow_left") {
+        input_x = -1
+    }
+    
+    # Salto
+    onif tecla_presionada("space") {
+        onif en_suelo == 1 {
+            jugador_vy = fuerza_salto
+            en_suelo = 0
+        }
+    }
+    
+    # =========================================================================
+    # FÍSICAS DEL JUGADOR
+    # =========================================================================
+    
+    # Aplicar input
+    jugador_vx = input_x * velocidad_movimiento
+    
+    # Aplicar gravedad
+    jugador_vy = jugador_vy + gravedad * 0.016
+    
+    # =========================================================================
+    # COLISIONES CON TILEMAP
+    # =========================================================================
+    
+    # Posición futura
+    dark.slot nueva_x = jugador_x + jugador_vx * 0.016
+    dark.slot nueva_y = jugador_y + jugador_vy * 0.016
+    
+    # Verificar colisión horizontal
+    dark.slot tile_izq_x = matematica::floor(jugador_x / 32)
+    dark.slot tile_der_x = matematica::floor((jugador_x + jugador_ancho - 1) / 32)
+    dark.slot tile_arriba_y = matematica::floor(jugador_y / 32)
+    dark.slot tile_abajo_y = matematica::floor((jugador_y + jugador_alto - 1) / 32)
+    
+    # Colisión izquierda
+    onif tilemap::get_tile(tile_izq_x, tile_arriba_y) > 0 {
+        jugador_x = (tile_izq_x + 1) * 32
+        jugador_vx = 0
+    }
+    onif tilemap::get_tile(tile_izq_x, tile_abajo_y) > 0 {
+        jugador_x = (tile_izq_x + 1) * 32
+        jugador_vx = 0
+    }
+    
+    # Colisión derecha
+    onif tilemap::get_tile(tile_der_x, tile_arriba_y) > 0 {
+        jugador_x = tile_der_x * 32 - jugador_ancho
+        jugador_vx = 0
+    }
+    onif tilemap::get_tile(tile_der_x, tile_abajo_y) > 0 {
+        jugador_x = tile_der_x * 32 - jugador_ancho
+        jugador_vx = 0
+    }
+    
+    # Colisión vertical
+    dark.slot tile_izq_x2 = matematica::floor(jugador_x / 32)
+    dark.slot tile_der_x2 = matematica::floor((jugador_x + jugador_ancho - 1) / 32)
+    dark.slot tile_arriba_y2 = matematica::floor(nueva_y / 32)
+    dark.slot tile_abajo_y2 = matematica::floor((nueva_y + jugador_alto - 1) / 32)
+    
+    # Colisión techo
+    onif tilemap::get_tile(tile_izq_x2, tile_arriba_y2) > 0 {
+        jugador_y = (tile_arriba_y2 + 1) * 32
+        jugador_vy = 0
+    }
+    onif tilemap::get_tile(tile_der_x2, tile_arriba_y2) > 0 {
+        jugador_y = (tile_arriba_y2 + 1) * 32
+        jugador_vy = 0
+    }
+    
+    # Colisión suelo
+    onif tilemap::get_tile(tile_izq_x2, tile_abajo_y2) > 0 {
+        jugador_y = tile_abajo_y2 * 32 - jugador_alto
+        jugador_vy = 0
+        en_suelo = 1
+    }
+    onif tilemap::get_tile(tile_der_x2, tile_abajo_y2) > 0 {
+        jugador_y = tile_abajo_y2 * 32 - jugador_alto
+        jugador_vy = 0
+        en_suelo = 1
+    }
+    
+    # Actualizar posición si no hay colisión
+    onif jugador_x != (tile_izq_x + 1) * 32 && jugador_x != tile_der_x * 32 - jugador_ancho {
+        jugador_x = nueva_x
+    }
+    onif jugador_y != (tile_arriba_y2 + 1) * 32 && jugador_y != tile_abajo_y2 * 32 - jugador_alto {
+        jugador_y = nueva_y
+    }
+    
+    # Verificar si está en el suelo
+    onif en_suelo == 0 {
+        dark.slot tile_suelo = tilemap::get_tile(matematica::floor((jugador_x + 16) / 32), matematica::floor((jugador_y + jugador_alto + 1) / 32))
+        onif tile_suelo > 0 {
+            en_suelo = 1
+        }
+    }
+    
+    # =========================================================================
+    # COLISIÓN CON ÁREAS
+    # =========================================================================
+    
+    # Verificar colisión con meta
+    dark.slot colision_meta = area2d::check("meta", "jugador_area")
+    
+    # Verificar si llegó a la meta
+    onif jugador_x > 23 * 32 && jugador_x < 24 * 32 && jugador_y > 17 * 32 {
+        nivel_completado = 1
+    }
+    
+    # Caer al vacío (muerte)
+    onif jugador_y > 640 {
+        jugador_muerto = 1
+    }
+    
+    # =========================================================================
+    # CÁMARA - SEGUIMIENTO DEL JUGADOR
+    # =========================================================================
+    
+    # Cámara sigue al jugador con suavizado
+    dark.slot camara_x = jugador_x - 400
+    dark.slot camara_y = jugador_y - 300
+    
+    # Limitar cámara a los bounds del nivel
+    onif camara_x < 0 {
+        camara_x = 0
+    }
+    onif camara_x > 25 * 32 - 800 {
+        camara_x = 25 * 32 - 800
+    }
+    onif camara_y < 0 {
+        camara_y = 0
+    }
+    
+    camera::set_position(camara_x, camara_y)
+    
+    # =========================================================================
+    # DIBUJADO
+    # =========================================================================
+    
+    # Dibujar tilemap
+    tilemap::draw()
+    
+    # Dibujar jugador (rectángulo rojo)
+    dibujar.rect(jugador_x, jugador_y, jugador_ancho, jugador_alto, "rojo")
+    
+    # Dibujar ojos del jugador (dirección)
+    onif input_x >= 0 {
+        dibujar.rect(jugador_x + 20, jugador_y + 8, 6, 6, "blanco")
+    } {
+        dibujar.rect(jugador_x + 6, jugador_y + 8, 6, 6, "blanco")
+    }
+    
+    # =========================================================================
+    # UI / HUD
+    # =========================================================================
+    
+    # Título
+    texto "RyDit v0.9.4 - Platformer Demo" en 10, 10, tamano 18, color "blanco"
+    
+    # Controles
+    texto "Controles: Flechas = Mover, Space = Saltar" en 10, 35, tamano 14, color "gris"
+    
+    # FPS
+    texto "FPS: " + fps() en 10, 55, tamano 14, color "verde"
+    
+    # Posición
+    texto "Pos: (" + jugador_x + ", " + jugador_y + ")" en 10, 75, tamano 12, color "amarillo"
+    
+    # Estado
+    onif en_suelo == 1 {
+        texto "Suelo: SI" en 10, 95, tamano 12, color "verde"
+    } {
+        texto "Suelo: NO" en 10, 95, tamano 12, color "rojo"
+    }
+    
+    # Mensaje de victoria
+    onif nivel_completado == 1 {
+        dibujar.rect(200, 200, 400, 200, "azul")
+        texto "¡NIVEL COMPLETADO!" en 250, 280, tamano 24, color "amarillo"
+        texto "Presiona R para reiniciar" en 230, 320, tamano 16, color "blanco"
+    }
+    
+    # Mensaje de muerte
+    onif jugador_muerto == 1 {
+        dibujar.rect(200, 200, 400, 200, "rojo")
+        texto "¡JUGADOR MUERTO!" en 250, 280, tamano 24, color "blanco"
+        texto "Presiona R para reiniciar" en 230, 320, tamano 16, color "blanco"
+    }
+    
+    # =========================================================================
+    # REINICIAR JUEGO
+    # =========================================================================
+    
+    onif tecla_presionada("r") {
+        jugador_x = 100
+        jugador_y = 400
+        jugador_vx = 0
+        jugador_vy = 0
+        en_suelo = 0
+        nivel_completado = 0
+        jugador_muerto = 0
+        camera::set_position(0, 0)
+    }
+    
+    # Toggle fullscreen con F
+    onif tecla_presionada("f") {
+        window::toggle_fullscreen()
+    }
+    
+    # Salir con ESC
+    onif tecla_presionada("escape") {
+        romper
+    }
+    
+    # Incrementar frame
+    frame = frame + 1
+}

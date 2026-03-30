@@ -47,6 +47,12 @@ pub mod debug_log;
 // Módulo de render queue v0.9.0 - Command Queue + Double Buffering + Platform Sync
 pub mod render_queue;
 
+// Módulo de ECS render v0.10.0 - ECS + rlgl integration
+pub mod ecs_render;
+
+// Módulo de GPU Instancing v0.10.1 - FFI OpenGL + Shaders GLSL
+pub mod gpu_instancing;
+
 use raylib::consts::KeyboardKey;
 use raylib::prelude::*;
 
@@ -427,6 +433,34 @@ pub const KEY_SEVEN: KeyboardKey = unsafe { std::mem::transmute(55i32) };
 pub const KEY_EIGHT: KeyboardKey = unsafe { std::mem::transmute(56i32) };
 pub const KEY_NINE: KeyboardKey = unsafe { std::mem::transmute(57i32) };
 
+// Teclas adicionales v0.9.2 (100+ teclas)
+pub const KEY_TAB: KeyboardKey = unsafe { std::mem::transmute(258i32) };
+pub const KEY_CAPS_LOCK: KeyboardKey = unsafe { std::mem::transmute(259i32) };
+pub const KEY_LEFT_SHIFT: KeyboardKey = unsafe { std::mem::transmute(340i32) };
+pub const KEY_RIGHT_SHIFT: KeyboardKey = unsafe { std::mem::transmute(344i32) };
+pub const KEY_LEFT_CONTROL: KeyboardKey = unsafe { std::mem::transmute(341i32) };
+pub const KEY_RIGHT_CONTROL: KeyboardKey = unsafe { std::mem::transmute(345i32) };
+pub const KEY_LEFT_ALT: KeyboardKey = unsafe { std::mem::transmute(342i32) };
+pub const KEY_RIGHT_ALT: KeyboardKey = unsafe { std::mem::transmute(346i32) };
+pub const KEY_PAGE_UP: KeyboardKey = unsafe { std::mem::transmute(266i32) };
+pub const KEY_PAGE_DOWN: KeyboardKey = unsafe { std::mem::transmute(267i32) };
+pub const KEY_HOME: KeyboardKey = unsafe { std::mem::transmute(268i32) };
+pub const KEY_END: KeyboardKey = unsafe { std::mem::transmute(269i32) };
+pub const KEY_INSERT: KeyboardKey = unsafe { std::mem::transmute(260i32) };
+pub const KEY_DELETE: KeyboardKey = unsafe { std::mem::transmute(261i32) };
+pub const KEY_F1: KeyboardKey = unsafe { std::mem::transmute(290i32) };
+pub const KEY_F2: KeyboardKey = unsafe { std::mem::transmute(291i32) };
+pub const KEY_F3: KeyboardKey = unsafe { std::mem::transmute(292i32) };
+pub const KEY_F4: KeyboardKey = unsafe { std::mem::transmute(293i32) };
+pub const KEY_F5: KeyboardKey = unsafe { std::mem::transmute(294i32) };
+pub const KEY_F6: KeyboardKey = unsafe { std::mem::transmute(295i32) };
+pub const KEY_F7: KeyboardKey = unsafe { std::mem::transmute(296i32) };
+pub const KEY_F8: KeyboardKey = unsafe { std::mem::transmute(297i32) };
+pub const KEY_F9: KeyboardKey = unsafe { std::mem::transmute(298i32) };
+pub const KEY_F10: KeyboardKey = unsafe { std::mem::transmute(299i32) };
+pub const KEY_F11: KeyboardKey = unsafe { std::mem::transmute(300i32) };
+pub const KEY_F12: KeyboardKey = unsafe { std::mem::transmute(301i32) };
+
 // ============================================================================
 // COLORES RYDIT
 // ============================================================================
@@ -562,11 +596,38 @@ impl FromStr for ColorRydit {
 // ============================================================================
 
 /// Teclas para input
+/// v0.9.2: 100+ teclas
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Key {
     Escape,
     Space,
     Enter,
+    Tab,
+    CapsLock,
+    LeftShift,
+    RightShift,
+    LeftControl,
+    RightControl,
+    LeftAlt,
+    RightAlt,
+    PageUp,
+    PageDown,
+    Home,
+    End,
+    Insert,
+    Delete,
+    F1,
+    F2,
+    F3,
+    F4,
+    F5,
+    F6,
+    F7,
+    F8,
+    F9,
+    F10,
+    F11,
+    F12,
     ArrowUp,
     ArrowDown,
     ArrowLeft,
@@ -613,13 +674,48 @@ impl Key {
     /// Convertir a KeyboardKey de raylib
     pub fn to_raylib(&self) -> KeyboardKey {
         match self {
+            // Especiales
             Key::Escape => KEY_ESCAPE,
             Key::Space => KEY_SPACE,
             Key::Enter => KEY_ENTER,
+            Key::Tab => KEY_TAB,
+            Key::CapsLock => KEY_CAPS_LOCK,
+            Key::LeftShift => KEY_LEFT_SHIFT,
+            Key::RightShift => KEY_RIGHT_SHIFT,
+            Key::LeftControl => KEY_LEFT_CONTROL,
+            Key::RightControl => KEY_RIGHT_CONTROL,
+            Key::LeftAlt => KEY_LEFT_ALT,
+            Key::RightAlt => KEY_RIGHT_ALT,
+            
+            // Navegación
+            Key::PageUp => KEY_PAGE_UP,
+            Key::PageDown => KEY_PAGE_DOWN,
+            Key::Home => KEY_HOME,
+            Key::End => KEY_END,
+            Key::Insert => KEY_INSERT,
+            Key::Delete => KEY_DELETE,
+            
+            // Función F1-F12
+            Key::F1 => KEY_F1,
+            Key::F2 => KEY_F2,
+            Key::F3 => KEY_F3,
+            Key::F4 => KEY_F4,
+            Key::F5 => KEY_F5,
+            Key::F6 => KEY_F6,
+            Key::F7 => KEY_F7,
+            Key::F8 => KEY_F8,
+            Key::F9 => KEY_F9,
+            Key::F10 => KEY_F10,
+            Key::F11 => KEY_F11,
+            Key::F12 => KEY_F12,
+            
+            // Flechas
             Key::ArrowUp => KEY_UP,
             Key::ArrowDown => KEY_DOWN,
             Key::ArrowLeft => KEY_LEFT,
             Key::ArrowRight => KEY_RIGHT,
+            
+            // Letras A-Z
             Key::A => KEY_A,
             Key::B => KEY_B,
             Key::C => KEY_C,
@@ -646,6 +742,8 @@ impl Key {
             Key::X => KEY_X,
             Key::Y => KEY_Y,
             Key::Z => KEY_Z,
+            
+            // Números 0-9
             Key::Num0 => KEY_ZERO,
             Key::Num1 => KEY_ONE,
             Key::Num2 => KEY_TWO,
@@ -1106,6 +1204,22 @@ impl Assets {
     ) {
         if let Some(texture) = self.textures.get(id) {
             d.draw_texture_ex(texture, Vector2::new(x, y), 0.0, scale, color);
+        }
+    }
+
+    /// Dibujar textura con rotación y escala (para RenderQueue)
+    pub fn draw_texture_ex_by_id(
+        &self,
+        d: &mut RaylibDrawHandle,
+        id: &str,
+        x: f32,
+        y: f32,
+        scale: f32,
+        rotation: f32,
+        color: ColorRydit,
+    ) {
+        if let Some(texture) = self.textures.get(id) {
+            d.draw_texture_ex(texture, Vector2::new(x, y), rotation, scale, color.to_color());
         }
     }
 

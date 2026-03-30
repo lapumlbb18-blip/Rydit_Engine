@@ -1,0 +1,107 @@
+# =============================================================================
+# DEMO MÓDULO REGEX v0.6.2
+# =============================================================================
+# Demostración de expresiones regulares en RyDit
+# =============================================================================
+
+import regex
+
+# =============================================================================
+# 1. REGEX::MATCH - Validar patrones
+# =============================================================================
+
+dark.slot email = "usuario@ejemplo.com"
+dark.slot email_invalido = "usuario@ejemplo"
+
+# Validar email
+dark.slot es_valido = regex::match("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}", email)
+voz "Email válido: " + es_valido  # true
+
+dark.slot es_invalido = regex::match("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}", email_invalido)
+voz "Email inválido: " + es_invalido  # false
+
+# =============================================================================
+# 2. REGEX::REPLACE - Reemplazar patrones
+# =============================================================================
+
+dark.slot texto = "hola mundo cruel"
+# Reemplazar vocales por *
+dark.slot sin_vocales = regex::replace("[aeiou]", "*", texto)
+voz "Sin vocales: " + sin_vocales  # "h*l* m*nd* cr**l"
+
+# Eliminar espacios
+dark.slot sin_espacios = regex::replace("\\s+", "", texto)
+voz "Sin espacios: " + sin_espacios  # "holamundocruel"
+
+# =============================================================================
+# 3. REGEX::SPLIT - Dividir por patrón
+# =============================================================================
+
+dark.slot csv = "manzana,pera,uva,naranja"
+dark.slot frutas = regex::split(",", csv)
+# frutas = ["manzana", "pera", "uva", "naranja"]
+voz "Frutas: " + frutas
+
+# Split por múltiples espacios
+dark.slot frase = "hola    mundo   rydit"
+dark.slot palabras = regex::split("\\s+", frase)
+# palabras = ["hola", "mundo", "rydit"]
+voz "Palabras: " + palabras
+
+# =============================================================================
+# 4. REGEX::FIND_ALL - Encontrar todos los matches
+# =============================================================================
+
+dark.slot mixed = "a1b23c456d7890"
+dark.slot numeros = regex::find_all("\\d+", mixed)
+# numeros = ["1", "23", "456", "7890"]
+voz "Números encontrados: " + numeros
+
+# Encontrar todas las palabras
+dark.slot texto2 = "el gato salta sobre el sofá"
+dark.slot palabras2 = regex::find_all("[a-z]+", texto2)
+voz "Todas las palabras: " + palabras2
+
+# =============================================================================
+# 5. REGEX::CAPTURE - Capturar grupos
+# =============================================================================
+
+# Capturar nombre:valor
+dark.slot par = "edad:25"
+dark.slot captura = regex::capture("([a-z]+):(\\d+)", par)
+# captura = ["edad:25", "edad", "25"]
+voz "Captura completa: " + captura
+voz "Grupo 1 (nombre): " + captura[1]
+voz "Grupo 2 (valor): " + captura[2]
+
+# Capturar fecha DD/MM/AAAA
+dark.slot fecha = "23/03/2026"
+dark.slot fecha_caps = regex::capture("(\\d{2})/(\\d{2})/(\\d{4})", fecha)
+# fecha_caps = ["23/03/2026", "23", "03", "2026"]
+voz "Día: " + fecha_caps[1]
+voz "Mes: " + fecha_caps[2]
+voz "Año: " + fecha_caps[3]
+
+# =============================================================================
+# 6. CASOS DE USO REALES
+# =============================================================================
+
+# Validar teléfono (formato simple)
+dark.slot telefono = "+1-555-123-4567"
+dark.slot es_tel = regex::match("\\+?\\d{1,3}[-.]?\\d{3}[-.]?\\d{3}[-.]?\\d{4}", telefono)
+voz "Teléfono válido: " + es_tel
+
+# Extraer hashtags
+dark.slot tweet = "Hola #RyDit #Rust #Programacion"
+dark.slot hashtags = regex::find_all("#[a-zA-Z]+", tweet)
+voz "Hashtags: " + hashtags  # ["#RyDit", "#Rust", "#Programacion"]
+
+# Validar URL
+dark.slot url = "https://github.com/lapumlbb18-blip/Rydit_Engine"
+dark.slot es_url = regex::match("https?://[a-zA-Z0-9.-]+/[a-zA-Z0-9._/-]*", url)
+voz "URL válida: " + es_url
+
+# =============================================================================
+# FIN DE LA DEMO
+# =============================================================================
+voz "=== Demo Regex Completada ==="

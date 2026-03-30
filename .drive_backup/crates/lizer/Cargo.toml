@@ -1,0 +1,11 @@
+[package]
+name = "lizer"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+# Benchmarks requieren nightly (temporalmente deshabilitado)
+# [[bench]]
+# name = "bench_lizer"
+# harness = false

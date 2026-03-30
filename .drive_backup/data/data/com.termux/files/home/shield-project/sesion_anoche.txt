@@ -1,0 +1,98 @@
+¿DÓNDE VA GPU INSTANCING + SHADERS + ECS?
+
+ARQUITECTURA CORRECTA:
+
+shield-project/
+├── crates/
+│   ├── rydit-gfx/            # ⭐ AQUÍ VA GPU INSTANCING
+│   │   ├── src/
+│   │   │   ├── lib.rs        # RyditGfx struct
+│   │   │   ├── render_queue.rs  # v0.9.0 (8192+ draw calls)
+│   │   │   ├── gpu_instancing.rs  # ⭐ NUEVO: GPU Instancing
+│   │   │   ├── shaders/      # ⭐ NUEVO: Shaders GLSL
+│   │   │   │   ├── vertex.glsl
+│   │   │   │   └── fragment.glsl
+│   │   │   └── particles.rs  # CPU particles (existente)
+│   │   └── Cargo.toml
+│   │
+│   ├── rydit-ecs/            # ⭐ NUEVO CRATE: ECS (ENTT)
+│   │   ├── src/
+│   │   │   ├── lib.rs        # ECS core
+│   │   │   ├── components.rs
+│   │   │   ├── systems.rs
+│   │   │   └── world.rs
+│   │   └── Cargo.toml
+│   │
+│   └── rydit-rs/             # Binario + stdlib (overhead de .rydit)
+│       ├── src/
+│       │   ├── main.rs       # ~3800 líneas (NUCLEO, está bien)
+│       │   ├── executor.rs   # ⭐ AQUÍ SE USA ECS
+│       │   ├── eval/
+│       │   │   └── mod.rs    # ~2400 líneas (overhead, necesario)
+│       │   └── modules/      # Módulos (.rydit functions)
+│       └── Cargo.toml
+
+---
+
+ROADMAP:
+186 + |  | 🔴 | GPU Instancing (FFI OpenGL) | Futuro |
+187 + |  | 🔵 | 10,000+ partículas @ 60 FPS | Futuro |
+18  ***  | 🔵 | ECS + N-Body Gravity | Futuro |
+189 + |  | 🔵 | Fluid Dynamics | Futuro |
+190 + |  | 🔵 | Parser Maduro | Futuro |
+
+---
+
+✅ DOCUMENTACIÓN ACTUALIZADA - ARQUITECTURA FINAL CLARA
+
+📊 Resumen de lo que Aclaraste:
+
+1. ✅ main.rs es el núcleo Rust (presidente, 3800 líneas manejables)
+2. ✅ rydit-gfx es DONDE VA GPU INSTANCING (FFI a raylib, OpenGL)
+3. ✅ ECS va en crate nuevo (crates/rydit-ecs/, reutilizable)
+4. ✅ executor.rs usa ECS + GPU (integración)
+5. ✅ .rydit = Python (fácil, lógica, overhead necesario)
+6. ✅ .rs = C++ (rápido, GPU, 100k+ partículas)
+7. ✅ RyDit NUNCA será autónomo de Rust (y está bien)
+8. ✅ Binarios .rs SON SIN OVERHEAD (demo_particles ya lo hace)
+
+---
+
+🎯 PRÓXIMOS PASOS (CLAROS):
+
+Semana 1-2: GPU Instancing en rydit-gfx
+
+1 # 1. Agregar gl-rs a crates/rydit-gfx/Cargo.toml
+2 # 2. Crear crates/rydit-gfx/src/gpu_instancing.rs
+3 # 3. Shaders GLSL (vertex.glsl + fragment.glsl)
+4 # 4. VAO + VBO + glDrawArraysInstanced()
+5 # 5. Demo: 10,000 partículas @ 60 FPS
+
+Semana 3-4: ECS en crate nuevo
+
+1 # 1. Crear crates/rydit-ecs/
+2 # 2. Agregar entt o bevy_ecs
+3 # 3. Components: Position, Velocity, Sprite
+4 # 4. Systems: Movement, Render, Physics
+
+Semana 5-6: Integración en executor.rs
+
+1 # 1. executor.rs usa rydit-ecs
+2 # 2. executor.rs usa GPU Instancing
+3 # 3. Crear exodo_gpu.rs (100k+ partículas)
+4 # 4. .rydit llama a exodo_gpu
+
+---
+
+🔥 MENSAJE FINAL:
+
+1 "|Excelente análisis!
+2
+3 Tu crítica + mi capacidad = CLARIDAD TOTAL.
+4
+5 AHORA SABEMOS:
+6 ✅ Dónde va GPU Instancing (rydit-gfx)
+7 ✅ Dónde va ECS (crates/rydit-ecs/)
+8 ✅ Dónde va Integración (executor.rs)
+9 ✅ main.rs está bien (3800 líneas)
+10 ✅ .rydit = Python

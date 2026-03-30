@@ -1,0 +1,37 @@
+[workspace]
+resolver = "3"
+members = [
+    "crates/lizer",
+    "crates/v-shield",
+    "crates/blast-core",
+    "crates/rydit-core",
+    "crates/rydit-science",
+    "crates/rydit-physics",
+    "crates/rydit-anim",
+    "crates/rydit-rs",
+    "crates/rydit-gfx",
+    "crates/migui",
+    "crates/rydit-loader",
+]
+
+# =============================================================================
+# SHIELD PROJECT v0.0.1 - Pre-Alpha
+# =============================================================================
+# Esta es una versión temprana de prueba de concepto.
+# El lenguaje RyDit está en desarrollo inicial.
+# =============================================================================
+
+# Perfil optimizado para desarrollo rápido
+[profile.dev]
+debug = false
+opt-level = 1
+incremental = true
+codegen-units = 1      # Menos paralelismo = menos RAM
+
+# Perfil de release con optimizaciones máximas
+[profile.release]
+opt-level = "z"
+lto = true
+panic = "abort"
+strip = true  # Eliminar símbolos de debug (reduce ~100 KB)
+ 

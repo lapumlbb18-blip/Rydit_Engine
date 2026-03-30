@@ -1,0 +1,39 @@
+# Ejemplo de Arrays en RyDit v0.0.4
+# Prueba de arrays, indexación y arrays multidimensionales
+
+shield.init
+
+# Array básico
+dark.slot lista = [1, 2, 3]
+voz lista
+
+# Acceder por índice
+dark.slot primero = lista[0]
+voz primero
+
+# Array de strings
+dark.slot nombres = ["Ana", "Carlos", "Diana"]
+voz nombres[1]
+
+# Array multidimensional (tablero 3x3)
+dark.slot tablero = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+voz tablero[1][1]
+
+# Modificar valor del tablero
+dark.slot tablero = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+voz tablero[2][0]
+
+# Array vacío
+dark.slot vacio = []
+voz vacio
+
+# Array con expresiones
+dark.slot suma = [1 + 2, 3 * 4, 10 / 2]
+voz suma
+
+# Acceder a elemento de array con expresión
+dark.slot x = suma[0]
+voz x
+
+# Fin del script
+ryprime

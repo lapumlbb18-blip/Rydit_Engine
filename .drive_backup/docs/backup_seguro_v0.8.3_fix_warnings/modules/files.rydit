@@ -1,0 +1,58 @@
+# =============================================================================
+# MÓDULO FILES v0.6.3
+# =============================================================================
+# Lectura y escritura de archivos para RyDit
+# 
+# Funciones disponibles:
+#   - files::read(ruta)         -> texto (contenido del archivo)
+#   - files::write(ruta, texto) -> bool (true si éxito)
+#   - files::append(ruta, texto)-> bool (añade al final)
+#   - files::exists(ruta)       -> bool (true si existe)
+#   - files::delete(ruta)       -> bool (true si eliminado)
+# =============================================================================
+
+# Las funciones files están implementadas nativamente en Rust (bindings)
+# Este archivo es documentación y wrapper opcional
+
+# =============================================================================
+# EJEMPLOS DE USO
+# =============================================================================
+
+# Leer archivo completo
+# dark.slot contenido = files::read("archivo.txt")
+# voz "Contenido: " + contenido
+
+# Escribir archivo (sobrescribe)
+# files::write("notas.txt", "Hola Mundo")
+
+# Añadir al final
+# files::append("notas.txt", "\nMás contenido")
+
+# Verificar existencia
+# si files::exists("config.json") {
+#     voz "Configuración encontrada"
+# } blelse {
+#     voz "Crear configuración por defecto"
+# }
+
+# Eliminar archivo
+# files::delete("temp.txt")
+
+# =============================================================================
+# CASOS DE USO REALES
+# =============================================================================
+
+# 1. Guardar partida (JSON)
+# dark.slot partida = json::stringify({ "nivel": 5, "vidas": 3 })
+# files::write("savegame.json", partida)
+
+# 2. Cargar configuración
+# dark.slot config_str = files::read("config.json")
+# dark.slot config = json::parse(config_str)
+
+# 3. Log de errores
+# files::append("error.log", "Error en frame " + frame)
+
+# 4. Nivel personalizado
+# dark.slot nivel = files::read("niveles/nivel1.txt")
+# dark.slot lineas = strings::split(nivel, "\n")
