@@ -50,6 +50,9 @@ pub mod render_queue;
 // Módulo de ECS render v0.10.0 - ECS + rlgl integration
 pub mod ecs_render;
 
+// Módulo de GPU Instancing v0.10.1 - FFI OpenGL + Shaders GLSL
+pub mod gpu_instancing;
+
 use raylib::consts::KeyboardKey;
 use raylib::prelude::*;
 

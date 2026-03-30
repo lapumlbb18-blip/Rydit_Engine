@@ -168,9 +168,9 @@ pub fn ejecutar_stmt(
             }
         }
         Stmt::While { condition, body } => {
-            // Ejecutar mientras la condición sea verdadera
+            // ✅ v0.10.2: Sin límite - game loop infinito
             let mut iterations = 0;
-            while iterations < 100 {
+            loop {
                 // Límite de seguridad
                 let cond_val = evaluar_expr(condition, executor, funcs);
                 let es_verdad = match cond_val {
@@ -4177,8 +4177,9 @@ pub fn ejecutar_stmt_migui(
             }
         }
         Stmt::While { condition, body } => {
+            // ✅ v0.10.2: Sin límite - MiGui loop infinito
             let mut iterations = 0;
-            while iterations < 10 {
+            loop {
                 let cond_val = evaluar_expr_migui(
                     condition,
                     executor,

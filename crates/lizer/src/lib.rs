@@ -469,6 +469,15 @@ pub struct Program {
 // LIZER (Lexer)
 // ============================================================================
 
+// ✅ v0.10.2: AST Caching para game loops repetitivos
+use std::collections::HashMap;
+use std::sync::{Arc, Mutex};
+use std::sync::LazyLock;
+
+// Cache global de ASTs parseados
+static AST_CACHE: LazyLock<Mutex<HashMap<Arc<str>, Arc<Program>>>> = 
+    LazyLock::new(|| Mutex::new(HashMap::new()));
+
 /// Lexer para RyDit
 ///
 /// Convierte código fuente en tokens.
@@ -1120,6 +1129,36 @@ mod tests {
 // ============================================================================
 // PARSER
 // ============================================================================
+
+/// ✅ v0.10.2: Parsear con caching (para game loops repetitivos)
+pub fn parse_cached(source: &str) -> Result<Program> {
+    // Usar source como hash
+    let hash = Arc::from(source);
+    
+    // Intentar obtener de cache
+    {
+        if let Ok(cache) = AST_CACHE.lock() {
+            if let Some(program) = cache.get(&hash) {
+                return Ok((**program).clone());
+            }
+        }
+    }
+    
+    // Parsear normalmente
+    let mut lizer = Lizer::new(source);
+    let tokens = lizer.scan();
+    let mut parser = Parser::new(tokens);
+    let program = parser.parse()?;
+    
+    // Guardar en cache
+    {
+        if let Ok(mut cache) = AST_CACHE.lock() {
+            cache.insert(hash, Arc::new(program.clone()));
+        }
+    }
+    
+    Ok(program)
+}
 
 /// Parser para RyDit
 ///

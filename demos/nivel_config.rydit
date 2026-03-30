@@ -1,0 +1,163 @@
+# 🛡️ RyDit v0.10.2 - Formato de Configuración
+# Este archivo SOLO contiene datos, NO lógica
+# El Core Rust (binario) controla el game loop
+
+# ============================================================================
+# METADATOS DEL NIVEL
+# ============================================================================
+
+@nombre "Nivel 1 - Prueba"
+@descripcion "Demo de inversión de control"
+@autor "RyDit Team"
+@version "1.0"
+
+# ============================================================================
+# CONFIGURACIÓN DEL MUNDO
+# ============================================================================
+
+mundo {
+    gravedad: 9.8
+    fondo: "cielo.png"
+    musica: "batalla.mp3"
+    ancho: 800
+    alto: 600
+}
+
+# ============================================================================
+# CÁMARA
+# ============================================================================
+
+camara {
+    seguir: "jugador"
+    zoom: 1.0
+    limite_x: 0, 2000
+    limite_y: 0, 1000
+}
+
+# ============================================================================
+# ENTIDADES
+# ============================================================================
+
+# Jugador
+entidad "jugador" {
+    tipo: "player"
+    sprite: "hero.png"
+    x: 100
+    y: 400
+    ancho: 32
+    alto: 32
+    velocidad: 200
+    vida: 100
+    script: "jugador_control.rydit"  # Script opcional para lógica compleja
+}
+
+# Enemigo 1
+entidad "enemigo_1" {
+    tipo: "enemy"
+    sprite: "enemy.png"
+    x: 400
+    y: 300
+    ancho: 32
+    alto: 32
+    ia: "patrol"
+    patrol_puntos: [400, 300, 600, 300]
+    vida: 50
+    daño: 10
+}
+
+# Enemigo 2
+entidad "enemigo_2" {
+    tipo: "enemy"
+    sprite: "enemy.png"
+    x: 600
+    y: 200
+    ancho: 32
+    alto: 32
+    ia: "chase"
+    vida: 30
+    daño: 5
+}
+
+# Moneda 1
+entidad "moneda_1" {
+    tipo: "coin"
+    sprite: "coin.png"
+    x: 300
+    y: 350
+    ancho: 16
+    alto: 16
+    valor: 10
+}
+
+# Moneda 2
+entidad "moneda_2" {
+    tipo: "coin"
+    sprite: "coin.png"
+    x: 500
+    y: 250
+    ancho: 16
+    alto: 16
+    valor: 10
+}
+
+# Plataforma 1
+entidad "plataforma_1" {
+    tipo: "platform"
+    sprite: "platform.png"
+    x: 200
+    y: 450
+    ancho: 200
+    alto: 32
+    estatica: true
+}
+
+# Plataforma 2
+entidad "plataforma_2" {
+    tipo: "platform"
+    sprite: "platform.png"
+    x: 500
+    y: 350
+    ancho: 150
+    alto: 32
+    estatica: true
+}
+
+# ============================================================================
+# PARTÍCULAS (opcional, usa GPU Instancing)
+# ============================================================================
+
+particulas {
+    habilitado: true
+    max_particulas: 10000
+    emisor "fuente" {
+        x: 400
+        y: 300
+        tasa: 100
+        vida: 2.0
+        tamano: 8.0
+        color: [1.0, 0.5, 0.0, 0.8]
+    }
+}
+
+# ============================================================================
+# CHECKPOINTS
+# ============================================================================
+
+checkpoint "inicio" {
+    x: 100
+    y: 400
+}
+
+checkpoint "medio" {
+    x: 400
+    y: 300
+}
+
+checkpoint "final" {
+    x: 700
+    y: 200
+}
+
+# ============================================================================
+# FIN DEL ARCHIVO DE CONFIGURACIÓN
+# ============================================================================

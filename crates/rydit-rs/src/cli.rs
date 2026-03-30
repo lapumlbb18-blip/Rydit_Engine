@@ -1,10 +1,12 @@
 // crates/rydit-rs/src/cli.rs
 // Parsing de argumentos de línea de comandos y entrada principal
+// v0.10.2: Inversión de Control + AST Caching
 
 use std::{env, fs};
 
 use blast_core::Executor;
-use lizer::{Lizer, Parser};
+// ✅ v0.10.2: Lizer y Parser ya no se usan directamente (usamos parse_cached)
+// use lizer::{Lizer, Parser};
 use migui::Migui;
 use rydit_gfx::RyditGfx;
 
@@ -19,6 +21,92 @@ pub fn run() {
     init_global_loader();
 
     let args: Vec<String> = env::args().collect();
+
+    // ✅ v0.10.2: SCENE RUNNER (Inversión de Control)
+    if args.len() > 1 && args[1] == "--scene" {
+        // Ejecutar scene_runner con el nombre de escena
+        let escena = if args.len() > 2 {
+            &args[2]
+        } else {
+            "demos/nivel_config.rydit"
+        };
+        
+        println!("🛡️ Iniciando Scene Runner v0.10.2");
+        println!("   Escena: {}\n", escena);
+        
+        // Ejecutar scene_runner directamente
+        std::process::Command::new(std::env::current_exe().unwrap())
+            .arg("--scene-run")
+            .arg(escena)
+            .status()
+            .expect("Failed to run scene runner");
+        return;
+    }
+    
+    // ✅ v0.10.2: SCENE RUN interno (llamado desde --scene)
+    if args.len() > 1 && args[1] == "--scene-run" {
+        let escena = if args.len() > 2 { &args[2] } else { "demos/nivel_config.rydit" };
+        
+        // Importar y ejecutar scene_runner
+        use crate::config_parser::ConfigParser;
+        use rydit_ecs::EcsWorld;
+        use rydit_gfx::{ColorRydit, Key};
+        use rydit_gfx::ecs_render::EcsRenderer;
+        
+        // Parsear configuración
+        let config = match ConfigParser::parse(escena) {
+            Ok(c) => c,
+            Err(e) => {
+                eprintln!("❌ Error: {}", e);
+                std::process::exit(1);
+            }
+        };
+        
+        // Crear ventana
+        let mut gfx = RyditGfx::new(&config.nombre, 800, 600);
+        gfx.set_target_fps(60);
+        
+        // Crear ECS World
+        let mut ecs_world = EcsWorld::new();
+        ecs_world.set_gravity(0.0, config.gravedad);
+        
+        // Spawnear entidades
+        for ent in &config.entidades {
+            ecs_world.create_sprite_entity(ent.x, ent.y, &ent.sprite, ent.ancho, ent.alto);
+        }
+        
+        // Renderer
+        let mut renderer = EcsRenderer::new();
+        
+        // Game loop nativo
+        let mut frame = 0;
+        while !gfx.should_close() {
+            gfx.begin_draw();
+            gfx.clear_background(ColorRydit::Negro);
+            
+            // Input
+            if gfx.is_key_pressed(Key::Escape) {
+                break;
+            }
+            
+            // Update
+            ecs_world.update(0.016);
+            
+            // Render
+            renderer.render_colored(&ecs_world);
+            
+            // UI
+            gfx.draw_text(&format!("🛡️ {}", config.nombre), 10, 20, 18, ColorRydit::Blanco);
+            gfx.draw_text(&format!("Entidades: {} | FPS: {}", ecs_world.entity_count(), gfx.get_fps()), 10, 45, 16, ColorRydit::Verde);
+            gfx.draw_text("ESC = Salir", 10, 580, 12, ColorRydit::Gris);
+            
+            gfx.end_draw();
+            frame += 1;
+        }
+        
+        println!("✅ Scene completada: {} frames", frame);
+        return;
+    }
 
     // Verificar si es modo LAZOS (Protocolo LAZOS)
     if args.len() > 1 && (args[1] == "--lazos" || args[1] == "-l") {
@@ -96,19 +184,19 @@ fn run_gfx_mode(script: &str) {
     let mut gfx = RyditGfx::new("RyDit Engine", 800, 600);
     gfx.set_target_fps(60);
 
-    // Lexer + Parser (AST)
-    let tokens = Lizer::new(script).scan();
-    let mut parser = Parser::new(tokens);
-
-    match parser.parse() {
-        Ok(program) => {
-            println!("[RYDIT] {} statements en AST", program.statements.len());
-            ejecutar_programa_gfx(&program, &mut executor, &mut funcs, &mut gfx);
-        }
+    // Lexer + Parser (AST) - ✅ v0.10.2: Usar caching
+    let program = match lizer::parse_cached(script) {
+        Ok(p) => {
+            println!("[RYDIT] {} statements en AST (cached)", p.statements.len());
+            p
+        },
         Err(e) => {
             println!("[ERROR] {}", e);
+            return;
         }
-    }
+    };
+    
+    ejecutar_programa_gfx(&program, &mut executor, &mut funcs, &mut gfx);
 
     executor.mostrar_memoria();
     println!("--- SISTEMA PROTEGIDO ---");
@@ -129,18 +217,19 @@ fn run_migui_mode(script: &str) {
     let mut gfx = RyditGfx::new("RyDit migui v0.4.1", 800, 600);
     gfx.set_target_fps(60);
 
-    let tokens = Lizer::new(script).scan();
-    let mut parser = Parser::new(tokens);
-
-    match parser.parse() {
-        Ok(program) => {
-            println!("[RYDIT] {} statements en AST", program.statements.len());
-            ejecutar_programa_migui(&program, &mut executor, &mut funcs, &mut gui, &mut gfx);
-        }
+    // Lexer + Parser (AST) - ✅ v0.10.2: Usar caching
+    let program = match lizer::parse_cached(script) {
+        Ok(p) => {
+            println!("[MIGUI] {} statements en AST (cached)", p.statements.len());
+            p
+        },
         Err(e) => {
             println!("[ERROR] {}", e);
+            return;
         }
-    }
+    };
+    
+    ejecutar_programa_migui(&program, &mut executor, &mut funcs, &mut gui, &mut gfx);
 
     executor.mostrar_memoria();
     println!("--- SISTEMA PROTEGIDO ---");
@@ -158,19 +247,19 @@ fn run_comandante_mode(script: &str) {
     let mut funcs: std::collections::HashMap<String, (Vec<String>, Vec<lizer::Stmt>)> =
         std::collections::HashMap::new();
 
-    // Lexer + Parser (AST)
-    let tokens = Lizer::new(script).scan();
-    let mut parser = Parser::new(tokens);
-
-    match parser.parse() {
-        Ok(program) => {
-            println!("[RYDIT] {} statements en AST", program.statements.len());
-            ejecutar_programa(&program, &mut executor, &mut funcs);
-        }
+    // Lexer + Parser (AST) - ✅ v0.10.2: Usar caching
+    let program = match lizer::parse_cached(script) {
+        Ok(p) => {
+            println!("[RYDIT] {} statements en AST (cached)", p.statements.len());
+            p
+        },
         Err(e) => {
             println!("[ERROR] {}", e);
+            return;
         }
-    }
+    };
+    
+    ejecutar_programa(&program, &mut executor, &mut funcs);
 
     executor.mostrar_memoria();
     println!("--- SISTEMA PROTEGIDO ---");

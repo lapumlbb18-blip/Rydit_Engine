@@ -194,8 +194,8 @@ pub fn ejecutar_programa_gfx(
                     queue.execute(gfx, &assets_borrow);
 
                     // ✅ v0.9.2: Dibujar partículas (después de queue, directo con begin_draw)
-                    use crate::modules::particles;
-                    particles::draw_particles(gfx);
+                    // use crate::modules::particles;  // ✅ v0.10.2: Temporalmente comentado
+                    // particles::draw_particles(gfx);  // ✅ v0.10.2: Temporalmente comentado
 
                     eprintln!(
                         "[EXECUTOR] Frame {} completado - Queue ejecutada (stats: {})",
@@ -275,8 +275,8 @@ pub fn ejecutar_programa_gfx(
                     queue.execute(gfx, &assets_borrow);
 
                     // ✅ v0.9.2: Dibujar partículas
-                    use crate::modules::particles;
-                    particles::draw_particles(gfx);
+                    // use crate::modules::particles;  // ✅ v0.10.2: Temporalmente comentado
+                    // particles::draw_particles(gfx);  // ✅ v0.10.2: Temporalmente comentado
 
                     if escape {
                         break;

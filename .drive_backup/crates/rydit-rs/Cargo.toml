@@ -1,6 +1,6 @@
 [package]
 name = "rydit-rs"
-version = "0.10.0"
+version = "0.10.1"
 edition = "2021"
 
 [dependencies]
@@ -17,6 +17,7 @@ rydit-gfx = { path = "../rydit-gfx" }
 migui = { path = "../migui" }
 rydit-http = { path = "../rydit-http" }
 raylib = { version = "5.5.1", default-features = false, features = ["nobuild"] }
+gl = "0.14.0"  # ✅ v0.10.1: GPU Instancing
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 regex = "1.10"
