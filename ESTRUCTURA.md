@@ -1,13 +1,13 @@
 # 🛡️ RyDit - ESTRUCTURA DEL PROYECTO
 
-**Última actualización**: 2026-03-30
-**Versión**: v0.10.2 ✅ INVERSIÓN DE CONTROL + AST CACHING
+**Última actualización**: 2026-03-31
+**Versión**: v0.10.5 ✅ SDL2 BACKEND DESCUBIERTO
 **Commit**: `209069e`
-**Estado**: 10/10 - Fases 1-3 completadas
+**Estado**: Input funciona en Termux-X11 con SDL2
 
 ---
 
-## 🎯 ARQUITECTURA ACTUAL
+## 🎯 ARQUITECTURA ACTUALIZADA v0.10.5
 
 ```
 rydit-engine/
@@ -25,29 +25,32 @@ rydit-engine/
 │   │   │   └── systems.rs
 │   │   └── Cargo.toml      # bevy_ecs = "0.15"
 │   │
-│   ├── rydit-gfx/          # ✅ GPU + Renderer (v0.10.0-0.10.1)
+│   ├── rydit-gfx/          # ✅ Backend Dual (v0.10.5)
 │   │   ├── src/
-│   │   │   ├── lib.rs      # RyditGfx
+│   │   │   ├── lib.rs      # RyditGfx + input_sdl2
+│   │   │   ├── input_sdl2.rs      # ✅ Input con eventos SDL2
 │   │   │   ├── gpu_instancing.rs  # ✅ 100K partículas
 │   │   │   ├── ecs_render.rs      # ✅ ECS + rlgl
 │   │   │   ├── render_queue.rs    # ✅ 8192 draw calls
 │   │   │   └── shaders/           # ✅ vertex.glsl, fragment.glsl
-│   │   └── Cargo.toml      # gl = "0.14.0"
+│   │   └── Cargo.toml      # sdl2 = "0.37" + raylib
 │   │
-│   ├── rydit-rs/           # ⚠️ Binario principal (64 errores)
+│   ├── rydit-rs/           # ⚠️ Binario principal
 │   │   ├── src/
 │   │   │   ├── bin/
-│   │   │   │   ├── scene_runner.rs  # ✅ Inversión de Control
-│   │   │   │   ├── ecs_demo_10k.rs  # ✅ ECS test
-│   │   │   │   └── gpu_demo_100k.rs # ✅ GPU test
+│   │   │   │   ├── demo_sdl2_puro.rs      # ✅ SDL2 puro (funciona)
+│   │   │   │   ├── test_callback_sdl2.rs  # ✅ Test SDL2 (funciona)
+│   │   │   │   ├── scene_runner.rs        # ✅ Inversión de Control
+│   │   │   │   ├── ecs_demo_10k.rs        # ✅ ECS test
+│   │   │   │   └── gpu_demo_100k.rs       # ✅ GPU test
 │   │   │   ├── config_parser.rs     # ✅ Parser de configs
 │   │   │   ├── lib.rs               # ✅ Mínimo (solo config_parser)
 │   │   │   ├── cli.rs               # ✅ Usa parse_cached
 │   │   │   ├── executor.rs          # ⚠️ Con módulos comentados
 │   │   │   ├── main.rs              # ⚠️ Límites removidos
-│   │   │   ├── modules/             # ⚠️ 5 módulos comentados
+│   │   │   ├── modules/             # ✅ input_map.rs (657 líneas)
 │   │   │   └── disabled/            # 📁 particles_module.rs
-│   │   └── Cargo.toml
+│   │   └── Cargo.toml      # sdl2 = "0.37"
 │   │
 │   └── ... (otros crates: anim, physics, science, etc.)
 │
@@ -57,6 +60,7 @@ rydit-engine/
 │   └── ...
 │
 ├── docs/                   # ✅ Documentación
+│   ├── DIAGNOSTICO_INPUT_TERMUX_X11.md  # ✅ Diagnóstico completo
 │   ├── CAMBIOS_V0.10.2_FASE1-2.md
 │   ├── TAREAS_PENDIENTES_V0.10.2.md
 │   ├── RYDIT_V0.9.4_COMPLETADA.md
@@ -64,8 +68,8 @@ rydit-engine/
 │
 ├── ROADMAP.md              # ✅ Roadmap completo
 ├── RESUMEN_V0.10.2.md      # ✅ Resumen ejecutivo
-├── QWEN.md                 # ✅ Bitácora técnica
-└── README.md               # ✅ Estado actual
+├── QWEN.md                 # ✅ Bitácora técnica (v0.10.5)
+└── README.md               # ✅ Estado actual (v0.10.5)
 ```
 
 ---
@@ -77,7 +81,7 @@ rydit-engine/
 | **lizer** | ✅ 100% | ~3300 | Parser + AST caching | v0.10.2 |
 | **rydit-core** | ✅ 100% | ~400 | RyditModule trait | Sin usar |
 | **rydit-ecs** | ✅ 100% | ~640 | ECS completo | v0.10.0 |
-| **rydit-gfx** | ✅ 100% | ~1500 | GPU + ECS renderer | v0.10.1 |
+| **rydit-gfx** | ✅ 100% | ~1700 | Backend Dual + Input SDL2 | v0.10.5 |
 | **rydit-rs (scene_runner)** | ✅ 100% | ~326KB | Inversión de Control | v0.10.2 |
 | **rydit-rs (legacy)** | ❌ 64 errores | ~4500 | Legacy | Needs fix |
 | **rydit-physics** | ✅ 100% | ~690 | Físicas 2D | v0.9.3 |

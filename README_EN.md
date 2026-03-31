@@ -6,16 +6,48 @@
 
 **"David vs Goliath - A game engine in Rust, built 100% on a Redmi Note 8"**
 
-[![Version](https://img.shields.io/badge/version-v0.7.3.4-blue.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
-[![Tests](https://img.shields.io/badge/tests-190%20passing-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![Version](https://img.shields.io/badge/version-v0.10.6-blue.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![Tests](https://img.shields.io/badge/tests-260%20passing-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
 [![raylib](https://img.shields.io/badge/raylib-5.5-purple.svg)](https://www.raylib.com/)
+[![SDL2](https://img.shields.io/badge/SDL2-0.37-red.svg)](https://www.libsdl.org/)
 [![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine/blob/main/LICENSE)
 
 [📖 Documentation](#-documentation) • [🎮 Snake Demo](#-snake-game---functional-demo) • [🚀 Roadmap](#-roadmap) • [📱 Built on Android](#-built-on-androidtermux) • [💬 Community](#-community)
 
 </div>
+
+---
+
+## 🔥 v0.10.6 - SDL2 BACKEND COMPLETE (2026-03-31)
+
+### ✅ **SDL2 Backend Fully Functional!**
+
+After 10 days stuck with input issues, we implemented a complete SDL2 backend:
+
+| System | Method | Works on Termux-X11? |
+|--------|--------|---------------------|
+| **Raylib/GLFW** | Polling (`glfwGetKey()`) | ❌ **NO** |
+| **SDL2 Backend** | Event Loop (`poll_iter()`) | ✅ **YES!** |
+| **glxgears** | X11 Events | ✅ YES |
+
+**Working Demos**:
+- ✅ `test_callback_sdl2.rs` - Pure SDL2, perfect input
+- ✅ `demo_sdl2_puro.rs` - Pure SDL2, smooth movement
+- ✅ `demo_particulas_sdl2.rs` - 100+ particles @ 60 FPS
+
+**Solution**: SDL2 backend for Android/Termux-X11, Raylib for Desktop.
+
+### v0.10.6 Features
+- ✅ **Sdl2Backend** - Complete window + OpenGL 3.3 Core context
+- ✅ **InputState** - 69 keys mapped with event loop
+- ✅ **GPU Instancing Ready** - OpenGL context for GPU rendering
+- ✅ **Primitives** - Rect, Circle, Text (basic)
+- ✅ **VSync** - 60 FPS stable
+- ⚠️ **SDL2_image** - Pending linking fix
+- ⚠️ **SDL2_ttf** - Pending
+- ⚠️ **SDL2_mixer** - Pending
 
 ---
 

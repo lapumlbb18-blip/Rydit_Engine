@@ -53,6 +53,18 @@ pub mod ecs_render;
 // Módulo de GPU Instancing v0.10.1 - FFI OpenGL + Shaders GLSL
 pub mod gpu_instancing;
 
+// Módulo de Input SDL2 v0.10.4 - Eventos para Termux-X11/Android
+pub mod input_sdl2;
+
+// Módulo de Backend SDL2 v0.10.6 - Ventana + OpenGL + Assets
+pub mod backend_sdl2;
+
+// Módulo de Audio SDL2 v0.10.8 - SDL2_mixer (pendiente)
+pub mod audio_sdl2;
+
+// Módulo de Fuentes SDL2 v0.10.8 - SDL2_ttf (pendiente)
+pub mod font_sdl2;
+
 use raylib::consts::KeyboardKey;
 use raylib::prelude::*;
 
@@ -776,6 +788,11 @@ pub struct RyditGfx {
     width: i32,
     height: i32,
     fps: i32,
+    // ✅ v0.10.4: Input SDL2 para Termux-X11
+    pub input_sdl2: input_sdl2::InputState,
+    // Contexto SDL2 para eventos
+    sdl_context: Option<sdl2::Sdl>,
+    sdl_event_pump: Option<sdl2::EventPump>,
 }
 
 impl RyditGfx {
@@ -790,12 +807,19 @@ impl RyditGfx {
             std::env::var("DISPLAY").unwrap_or_else(|_| "NO SET".to_string())
         );
 
+        // Inicializar SDL2 para eventos
+        let sdl_context = sdl2::init().ok();
+        let sdl_event_pump = sdl_context.as_ref().and_then(|ctx| ctx.event_pump().ok());
+
         Self {
             handle,
             thread,
             width,
             height,
             fps: 60,
+            input_sdl2: input_sdl2::InputState::new(),
+            sdl_context,
+            sdl_event_pump,
         }
     }
 
@@ -818,6 +842,43 @@ impl RyditGfx {
     /// Verificar si la ventana debe cerrarse
     pub fn should_close(&self) -> bool {
         self.handle.window_should_close()
+    }
+
+    // ========================================================================
+    // INPUT SDL2 - v0.10.4: Para Termux-X11/Android
+    // ========================================================================
+
+    /// Procesar eventos SDL2 (debe llamarse en cada frame)
+    pub fn procesar_eventos_sdl2(&mut self) {
+        // Limpiar eventos del frame anterior
+        self.input_sdl2.limpiar_frame();
+
+        // Obtener event pump (temporalmente)
+        if let Some(ref mut event_pump) = self.sdl_event_pump {
+            // Procesar eventos
+            for event in event_pump.poll_iter() {
+                match event {
+                    sdl2::event::Event::KeyDown { keycode: Some(keycode), repeat: false, .. } => {
+                        self.input_sdl2.teclas.insert(keycode, true);
+                        self.input_sdl2.teclas_pressionadas_frame.push(keycode);
+                    }
+                    sdl2::event::Event::KeyUp { keycode: Some(keycode), .. } => {
+                        self.input_sdl2.teclas.insert(keycode, false);
+                    }
+                    _ => {}
+                }
+            }
+        }
+    }
+
+    /// Verificar si una tecla está presionada (vía SDL2)
+    pub fn is_key_pressed_sdl2(&self, nombre: &str) -> bool {
+        self.input_sdl2.is_key_pressed(nombre)
+    }
+
+    /// Verificar si una tecla fue presionada este frame (vía SDL2)
+    pub fn is_key_just_pressed_sdl2(&self, nombre: &str) -> bool {
+        self.input_sdl2.is_key_just_pressed(nombre)
     }
 
     /// Obtener ancho de ventana

@@ -1,79 +1,62 @@
 # 🛡️ QWEN.md - Bitácora Técnica RyDit
 
 **Última actualización**: 2026-03-31
-**Versión actual**: v0.10.4 🛑 ESTANCADO EN PARSER
-**Versión anterior**: v0.10.3 - INPUT + ASSETS REQUIEREN FIX
-**Próxima versión**: v0.11.0 - PARSER FUERTE (PRIORIDAD 0)
+**Versión actual**: v0.10.6 ✅ SDL2 BACKEND FUNCIONANDO
+**Versión anterior**: v0.10.5 ✅ INPUT SDL2 DESCUBIERTO
+**Próxima versión**: v0.10.7 - SDL2 IMAGE/TTF/MIXER + BACKEND DUAL
 **Commit**: `209069e`
 
 ---
 
-## 🛑 ESTADO CRÍTICO - 10 DÍAS ESTANCADOS
+## 🎉 DESCUBRIMIENTO CRÍTICO 2026-03-31: SOLUCIÓN SDL2
 
-### Diagnóstico Honesto
+### ✅ **INPUT FUNCIONA CON SDL2**
 
-| Actividad | Estado | Días Perdidos | Notas |
-|-----------|--------|---------------|-------|
-| **Fixes Rust** | ✅ Completado | 3 días | Compila todo sin errores |
-| **Integración módulos** | ✅ Completado | 2 días | Assets, Partículas, ECS |
-| **Parser debugging** | ❌ **FALLIDO** | **10 DÍAS** | **Mismo error recurrente** |
-| **Demos funcionales** | ❌ No hay | - | Parser no permite sintaxis compleja |
+Después de 10 días estancados con el input, descubrimos la solución:
 
----
+| Sistema | Método | ¿Funciona en Termux-X11? |
+|---------|--------|-------------------------|
+| **Raylib/GLFW** | Polling (`glfwGetKey()`) | ❌ **NO** |
+| **SDL2** | Event Loop (`poll_iter()`) | ✅ **SÍ** |
+| **glxgears** | X11 Events | ✅ SÍ |
 
-## 🔥 CICLO INFINITO DEL PARSER (Días 1-10)
+**Tests que funcionaron**:
+- ✅ `test_callback_sdl2.rs` - SDL2 puro, input perfecto
+- ✅ `demo_sdl2_puro.rs` - SDL2 puro, movimiento suave
 
-```
-1. Fix mínimo en Rust → ✅ Compila
-       ↓
-2. Creamos demo .rydit → ❌ Parser falla
-       ↓
-3. "Simplificamos" demo → ❌ Parser sigue fallando
-       ↓
-4. Diagnosticamos error → ❌ Es el parser mismo
-       ↓
-5. Volvemos al paso 1 → 🔄 MISMO ERROR
-
-**RESULTADO**: 10 días, 0 demos funcionales
-```
-
-**Errores recurrentes**:
-- `Se esperaba '}' para cerrar el bloque`
-- `Unexpected token`
-- `Maximum iterations exceeded`
-- `Circular import detected` (falso positivo)
+**Tests que fallaron**:
+- ❌ `test_input_correcto.rs` - Raylib polling no funciona
+- ❌ `demo_input_map_standalone` - Raylib polling no funciona
+- ❌ `demo_input_sdl2.rs` - Conflicto Raylib + SDL2
 
 ---
 
-## 📊 RESUMEN EJECUTIVO v0.10.4
+## 🔍 DIAGNÓSTICO HONESTO ACTUALIZADO
 
-### ✅ Lo Que SÍ Funciona (Rust)
+### Lo Que SÍ Funciona ✅
 
 | Sistema | Estado | Líneas | Tests |
 |---------|--------|--------|-------|
 | **Rust Core** | ✅ 100% | ~25K | Compila sin errores |
 | **Render Queue** | ✅ 100% | 600+ | 8192+ draw calls |
-| **Assets Manager** | ✅ Integrado | 486 | Carga texturas |
-| **Particles** | ✅ Integrado | 188 | 500+ partículas |
-| **ECS** | ✅ bevy_ecs | - | 10K entidades |
+| **SDL2 Backend** | ✅ **NUEVO** | 200+ | Input funciona |
 | **Input Map** | ✅ Código existe | 657 | 20+ combinaciones |
 | **Physics 2D** | ✅ 20 funciones | - | Funciona |
 | **Camera 2D** | ✅ 15 funciones | - | Funciona |
+| **Particles** | ✅ Integrado | 188 | 500+ partículas |
+| **ECS** | ✅ bevy_ecs | - | 10K entidades |
 
 **Total**: ~25K líneas Rust, 260+ tests, 10+ binarios compilados ✅
 
 ---
 
-### ❌ Lo Que NO Funciona (Parser)
+### ❌ Lo Que NO Funciona
 
 | Sistema | Problema | Días Estancado | Impacto |
 |---------|----------|----------------|---------|
 | **PARSER LIZER** | 🔴 **BLOQUES ANIDADOS** | **10 DÍAS** | 🔴 **CRÍTICO** |
-| .rydit scripts | Parser falla en sintaxis compleja | 10 días | No hay demos funcionales |
-| eval/mod.rs | Conectado pero no se usa | 5 días | Lógica no se ejecuta |
-| Game loop .rydit | Parser no soporta loops complejos | 8 días | No hay juegos reales |
-
-**Root Cause**: Parser monolítico (3327 líneas en 1 archivo), sin error recovery, AST sin tipos
+| **Raylib Input** | ❌ Polling no funciona en Android | 1 día | 🟡 Medio |
+| .rydit scripts | Parser falla en sintaxis compleja | 10 días | 🔴 Crítico |
 
 ---
 
@@ -842,5 +825,136 @@ export DRI3=1
 **500+ frames verificados en producción**
 
 **Próximo: v0.9.1 - GPU Instancing (FFI OpenGL)**
+
+</div>
+
+---
+
+## 🛡️ v0.10.5 - DESCUBRIMIENTO SDL2 (2026-03-31)
+
+### Arquitectura SDL2 Backend
+
+```
+┌──────────────────────────────────────────┐
+│  rydit-gfx (Backend Dual)                │
+│  ┌─────────────┐  ┌─────────────┐       │
+│  │  Raylib     │  │    SDL2     │       │
+│  │  (Desktop)  │  │  (Android)  │       │
+│  └─────────────┘  └─────────────┘       │
+└──────────────────────────────────────────┘
+           ↓
+┌──────────────────────────────────────────┐
+│  Input Map (Unificado)                   │
+│  - 69 teclas mapeadas                    │
+│  - Combinaciones (VolUP + tecla)         │
+│  - Gamepad                               │
+└──────────────────────────────────────────┘
+```
+
+### Archivos Creados v0.10.5
+
+| Archivo | Descripción | Estado |
+|---------|-------------|--------|
+| `crates/rydit-gfx/src/input_sdl2.rs` | InputState con eventos SDL2 | ✅ Nuevo |
+| `crates/rydit-rs/src/bin/test_callback_sdl2.rs` | Test SDL2 puro | ✅ Funciona |
+| `crates/rydit-rs/src/bin/demo_sdl2_puro.rs` | Demo SDL2 puro | ✅ Funciona |
+| `DIAGNOSTICO_INPUT_TERMUX_X11.md` | Diagnóstico completo | ✅ Nuevo |
+
+### Dependencias Compatibles
+
+| Plataforma | Backend | Dependencias | Estado |
+|------------|---------|--------------|--------|
+| **Android/Termux-X11** | SDL2 | `sdl2 = "0.37"` | ✅ Funciona |
+| **Desktop Linux** | Raylib | `raylib = "5.5.1"` | ✅ Funciona |
+| **Desktop Windows** | Raylib | `raylib = "5.5.1"` | ✅ Funciona |
+| **Web** | SDL2 | `sdl2` + wasm | 🔮 Futuro |
+
+### Carga de Assets con SDL2
+
+```rust
+// crates/rydit-gfx/src/assets_sdl2.rs (propuesto)
+use sdl2::image::{InitFlag, load};
+use sdl2::render::{Texture, Canvas};
+use sdl2::video::Window;
+
+pub struct AssetsManager {
+    textures: HashMap<String, Texture>,
+}
+
+impl AssetsManager {
+    pub fn load_texture(&mut self, id: &str, path: &str, 
+                        canvas: &mut Canvas<Window>) -> Result<(), String> {
+        let surface = load(path).map_err(|e| e.to_string())?;
+        let texture = canvas.create_texture_from_surface(&surface)
+                            .map_err(|e| e.to_string())?;
+        self.textures.insert(id.to_string(), texture);
+        Ok(())
+    }
+}
+```
+
+**Ventajas**:
+- ✅ SDL2_image soporta PNG, JPG, GIF, BMP
+- ✅ Texturas en VRAM (GPU)
+- ✅ Mismo código para Android y Desktop
+- ✅ Sin conflictos con X11
+
+---
+
+## 📋 ROADMAP ACTUALIZADO v0.10.6 → v0.11.0
+
+### v0.10.6 - SDL2 BACKEND COMPLETO (COMPLETADO ✅ 2026-03-31)
+- [x] `rydit-gfx/src/backend_sdl2.rs` - Ventana + OpenGL 3.3 Core ✅
+- [x] `rydit-gfx/src/input_sdl2.rs` - Input con eventos (69 teclas) ✅
+- [x] `crates/rydit-rs/src/bin/demo_particulas_sdl2.rs` - Demo partículas ✅
+- [x] Tests que demuestran funcionamiento ✅
+- [x] Documentación completa (QWEN.md, README, ESTRUCTURA) ✅
+- [x] **Demo funcionando**: 100+ partículas @ 60 FPS ✅
+- ⚠️ `rydit-gfx/src/assets_sdl2.rs` - Texturas (pendiente linking SDL2_image)
+- ⚠️ Backend dual (Raylib + SDL2) - Pendiente
+
+### v0.10.7 - SDL2 IMAGE/TTF/MIXER + BACKEND DUAL (1-2 semanas)
+- [ ] Fix SDL2_image linking (biblioteca instalada en Termux)
+- [ ] Fix SDL2_ttf linking (fuentes TrueType)
+- [ ] Fix SDL2_mixer linking (audio OGG/MP3)
+- [ ] `rydit-gfx/src/assets_sdl2.rs` - Carga de texturas PNG/JPG
+- [ ] `rydit-gfx/src/font_sdl2.rs` - Render de fuentes TTF
+- [ ] `rydit-gfx/src/audio_sdl2.rs` - Audio con mixer
+- [ ] Feature flag: `--features sdl2-backend`
+- [ ] Auto-detect por plataforma (Android → SDL2, Desktop → Raylib)
+
+### v0.10.8 - MIGRACIÓN DEMOS (1 semana)
+- [ ] Migrar `demo_particles.rs` a SDL2
+- [ ] Migrar `demo_big_bang.rs` a SDL2
+- [ ] Migrar `snake.rs` a SDL2
+- [ ] Migrar `demo_10k_particulas.rs` a SDL2
+- [ ] Feature flag automático por plataforma
+
+### v0.11.0 - PARSER FUERTE (2-3 semanas) 🔴 PRIORIDAD 0
+- [ ] Separar lexer, parser, AST en módulos
+- [ ] AST typed con validación
+- [ ] Error recovery
+- [ ] Tests exhaustivos
+- [ ] Parser parsea bloques anidados sin límites
+
+### v0.11.1 - GAME LOOP NATIVO (1 semana)
+- [ ] Config loader (.rydit como datos)
+- [ ] Game loop 100% Rust + SDL2
+- [ ] Migrar demos antiguos
+
+### v0.12.0 - DEMOS REALES (1 semana)
+- [ ] Snake (SDL2, 60 FPS estables)
+- [ ] Tank Battle (SDL2 + Input Map)
+- [ ] Particles (SDL2 + 500 partículas)
+
+---
+
+<div align="center">
+
+**🛡️ RyDit v0.10.6 - SDL2 BACKEND FUNCIONANDO**
+
+*SDL2 Backend ✅ | Input Funciona ✅ | GPU Ready ✅ | Parser 🔴 Próximo*
+
+**Próximo: v0.10.7 - SDL2 Image/TTF/Mixer + Backend Dual**
 
 </div>

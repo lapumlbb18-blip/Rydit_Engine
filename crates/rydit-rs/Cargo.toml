@@ -18,6 +18,7 @@ migui = { path = "../migui" }
 rydit-http = { path = "../rydit-http" }
 raylib = { version = "5.5.1", default-features = false, features = ["nobuild"] }
 gl = "0.14.0"  # ✅ v0.10.1: GPU Instancing
+sdl2 = "0.37"  # ✅ v0.10.4: Callbacks para Termux-X11 (mejor soporte Android)
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 regex = "1.10"

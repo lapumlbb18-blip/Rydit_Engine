@@ -1,12 +1,20 @@
-// build.rs para rydit-gfx
-// Configura el linking con raylib nativo usando pkg-config
+// crates/rydit-gfx/build.rs
+// Build script para linking de SDL2
 
 fn main() {
-    // Usar pkg-config para encontrar y linkear raylib
-    pkg_config::Config::new()
-        .atleast_version("5.0")
-        .probe("raylib")
-        .expect("raylib no encontrado. Instala raylib con: pkg install raylib");
-
+    // Linking explícito de SDL2 y extensiones
+    println!("cargo:rustc-link-lib=SDL2");
+    println!("cargo:rustc-link-lib=SDL2_image");
+    println!("cargo:rustc-link-lib=SDL2_ttf");
+    println!("cargo:rustc-link-lib=SDL2_mixer");
+    
+    // Usar pkg-config para encontrar las bibliotecas
+    if let Ok(libs) = pkg_config::Config::new()
+        .atleast_version("2.0")
+        .probe("sdl2")
+    {
+        println!("cargo:rustc-link-search=native={}", libs.link_paths.iter().map(|p| p.to_str().unwrap()).collect::<Vec<_>>().join(":"));
+    }
+    
     println!("cargo:rerun-if-changed=build.rs");
 }
