@@ -1,8 +1,0 @@
-RyditModule trait para evitar seguir inflando el núcleo main.rs . Este sistema 
-El split seguro sin tocar la parte gráfica que está acoplada con raylib, evitamos riesgos altos , con este RyditModule trait el núcleo no crecerá aunque pongamos más módulos, importando por módulos KB ligueros , los módulos mas importantes son de animación 2d com los 12 principios de la animación 2d moderna, y la ciencia de datos y física 2d avanzado , el http puede ser básico sin async ni Tokio , 
-Posibles pasos 
-1 Split seguro sin tocar Gameloop ni nada referente a gráficos, 
-2 RyditModule trait Sistema de registro macro PATRON, 
-3 los 3 módulos, con el sistema núcleo limpio y más fresco , animación 2d (12 principios de la animación 2d moderna) ,ciencia de datos y física 2d avanzado, y http simple primero sin tokio sin async, pero si a futuro,
-Inspirados en bevy y manim, 
-			
