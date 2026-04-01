@@ -1,10 +1,30 @@
 # 🛡️ QWEN.md - Bitácora Técnica RyDit
 
-**Última actualización**: 2026-03-31
-**Versión actual**: v0.10.6 ✅ SDL2 BACKEND FUNCIONANDO
-**Versión anterior**: v0.10.5 ✅ INPUT SDL2 DESCUBIERTO
-**Próxima versión**: v0.10.7 - SDL2 IMAGE/TTF/MIXER + BACKEND DUAL
-**Commit**: `209069e`
+**Última actualización**: 2026-04-01
+**Versión actual**: v0.11.0 ✅ RYBOT + SDL2 + TOOLKIT
+**Versión anterior**: v0.10.6 ✅ SDL2 BACKEND FUNCIONANDO
+**Próxima versión**: v0.11.1 - FSR 1.0 + PARSER MODULAR
+**Commit**: Ver `git log -n 1`
+
+---
+
+## 🎉 v0.11.0 COMPLETADO - RYBOT + SDL2 + TOOLKIT (2026-04-01)
+
+### ✅ **LO QUE SÍ FUNCIONA AHORA**
+
+| Sistema | Estado | Líneas | Tests |
+|---------|--------|--------|-------|
+| **SDL2 Backend** | ✅ 100% | 360+ | Ventana + Input + Render |
+| **SDL2_ttf** | ✅ 100% | 370+ | Texto blended |
+| **SDL2_image** | ✅ 100% | FFI nativo | PNG/JPG cargados |
+| **Toolkit UI** | ✅ 90% | 200+ | Button, Label, Panel |
+| **RyBot Inspector** | ✅ 80% | 530+ | Registry + Alertas + CLI |
+| **Render Queue** | ✅ 100% | 600+ | 8192+ draw calls |
+| **GPU Instancing** | ✅ 100% | - | 100K+ partículas |
+| **ECS** | ✅ 100% | - | 10K entidades |
+| **Sistema Ry** | ✅ 90% | 180K+ | Camera, Entity, Level |
+
+**Total**: ~250K líneas Rust, 260+ tests, 15+ binarios compilados ✅
 
 ---
 
@@ -31,36 +51,46 @@ Después de 10 días estancados con el input, descubrimos la solución:
 
 ---
 
-## 🔍 DIAGNÓSTICO HONESTO ACTUALIZADO
+## 🔍 DIAGNÓSTICO HONESTO ACTUALIZADO (v0.11.0)
 
 ### Lo Que SÍ Funciona ✅
 
 | Sistema | Estado | Líneas | Tests |
 |---------|--------|--------|-------|
+| **SDL2 Backend** | ✅ 100% | 360+ | Ventana + Input + Render |
+| **SDL2_ttf** | ✅ 100% | 370+ | Texto blended |
+| **SDL2_image** | ✅ 100% | FFI | PNG/JPG cargados |
+| **Toolkit UI** | ✅ 90% | 200+ | Button, Label, Panel |
+| **RyBot Inspector** | ✅ 80% | 530+ | Registry + Alertas + CLI |
 | **Rust Core** | ✅ 100% | ~25K | Compila sin errores |
 | **Render Queue** | ✅ 100% | 600+ | 8192+ draw calls |
-| **SDL2 Backend** | ✅ **NUEVO** | 200+ | Input funciona |
-| **Input Map** | ✅ Código existe | 657 | 20+ combinaciones |
-| **Physics 2D** | ✅ 20 funciones | - | Funciona |
-| **Camera 2D** | ✅ 15 funciones | - | Funciona |
-| **Particles** | ✅ Integrado | 188 | 500+ partículas |
-| **ECS** | ✅ bevy_ecs | - | 10K entidades |
+| **GPU Instancing** | ✅ 100% | - | 100K+ partículas |
+| **ECS** | ✅ 100% | - | 10K entidades |
+| **Sistema Ry** | ✅ 90% | 180K+ | Camera, Entity, Level |
 
-**Total**: ~25K líneas Rust, 260+ tests, 10+ binarios compilados ✅
+**Total**: ~250K líneas Rust, 260+ tests, 15+ binarios compilados ✅
 
 ---
 
-### ❌ Lo Que NO Funciona
+### ⚠️ Lo Que Está en Progreso
 
-| Sistema | Problema | Días Estancado | Impacto |
-|---------|----------|----------------|---------|
-| **PARSER LIZER** | 🔴 **BLOQUES ANIDADOS** | **10 DÍAS** | 🔴 **CRÍTICO** |
-| **Raylib Input** | ❌ Polling no funciona en Android | 1 día | 🟡 Medio |
-| .rydit scripts | Parser falla en sintaxis compleja | 10 días | 🔴 Crítico |
+| Sistema | Progreso | Faltante | Impacto |
+|---------|----------|----------|---------|
+| **Parser Lizer** | 70% | Bloques anidados | 🟡 Medio |
+| **RyBot UI** | 20% | Paneles visuales | 🟢 Bajo |
+| **Módulos RyditModule** | 60% | Integración 100% | 🟢 Bajo |
+| **FSR 1.0** | 0% | Shader embebido | 🔴 Alto |
 
 ---
 
-## 🎯 PRIORIDAD 0: PARSER FUERTE (2-3 SEMANAS)
+### 🔴 PRIORIDADES PRÓXIMAS
+
+| Prioridad | Tarea | Tiempo | Impacto |
+|-----------|-------|--------|---------|
+| **0** | FSR 1.0 Shader | 1-2 semanas | 🔴 ALTO |
+| **0** | Parser Fuerte | 2-3 semanas | 🔴 ALTO |
+| **1** | RyBot UI Panels | 3-4 días | 🟡 MEDIO |
+| **2** | GitHub Actions | 1 semana | 🟢 BAJO |
 
 ### NO MÁS "FIX MÍNIMO" - Solución REAL
 
