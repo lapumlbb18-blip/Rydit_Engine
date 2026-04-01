@@ -51,6 +51,147 @@ Después de 10 días estancados con el input, descubrimos la solución:
 
 ---
 
+## 🎥 PORTAL STREAM (RYDI-STREAM) - BOOM FEATURE 🔮
+
+### **Análisis Competitivo**
+
+| Motor | Streaming Nativo | Estado | Notas |
+|-------|------------------|--------|-------|
+| **Unity** | ❌ NO nativo | Requiere OBS/plugins | Third-party necesario |
+| **Unreal** | ⚠️ Pixel Streaming | ✅ Existe pero complejo | Servidores dedicados ($50-200/mes) |
+| **Godot** | ❌ NO nativo | Sin soporte | Comunidad pide desde 2020 |
+| **RyDit** | 🔮 **En desarrollo** | 🟢 **NATIVO + Ligero** | **ÚNICO en educación/STEM** |
+
+---
+
+### **Ventaja Competitiva**
+
+**Unreal Pixel Streaming** (lo más cercano):
+```
+✅ Funciona
+❌ Requiere servidor dedicado (~$50-200/mes)
+❌ Complejo de configurar (Docker, WebRTC, signaling)
+❌ Enfocado en AAA graphics (no educación)
+❌ No funciona en Chromebooks/Android barato
+```
+
+**RyDit Stream Portal** (propuesta):
+```
+✅ Nativo (sin servidores externos)
+✅ LAN streaming (gratis, sin infraestructura)
+✅ WebRTC simple (P2P, sin servidor central)
+✅ Enfocado en educación (Chromebooks, Android)
+✅ TUI táctil para control (ÚNICO)
+✅ Ligero (< 500MB RAM)
+```
+
+---
+
+### **Arquitectura Propuesta**
+
+```
+crates/rydi-stream/
+├── src/
+│   ├── lib.rs
+│   ├── server.rs        # Servidor de streaming
+│   ├── client.rs        # Cliente viewer
+│   ├── lan.rs           # Discovery LAN (mDNS)
+│   ├── webrtc.rs        # WebRTC para web
+│   ├── rtmp.rs          # RTMP para Twitch/YouTube
+│   └── websocket.rs     # WebSocket para custom
+```
+
+---
+
+### **Features del Portal**
+
+| Feature | Descripción | Impacto |
+|---------|-------------|---------|
+| **Stream Local (LAN)** | Ver escenas en otros dispositivos de la red | 🔴 ALTO |
+| **Stream Web** | Broadcast a internet (YouTube, Twitch, custom) | 🔴 ALTO |
+| **Multi-Viewer** | Múltiples espectadores simultáneos | 🟡 MEDIO |
+| **Interactive Stream** | Viewers pueden interactuar (votar, cambiar params) | 🔴 ALTO |
+| **Record & Replay** | Grabar sesiones y reproducir después | 🟡 MEDIO |
+| **TUI Control** | Control táctil tipo Yazi (Android/Chromebook) | 🔴 ALTO |
+
+---
+
+### **Casos de Uso**
+
+#### **1. Educación STEM** 🎓
+```
+Profesor crea simulación → Estudiantes ven en Chromebooks
+→ Interactúan cambiando parámetros en tiempo real
+```
+
+#### **2. Game Development** 🎮
+```
+Dev juega su juego → Stream a Discord/Twitch
+→ Viewers votan por power-ups/enemigos
+```
+
+#### **3. Visualización Científica** 🔬
+```
+Simulación N-Body → Stream a múltiples monitores
+→ Control remoto desde tablets
+```
+
+#### **4. Colaboración** 👥
+```
+2+ devs editan misma escena → Stream sincronizado
+→ Cambios se reflejan en tiempo real
+```
+
+---
+
+### **Implementación por Fases**
+
+| Fase | Feature | Tiempo | Estado |
+|------|---------|--------|--------|
+| **1** | Stream Local (LAN) | 1-2 semanas | 🔮 Pendiente |
+| **2** | Stream Web (WebRTC) | 2-3 semanas | 🔮 Pendiente |
+| **3** | RTMP (Twitch/YouTube) | 1-2 semanas | 🔮 Pendiente |
+| **4** | TUI Táctil | 2 semanas | 🔮 Pendiente |
+
+---
+
+### **Tecnologías**
+
+| Tecnología | Propósito | Crate |
+|------------|-----------|-------|
+| **WebRTC** | Stream P2P web | `webrtc-rs` |
+| **RTMP** | Twitch/YouTube | `rtmp-rs` |
+| **WebSocket** | Custom streaming | `tungstenite` (ya usado) |
+| **mDNS** | Discovery LAN | `libmdns` |
+| **H.264/VP8** | Codec de video | `ffmpeg` bindings |
+
+---
+
+### **Valor Potencial**
+
+| Métrica | Valor |
+|---------|-------|
+| **Diferenciación** | ÚNICO en educación |
+| **Mercado** | STEM + Chromebooks |
+| **Competencia** | Ninguna directa |
+| **Valor** | $200K-500K adicional |
+
+---
+
+## 🎯 PRIORIDADES ACTUALIZADAS
+
+| # | Feature | Tiempo | Impacto | Valor |
+|---|---------|--------|---------|-------|
+| **1** | Parser Fuerte | 2-3 semanas | 🔴 ALTO | $200K |
+| **2** | FSR 1.0 | 1-2 semanas | 🔴 ALTO | $150K |
+| **3** | RyBot UI Táctil | 2 semanas | 🔴 ALTO | $200K |
+| **4** | **Rydi-Stream** | 3-4 semanas | 🔴 ALTO | $300K |
+| **5** | GitHub Actions | 1 semana | 🟡 MEDIO | $50K |
+
+**Valor Total Potencial**: **$900K+**
+
+---
+
 ## 🔍 DIAGNÓSTICO HONESTO ACTUALIZADO (v0.11.0)
 
 ### Lo Que SÍ Funciona ✅
