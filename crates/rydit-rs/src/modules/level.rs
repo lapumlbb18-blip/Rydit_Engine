@@ -1,19 +1,5 @@
 // crates/rydit-rs/src/modules/level.rs
 // Level Manager - Gestión de Niveles para RyDit
-//
-// Funciones:
-// - level::load("nivel.rydit") - Cargar nivel
-// - level::unload() - Descargar nivel actual
-// - level::transition("nivel2.rydit") - Transición a otro nivel
-// - level::get_current() - Obtener nivel actual
-// - level::reload() - Recargar nivel actual
-// - level::get_name() - Obtener nombre del nivel
-// - level::set_checkpoint(name, x, y) - Establecer checkpoint
-// - level::load_checkpoint(name) - Cargar checkpoint
-// - level::get_checkpoint(name) - Obtener posición de checkpoint
-// - level::list_checkpoints() - Listar checkpoints
-// - level::transition_fade(duration) - Transición fade
-// - level::transition_slide(direction) - Transición slide
 
 use blast_core::{Executor, Valor};
 use lizer::{Expr, Stmt};
@@ -21,6 +7,9 @@ use std::collections::HashMap;
 use std::fs;
 
 use crate::eval::evaluar_expr;
+
+// Imports para SDL2
+use rydit_gfx::camera::Camera2D;
 
 // ============================================================================
 // LEVEL MANAGER STRUCT
@@ -223,6 +212,66 @@ impl LevelManager {
     #[allow(dead_code)] // Para futura integración con game loop
     pub fn get_transition_duration(&self) -> f32 {
         self.transition_duration
+    }
+
+    // ========================================================================
+    // SDL2 RENDER
+    // ========================================================================
+
+    /// Renderizar nivel con SDL2 (sin cámara)
+    pub fn render_sdl2(
+        &self,
+        _canvas: &mut sdl2::render::Canvas<sdl2::video::Window>,
+        _texture_manager: &mut std::collections::HashMap<String, sdl2::render::Texture>
+    ) -> Result<(), String> {
+        // Placeholder: renderizar fondo del nivel
+        // En producción, renderizar tiles, entidades, decoración
+        
+        // Renderizar fondo (color desde level_data)
+        if let Some(Valor::Texto(ref bg_color)) = self.level_data.get("fondo") {
+            let color = parse_color(bg_color);
+            _canvas.set_draw_color(color);
+            _canvas.clear();
+        } else {
+            _canvas.set_draw_color(sdl2::pixels::Color::RGB(30, 30, 30));
+            _canvas.clear();
+        }
+        
+        Ok(())
+    }
+
+    /// Renderizar nivel con SDL2 + Cámara
+    pub fn render_with_camera_sdl2(
+        &self,
+        canvas: &mut sdl2::render::Canvas<sdl2::video::Window>,
+        camera: &rydit_gfx::camera::Camera2D,
+        texture_manager: &mut std::collections::HashMap<String, sdl2::render::Texture>,
+        screen_width: i32,
+        screen_height: i32
+    ) -> Result<(), String> {
+        // Renderizar nivel con cámara
+        self.render_sdl2(canvas, texture_manager)?;
+        
+        // En producción, aplicar cámara a todos los elementos
+        // let (screen_x, screen_y) = camera.apply_sdl2(...);
+        
+        Ok(())
+    }
+}
+
+// ============================================================================
+// UTILIDADES
+// ============================================================================
+
+/// Parsear color desde string (ej: "negro", "rojo", "#FF0000")
+fn parse_color(color_str: &str) -> sdl2::pixels::Color {
+    match color_str.to_lowercase().as_str() {
+        "negro" | "black" => sdl2::pixels::Color::RGB(0, 0, 0),
+        "blanco" | "white" => sdl2::pixels::Color::RGB(255, 255, 255),
+        "rojo" | "red" => sdl2::pixels::Color::RGB(255, 0, 0),
+        "verde" | "green" => sdl2::pixels::Color::RGB(0, 255, 0),
+        "azul" | "blue" => sdl2::pixels::Color::RGB(0, 0, 255),
+        _ => sdl2::pixels::Color::RGB(30, 30, 30), // Default
     }
 }
 
