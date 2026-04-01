@@ -6,7 +6,7 @@
 
 **"David vs Goliath - A game engine in Rust, built 100% on a Redmi Note 8"**
 
-[![Version](https://img.shields.io/badge/version-v0.10.10-blue.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![Version](https://img.shields.io/badge/version-v0.11.0-blue.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
 [![Tests](https://img.shields.io/badge/tests-260%20passing-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
 [![raylib](https://img.shields.io/badge/raylib-5.5-purple.svg)](https://www.raylib.com/)
@@ -344,28 +344,35 @@ json::stringify(my_data)
 
 ---
 
-## 🆕 Recent Updates (v0.10.10)
+## 🆕 Recent Updates (v0.11.0)
 
-### Session v0.10.10 - MiGUI + SDL2 + Native Rust Fonts
-- ✅ **MiGUI + SDL2 Backend** - Complete UI system (196 lines)
-- ✅ **Interactive Demo** - Buttons, slider, checkbox, dynamic panel (145 lines)
-- ✅ **NativeFontManager** - ab_glyph, 100% Rust, no FFI (90 lines)
-- ✅ **SDL2 FFI** - Textures, audio, fonts (300+ lines)
-- ✅ **Audio System** - SDL2_mixer + PulseAudio working
-- ✅ **60 FPS stable** - VSync enabled
-- ✅ **~3000 Rust lines** added
-- ✅ **~2500 documentation lines**
+### Session v0.11.0 - Sistema Ry + SDL2 + Platformer Demo
+- ✅ **Sistema Ry + SDL2** - 95% conectado
+- ✅ **camera.rs** - `apply_sdl2()`, `get_transform_matrix()`
+- ✅ **entity.rs** - `render_sdl2()`, `render_with_camera_sdl2()`
+- ✅ **level.rs** - `render_sdl2()`, `render_with_camera_sdl2()`
+- ✅ **assets.rs** - `load_texture_sdl2()` (pendiente fix)
+- ✅ **physics.rs** - 20 funciones (ya existen)
+- ✅ **input_map.rs** - Eventos SDL2 (ya existe)
+- ✅ **rydit-anim** - 12 principios de animación Disney
+- ✅ **rydit-science** - Geometría + matemáticas
+- ✅ **Demo Platformer** - Movimiento, salto, gravedad, colisiones
+- ✅ **Clave del movimiento SDL2** - `repeat: false` + `repeat: true`
 
-### Session v0.10.7 - SDL2 Backend
-- ✅ **Sdl2Backend** - Complete window + OpenGL 3.3 Core context
-- ✅ **InputState** - 69 keys mapped with event loop
-- ✅ **GPU Instancing Ready** - OpenGL context for GPU rendering
-- ✅ **VSync** - 60 FPS stable
+### Demos Disponibles
+```bash
+# Platformer completo (recomendado)
+cargo run --bin demo_platformer_completo --release
 
-### Session v0.10.8 - SDL2 FFI Native
-- ✅ **sdl2_ffi.rs** - Direct FFI for SDL2_image, SDL2_ttf, SDL2_mixer
-- ✅ **No version conflicts** - sdl2-sys issues resolved
-- ✅ **Audio test** - WAV generation + playback working
+# Movimiento básico
+cargo run --bin demo_movimiento --release
+
+# MiGUI + SDL2 (UI interactiva)
+cargo run --bin demo_migui_sdl2 --release
+
+# Partículas SDL2
+cargo run --bin demo_particulas_sdl2 --release
+```
 
 ---
 
@@ -462,9 +469,28 @@ MIT License - See [LICENSE](LICENSE) for details.
 
 *Next update:* v0.5.3 Interactive REPL + Particles
 
-*Last updated:* 2026-03-31 (v0.10.10 - MiGUI + SDL2 + Native Rust Fonts)
-*Next version:* v0.11.0 (Complete Text Render + Sistema Ry + Multi-language Translator)
-*Status:* ✅ **260+ TESTS - MIGUI + SDL2 - NATIVE FONTS - AUDIO - 60 FPS - 3000+ LINES**
+*Last updated:* 2026-03-31 (v0.11.0 - Sistema Ry + SDL2 + Platformer Demo)
+*Next version:* v0.12.0 (MiGUI Fix + Assets Fix + 12 Animation Principles)
+*Status:* ✅ **260+ TESTS - SISTEMA RY 95% - SDL2 BACKEND - PLATFORMER DEMO - 60 FPS**
+
+### 🎨 Próximo: 12 Principios de Animación 2D
+
+Cuando fixemos MiGUI y assets, implementaremos:
+
+1. **Squash & Stretch** - Deformación con volumen constante
+2. **Anticipation** - Preparación antes de la acción
+3. **Staging** - Presentación clara de ideas
+4. **Straight Ahead & Pose to Pose** - Dos métodos de animación
+5. **Follow Through & Overlapping** - Inercia y solapamiento
+6. **Slow In & Slow Out** - Aceleración/desaceleración
+7. **Arcs** - Movimientos en arco
+8. **Secondary Action** - Acciones secundarias
+9. **Timing** - Velocidad y ritmo
+10. **Exaggeration** - Exageración artística
+11. **Solid Drawing** - Dibujo tridimensional
+12. **Appeal** - Carisma del personaje
+
+**Implementado en**: `crates/rydit-anim/` (269 líneas)
 
 [⬆️ Back to top](#-rydit---rust-gaming--scripting-engine-for-androidtermux)
 
