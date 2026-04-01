@@ -2,7 +2,7 @@
 // FFI Nativo para SDL2 - Texturas y Audio
 // v0.10.8 - Implementación nativa sin crates sdl2_*
 
-#![allow(non_upper_case_globals, non_snake_case, dead_code)]
+#![allow(non_upper_case_globals, non_snake_case, dead_code, improper_ctypes)]
 
 // ============================================================================
 // FFI PARA SDL2_IMAGE (TEXTURAS)
@@ -146,7 +146,7 @@ impl TextureFFI {
     /// Obtener dimensiones
     pub fn dimensions(&self) -> (i32, i32) {
         unsafe {
-            ((*self.surface).w as i32, (*self.surface).h as i32)
+            ((*self.surface).w, (*self.surface).h)
         }
     }
 
@@ -221,8 +221,8 @@ impl AudioFFI {
         }
     }
 
-    /// Reproducir sonido
-    pub fn play_sound(&self, chunk: *mut Mix_Chunk) -> Result<(), String> {
+    /// Reproducir sonido (unsafe por raw pointer)
+    pub unsafe fn play_sound(&self, chunk: *mut Mix_Chunk) -> Result<(), String> {
         unsafe {
             let result = Mix_PlayChannel(-1, chunk, 0);
             if result == -1 {
@@ -233,8 +233,8 @@ impl AudioFFI {
         }
     }
 
-    /// Reproducir música
-    pub fn play_music(&self, music: *mut Mix_Music, loops: i32) -> Result<(), String> {
+    /// Reproducir música (unsafe por raw pointer)
+    pub unsafe fn play_music(&self, music: *mut Mix_Music, loops: i32) -> Result<(), String> {
         unsafe {
             let result = Mix_PlayMusic(music, loops as c_int);
             if result == -1 {
@@ -342,6 +342,6 @@ mod tests {
     #[test]
     fn test_texture_ffi_init() {
         // No podemos testear sin SDL2 inicializado, pero verificamos que compile
-        assert!(true);
+        // Test placeholder - FFI requiere SDL2 inicializado
     }
 }

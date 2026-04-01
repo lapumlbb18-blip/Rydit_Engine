@@ -35,6 +35,8 @@
 //! }
 //! ```
 
+#![allow(clippy::too_many_arguments)]
+
 // Módulo de partículas v0.5.3
 pub mod particles;
 

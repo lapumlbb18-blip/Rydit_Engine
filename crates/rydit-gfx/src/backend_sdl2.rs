@@ -2,6 +2,8 @@
 // SDL2 Backend para RyDit - Ventana + OpenGL Context + Input
 // ✅ v0.10.6: Backend completo para Android/Termux-X11
 
+#![allow(clippy::too_many_arguments)]
+
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::video::{Window, GLProfile, GLContext};
