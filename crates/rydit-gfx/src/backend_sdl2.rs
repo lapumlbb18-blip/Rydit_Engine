@@ -173,6 +173,7 @@ impl Sdl2Backend {
         // Limpiar pantalla (negro por defecto)
         self.canvas.set_draw_color(Color::RGB(0, 0, 0));
         self.canvas.clear();
+        self.canvas.present();  // Presentar inmediatamente después de clear
     }
 
     /// Finalizar frame de renderizado
@@ -233,8 +234,8 @@ impl Sdl2Backend {
             }
         };
 
-        // Renderizar texto a superficie
-        let surface_ptr = match font.render_text(text, r, g, b) {
+        // Renderizar texto a superficie (usar Blended para alpha correcto)
+        let surface_ptr = match font.render_text_blended(text, r, g, b) {
             Ok(s) => s,
             Err(e) => {
                 eprintln!("[SDL2-BACKEND]: Error renderizando texto: {}", e);
@@ -246,7 +247,7 @@ impl Sdl2Backend {
             // Crear wrapper Surface alrededor del raw pointer
             // La superficie será liberada cuando el wrapper se dropee
             let sdl_surface = Surface::from_ll(surface_ptr as *mut sdl2::sys::SDL_Surface);
-            
+
             // Crear textura desde superficie
             let texture = match self.texture_creator.create_texture_from_surface(&sdl_surface) {
                 Ok(t) => t,
@@ -262,7 +263,7 @@ impl Sdl2Backend {
             // Dibujar textura
             let rect = Rect::new(x, y, w, h);
             self.canvas.copy(&texture, None, rect).unwrap();
-            
+
             // sdl_surface se dropea aquí y libera la superficie automáticamente
         }
     }

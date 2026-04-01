@@ -33,6 +33,11 @@ extern "C" {
         text: *const c_char,
         fg: SDL_Color,
     ) -> *mut SDL_Surface;
+    fn TTF_RenderText_Blended(
+        font: *mut TTF_Font,
+        text: *const c_char,
+        fg: SDL_Color,
+    ) -> *mut SDL_Surface;
 }
 
 // ============================================================================
@@ -299,14 +304,30 @@ impl FontFFI {
         }
     }
 
-    /// Renderizar texto
+    /// Renderizar texto (Solid - rápido, sin alpha suave)
     pub fn render_text(&self, text: &str, r: u8, g: u8, b: u8) -> Result<*mut SDL_Surface, String> {
         unsafe {
             let c_text = CString::new(text).map_err(|e| e.to_string())?;
             let color = SDL_Color { r, g, b, a: 255 };
-            
+
             let surface = TTF_RenderText_Solid(self.font, c_text.as_ptr(), color);
-            
+
+            if surface.is_null() {
+                Err("Error renderizando texto".to_string())
+            } else {
+                Ok(surface)
+            }
+        }
+    }
+
+    /// Renderizar texto (Blended - más lento, con alpha suave)
+    pub fn render_text_blended(&self, text: &str, r: u8, g: u8, b: u8) -> Result<*mut SDL_Surface, String> {
+        unsafe {
+            let c_text = CString::new(text).map_err(|e| e.to_string())?;
+            let color = SDL_Color { r, g, b, a: 255 };
+
+            let surface = TTF_RenderText_Blended(self.font, c_text.as_ptr(), color);
+
             if surface.is_null() {
                 Err("Error renderizando texto".to_string())
             } else {
