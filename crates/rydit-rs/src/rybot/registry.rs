@@ -1,6 +1,6 @@
 // crates/rydit-rs/src/rybot/registry.rs
 // RyBot Registry - Registro central de módulos y eventos
-// v0.11.0 - Fusión RyBot + RyditModule
+// v0.11.0 - Fusión RyBot + RyditModule + Alertas
 
 use std::collections::HashMap;
 use std::time::Instant;
@@ -15,6 +15,15 @@ pub type EntityId = u32;
 /// Timestamp en nanosegundos
 pub type Timestamp = u64;
 
+/// Nivel de alerta
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Ord, PartialOrd)]
+pub enum AlertLevel {
+    Info,
+    Warning,
+    Error,
+    Critical,
+}
+
 /// Fuente de un evento
 #[derive(Debug, Clone)]
 pub enum EventSource {
@@ -23,6 +32,7 @@ pub enum EventSource {
     Module(String),
     Core,
     User,
+    RyBot,
 }
 
 /// Valor dinámico (compatible con lizer)
@@ -34,6 +44,106 @@ pub enum Valor {
     Lista(Vec<Valor>),
     Mapa(HashMap<String, Valor>),
     Nada,
+}
+
+// ============================================================================
+// ALERTA RYBOT
+// ============================================================================
+
+/// Alerta de RyBot (no bloqueante)
+#[derive(Debug, Clone)]
+pub struct RyBotAlert {
+    pub level: AlertLevel,
+    pub source: String,
+    pub message: String,
+    pub timestamp: Timestamp,
+    pub frame: u32,
+    pub resolved: bool,
+}
+
+impl RyBotAlert {
+    pub fn new(level: AlertLevel, source: &str, message: &str, frame: u32) -> Self {
+        Self {
+            level,
+            source: source.to_string(),
+            message: message.to_string(),
+            timestamp: std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos() as Timestamp,
+            frame,
+            resolved: false,
+        }
+    }
+    
+    pub fn info(source: &str, message: &str, frame: u32) -> Self {
+        Self::new(AlertLevel::Info, source, message, frame)
+    }
+    
+    pub fn warn(source: &str, message: &str, frame: u32) -> Self {
+        Self::new(AlertLevel::Warning, source, message, frame)
+    }
+    
+    pub fn error(source: &str, message: &str, frame: u32) -> Self {
+        Self::new(AlertLevel::Error, source, message, frame)
+    }
+}
+
+// ============================================================================
+// ESTADO DE MÓDULO
+// ============================================================================
+
+/// Estado de un módulo
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum ModuleState {
+    Activo,      // Usado en este frame
+    Inactivo,    // Registrado pero no usado
+    NoUsado,     // Importado pero nunca llamado
+    Error,       // Tuvo error pero no fatal
+}
+
+/// Información de un módulo registrado
+#[derive(Debug)]
+pub struct ModuleInfo {
+    pub name: String,
+    pub version: String,
+    pub enabled: bool,
+    pub state: ModuleState,
+    pub update_time_ms: f32,
+    pub render_time_ms: f32,
+    pub call_count: u32,
+    pub last_call_frame: u32,
+    pub metadata: HashMap<String, String>,
+}
+
+impl ModuleInfo {
+    pub fn new(name: &str, version: &str) -> Self {
+        Self {
+            name: name.to_string(),
+            version: version.to_string(),
+            enabled: true,
+            state: ModuleState::Inactivo,
+            update_time_ms: 0.0,
+            render_time_ms: 0.0,
+            call_count: 0,
+            last_call_frame: 0,
+            metadata: HashMap::new(),
+        }
+    }
+    
+    /// Marcar módulo como usado en este frame
+    pub fn mark_used(&mut self, frame: u32) {
+        self.state = ModuleState::Activo;
+        self.call_count += 1;
+        self.last_call_frame = frame;
+    }
+    
+    /// Verificar si está inactivo (no usado en N frames)
+    pub fn check_inactive(&mut self, current_frame: u32, threshold: u32) {
+        if self.enabled && current_frame - self.last_call_frame > threshold {
+            self.state = ModuleState::NoUsado;
+        }
+    }
 }
 
 // ============================================================================
@@ -61,34 +171,6 @@ impl RyditEvent {
             source,
             action: action.to_string(),
             data,
-        }
-    }
-}
-
-// ============================================================================
-// INFO DE MÓDULO
-// ============================================================================
-
-/// Información de un módulo registrado
-#[derive(Debug)]
-pub struct ModuleInfo {
-    pub name: String,
-    pub version: String,
-    pub enabled: bool,
-    pub update_time_ms: f32,
-    pub render_time_ms: f32,
-    pub metadata: HashMap<String, String>,
-}
-
-impl ModuleInfo {
-    pub fn new(name: &str, version: &str) -> Self {
-        Self {
-            name: name.to_string(),
-            version: version.to_string(),
-            enabled: true,
-            update_time_ms: 0.0,
-            render_time_ms: 0.0,
-            metadata: HashMap::new(),
         }
     }
 }
@@ -140,6 +222,10 @@ pub struct Registry {
     events: Vec<RyditEvent>,
     max_events: usize,
     
+    /// Alertas activas
+    alerts: Vec<RyBotAlert>,
+    max_alerts: usize,
+    
     /// Métricas actuales
     metrics: Metrics,
     
@@ -157,6 +243,8 @@ impl Registry {
             modules: HashMap::new(),
             events: Vec::with_capacity(1000),
             max_events: 1000,
+            alerts: Vec::new(),
+            max_alerts: 100,
             metrics: Metrics::new(),
             current_frame: 0,
             start_time: Instant::now(),
@@ -248,6 +336,85 @@ impl Registry {
         self.metrics.event_count = 0;
     }
     
+    // ==================== ALERTAS ====================
+    
+    /// Agregar alerta
+    pub fn add_alert(&mut self, alert: RyBotAlert) {
+        // Verificar si ya existe alerta similar
+        let exists = self.alerts.iter().any(|a| {
+            a.source == alert.source && a.message == alert.message && !a.resolved
+        });
+        
+        if !exists {
+            self.alerts.push(alert);
+            if self.alerts.len() > self.max_alerts {
+                self.alerts.remove(0);
+            }
+        }
+    }
+    
+    /// Alerta de información
+    pub fn info(&mut self, source: &str, message: &str) {
+        let alert = RyBotAlert::info(source, message, self.current_frame);
+        self.add_alert(alert);
+        println!("[ℹ️ INFO] {}: {}", source, message);
+    }
+    
+    /// Alerta de warning (no bloqueante)
+    pub fn warn(&mut self, source: &str, message: &str) {
+        let alert = RyBotAlert::warn(source, message, self.current_frame);
+        self.add_alert(alert);
+        eprintln!("[⚠️ WARN] {}: {}", source, message);
+    }
+    
+    /// Alerta de error (no bloqueante)
+    pub fn error(&mut self, source: &str, message: &str) {
+        let alert = RyBotAlert::error(source, message, self.current_frame);
+        self.add_alert(alert);
+        eprintln!("[❌ ERROR] {}: {}", source, message);
+    }
+    
+    /// Obtener alertas activas
+    pub fn get_alerts(&self) -> Vec<&RyBotAlert> {
+        self.alerts.iter().filter(|a| !a.resolved).collect()
+    }
+    
+    /// Obtener warnings de módulos no usados
+    pub fn check_unused_modules(&mut self) {
+        let threshold = 100; // Frames sin usar
+        
+        for module in self.modules.values_mut() {
+            module.check_inactive(self.current_frame, threshold);
+            
+            if module.state == ModuleState::NoUsado {
+                self.warn(
+                    "RyBot",
+                    &format!("Módulo '{}' no usado en {} frames", module.name, threshold),
+                );
+            }
+        }
+    }
+    
+    /// Reportar import no usado
+    pub fn report_unused_import(&mut self, module: &str, import: &str) {
+        self.warn(
+            "unused_imports",
+            &format!("Importación no usada: {}::{}", module, import),
+        );
+    }
+    
+    /// Resolver alerta
+    pub fn resolve_alert(&mut self, index: usize) {
+        if let Some(alert) = self.alerts.get_mut(index) {
+            alert.resolved = true;
+        }
+    }
+    
+    /// Contar alertas activas
+    pub fn alert_count(&self) -> usize {
+        self.alerts.iter().filter(|a| !a.resolved).count()
+    }
+
     // ==================== MÉTRICAS ====================
     
     /// Actualizar FPS
@@ -302,12 +469,13 @@ impl Registry {
     /// Exportar estado para CLI
     pub fn export_status(&self) -> String {
         let mut output = String::new();
-        
+
         output.push_str(&format!("=== RyBot Status ===\n"));
         output.push_str(&format!("Frame: {}\n", self.current_frame));
         output.push_str(&format!("Uptime: {:?}\n", self.uptime()));
+        output.push_str(&format!("Alerts: {}\n", self.alert_count()));
         output.push_str(&format!("\n"));
-        
+
         output.push_str(&format!("=== Metrics ===\n"));
         output.push_str(&format!("FPS: {:.1}\n", self.metrics.fps));
         output.push_str(&format!("Frame time: {:.2}ms\n", self.metrics.frame_time_ms));
@@ -318,16 +486,40 @@ impl Registry {
         output.push_str(&format!("Modules: {}\n", self.metrics.module_count));
         output.push_str(&format!("Events: {}\n", self.metrics.event_count));
         output.push_str(&format!("\n"));
-        
+
         output.push_str(&format!("=== Modules ===\n"));
         for module in self.list_modules() {
             let status = if module.enabled { "✓" } else { "✗" };
+            let state = match module.state {
+                ModuleState::Activo => "🟢",
+                ModuleState::Inactivo => "🟡",
+                ModuleState::NoUsado => "🔴",
+                ModuleState::Error => "⚠️",
+            };
             output.push_str(&format!(
-                "  {} {} v{} (update: {:.2}ms, render: {:.2}ms)\n",
-                status, module.name, module.version, module.update_time_ms, module.render_time_ms
+                "  {} {} {} v{} (calls: {}, update: {:.2}ms)\n",
+                status, state, module.name, module.version, module.call_count, module.update_time_ms
             ));
         }
         
+        // Alertas activas
+        let alerts: Vec<_> = self.alerts.iter().filter(|a| !a.resolved).collect();
+        if !alerts.is_empty() {
+            output.push_str(&format!("\n=== Alerts ({}) ===\n", alerts.len()));
+            for alert in alerts {
+                let icon = match alert.level {
+                    AlertLevel::Info => "ℹ️",
+                    AlertLevel::Warning => "⚠️",
+                    AlertLevel::Error => "❌",
+                    AlertLevel::Critical => "🔴",
+                };
+                output.push_str(&format!(
+                    "  {} [Frame {}] {}: {}\n",
+                    icon, alert.frame, alert.source, alert.message
+                ));
+            }
+        }
+
         output
     }
 }

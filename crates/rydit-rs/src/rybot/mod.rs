@@ -1,6 +1,6 @@
 // crates/rydit-rs/src/rybot/mod.rs
 // RyBot - Inspector, Registry y CLI para RyDit
-// v0.11.0 - Fusión RyBot + RyditModule
+// v0.11.0 - Fusión RyBot + RyditModule + Alertas
 
 pub mod registry;
 
@@ -118,6 +118,48 @@ impl RyBot {
     /// Actualizar contador de entidades
     pub fn set_entity_count(&mut self, count: usize) {
         self.registry.set_entity_count(count);
+    }
+    
+    // ==================== ALERTAS ====================
+    
+    /// Alerta de información
+    pub fn info(&mut self, source: &str, message: &str) {
+        self.registry.info(source, message);
+    }
+    
+    /// Alerta de warning (no bloqueante)
+    pub fn warn(&mut self, source: &str, message: &str) {
+        self.registry.warn(source, message);
+    }
+    
+    /// Alerta de error (no bloqueante)
+    pub fn error(&mut self, source: &str, message: &str) {
+        self.registry.error(source, message);
+    }
+    
+    /// Reportar import no usado
+    pub fn report_unused_import(&mut self, module: &str, import: &str) {
+        self.registry.report_unused_import(module, import);
+    }
+    
+    /// Verificar módulos no usados
+    pub fn check_unused_modules(&mut self) {
+        self.registry.check_unused_modules();
+    }
+    
+    /// Obtener estado de módulo
+    pub fn get_module_state(&self, name: &str) -> Option<ModuleState> {
+        self.registry.get_module(name).map(|m| m.state)
+    }
+    
+    /// Obtener alertas activas
+    pub fn get_alerts(&self) -> Vec<&RyBotAlert> {
+        self.registry.get_alerts()
+    }
+    
+    /// Contar alertas
+    pub fn alert_count(&self) -> usize {
+        self.registry.alert_count()
     }
 }
 
