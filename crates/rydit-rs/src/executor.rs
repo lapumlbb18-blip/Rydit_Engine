@@ -2,6 +2,7 @@
 // Ejecución de programas en diferentes modos (comandante, gfx, migui)
 
 use std::collections::{HashMap, HashSet};
+use std::time::Instant;
 
 use blast_core::Executor;
 use lizer::Program;
@@ -12,6 +13,9 @@ use rydit_gfx::render_queue::{RenderQueue, DrawCommand};
 use crate::{
     ejecutar_stmt, ejecutar_stmt_gfx, ejecutar_stmt_migui, evaluar_expr_migui, InputEstado,
 };
+
+// 🆕 RyBot - Inspector + Registry
+use crate::rybot::RyBot;
 
 /// Ejecutar programa en modo comandante (sin gráficos)
 pub fn ejecutar_programa(
@@ -59,6 +63,10 @@ pub fn ejecutar_programa_gfx(
 
     // Estado del input
     let mut input = InputEstado::new();
+    
+    // 🆕 RyBot - Inspector + Registry
+    let mut rybot = RyBot::new();
+    rybot.info("RyBot", "Game loop iniciado");
 
     // Contexto de imports: módulos cargados y stack de imports en progreso
     let mut loaded_modules: HashSet<String> = HashSet::new();
@@ -112,7 +120,12 @@ pub fn ejecutar_programa_gfx(
 
                 // El While ES el game loop principal
                 let mut frame_count = 0;
+                let mut frame_start = Instant::now();
+                
                 loop {
+                    // 🆕 RyBot begin frame
+                    rybot.begin_frame();
+                    
                     // Input primero
                     input.actualizar(gfx);
                     let escape = gfx.is_key_pressed(rydit_gfx::Key::Escape);
@@ -212,6 +225,17 @@ pub fn ejecutar_programa_gfx(
                         frame_count,
                         queue.stats()
                     );
+
+                    // 🆕 RyBot end frame
+                    let frame_time = frame_start.elapsed().as_secs_f32() * 1000.0;
+                    rybot.record_render(frame_time);
+                    rybot.set_entity_count(frame_count);  // Placeholder
+                    rybot.end_frame(frame_time);
+                    
+                    // Verificar módulos no usados cada 100 frames
+                    if frame_count % 100 == 0 {
+                        rybot.check_unused_modules();
+                    }
 
                     frame_count += 1;
 
