@@ -2,7 +2,6 @@
 // Audio SDL2 para RyDit - v0.10.8
 // ⚠️ PENDIENTE: Linking de SDL2_mixer
 
-use std::collections::HashMap;
 
 /// Gestor de audio con SDL2_mixer
 pub struct AudioManager {

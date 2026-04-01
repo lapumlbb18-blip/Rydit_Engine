@@ -6,16 +6,15 @@
 
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
-use sdl2::video::{Window, GLProfile, GLContext};
+use sdl2::video::GLProfile;
 use sdl2::render::{Canvas, TextureCreator};
 use sdl2::image::InitFlag;
 use sdl2::rect::Rect;
 use sdl2::pixels::Color;
 use sdl2::surface::Surface;
-use std::collections::HashMap;
 
 use crate::input_sdl2::InputState;
-use crate::sdl2_ffi::{FontFFI, SDL_Color};
+use crate::sdl2_ffi::FontFFI;
 
 // ============================================================================
 // SDL2 BACKEND

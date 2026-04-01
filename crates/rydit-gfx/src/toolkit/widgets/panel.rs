@@ -3,7 +3,6 @@
 
 use crate::backend_sdl2::Sdl2Backend;
 use crate::toolkit::theme::Theme;
-use sdl2::pixels::Color;
 use sdl2::rect::Rect;
 
 /// Panel - Contenedor/ventana

@@ -80,7 +80,6 @@ use raylib::prelude::*;
 use migui::{Color as MiguiColor, MiguiBackend, Rect as MiguiRect};
 
 // SDL2 para carga de texturas
-use sdl2::image;
 
 // ============================================================================
 // AUDIO SYSTEM - v0.5.2

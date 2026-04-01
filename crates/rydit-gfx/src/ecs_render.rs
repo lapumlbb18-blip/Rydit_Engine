@@ -2,7 +2,7 @@
 // ECS Render - Integración de ECS con rydit-gfx usando rlgl
 // v0.10.0: ECS + rlgl para renderizado eficiente
 
-use rydit_ecs::{EcsWorld, Position, Sprite};
+use rydit_ecs::EcsWorld;
 use raylib::ffi::*;
 
 // Constantes rlgl
@@ -42,7 +42,7 @@ impl EcsRenderer {
         let render_data = world.get_render_data();
 
         // Renderizar cada entidad
-        for (x, y, texture_id, w, h) in render_data {
+        for (x, y, _texture_id, w, h) in render_data {
             // Aplicar cámara
             let screen_x = (x - self.camera_x) * self.camera_zoom;
             let screen_y = (y - self.camera_y) * self.camera_zoom;
@@ -111,7 +111,7 @@ impl EcsRenderer {
     pub fn render_nbody(&self, world: &EcsWorld) {
         let render_data = world.get_render_data();
 
-        for (x, y, _, w, h) in render_data {
+        for (x, y, _, w, _h) in render_data {
             let screen_x = (x - self.camera_x) * self.camera_zoom;
             let screen_y = (y - self.camera_y) * self.camera_zoom;
             let size = w * self.camera_zoom;

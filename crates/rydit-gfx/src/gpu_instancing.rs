@@ -2,7 +2,7 @@
 // GPU Instancing - 100K+ partículas en un solo draw call
 // v0.10.1: FFI OpenGL + Shaders GLSL
 
-use gl::types::{GLuint, GLsizei, GLint};
+use gl::types::{GLuint, GLsizei};
 use std::ffi::CString;
 use std::fs;
 use std::path::Path;
