@@ -1,8 +1,43 @@
+# Archivos y carpetas excluidos de sincronización con Drive
+
+# Carpetas completas
 target/
 .git/
-*.log
+.vscode/
+.idea/
+
+# Archivos temporales
 *.tmp
+*.log
+*.swp
+*~
+*.bak
+
+# Archivos de build (excepto binarios clave)
+target/debug/
+target/release/deps/
+target/release/build/
+target/release/incremental/
+target/.rustc_info.json
+target/CACHEDIR.TAG
+
+# Excepciones: binarios de prueba clave
+!target/release/demo_toolkit_ry
+!target/release/test_sdl2_basico
+!target/release/test_sdl2_sprite_simple
+!target/release/test_sdl2_sprite_debug
+!target/release/test_sdl2_sprites
+!target/release/rybot_cli
+!target/release/*.d
+
+# Node modules (si hubiera)
+node_modules/
+
+# Python
 __pycache__/
 *.pyc
-.DS_Store
-Thumbs.db
+.venv/
+venv/
+
+# Rust específico
+Cargo.lock
