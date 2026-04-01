@@ -17,6 +17,9 @@ mod repl;
 mod modules;
 mod tests; // ← MÓDULOS EXTENSIBLES (assets, audio, particles, http)
 
+// 🆕 RyBot - Inspector + Registry (v0.11.0)
+mod rybot;
+
 // Re-exportar funciones del módulo eval
 pub use eval::evaluar_expr;
 
