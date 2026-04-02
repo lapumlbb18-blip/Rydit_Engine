@@ -539,6 +539,30 @@ impl ColorRydit {
         }
     }
 
+    /// Convertir a componentes RGB (r, g, b)
+    pub fn to_rgb(&self) -> (u8, u8, u8) {
+        match self {
+            ColorRydit::Rojo => (255, 0, 0),
+            ColorRydit::Verde => (0, 255, 0),
+            ColorRydit::Azul => (0, 0, 255),
+            ColorRydit::Amarillo => (255, 255, 0),
+            ColorRydit::Blanco => (255, 255, 255),
+            ColorRydit::Negro => (0, 0, 0),
+            ColorRydit::Magenta => (255, 0, 255),
+            ColorRydit::Rosa => (255, 192, 203),
+            ColorRydit::Naranja => (255, 165, 0),
+            ColorRydit::Gris => (128, 128, 128),
+            ColorRydit::Cyan => (0, 255, 255),
+            ColorRydit::Morado => (128, 0, 128),
+            ColorRydit::Cafe => (165, 42, 42),
+            ColorRydit::Lima => (0, 255, 0),
+            ColorRydit::AzulOscuro => (0, 0, 139),
+            ColorRydit::Oliva => (128, 128, 0),
+            ColorRydit::Turquesa => (64, 224, 208),
+            ColorRydit::Vino => (128, 0, 64),
+        }
+    }
+
     /// Crear desde Color de migui
     pub fn from_migui(color: MiguiColor) -> Self {
         // Convertir componentes RGB directamente

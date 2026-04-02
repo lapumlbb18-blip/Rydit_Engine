@@ -4,7 +4,6 @@
 
 use rydit_gfx::backend_sdl2::Sdl2Backend;
 use rydit_gfx::ColorRydit;
-use rydit_gfx::Key;
 
 fn main() {
     println!("⌨️ Nivel 3 - Test Input Low-End v0.11.1\n");
@@ -40,12 +39,12 @@ fn main() {
         backend.clear_background(ColorRydit::Negro);
 
         // Dibujar cuadrado en posición (x, y)
-        backend.draw_rect(x, y, 40, 40, color);
+        backend.draw_rect_color(x, y, 40, 40, color);
 
         // Dibujar instrucciones
-        backend.draw_text("Usa flechas para mover", 90, 20, 16, ColorRydit::Blanco);
-        backend.draw_text("ESPACIO: cambiar color", 105, 40, 16, ColorRydit::Blanco);
-        backend.draw_text(
+        backend.draw_text_color("Usa flechas para mover", 90, 20, 16, ColorRydit::Blanco);
+        backend.draw_text_color("ESPACIO: cambiar color", 105, 40, 16, ColorRydit::Blanco);
+        backend.draw_text_color(
             &format!("Pos: ({}, {})", x, y),
             150,
             270,
@@ -54,31 +53,31 @@ fn main() {
         );
 
         // Input handling
-        if backend.is_key_pressed(Key::Escape) {
+        if backend.is_key_pressed("escape") {
             running = false;
         }
 
-        if backend.is_key_pressed(Key::Left) {
+        if backend.is_key_pressed("arrow_left") {
             x -= 10;
             println!("← Izquierda: ({}, {})", x, y);
         }
 
-        if backend.is_key_pressed(Key::Right) {
+        if backend.is_key_pressed("arrow_right") {
             x += 10;
             println!("→ Derecha: ({}, {})", x, y);
         }
 
-        if backend.is_key_pressed(Key::Up) {
+        if backend.is_key_pressed("arrow_up") {
             y -= 10;
             println!("↑ Arriba: ({}, {})", x, y);
         }
 
-        if backend.is_key_pressed(Key::Down) {
+        if backend.is_key_pressed("arrow_down") {
             y += 10;
             println!("↓ Abajo: ({}, {})", x, y);
         }
 
-        if backend.is_key_pressed(Key::Space) {
+        if backend.is_key_pressed("space") {
             // Cambiar color cíclicamente
             color = match color {
                 ColorRydit::Verde => ColorRydit::Azul,

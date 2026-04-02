@@ -15,6 +15,7 @@ use sdl2::video::GLProfile;
 
 use crate::input_sdl2::InputState;
 use crate::sdl2_ffi::FontFFI;
+use crate::ColorRydit;
 
 // ============================================================================
 // SDL2 BACKEND
@@ -183,6 +184,13 @@ impl Sdl2Backend {
         self.canvas.present(); // Presentar inmediatamente después de clear
     }
 
+    /// Limpiar fondo con color
+    pub fn clear_background(&mut self, color: ColorRydit) {
+        let (r, g, b) = color.to_rgb();
+        self.canvas.set_draw_color(Color::RGB(r, g, b));
+        self.canvas.clear();
+    }
+
     /// Finalizar frame de renderizado
     pub fn end_draw(&mut self) {
         self.canvas.present();
@@ -209,6 +217,12 @@ impl Sdl2Backend {
         self.canvas.set_draw_color(Color::RGB(r, g, b));
         let rect = sdl2::rect::Rect::new(x, y, w as u32, h as u32);
         self.canvas.fill_rect(rect).unwrap();
+    }
+
+    /// Dibujar rectángulo con ColorRydit
+    pub fn draw_rect_color(&mut self, x: i32, y: i32, w: i32, h: i32, color: ColorRydit) {
+        let (r, g, b) = color.to_rgb();
+        self.draw_rect(x, y, w, h, r, g, b);
     }
 
     /// Dibujar círculo (aproximación con rectángulos)
@@ -255,11 +269,9 @@ impl Sdl2Backend {
             // La superficie será liberada cuando el wrapper se dropee
             let sdl_surface = Surface::from_ll(surface_ptr as *mut sdl2::sys::SDL_Surface);
 
+
             // Crear textura desde superficie
-            let texture = match self
-                .texture_creator
-                .create_texture_from_surface(&sdl_surface)
-            {
+            let texture = match self.texture_creator.create_texture_from_surface(&sdl_surface) {
                 Ok(t) => t,
                 Err(e) => {
                     eprintln!("[SDL2-BACKEND]: Error creando textura: {}", e);
@@ -267,15 +279,17 @@ impl Sdl2Backend {
                 }
             };
 
-            // Obtener dimensiones
-            let (w, h) = sdl_surface.size();
-
-            // Dibujar textura
-            let rect = Rect::new(x, y, w, h);
-            self.canvas.copy(&texture, None, rect).unwrap();
-
-            // sdl_surface se dropea aquí y libera la superficie automáticamente
+            // Obtener dimensiones de la textura (usar query())
+            let query = texture.query();
+            let dst_rect = Rect::new(x, y, query.width, query.height);
+            let _ = self.canvas.copy(&texture, None, dst_rect);
         }
+    }
+
+    /// Dibujar texto con ColorRydit
+    pub fn draw_text_color(&mut self, text: &str, x: i32, y: i32, size: u16, color: ColorRydit) {
+        let (r, g, b) = color.to_rgb();
+        self.draw_text(text, x, y, size, r, g, b);
     }
 
     /// Obtener FPS objetivo (vsync = 60)

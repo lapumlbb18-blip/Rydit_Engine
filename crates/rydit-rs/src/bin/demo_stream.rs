@@ -2,7 +2,7 @@
 // 🆕 Demo: Streaming de bytecode con rydit-stream
 
 use rydit_stream::{stream, StreamServer, WebPortal};
-use rydit_vm::compile_source;
+use rydit_vm::{compile_source, VM};
 use std::thread;
 use std::time::Duration;
 

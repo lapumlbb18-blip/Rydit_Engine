@@ -3,9 +3,9 @@
 // Ejecutar: cargo run --bin snake
 
 use blast_core::Executor;
+use lizer::Parser;
 use rydit_gfx::{ColorRydit, Key, RyditGfx};
 use rydit_lexer::Lexer;
-use rydit_parser::Parser;
 use std::collections::HashMap;
 use std::fs;
 
@@ -40,23 +40,23 @@ fn main() {
     println!();
 
     // Lexer + Parser
-    let tokens = Lizer::new(&script).scan();
+    let tokens = Lexer::new(&script).scan();
     let mut parser = Parser::new(tokens);
 
-    match parser.parse() {
-        Ok(program) => {
-            println!("[INFO] {} statements parseados", program.statements.len());
-            println!("[INFO] Iniciando juego...");
-            println!();
+    let (program, errors) = parser.parse();
+    
+    if !errors.is_empty() {
+        eprintln!("[ERROR] Error parseando script: {}", errors[0]);
+        return;
+    }
+    
+    println!("[INFO] {} statements parseados", program.statements.len());
+    println!("[INFO] Iniciando juego...");
+    println!();
 
-            // Ejecutar programa en loop infinito (hasta que usuario presione ESC)
-            loop {
-                ejecutar_programa_gfx(&program, &mut executor, &mut funcs, &mut gfx);
-            }
-        }
-        Err(e) => {
-            eprintln!("[ERROR] Error parseando script: {}", e);
-        }
+    // Ejecutar programa en loop infinito (hasta que usuario presione ESC)
+    loop {
+        ejecutar_programa_gfx(&program, &mut executor, &mut funcs, &mut gfx);
     }
 
     executor.mostrar_memoria();
