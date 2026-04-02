@@ -349,7 +349,7 @@ pub fn ejecutar_stmt(
             }
 
             // DEUDA #1 FIX: Verificar si ya está cargado (evitar re-ejecución)
-            if loaded_modules.contains(module) {
+            if loaded_modules.contains(&module[..]) {
                 println!("[IMPORT] Módulo '{}' ya cargado (usando cache)", module);
                 // Solo renombrar funciones existentes
                 let prefix = if let Some(alias_name) = alias {
@@ -1793,7 +1793,7 @@ fn ejecutar_stmt_gfx(
             }
 
             // DEUDA #1 FIX: Verificar si ya está cargado (evitar re-ejecución)
-            if loaded_modules.contains(module) {
+            if loaded_modules.contains(&module[..]) {
                 println!("[IMPORT] Módulo '{}' ya cargado (usando cache)", module);
                 // Solo renombrar funciones existentes
                 let prefix = if let Some(alias_name) = alias {
