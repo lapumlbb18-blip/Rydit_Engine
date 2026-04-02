@@ -3,13 +3,13 @@
 //
 // Compilador de AST a bytecode y VM para ejecutarlo.
 
-pub mod opcodes;
 pub mod compiler;
+pub mod opcodes;
 pub mod vm;
 
-pub use opcodes::{OpCode, BytecodeProgram};
-pub use compiler::{Compiler, compile_source};
-pub use vm::{VM, VMValue};
+pub use compiler::{compile_source, Compiler};
+pub use opcodes::{BytecodeProgram, OpCode};
+pub use vm::{VMValue, VM};
 
 /// Versión del crate
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");

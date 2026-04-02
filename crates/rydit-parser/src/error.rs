@@ -21,23 +21,23 @@ pub enum ErrorKind {
     UnexpectedChar,
     InvalidNumber,
     UnterminatedString,
-    
+
     // Parser
     UnexpectedToken,
     MissingToken,
     SyntaxError,
-    
+
     // Semántico
     UndefinedVariable,
     DuplicateDefinition,
     TypeMismatch,
     DivisionByZero,
     IndexOutOfBounds,
-    
+
     // Módulos
     CircularImport,
     ModuleNotFound,
-    
+
     // Assets
     TextureNotFound,
     SoundNotFound,
@@ -111,57 +111,124 @@ impl fmt::Display for RyDitError {
         };
 
         writeln!(f)?;
-        writeln!(f, "  ╔══════════════════════════════════════════════════════╗")?;
-        writeln!(f, "  ║  🔴 ERROR DE COMPILACIÓN                             ║")?;
-        writeln!(f, "  ╠══════════════════════════════════════════════════════╣")?;
+        writeln!(
+            f,
+            "  ╔══════════════════════════════════════════════════════╗"
+        )?;
+        writeln!(
+            f,
+            "  ║  🔴 ERROR DE COMPILACIÓN                             ║"
+        )?;
+        writeln!(
+            f,
+            "  ╠══════════════════════════════════════════════════════╣"
+        )?;
         writeln!(f, "  ║  Tipo: {}", kind_str)?;
-        writeln!(f, "  ║  Ubicación: línea {}, columna {}", self.line, self.column)?;
-        writeln!(f, "  ╠══════════════════════════════════════════════════════╣")?;
+        writeln!(
+            f,
+            "  ║  Ubicación: línea {}, columna {}",
+            self.line, self.column
+        )?;
+        writeln!(
+            f,
+            "  ╠══════════════════════════════════════════════════════╣"
+        )?;
 
         // Mostrar código fuente con snippet
         if !self.source_snippet.is_empty() {
-            writeln!(f, "  ║  Código:                                           ║")?;
+            writeln!(
+                f,
+                "  ║  Código:                                           ║"
+            )?;
             writeln!(f, "  ║    {}", self.source_snippet)?;
-            
+
             // Crear marcador visual
             let marker_len = self.column.saturating_sub(1);
             let marker = "→".to_string() + &" ".repeat(marker_len) + "^";
             writeln!(f, "  ║    {}", marker)?;
         }
 
-        writeln!(f, "  ╠══════════════════════════════════════════════════════╣")?;
+        writeln!(
+            f,
+            "  ╠══════════════════════════════════════════════════════╣"
+        )?;
         writeln!(f, "  ║  Mensaje: {}", self.message)?;
 
         // Agregar sugerencias basadas en el tipo de error
         match self.kind {
             ErrorKind::UnterminatedString => {
-                writeln!(f, "  ╠══════════════════════════════════════════════════════╣")?;
-                writeln!(f, "  ║  💡 Sugerencia: Agrega comillas al final del string  ║")?;
+                writeln!(
+                    f,
+                    "  ╠══════════════════════════════════════════════════════╣"
+                )?;
+                writeln!(
+                    f,
+                    "  ║  💡 Sugerencia: Agrega comillas al final del string  ║"
+                )?;
             }
             ErrorKind::MissingToken => {
-                writeln!(f, "  ╠══════════════════════════════════════════════════════╣")?;
-                writeln!(f, "  ║  💡 Sugerencia: Verifica que todos los paréntesis   ║")?;
-                writeln!(f, "  ║     y llaves estén cerrados correctamente            ║")?;
+                writeln!(
+                    f,
+                    "  ╠══════════════════════════════════════════════════════╣"
+                )?;
+                writeln!(
+                    f,
+                    "  ║  💡 Sugerencia: Verifica que todos los paréntesis   ║"
+                )?;
+                writeln!(
+                    f,
+                    "  ║     y llaves estén cerrados correctamente            ║"
+                )?;
             }
             ErrorKind::UndefinedVariable => {
-                writeln!(f, "  ╠══════════════════════════════════════════════════════╣")?;
-                writeln!(f, "  ║  💡 Sugerencia: Verifica el nombre de la variable   ║")?;
-                writeln!(f, "  ║     o defínela antes de usarla                       ║")?;
+                writeln!(
+                    f,
+                    "  ╠══════════════════════════════════════════════════════╣"
+                )?;
+                writeln!(
+                    f,
+                    "  ║  💡 Sugerencia: Verifica el nombre de la variable   ║"
+                )?;
+                writeln!(
+                    f,
+                    "  ║     o defínela antes de usarla                       ║"
+                )?;
             }
             ErrorKind::CircularImport => {
-                writeln!(f, "  ╠══════════════════════════════════════════════════════╣")?;
-                writeln!(f, "  ║  💡 Sugerencia: Reestructura los módulos para       ║")?;
-                writeln!(f, "  ║     evitar dependencias circulares                   ║")?;
+                writeln!(
+                    f,
+                    "  ╠══════════════════════════════════════════════════════╣"
+                )?;
+                writeln!(
+                    f,
+                    "  ║  💡 Sugerencia: Reestructura los módulos para       ║"
+                )?;
+                writeln!(
+                    f,
+                    "  ║     evitar dependencias circulares                   ║"
+                )?;
             }
             ErrorKind::ModuleNotFound => {
-                writeln!(f, "  ╠══════════════════════════════════════════════════════╣")?;
-                writeln!(f, "  ║  💡 Sugerencia: Verifica que el archivo existe en   ║")?;
-                writeln!(f, "  ║     crates/modules/                                  ║")?;
+                writeln!(
+                    f,
+                    "  ╠══════════════════════════════════════════════════════╣"
+                )?;
+                writeln!(
+                    f,
+                    "  ║  💡 Sugerencia: Verifica que el archivo existe en   ║"
+                )?;
+                writeln!(
+                    f,
+                    "  ║     crates/modules/                                  ║"
+                )?;
             }
             _ => {}
         }
 
-        writeln!(f, "  ╚══════════════════════════════════════════════════════╝")?;
+        writeln!(
+            f,
+            "  ╚══════════════════════════════════════════════════════╝"
+        )?;
         writeln!(f)
     }
 }
@@ -228,12 +295,7 @@ mod tests {
 
     #[test]
     fn test_error_new() {
-        let error = RyDitError::new(
-            ErrorKind::SyntaxError,
-            "Error de prueba".to_string(),
-            1,
-            10,
-        );
+        let error = RyDitError::new(ErrorKind::SyntaxError, "Error de prueba".to_string(), 1, 10);
         assert_eq!(error.kind, ErrorKind::SyntaxError);
         assert_eq!(error.message, "Error de prueba");
         assert_eq!(error.line, 1);

@@ -10,7 +10,6 @@ pub use registry::*;
 // RYBOT CORE
 // ============================================================================
 
-
 /// RyBot - Inspector y Registry central
 pub struct RyBot {
     /// Registry de módulos y eventos

@@ -9,7 +9,7 @@
 mod rybot_tests {
     // Tests de Rybot registry y alertas
     // Pendiente: Rybot necesita más desarrollo para tests
-    
+
     #[test]
     fn test_rybot_basico() {
         // Placeholder para tests de Rybot
@@ -25,7 +25,7 @@ mod rybot_tests {
 mod evaluator_tests {
     // Tests del evaluator de scripts .rydit
     // Pendiente: Integración con lizer + blast-core
-    
+
     #[test]
     fn test_evaluator_basico() {
         // Placeholder para tests del evaluator
@@ -41,7 +41,7 @@ mod evaluator_tests {
 mod modules_tests {
     // Tests de módulos (assets, audio, physics, etc.)
     // Pendiente: Integración completa
-    
+
     #[test]
     fn test_modules_basico() {
         // Placeholder para tests de módulos

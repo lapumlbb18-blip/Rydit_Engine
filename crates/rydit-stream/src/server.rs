@@ -4,7 +4,7 @@
 use std::net::{TcpListener, TcpStream};
 use std::sync::{Arc, Mutex};
 use std::thread;
-use tungstenite::{accept, Message, Error};
+use tungstenite::{accept, Error, Message};
 
 /// Cliente conectado al servidor
 pub struct Client {
@@ -49,18 +49,16 @@ impl StreamServer {
                 }
 
                 match stream {
-                    Ok(stream) => {
-                        match accept(stream) {
-                            Ok(ws) => {
-                                let addr = ws.get_ref().peer_addr().unwrap().to_string();
-                                eprintln!("[STREAM] Client connected: {}", addr);
+                    Ok(stream) => match accept(stream) {
+                        Ok(ws) => {
+                            let addr = ws.get_ref().peer_addr().unwrap().to_string();
+                            eprintln!("[STREAM] Client connected: {}", addr);
 
-                                let mut clients = clients.lock().unwrap();
-                                clients.push(Client { ws, addr });
-                            }
-                            Err(e) => eprintln!("[STREAM] WebSocket error: {}", e),
+                            let mut clients = clients.lock().unwrap();
+                            clients.push(Client { ws, addr });
                         }
-                    }
+                        Err(e) => eprintln!("[STREAM] WebSocket error: {}", e),
+                    },
                     Err(e) => eprintln!("[STREAM] Connection error: {}", e),
                 }
             }
@@ -92,7 +90,12 @@ impl StreamServer {
     }
 
     /// Broadcast JSON-RPC
-    pub fn broadcast_rpc(&self, method: &str, params: serde_json::Value, id: u64) -> Result<(), String> {
+    pub fn broadcast_rpc(
+        &self,
+        method: &str,
+        params: serde_json::Value,
+        id: u64,
+    ) -> Result<(), String> {
         let msg = serde_json::json!({
             "jsonrpc": "2.0",
             "method": method,

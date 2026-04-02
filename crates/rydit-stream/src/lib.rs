@@ -2,23 +2,26 @@
 // 🆕 LAN streaming for RyDit Engine
 
 pub mod client;
-pub mod server;
 pub mod lan;
-pub mod protocol;
 pub mod portal;
+pub mod protocol;
+pub mod server;
 
 // Re-exports públicos
 pub use client::StreamClient;
-pub use server::StreamServer;
-pub use lan::{StreamService, ServiceInfo};
+pub use lan::{ServiceInfo, StreamService};
 pub use portal::WebPortal;
-pub use protocol::{RpcMessage, stream};
+pub use protocol::{stream, RpcMessage};
+pub use server::StreamServer;
 
 /// Versión del crate
 pub const VERSION: &str = "0.1.0";
 
 /// Iniciar streaming completo (server + portal)
-pub fn start_streaming(stream_addr: &str, portal_port: u16) -> Result<(StreamServer, WebPortal), String> {
+pub fn start_streaming(
+    stream_addr: &str,
+    portal_port: u16,
+) -> Result<(StreamServer, WebPortal), String> {
     let server = StreamServer::new(stream_addr);
     server.start();
 

@@ -13,8 +13,11 @@ pub struct StreamService {
 impl StreamService {
     /// Crear servicio mDNS (stub)
     pub fn new(name: &str, port: u16) -> Result<Self, String> {
-        eprintln!("[mDNS] Service registered (stub): {} on port {}", name, port);
-        
+        eprintln!(
+            "[mDNS] Service registered (stub): {} on port {}",
+            name, port
+        );
+
         Ok(Self {
             name: name.to_string(),
             port,

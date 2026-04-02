@@ -36,7 +36,7 @@ impl std::fmt::Display for VMValue {
 struct CallFrame {
     /// Instruction pointer
     ip: usize,
-    
+
     /// Base del stack para este frame
     stack_base: usize,
 }
@@ -45,19 +45,19 @@ struct CallFrame {
 pub struct VM {
     /// Stack de valores
     stack: Vec<VMValue>,
-    
+
     /// Variables globales
     globals: HashMap<String, VMValue>,
-    
+
     /// Call frames
     frames: Vec<CallFrame>,
-    
+
     /// Instruction pointer actual
     ip: usize,
-    
+
     /// Programa actual
     program: Option<BytecodeProgram>,
-    
+
     /// Callback para draw commands
     pub draw_callback: Option<Box<dyn FnMut(&str, Vec<f64>)>>,
 }
@@ -108,39 +108,39 @@ impl VM {
     fn execute_instruction(&mut self) -> Result<ExecutionResult, String> {
         let program = self.program.as_ref().unwrap();
         let instruction = &program.instructions[self.ip];
-        
+
         match instruction {
             OpCode::LoadConst(idx) => {
                 let value = program.constants_num[*idx];
                 self.stack.push(VMValue::Num(value));
                 self.ip += 1;
             }
-            
+
             OpCode::LoadString(idx) => {
                 let value = program.constants_str[*idx].clone();
                 self.stack.push(VMValue::Texto(value));
                 self.ip += 1;
             }
-            
+
             OpCode::LoadBool(b) => {
                 self.stack.push(VMValue::Bool(*b));
                 self.ip += 1;
             }
-            
+
             OpCode::LoadGlobal(idx) => {
                 let name = &program.global_names[*idx];
                 let value = self.globals.get(name).cloned().unwrap_or(VMValue::Vacio);
                 self.stack.push(value);
                 self.ip += 1;
             }
-            
+
             OpCode::StoreGlobal(idx) => {
                 let name = &program.global_names[*idx];
                 let value = self.stack.pop().ok_or("Stack underflow")?;
                 self.globals.insert(name.clone(), value);
                 self.ip += 1;
             }
-            
+
             OpCode::LoadLocal(idx) => {
                 // Buscar en stack relativo al frame actual
                 if let Some(frame) = self.frames.last() {
@@ -154,7 +154,7 @@ impl VM {
                 }
                 self.ip += 1;
             }
-            
+
             OpCode::StoreLocal(idx) => {
                 if let Some(frame) = self.frames.last() {
                     let stack_idx = frame.stack_base + idx;
@@ -167,35 +167,35 @@ impl VM {
                 }
                 self.ip += 1;
             }
-            
+
             OpCode::Add => {
                 let b = self.stack.pop().ok_or("Stack underflow")?;
                 let a = self.stack.pop().ok_or("Stack underflow")?;
-                
+
                 let result = match (a, b) {
                     (VMValue::Num(x), VMValue::Num(y)) => VMValue::Num(x + y),
                     (VMValue::Texto(x), VMValue::Texto(y)) => VMValue::Texto(x + &y),
                     _ => return Err("Type mismatch for +".to_string()),
                 };
-                
+
                 self.stack.push(result);
                 self.ip += 1;
             }
-            
+
             OpCode::Subtract => {
                 let b = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
                 let a = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
                 self.stack.push(VMValue::Num(a - b));
                 self.ip += 1;
             }
-            
+
             OpCode::Multiply => {
                 let b = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
                 let a = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
                 self.stack.push(VMValue::Num(a * b));
                 self.ip += 1;
             }
-            
+
             OpCode::Divide => {
                 let b = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
                 let a = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
@@ -205,7 +205,7 @@ impl VM {
                 self.stack.push(VMValue::Num(a / b));
                 self.ip += 1;
             }
-            
+
             OpCode::Equal => {
                 let b = self.stack.pop().ok_or("Stack underflow")?;
                 let a = self.stack.pop().ok_or("Stack underflow")?;
@@ -213,7 +213,7 @@ impl VM {
                 self.stack.push(VMValue::Bool(result));
                 self.ip += 1;
             }
-            
+
             OpCode::NotEqual => {
                 let b = self.stack.pop().ok_or("Stack underflow")?;
                 let a = self.stack.pop().ok_or("Stack underflow")?;
@@ -221,59 +221,59 @@ impl VM {
                 self.stack.push(VMValue::Bool(result));
                 self.ip += 1;
             }
-            
+
             OpCode::Greater => {
                 let b = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
                 let a = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
                 self.stack.push(VMValue::Bool(a > b));
                 self.ip += 1;
             }
-            
+
             OpCode::Less => {
                 let b = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
                 let a = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
                 self.stack.push(VMValue::Bool(a < b));
                 self.ip += 1;
             }
-            
+
             OpCode::GreaterEqual => {
                 let b = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
                 let a = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
                 self.stack.push(VMValue::Bool(a >= b));
                 self.ip += 1;
             }
-            
+
             OpCode::LessEqual => {
                 let b = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
                 let a = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
                 self.stack.push(VMValue::Bool(a <= b));
                 self.ip += 1;
             }
-            
+
             OpCode::And => {
                 let b = self.stack.pop().ok_or("Stack underflow")?.as_bool()?;
                 let a = self.stack.pop().ok_or("Stack underflow")?.as_bool()?;
                 self.stack.push(VMValue::Bool(a && b));
                 self.ip += 1;
             }
-            
+
             OpCode::Or => {
                 let b = self.stack.pop().ok_or("Stack underflow")?.as_bool()?;
                 let a = self.stack.pop().ok_or("Stack underflow")?.as_bool()?;
                 self.stack.push(VMValue::Bool(a || b));
                 self.ip += 1;
             }
-            
+
             OpCode::Not => {
                 let a = self.stack.pop().ok_or("Stack underflow")?.as_bool()?;
                 self.stack.push(VMValue::Bool(!a));
                 self.ip += 1;
             }
-            
+
             OpCode::Jump(addr) => {
                 self.ip = *addr;
             }
-            
+
             OpCode::JumpIfFalse(addr) => {
                 let cond = self.stack.pop().ok_or("Stack underflow")?.as_bool()?;
                 if !cond {
@@ -282,7 +282,7 @@ impl VM {
                     self.ip += 1;
                 }
             }
-            
+
             OpCode::JumpIfTrue(addr) => {
                 let cond = self.stack.pop().ok_or("Stack underflow")?.as_bool()?;
                 if cond {
@@ -291,20 +291,20 @@ impl VM {
                     self.ip += 1;
                 }
             }
-            
+
             OpCode::Loop(addr) => {
                 self.ip = *addr;
             }
-            
+
             OpCode::Call(idx, arity) => {
                 let _func_name = &program.function_names[*idx];
                 let _arity = *arity;
-                
+
                 // Por ahora, funciones nativas simples
                 // TODO: Implementar llamada a funciones definidas por usuario
                 self.ip += 1;
             }
-            
+
             OpCode::Return => {
                 self.frames.pop();
                 if self.frames.is_empty() {
@@ -312,7 +312,7 @@ impl VM {
                 }
                 self.ip = self.frames.last().unwrap().ip;
             }
-            
+
             OpCode::ReturnValue => {
                 let value = self.stack.pop().ok_or("Stack underflow")?;
                 self.frames.pop();
@@ -321,7 +321,7 @@ impl VM {
                 }
                 self.ip = self.frames.last().unwrap().ip;
             }
-            
+
             OpCode::BuildArray(size) => {
                 let mut items = Vec::with_capacity(*size as usize);
                 for _ in 0..*size {
@@ -331,11 +331,11 @@ impl VM {
                 self.stack.push(VMValue::Array(items));
                 self.ip += 1;
             }
-            
+
             OpCode::GetIndex => {
                 let index = self.stack.pop().ok_or("Stack underflow")?.as_num()? as usize;
                 let array = self.stack.pop().ok_or("Stack underflow")?;
-                
+
                 if let VMValue::Array(arr) = array {
                     if index < arr.len() {
                         self.stack.push(arr[index].clone());
@@ -347,12 +347,12 @@ impl VM {
                 }
                 self.ip += 1;
             }
-            
+
             OpCode::SetIndex => {
                 let value = self.stack.pop().ok_or("Stack underflow")?;
                 let index = self.stack.pop().ok_or("Stack underflow")?.as_num()? as usize;
                 let mut array = self.stack.pop().ok_or("Stack underflow")?;
-                
+
                 if let VMValue::Array(ref mut arr) = array {
                     if index < arr.len() {
                         arr[index] = value;
@@ -362,56 +362,56 @@ impl VM {
                 } else {
                     return Err("Cannot set index on non-array".to_string());
                 }
-                
+
                 self.stack.push(array);
                 self.ip += 1;
             }
-            
+
             OpCode::DrawCircle => {
                 // Pop parámetros: radio, y, x
                 let radio = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
                 let y = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
                 let x = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
-                
+
                 if let Some(ref mut callback) = self.draw_callback {
                     callback("circle", vec![x, y, radio]);
                 }
-                
+
                 self.ip += 1;
             }
-            
+
             OpCode::DrawRect => {
                 let alto = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
                 let ancho = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
                 let y = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
                 let x = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
-                
+
                 if let Some(ref mut callback) = self.draw_callback {
                     callback("rect", vec![x, y, ancho, alto]);
                 }
-                
+
                 self.ip += 1;
             }
-            
+
             OpCode::DrawLine => {
                 let y2 = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
                 let x2 = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
                 let y1 = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
                 let x1 = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
-                
+
                 if let Some(ref mut callback) = self.draw_callback {
                     callback("line", vec![x1, y1, x2, y2]);
                 }
-                
+
                 self.ip += 1;
             }
-            
+
             OpCode::DrawText => {
                 let tamano = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
                 let y = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
                 let x = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
                 let texto = self.stack.pop().ok_or("Stack underflow")?;
-                
+
                 if let Some(ref mut callback) = self.draw_callback {
                     let texto_str = match texto {
                         VMValue::Texto(s) => s,
@@ -420,10 +420,10 @@ impl VM {
                     callback("text", vec![x, y, tamano]);
                     let _ = texto_str; // Usado en callback real
                 }
-                
+
                 self.ip += 1;
             }
-            
+
             OpCode::DrawTriangle => {
                 let v3_y = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
                 let v3_x = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
@@ -431,51 +431,51 @@ impl VM {
                 let v2_x = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
                 let v1_y = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
                 let v1_x = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
-                
+
                 if let Some(ref mut callback) = self.draw_callback {
                     callback("triangle", vec![v1_x, v1_y, v2_x, v2_y, v3_x, v3_y]);
                 }
-                
+
                 self.ip += 1;
             }
-            
+
             OpCode::DrawRing => {
                 let outer = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
                 let inner = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
                 let y = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
                 let x = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
-                
+
                 if let Some(ref mut callback) = self.draw_callback {
                     callback("ring", vec![x, y, inner, outer]);
                 }
-                
+
                 self.ip += 1;
             }
-            
+
             OpCode::DrawEllipse => {
                 let radius_v = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
                 let radius_h = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
                 let y = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
                 let x = self.stack.pop().ok_or("Stack underflow")?.as_num()?;
-                
+
                 if let Some(ref mut callback) = self.draw_callback {
                     callback("ellipse", vec![x, y, radius_h, radius_v]);
                 }
-                
+
                 self.ip += 1;
             }
-            
+
             OpCode::Print => {
                 let value = self.stack.pop().ok_or("Stack underflow")?;
                 println!("{}", value);
                 self.ip += 1;
             }
-            
+
             OpCode::Pop => {
                 self.stack.pop();
                 self.ip += 1;
             }
-            
+
             OpCode::Duplicate => {
                 if let Some(value) = self.stack.last() {
                     self.stack.push(value.clone());
@@ -484,12 +484,12 @@ impl VM {
                 }
                 self.ip += 1;
             }
-            
+
             OpCode::Nop => {
                 self.ip += 1;
             }
         }
-        
+
         Ok(ExecutionResult::Continue)
     }
 
@@ -561,11 +561,11 @@ mod tests {
     fn test_vm_run_simple() {
         let source = "dark.slot x = 100";
         let program = compile_source(source).unwrap();
-        
+
         let mut vm = VM::new();
         vm.load(program);
         let result = vm.run();
-        
+
         assert!(result.is_ok());
         assert_eq!(vm.get_global("x"), Some(VMValue::Num(100.0)));
     }
@@ -574,11 +574,11 @@ mod tests {
     fn test_vm_arithmetic() {
         let source = "dark.slot y = 10 + 5";
         let program = compile_source(source).unwrap();
-        
+
         let mut vm = VM::new();
         vm.load(program);
         let result = vm.run();
-        
+
         assert!(result.is_ok());
         assert_eq!(vm.get_global("y"), Some(VMValue::Num(15.0)));
     }
@@ -587,7 +587,7 @@ mod tests {
     fn test_vm_value_display() {
         let value = VMValue::Num(42.0);
         assert_eq!(format!("{}", value), "42");
-        
+
         let value = VMValue::Texto("hola".to_string());
         assert_eq!(format!("{}", value), "hola");
     }

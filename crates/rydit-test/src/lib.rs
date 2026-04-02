@@ -1,7 +1,7 @@
 //! RyDit Test Crate - Tests Simplificados
-//! 
+//!
 //! **Objetivo**: Tests rápidos y aislados para Rybot + Lizer + RyditModule
-//! 
+//!
 //! **Filosofía**:
 //! - ✅ Tests rápidos (< 1 segundo cada uno)
 //! - ✅ Sin dependencias gráficas pesadas

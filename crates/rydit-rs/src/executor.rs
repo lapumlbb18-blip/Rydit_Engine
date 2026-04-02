@@ -4,10 +4,10 @@
 use std::collections::{HashMap, HashSet};
 
 use blast_core::Executor;
-use rydit_parser::{Program, Stmt};
 use migui::Migui;
 use rydit_gfx::render_queue::{DrawCommand, RenderQueue};
 use rydit_gfx::RyditGfx;
+use rydit_parser::{Program, Stmt};
 
 use crate::{
     ejecutar_stmt, ejecutar_stmt_gfx, ejecutar_stmt_migui, evaluar_expr_migui, InputEstado,
@@ -420,7 +420,10 @@ pub fn ejecutar_programa_migui<'a>(
     for stmt in &program.statements {
         match stmt {
             Stmt::Function { name, params, body } => {
-                funcs.insert(name.to_string(), (params.iter().map(|s| s.to_string()).collect(), body.clone()));
+                funcs.insert(
+                    name.to_string(),
+                    (params.iter().map(|s| s.to_string()).collect(), body.clone()),
+                );
             }
             Stmt::Assign { name, value } => {
                 let valor = evaluar_expr_migui(

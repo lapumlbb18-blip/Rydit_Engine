@@ -1,8 +1,8 @@
 // crates/rydit-stream/src/client.rs
 // 🆕 WebSocket client para streaming RyDit
 
-use tungstenite::{connect, Message, WebSocket, Error, stream::MaybeTlsStream};
 use std::net::TcpStream;
+use tungstenite::{connect, stream::MaybeTlsStream, Error, Message, WebSocket};
 
 /// Cliente de streaming RyDit
 pub struct StreamClient {
@@ -61,7 +61,12 @@ impl StreamClient {
     }
 
     /// Enviar JSON-RPC request
-    pub fn send_rpc(&mut self, method: &str, params: serde_json::Value, id: u64) -> Result<(), String> {
+    pub fn send_rpc(
+        &mut self,
+        method: &str,
+        params: serde_json::Value,
+        id: u64,
+    ) -> Result<(), String> {
         let msg = serde_json::json!({
             "jsonrpc": "2.0",
             "method": method,

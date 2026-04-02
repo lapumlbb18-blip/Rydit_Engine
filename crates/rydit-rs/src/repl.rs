@@ -5,8 +5,8 @@ use std::collections::{HashMap, HashSet};
 use std::io::{self, Write};
 
 use blast_core::Executor;
-use rydit_parser::{Parser, Stmt};
 use rydit_lexer::Lexer;
+use rydit_parser::{Parser, Stmt};
 
 /// Iniciar modo REPL interactivo
 pub fn repl_mode() {

@@ -11,9 +11,9 @@ use std::path::Path;
 /// Calidad FSR
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum FsrQuality {
-    Performance,  // 0.5x (720p → 1080p) +50% FPS
-    Balanced,     // 0.66x (900p → 1080p) +30% FPS
-    Quality,      // 0.75x (1080p → 1440p) +20% FPS
+    Performance, // 0.5x (720p → 1080p) +50% FPS
+    Balanced,    // 0.66x (900p → 1080p) +30% FPS
+    Quality,     // 0.75x (1080p → 1440p) +20% FPS
 }
 
 impl FsrQuality {
@@ -29,7 +29,7 @@ impl FsrQuality {
     /// Obtener sharpness recomendado
     pub fn sharpness(&self) -> f32 {
         match self {
-            FsrQuality::Performance => 0.7,  // Más sharpen para compensar upscale
+            FsrQuality::Performance => 0.7, // Más sharpen para compensar upscale
             FsrQuality::Balanced => 0.5,
             FsrQuality::Quality => 0.3,
         }
@@ -54,26 +54,23 @@ impl FsrUpscaler {
     pub fn new() -> Result<Self, String> {
         // Crear fullscreen quad
         let (vao, vbo) = Self::create_quad();
-        
+
         // Cargar shaders
-        let program = Self::load_shaders(
-            "shaders/fsr_upscale.glsl",
-            "shaders/fsr_sharpen.glsl",
-        )?;
-        
+        let program = Self::load_shaders("shaders/fsr_upscale.glsl", "shaders/fsr_sharpen.glsl")?;
+
         // Obtener uniform locations
         unsafe {
             gl::UseProgram(program);
-            let input_size_loc = gl::GetUniformLocation(
-                program, b"inputSize\0".as_ptr() as *const _);
-            let output_size_loc = gl::GetUniformLocation(
-                program, b"outputSize\0".as_ptr() as *const _);
-            let texel_size_loc = gl::GetUniformLocation(
-                program, b"texelSize\0".as_ptr() as *const _);
-            let sharpness_loc = gl::GetUniformLocation(
-                program, b"sharpness\0".as_ptr() as *const _);
+            let input_size_loc =
+                gl::GetUniformLocation(program, b"inputSize\0".as_ptr() as *const _);
+            let output_size_loc =
+                gl::GetUniformLocation(program, b"outputSize\0".as_ptr() as *const _);
+            let texel_size_loc =
+                gl::GetUniformLocation(program, b"texelSize\0".as_ptr() as *const _);
+            let sharpness_loc =
+                gl::GetUniformLocation(program, b"sharpness\0".as_ptr() as *const _);
             gl::UseProgram(0);
-            
+
             Ok(Self {
                 program,
                 vao,
@@ -87,42 +84,38 @@ impl FsrUpscaler {
             })
         }
     }
-    
+
     /// Crear fullscreen quad
     fn create_quad() -> (GLuint, GLuint) {
         unsafe {
             let (mut vao, mut vbo) = (0, 0);
             gl::GenVertexArrays(1, &mut vao);
             gl::GenBuffers(1, &mut vbo);
-            
+
             gl::BindVertexArray(vao);
             gl::BindBuffer(gl::ARRAY_BUFFER, vbo);
-            
+
             // Fullscreen quad vertices
             let vertices: [f32; 18] = [
-                -1.0, -1.0, 0.0,
-                 1.0, -1.0, 0.0,
-                 1.0,  1.0, 0.0,
-                -1.0, -1.0, 0.0,
-                 1.0,  1.0, 0.0,
-                -1.0,  1.0, 0.0,
+                -1.0, -1.0, 0.0, 1.0, -1.0, 0.0, 1.0, 1.0, 0.0, -1.0, -1.0, 0.0, 1.0, 1.0, 0.0,
+                -1.0, 1.0, 0.0,
             ];
-            
+
             gl::BufferData(
                 gl::ARRAY_BUFFER,
                 (vertices.len() * 4) as isize,
                 vertices.as_ptr() as *const _,
                 gl::STATIC_DRAW,
             );
-            
+
             gl::VertexAttribPointer(0, 3, gl::FLOAT, gl::FALSE, 0, std::ptr::null());
             gl::EnableVertexAttribArray(0);
-            
+
             gl::BindVertexArray(0);
             (vao, vbo)
         }
     }
-    
+
     /// Cargar shaders desde archivos
     fn load_shaders(vertex_path: &str, fragment_path: &str) -> Result<GLuint, String> {
         unsafe {
@@ -131,16 +124,10 @@ impl FsrUpscaler {
             let fragment_source = fs::read_to_string(fragment_path)
                 .map_err(|e| format!("Error leyendo fragment shader: {}", e))?;
 
-            let vertex_shader = Self::compile_shader(
-                gl::VERTEX_SHADER, 
-                &vertex_source, 
-                "Vertex shader"
-            )?;
-            let fragment_shader = Self::compile_shader(
-                gl::FRAGMENT_SHADER, 
-                &fragment_source, 
-                "Fragment shader"
-            )?;
+            let vertex_shader =
+                Self::compile_shader(gl::VERTEX_SHADER, &vertex_source, "Vertex shader")?;
+            let fragment_shader =
+                Self::compile_shader(gl::FRAGMENT_SHADER, &fragment_source, "Fragment shader")?;
 
             let program = gl::CreateProgram();
             gl::AttachShader(program, vertex_shader);
@@ -191,12 +178,9 @@ impl FsrUpscaler {
             Ok(shader)
         }
     }
-    
+
     /// Render FSR upscale + sharpen
-    pub fn render(&self, 
-                  input_texture: GLuint,
-                  input_size: (u32, u32), 
-                  output_size: (u32, u32)) {
+    pub fn render(&self, input_texture: GLuint, input_size: (u32, u32), output_size: (u32, u32)) {
         if !self.enabled {
             return;
         }
@@ -204,30 +188,38 @@ impl FsrUpscaler {
         unsafe {
             // Usar programa FSR
             gl::UseProgram(self.program);
-            
+
             // Set uniforms
-            gl::Uniform2f(self.input_size_loc, 
-                         input_size.0 as f32, input_size.1 as f32);
-            gl::Uniform2f(self.output_size_loc,
-                         output_size.0 as f32, output_size.1 as f32);
-            gl::Uniform2f(self.texel_size_loc,
-                         1.0 / output_size.0 as f32, 
-                         1.0 / output_size.1 as f32);
+            gl::Uniform2f(
+                self.input_size_loc,
+                input_size.0 as f32,
+                input_size.1 as f32,
+            );
+            gl::Uniform2f(
+                self.output_size_loc,
+                output_size.0 as f32,
+                output_size.1 as f32,
+            );
+            gl::Uniform2f(
+                self.texel_size_loc,
+                1.0 / output_size.0 as f32,
+                1.0 / output_size.1 as f32,
+            );
             gl::Uniform1f(self.sharpness_loc, self.quality.sharpness());
-            
+
             // Bind input texture
             gl::ActiveTexture(gl::TEXTURE0);
             gl::BindTexture(gl::TEXTURE_2D, input_texture);
-            
+
             // Render fullscreen quad
             gl::BindVertexArray(self.vao);
             gl::DrawArrays(gl::TRIANGLES, 0, 6);
             gl::BindVertexArray(0);
-            
+
             gl::UseProgram(0);
         }
     }
-    
+
     /// Set calidad
     pub fn set_quality(&mut self, quality: FsrQuality) {
         self.quality = quality;
@@ -237,7 +229,7 @@ impl FsrUpscaler {
     pub fn quality(&self) -> FsrQuality {
         self.quality
     }
-    
+
     /// Toggle on/off
     pub fn set_enabled(&mut self, enabled: bool) {
         self.enabled = enabled;

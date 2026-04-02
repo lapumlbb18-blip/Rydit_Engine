@@ -4,21 +4,21 @@
 // Lexer zero-copy con lifetimes para RyDit Engine.
 // Los tokens referencian el source original, no copian.
 
-pub mod token;
 pub mod lexer;
+pub mod token;
 
-pub use token::{Token, TokenKind, Span};
 pub use lexer::Lexer;
+pub use token::{Span, Token, TokenKind};
 
 /// Versión del crate
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 /// Escanear source code y retornar tokens (zero-copy)
-/// 
+///
 /// Función convenience para `Lexer::new(source).scan()`.
-/// 
+///
 /// # Ejemplos
-/// 
+///
 /// ```
 /// let tokens = rydit_lexer::scan("shield.init dark.slot x = 100");
 /// assert!(tokens.iter().any(|t| t.kind == rydit_lexer::TokenKind::ShieldInit));

@@ -120,20 +120,12 @@ pub mod stream {
 
     /// Crear mensaje de escena
     pub fn scene(data: SceneData) -> RpcMessage {
-        RpcMessage::request(
-            "stream.scene",
-            json!({ "data": data }),
-            1,
-        )
+        RpcMessage::request("stream.scene", json!({ "data": data }), 1)
     }
 
     /// Crear mensaje de acción (client → server)
     pub fn action(name: &str) -> RpcMessage {
-        RpcMessage::request(
-            "stream.action",
-            json!({ "action": name }),
-            2,
-        )
+        RpcMessage::request("stream.action", json!({ "action": name }), 2)
     }
 }
 
@@ -194,17 +186,15 @@ mod tests {
 
     #[test]
     fn test_stream_update() {
-        let entities = vec![
-            stream::EntityData {
-                id: 1,
-                x: 100.0,
-                y: 200.0,
-                sprite: None,
-                color: Some("red".to_string()),
-                width: None,
-                height: None,
-            },
-        ];
+        let entities = vec![stream::EntityData {
+            id: 1,
+            x: 100.0,
+            y: 200.0,
+            sprite: None,
+            color: Some("red".to_string()),
+            width: None,
+            height: None,
+        }];
         let msg = stream::update(entities, 0.016);
         assert_eq!(msg.method.unwrap(), "stream.update");
     }

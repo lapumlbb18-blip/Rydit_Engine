@@ -8,7 +8,7 @@ use rydit_gfx::Key;
 
 fn main() {
     println!("⌨️ Nivel 3 - Test Input Low-End v0.11.1\n");
-    
+
     // Inicializar SDL2
     println!("📦 Inicializando SDL2 Backend...");
     let mut backend = match Sdl2Backend::new("Test Input Low-End", 400, 300) {
@@ -21,7 +21,7 @@ fn main() {
             return;
         }
     };
-    
+
     println!("═══════════════════════════════════════════");
     println!("🎮 PRUEBAS DE INPUT:");
     println!("═══════════════════════════════════════════");
@@ -29,49 +29,55 @@ fn main() {
     println!("• ESPACIO: Cambiar color");
     println!("• ESC: Salir");
     println!("═══════════════════════════════════════════\n");
-    
+
     let mut x = 180;
     let mut y = 130;
     let mut color = ColorRydit::Verde;
     let mut running = true;
-    
+
     while running {
         backend.begin_draw();
         backend.clear_background(ColorRydit::Negro);
-        
+
         // Dibujar cuadrado en posición (x, y)
         backend.draw_rect(x, y, 40, 40, color);
-        
+
         // Dibujar instrucciones
         backend.draw_text("Usa flechas para mover", 90, 20, 16, ColorRydit::Blanco);
         backend.draw_text("ESPACIO: cambiar color", 105, 40, 16, ColorRydit::Blanco);
-        backend.draw_text(&format!("Pos: ({}, {})", x, y), 150, 270, 14, ColorRydit::Amarillo);
-        
+        backend.draw_text(
+            &format!("Pos: ({}, {})", x, y),
+            150,
+            270,
+            14,
+            ColorRydit::Amarillo,
+        );
+
         // Input handling
         if backend.is_key_pressed(Key::Escape) {
             running = false;
         }
-        
+
         if backend.is_key_pressed(Key::Left) {
             x -= 10;
             println!("← Izquierda: ({}, {})", x, y);
         }
-        
+
         if backend.is_key_pressed(Key::Right) {
             x += 10;
             println!("→ Derecha: ({}, {})", x, y);
         }
-        
+
         if backend.is_key_pressed(Key::Up) {
             y -= 10;
             println!("↑ Arriba: ({}, {})", x, y);
         }
-        
+
         if backend.is_key_pressed(Key::Down) {
             y += 10;
             println!("↓ Abajo: ({}, {})", x, y);
         }
-        
+
         if backend.is_key_pressed(Key::Space) {
             // Cambiar color cíclicamente
             color = match color {
@@ -82,10 +88,10 @@ fn main() {
             };
             println!("🎨 Color cambiado: {:?}", color);
         }
-        
+
         backend.end_draw();
     }
-    
+
     println!("\n═══════════════════════════════════════════");
     println!("📊 RESUMEN:");
     println!("   ├─ SDL2 Backend: ✅ Funciona");

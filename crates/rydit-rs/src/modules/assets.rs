@@ -4,8 +4,8 @@
 #![allow(dead_code)] // Funciones usadas desde eval/mod.rs
 
 use blast_core::{Executor, Valor};
-use rydit_parser::{Expr, Stmt};
 use rydit_gfx::Assets;
+use rydit_parser::{Expr, Stmt};
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;

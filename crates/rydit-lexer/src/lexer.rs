@@ -1,22 +1,22 @@
 // crates/rydit-lexer/src/lexer.rs
 // Lexer<'a> zero-copy con lifetimes
 
-use crate::token::{Token, TokenKind, Span};
+use crate::token::{Span, Token, TokenKind};
 
 /// Lexer zero-copy para RyDit
-/// 
+///
 /// Convierte source code en tokens con lifetimes.
 /// Los tokens referencian el source original, no copian.
-/// 
+///
 /// # Ejemplos
-/// 
+///
 /// ```
 /// use rydit_lexer::Lexer;
-/// 
+///
 /// let source = "shield.init dark.slot x = 100";
 /// let lexer = Lexer::new(source);
 /// let tokens = lexer.scan();
-/// 
+///
 /// assert!(tokens.iter().any(|t| t.kind == TokenKind::ShieldInit));
 /// ```
 pub struct Lexer<'a> {
@@ -30,7 +30,7 @@ impl<'a> Lexer<'a> {
     }
 
     /// Escanea todo el source y retorna tokens
-    /// 
+    ///
     /// Los tokens referencian el source original (zero-copy).
     pub fn scan(&self) -> Vec<Token<'a>> {
         let mut tokens = Vec::new();
@@ -81,7 +81,7 @@ impl<'a> Lexer<'a> {
                 let start = i;
                 i += 1;
                 column += 1;
-                
+
                 while i < chars.len() && chars[i] != quote_char {
                     // Soporte para escapes
                     if chars[i] == '\\' && i + 1 < chars.len() {
@@ -92,12 +92,12 @@ impl<'a> Lexer<'a> {
                         column += 1;
                     }
                 }
-                
+
                 if i < chars.len() {
                     i += 1; // cerrar quote
                     column += 1;
                 }
-                
+
                 // Zero-copy: slice del source original (incluye comillas)
                 let text = &self.source[start..i];
                 tokens.push(Token::new(
@@ -121,7 +121,7 @@ impl<'a> Lexer<'a> {
                     i += 1;
                     column += 1;
                 }
-                
+
                 // Zero-copy: slice del source original
                 let num_str = &self.source[start..i];
                 tokens.push(Token::new(
@@ -133,24 +133,29 @@ impl<'a> Lexer<'a> {
             }
 
             // Identificador o comando: shield.init, delta.flow, x
-            if chars[i].is_alphabetic() 
-                || chars[i].is_alphanumeric() 
-                || chars[i] == '_' 
-                || chars[i] == '@' 
-                || chars[i] == '$' 
+            if chars[i].is_alphabetic()
+                || chars[i].is_alphanumeric()
+                || chars[i] == '_'
+                || chars[i] == '@'
+                || chars[i] == '$'
                 || chars[i] == '%'
             {
                 let start = i;
                 while i < chars.len()
-                    && (chars[i].is_alphanumeric() || chars[i] == '.' || chars[i] == '_' || chars[i] == '@' || chars[i] == '$' || chars[i] == '%')
+                    && (chars[i].is_alphanumeric()
+                        || chars[i] == '.'
+                        || chars[i] == '_'
+                        || chars[i] == '@'
+                        || chars[i] == '$'
+                        || chars[i] == '%')
                 {
                     i += 1;
                     column += 1;
                 }
-                
+
                 // Zero-copy: slice del source original
                 let ident = &self.source[start..i];
-                
+
                 // Verificar si es comando especial
                 let kind = match ident {
                     "shield.init" => TokenKind::ShieldInit,
@@ -172,7 +177,9 @@ impl<'a> Lexer<'a> {
                     "draw.text" | "dibujar.texto" => TokenKind::DrawText,
                     "draw.triangle" | "dibujar.triangulo" => TokenKind::DrawTriangle,
                     "draw.ring" | "dibujar.anillo" => TokenKind::DrawRing,
-                    "draw.rectangle_lines" | "dibujar.lineas_rectangulo" => TokenKind::DrawRectangleLines,
+                    "draw.rectangle_lines" | "dibujar.lineas_rectangulo" => {
+                        TokenKind::DrawRectangleLines
+                    }
                     "draw.ellipse" | "dibujar.elipse" => TokenKind::DrawEllipse,
                     "draw.line_thick" | "dibujar.linea_gruesa" => TokenKind::DrawLineThick,
                     // Keywords
@@ -186,8 +193,12 @@ impl<'a> Lexer<'a> {
                     "input" => TokenKind::Ident,
                     _ => TokenKind::Ident,
                 };
-                
-                tokens.push(Token::new(kind, ident, Span::new(start_pos, i, start_line, start_col)));
+
+                tokens.push(Token::new(
+                    kind,
+                    ident,
+                    Span::new(start_pos, i, start_line, start_col),
+                ));
                 continue;
             }
 
@@ -439,7 +450,7 @@ impl<'a> Lexer<'a> {
                 c => {
                     tokens.push(Token::new(
                         TokenKind::Error,
-                        &self.source[i..i+1],
+                        &self.source[i..i + 1],
                         Span::new(start_pos, i + 1, start_line, start_col),
                     ));
                     i += 1;
@@ -467,9 +478,13 @@ mod tests {
     fn test_dark_slot_numero() {
         let tokens = Lexer::new("dark.slot x = 100").scan();
         assert!(tokens.iter().any(|t| t.kind == TokenKind::DarkSlot));
-        assert!(tokens.iter().any(|t| t.kind == TokenKind::Ident && t.lexeme == "x"));
+        assert!(tokens
+            .iter()
+            .any(|t| t.kind == TokenKind::Ident && t.lexeme == "x"));
         assert!(tokens.iter().any(|t| t.kind == TokenKind::Igual));
-        assert!(tokens.iter().any(|t| t.kind == TokenKind::Num && t.lexeme == "100"));
+        assert!(tokens
+            .iter()
+            .any(|t| t.kind == TokenKind::Num && t.lexeme == "100"));
     }
 
     #[test]
@@ -498,23 +513,24 @@ mod tests {
         // Verificar zero-copy: los tokens referencian el source original
         let source = String::from("x = 100");
         let tokens = Lexer::new(&source).scan();
-        
+
         // El token Ident referencia una parte del source
         let ident_token = tokens.iter().find(|t| t.kind == TokenKind::Ident).unwrap();
         assert_eq!(ident_token.lexeme, "x");
-        
+
         // Verificar que es una referencia al source (mismo pointer)
-        assert!(std::ptr::eq(
-            ident_token.lexeme.as_ptr(),
-            source.as_ptr()
-        ));
+        assert!(std::ptr::eq(ident_token.lexeme.as_ptr(), source.as_ptr()));
     }
 
     #[test]
     fn test_numeros_negativos() {
         let tokens = Lexer::new("-5 -10.5").scan();
-        assert!(tokens.iter().any(|t| t.kind == TokenKind::Num && t.lexeme == "-5"));
-        assert!(tokens.iter().any(|t| t.kind == TokenKind::Num && t.lexeme == "-10.5"));
+        assert!(tokens
+            .iter()
+            .any(|t| t.kind == TokenKind::Num && t.lexeme == "-5"));
+        assert!(tokens
+            .iter()
+            .any(|t| t.kind == TokenKind::Num && t.lexeme == "-10.5"));
     }
 
     #[test]
@@ -546,8 +562,14 @@ mod tests {
     #[test]
     fn test_simbolos_identificadores() {
         let tokens = Lexer::new("@variable $valor %porcentaje").scan();
-        assert!(tokens.iter().any(|t| t.kind == TokenKind::Ident && t.lexeme == "@variable"));
-        assert!(tokens.iter().any(|t| t.kind == TokenKind::Ident && t.lexeme == "$valor"));
-        assert!(tokens.iter().any(|t| t.kind == TokenKind::Ident && t.lexeme == "%porcentaje"));
+        assert!(tokens
+            .iter()
+            .any(|t| t.kind == TokenKind::Ident && t.lexeme == "@variable"));
+        assert!(tokens
+            .iter()
+            .any(|t| t.kind == TokenKind::Ident && t.lexeme == "$valor"));
+        assert!(tokens
+            .iter()
+            .any(|t| t.kind == TokenKind::Ident && t.lexeme == "%porcentaje"));
     }
 }

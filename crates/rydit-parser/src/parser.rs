@@ -5,10 +5,10 @@
 
 use crate::ast::*;
 use crate::error::*;
-use rydit_lexer::{Token, TokenKind, Lexer};
+use rydit_lexer::{Lexer, Token, TokenKind};
 
 /// Parser para RyDit con error recovery
-/// 
+///
 /// Convierte tokens en AST, recuperando de errores para reportar múltiples.
 pub struct Parser<'a> {
     tokens: Vec<Token<'a>>,
@@ -33,14 +33,14 @@ impl<'a> Parser<'a> {
     }
 
     /// Parsear todo el programa
-    /// 
+    ///
     /// Retorna (AST, Vec<Errores>) - nunca falla completamente.
     pub fn parse(&mut self) -> (Program<'a>, Vec<RyDitError>) {
         let mut statements = Vec::new();
 
         while !self.is_at_end() {
             let pos_antes = self.pos;
-            
+
             match self.parse_statement() {
                 Some(stmt) => statements.push(stmt),
                 None => {
@@ -57,7 +57,7 @@ impl<'a> Parser<'a> {
                     }
                 }
             }
-            
+
             self.state.recover();
         }
 
@@ -83,17 +83,17 @@ impl<'a> Parser<'a> {
                 self.advance();
                 return Some(Stmt::Init);
             }
-            
+
             TokenKind::OndaCore => {
                 self.advance();
                 return Some(Stmt::Command("onda.core"));
             }
-            
+
             TokenKind::RyPrime => {
                 self.advance();
                 return Some(Stmt::Command("ryprime"));
             }
-            
+
             TokenKind::Ryda => return self.parse_while(),
             TokenKind::Cada => return self.parse_foreach(),
             TokenKind::Onif => return self.parse_if(),
@@ -506,11 +506,11 @@ impl<'a> Parser<'a> {
             // array[index] = value
             self.advance(); // consumir [
             let index = self.parse_expression()?;
-            
+
             if self.check(TokenKind::CorcheteDer) {
                 self.advance(); // consumir ]
             }
-            
+
             if self.check(TokenKind::Igual) {
                 self.advance(); // consumir =
                 let value = self.parse_expression()?;
@@ -569,7 +569,13 @@ impl<'a> Parser<'a> {
 
         self.consume(TokenKind::ParentDer, ")")?;
 
-        Some(Stmt::DrawRect { x, y, ancho, alto, color })
+        Some(Stmt::DrawRect {
+            x,
+            y,
+            ancho,
+            alto,
+            color,
+        })
     }
 
     fn parse_draw_line(&mut self) -> Option<Stmt<'a>> {
@@ -591,7 +597,13 @@ impl<'a> Parser<'a> {
 
         self.consume(TokenKind::ParentDer, ")")?;
 
-        Some(Stmt::DrawLine { x1, y1, x2, y2, color })
+        Some(Stmt::DrawLine {
+            x1,
+            y1,
+            x2,
+            y2,
+            color,
+        })
     }
 
     fn parse_draw_text(&mut self) -> Option<Stmt<'a>> {
@@ -613,7 +625,13 @@ impl<'a> Parser<'a> {
 
         self.consume(TokenKind::ParentDer, ")")?;
 
-        Some(Stmt::DrawText { texto, x, y, tamano, color })
+        Some(Stmt::DrawText {
+            texto,
+            x,
+            y,
+            tamano,
+            color,
+        })
     }
 
     fn parse_draw_triangle(&mut self) -> Option<Stmt<'a>> {
@@ -639,7 +657,15 @@ impl<'a> Parser<'a> {
 
         self.consume(TokenKind::ParentDer, ")")?;
 
-        Some(Stmt::DrawTriangle { v1_x, v1_y, v2_x, v2_y, v3_x, v3_y, color })
+        Some(Stmt::DrawTriangle {
+            v1_x,
+            v1_y,
+            v2_x,
+            v2_y,
+            v3_x,
+            v3_y,
+            color,
+        })
     }
 
     fn parse_draw_ring(&mut self) -> Option<Stmt<'a>> {
@@ -661,7 +687,13 @@ impl<'a> Parser<'a> {
 
         self.consume(TokenKind::ParentDer, ")")?;
 
-        Some(Stmt::DrawRing { center_x, center_y, inner_radius, outer_radius, color })
+        Some(Stmt::DrawRing {
+            center_x,
+            center_y,
+            inner_radius,
+            outer_radius,
+            color,
+        })
     }
 
     fn parse_draw_rectangle_lines(&mut self) -> Option<Stmt<'a>> {
@@ -683,7 +715,13 @@ impl<'a> Parser<'a> {
 
         self.consume(TokenKind::ParentDer, ")")?;
 
-        Some(Stmt::DrawRectangleLines { x, y, ancho, alto, color })
+        Some(Stmt::DrawRectangleLines {
+            x,
+            y,
+            ancho,
+            alto,
+            color,
+        })
     }
 
     fn parse_draw_ellipse(&mut self) -> Option<Stmt<'a>> {
@@ -705,7 +743,13 @@ impl<'a> Parser<'a> {
 
         self.consume(TokenKind::ParentDer, ")")?;
 
-        Some(Stmt::DrawEllipse { center_x, center_y, radius_h, radius_v, color })
+        Some(Stmt::DrawEllipse {
+            center_x,
+            center_y,
+            radius_h,
+            radius_v,
+            color,
+        })
     }
 
     fn parse_draw_line_thick(&mut self) -> Option<Stmt<'a>> {
@@ -729,7 +773,14 @@ impl<'a> Parser<'a> {
 
         self.consume(TokenKind::ParentDer, ")")?;
 
-        Some(Stmt::DrawLineThick { x1, y1, x2, y2, thick, color })
+        Some(Stmt::DrawLineThick {
+            x1,
+            y1,
+            x2,
+            y2,
+            thick,
+            color,
+        })
     }
 
     // ========================================================================
@@ -913,7 +964,7 @@ impl<'a> Parser<'a> {
     /// Parsear primario: números, strings, variables, parentesis
     fn parse_primary(&mut self) -> Option<Expr<'a>> {
         let token = self.current();
-        
+
         match token.kind {
             TokenKind::Num => {
                 if let Some(n) = token.as_num() {
@@ -937,11 +988,11 @@ impl<'a> Parser<'a> {
                 if let Some(name) = token.as_ident() {
                     let name_str = name;
                     self.advance();
-                
+
                     // Verificar si es llamada a función
                     if self.check(TokenKind::ParentIzq) {
                         self.advance(); // consumir (
-                        
+
                         let mut args = Vec::new();
                         while !self.is_at_end() && !self.check(TokenKind::ParentDer) {
                             if let Some(arg) = self.parse_expression() {
@@ -951,17 +1002,17 @@ impl<'a> Parser<'a> {
                                 self.advance();
                             }
                         }
-                        
+
                         if self.check(TokenKind::ParentDer) {
                             self.advance();
                         }
-                        
+
                         return Some(Expr::Call {
                             callee: Box::new(Expr::Var(name_str)),
                             args,
                         });
                     }
-                    
+
                     // Verificar si es indexación
                     if self.check(TokenKind::CorcheteIzq) {
                         self.advance(); // consumir [
@@ -974,7 +1025,7 @@ impl<'a> Parser<'a> {
                             index: Box::new(index),
                         });
                     }
-                    
+
                     return Some(Expr::Var(name_str));
                 } else {
                     self.state.add_error(RyDitError::syntax_error(

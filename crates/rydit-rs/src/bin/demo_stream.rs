@@ -1,7 +1,7 @@
 // crates/rydit-rs/src/bin/demo_stream.rs
 // 🆕 Demo: Streaming de bytecode con rydit-stream
 
-use rydit_stream::{StreamServer, WebPortal, stream};
+use rydit_stream::{stream, StreamServer, WebPortal};
 use rydit_vm::compile_source;
 use std::thread;
 use std::time::Duration;
@@ -68,17 +68,15 @@ fn main() {
         }
 
         // Crear entidad para stream
-        let entities = vec![
-            stream::EntityData {
-                id: 1,
-                x,
-                y,
-                sprite: None,
-                color: Some("cyan".to_string()),
-                width: Some(50.0),
-                height: Some(50.0),
-            },
-        ];
+        let entities = vec![stream::EntityData {
+            id: 1,
+            x,
+            y,
+            sprite: None,
+            color: Some("cyan".to_string()),
+            width: Some(50.0),
+            height: Some(50.0),
+        }];
 
         // Enviar update
         let msg = stream::update(entities, 0.016);
@@ -90,8 +88,13 @@ fn main() {
 
         frame += 1;
         if frame % 60 == 0 {
-            println!("📊 Frame {} | Clients: {} | Pos: ({}, {})", 
-                frame, server.client_count(), x as i32, y as i32);
+            println!(
+                "📊 Frame {} | Clients: {} | Pos: ({}, {})",
+                frame,
+                server.client_count(),
+                x as i32,
+                y as i32
+            );
         }
 
         // 60 FPS

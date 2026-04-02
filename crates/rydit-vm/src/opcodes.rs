@@ -11,133 +11,133 @@ pub enum OpCode {
     // === CONSTANTES ===
     /// Cargar constante numérica del pool
     LoadConst(usize),
-    
+
     /// Cargar constante de texto del pool
     LoadString(usize),
-    
+
     /// Cargar booleano
     LoadBool(bool),
-    
+
     // === VARIABLES ===
     /// Cargar variable global
     LoadGlobal(usize),
-    
+
     /// Guardar variable global
     StoreGlobal(usize),
-    
+
     /// Cargar variable local
     LoadLocal(usize),
-    
+
     /// Guardar variable local
     StoreLocal(usize),
-    
+
     // === OPERACIONES ARITMÉTICAS ===
     /// Suma: a + b
     Add,
-    
+
     /// Resta: a - b
     Subtract,
-    
+
     /// Multiplicación: a * b
     Multiply,
-    
+
     /// División: a / b
     Divide,
-    
+
     // === OPERACIONES DE COMPARACIÓN ===
     /// Igualdad: a == b
     Equal,
-    
+
     /// Diferente: a != b
     NotEqual,
-    
+
     /// Mayor que: a > b
     Greater,
-    
+
     /// Menor que: a < b
     Less,
-    
+
     /// Mayor o igual: a >= b
     GreaterEqual,
-    
+
     /// Menor o igual: a <= b
     LessEqual,
-    
+
     // === OPERACIONES LÓGICAS ===
     /// AND lógico: a and b
     And,
-    
+
     /// OR lógico: a or b
     Or,
-    
+
     /// NOT lógico: not a
     Not,
-    
+
     // === CONTROL DE FLUJO ===
     /// Salto incondicional
     Jump(usize),
-    
+
     /// Salto si falso
     JumpIfFalse(usize),
-    
+
     /// Salto si verdadero
     JumpIfTrue(usize),
-    
+
     /// Fin de loop (volver al inicio)
     Loop(usize),
-    
+
     // === FUNCIONES ===
     /// Llamar función
-    Call(usize, u8),  // (índice nombre, arity)
-    
+    Call(usize, u8), // (índice nombre, arity)
+
     /// Retorno de función
     Return,
-    
+
     /// Retorno con valor
     ReturnValue,
-    
+
     // === ESTRUCTURAS ===
     /// Crear array
-    BuildArray(u8),  // número de elementos
-    
+    BuildArray(u8), // número de elementos
+
     /// Indexar array
     GetIndex,
-    
+
     /// Setear elemento de array
     SetIndex,
-    
+
     // === DRAW COMMANDS ===
     /// Dibujar círculo
     DrawCircle,
-    
+
     /// Dibujar rectángulo
     DrawRect,
-    
+
     /// Dibujar línea
     DrawLine,
-    
+
     /// Dibujar texto
     DrawText,
-    
+
     /// Dibujar triángulo
     DrawTriangle,
-    
+
     /// Dibujar anillo
     DrawRing,
-    
+
     /// Dibujar elipse
     DrawEllipse,
-    
+
     // === ESPECIALES ===
     /// Nop (no operation)
     Nop,
-    
+
     /// Pop (descartar tope del stack)
     Pop,
-    
+
     /// Duplicar tope del stack
     Duplicate,
-    
+
     /// Print/voz
     Print,
 }
@@ -195,16 +195,16 @@ impl fmt::Display for OpCode {
 pub struct BytecodeProgram {
     /// Instrucciones
     pub instructions: Vec<OpCode>,
-    
+
     /// Pool de constantes numéricas
     pub constants_num: Vec<f64>,
-    
+
     /// Pool de constantes de texto
     pub constants_str: Vec<String>,
-    
+
     /// Nombres de variables globales
     pub global_names: Vec<String>,
-    
+
     /// Nombres de funciones
     pub function_names: Vec<String>,
 }
@@ -267,11 +267,11 @@ impl BytecodeProgram {
         output.push_str(&format!("Constants (str): {}\n", self.constants_str.len()));
         output.push_str(&format!("Globals: {}\n", self.global_names.len()));
         output.push_str(&format!("Functions: {}\n\n", self.function_names.len()));
-        
+
         for (addr, opcode) in self.instructions.iter().enumerate() {
             output.push_str(&format!("{:04}: {}\n", addr, opcode));
         }
-        
+
         output
     }
 }
@@ -331,7 +331,7 @@ mod tests {
         program.instructions.push(OpCode::LoadConst(0));
         program.instructions.push(OpCode::Add);
         program.add_constant_num(100.0);
-        
+
         let disasm = program.disassemble();
         assert!(disasm.contains("BYTECODE PROGRAM"));
         assert!(disasm.contains("LOAD_CONST"));

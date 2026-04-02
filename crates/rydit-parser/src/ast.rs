@@ -13,7 +13,9 @@ pub struct Program<'a> {
 
 impl<'a> Program<'a> {
     pub fn new() -> Self {
-        Self { statements: Vec::new() }
+        Self {
+            statements: Vec::new(),
+        }
     }
 
     pub fn is_empty(&self) -> bool {
@@ -32,44 +34,41 @@ impl<'a> Default for Program<'a> {
 }
 
 /// Expresiones en RyDit
-/// 
+///
 /// AST typed: cada variante tiene un propósito específico.
 #[derive(Debug, Clone)]
 pub enum Expr<'a> {
     /// Literal numérico: 100, 0.5, -5
     Num(f64),
-    
+
     /// Literal de texto: "hola", 'mundo'
     Texto(&'a str),
-    
+
     /// Variable: x, jugador, delta.flow
     Var(&'a str),
-    
+
     /// Booleano: true, false
     Bool(bool),
-    
+
     /// Array literal: [1, 2, 3]
     Array(Vec<Expr<'a>>),
-    
+
     /// Indexación: lista[0], array[i]
     Index {
         array: Box<Expr<'a>>,
         index: Box<Expr<'a>>,
     },
-    
+
     /// Operación binaria: a + b, x * y
     Binary {
         left: Box<Expr<'a>>,
         op: BinaryOp,
         right: Box<Expr<'a>>,
     },
-    
+
     /// Operación unaria: -x, not true
-    Unary {
-        op: UnaryOp,
-        expr: Box<Expr<'a>>,
-    },
-    
+    Unary { op: UnaryOp, expr: Box<Expr<'a>> },
+
     /// Llamada a función: tecla_presionada("arrow_up")
     Call {
         callee: Box<Expr<'a>>,
@@ -81,15 +80,15 @@ pub enum Expr<'a> {
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum BinaryOp {
     // Aritméticos
-    Suma,     // +
-    Resta,    // -
-    Mult,     // *
-    Div,      // /
-    MasIgual, // +=
+    Suma,       // +
+    Resta,      // -
+    Mult,       // *
+    Div,        // /
+    MasIgual,   // +=
     MenosIgual, // -=
-    PorIgual, // *=
-    DivIgual, // /=
-    
+    PorIgual,   // *=
+    DivIgual,   // /=
+
     // Comparación
     Mayor,      // >
     Menor,      // <
@@ -97,7 +96,7 @@ pub enum BinaryOp {
     MayorIgual, // >=
     MenorIgual, // <=
     Diferente,  // !=
-    
+
     // Lógicos
     And,
     Or,
@@ -130,8 +129,8 @@ impl fmt::Display for BinaryOp {
 /// Operadores unarios
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum UnaryOp {
-    Not,  // not
-    Neg,  // -
+    Not, // not
+    Neg, // -
 }
 
 impl fmt::Display for UnaryOp {
@@ -149,74 +148,71 @@ impl fmt::Display for UnaryOp {
 pub enum Stmt<'a> {
     /// shield.init
     Init,
-    
+
     /// Comandos: onda.core, ryprime
     Command(&'a str),
-    
+
     /// Asignación: dark.slot x = 100
-    Assign {
-        name: &'a str,
-        value: Expr<'a>,
-    },
-    
+    Assign { name: &'a str, value: Expr<'a> },
+
     /// Index assign: lista[0] = 5
     IndexAssign {
         array: &'a str,
         index: Expr<'a>,
         value: Expr<'a>,
     },
-    
+
     /// Condicional: onif condition { ... } blelse { ... }
     If {
         condition: Expr<'a>,
         then_body: Vec<Stmt<'a>>,
         else_body: Option<Vec<Stmt<'a>>>,
     },
-    
+
     /// While: ryda condition { ... }
     While {
         condition: Expr<'a>,
         body: Vec<Stmt<'a>>,
     },
-    
+
     /// Bloque: { ... }
     Block(Vec<Stmt<'a>>),
-    
+
     /// Función: rytmo nombre(params) { ... }
     Function {
         name: &'a str,
         params: Vec<&'a str>,
         body: Vec<Stmt<'a>>,
     },
-    
+
     /// Llamada a función como statement: nombre(args)
     Call {
         callee: &'a str,
         args: Vec<Expr<'a>>,
     },
-    
+
     /// Return: return valor
     Return(Option<Expr<'a>>),
-    
+
     /// Expresión como statement
     Expr(Expr<'a>),
-    
+
     /// ForEach: cada x en lista { ... }
     ForEach {
         var: &'a str,
         iterable: Expr<'a>,
         body: Vec<Stmt<'a>>,
     },
-    
+
     /// Break: salir de loop
     Break,
-    
+
     /// Import: import modulo [as alias]
     Import {
         module: &'a str,
         alias: Option<&'a str>,
     },
-    
+
     /// Draw commands
     DrawCircle {
         x: Expr<'a>,
@@ -224,7 +220,7 @@ pub enum Stmt<'a> {
         radio: Expr<'a>,
         color: &'a str,
     },
-    
+
     DrawRect {
         x: Expr<'a>,
         y: Expr<'a>,
@@ -232,7 +228,7 @@ pub enum Stmt<'a> {
         alto: Expr<'a>,
         color: &'a str,
     },
-    
+
     DrawLine {
         x1: Expr<'a>,
         y1: Expr<'a>,
@@ -240,7 +236,7 @@ pub enum Stmt<'a> {
         y2: Expr<'a>,
         color: &'a str,
     },
-    
+
     DrawText {
         texto: Expr<'a>,
         x: Expr<'a>,
@@ -248,7 +244,7 @@ pub enum Stmt<'a> {
         tamano: Expr<'a>,
         color: &'a str,
     },
-    
+
     DrawTriangle {
         v1_x: Expr<'a>,
         v1_y: Expr<'a>,
@@ -258,7 +254,7 @@ pub enum Stmt<'a> {
         v3_y: Expr<'a>,
         color: &'a str,
     },
-    
+
     DrawRing {
         center_x: Expr<'a>,
         center_y: Expr<'a>,
@@ -266,7 +262,7 @@ pub enum Stmt<'a> {
         outer_radius: Expr<'a>,
         color: &'a str,
     },
-    
+
     DrawRectangleLines {
         x: Expr<'a>,
         y: Expr<'a>,
@@ -274,7 +270,7 @@ pub enum Stmt<'a> {
         alto: Expr<'a>,
         color: &'a str,
     },
-    
+
     DrawEllipse {
         center_x: Expr<'a>,
         center_y: Expr<'a>,
@@ -282,7 +278,7 @@ pub enum Stmt<'a> {
         radius_v: Expr<'a>,
         color: &'a str,
     },
-    
+
     DrawLineThick {
         x1: Expr<'a>,
         y1: Expr<'a>,

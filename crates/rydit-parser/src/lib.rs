@@ -16,11 +16,11 @@ pub use parser::Parser;
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 /// Parsear source code y retornar (AST, errores)
-/// 
+///
 /// Función convenience para `Parser::from_source(source).parse()`.
-/// 
+///
 /// # Ejemplos
-/// 
+///
 /// ```
 /// let (program, errors) = rydit_parser::parse("shield.init dark.slot x = 100");
 /// assert!(errors.is_empty());

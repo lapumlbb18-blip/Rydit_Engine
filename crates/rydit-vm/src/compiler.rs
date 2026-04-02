@@ -4,12 +4,12 @@
 // Convierte AST en bytecode ejecutable por la VM.
 
 use crate::opcodes::*;
-use rydit_parser::{Expr, Stmt, Program, BinaryOp, UnaryOp};
+use rydit_parser::{BinaryOp, Expr, Program, Stmt, UnaryOp};
 
 /// Compilador de AST a Bytecode
 pub struct Compiler {
     program: BytecodeProgram,
-    scopes: Vec<Vec<String>>,  // Scope stack para variables locales
+    scopes: Vec<Vec<String>>, // Scope stack para variables locales
 }
 
 impl Compiler {
@@ -25,14 +25,17 @@ impl Compiler {
         for stmt in &program.statements {
             self.compile_stmt(stmt)?;
         }
-        
+
         // Agregar RETURN al final si no hay
-        if self.program.instructions.is_empty() 
-            || !matches!(self.program.instructions.last(), Some(OpCode::Return | OpCode::ReturnValue))
+        if self.program.instructions.is_empty()
+            || !matches!(
+                self.program.instructions.last(),
+                Some(OpCode::Return | OpCode::ReturnValue)
+            )
         {
             self.program.instructions.push(OpCode::Return);
         }
-        
+
         Ok(self.program)
     }
 
@@ -43,18 +46,18 @@ impl Compiler {
                 // shield.init - no operation
                 Ok(())
             }
-            
+
             Stmt::Command(cmd) => {
                 // onda.core, ryprime - comandos especiales
                 // Por ahora, nop
                 self.program.instructions.push(OpCode::Nop);
                 Ok(())
             }
-            
+
             Stmt::Assign { name, value } => {
                 // Compilar valor
                 self.compile_expr(value)?;
-                
+
                 // Verificar si es variable local o global
                 if let Some(idx) = self.find_local(name) {
                     self.program.instructions.push(OpCode::StoreLocal(idx));
@@ -65,38 +68,44 @@ impl Compiler {
                 }
                 Ok(())
             }
-            
-            Stmt::If { condition, then_body, else_body } => {
+
+            Stmt::If {
+                condition,
+                then_body,
+                else_body,
+            } => {
                 // Compilar condición
                 self.compile_expr(condition)?;
-                
+
                 // Salto si falso al else
                 let jump_to_else_idx = self.program.len();
                 self.program.instructions.push(OpCode::JumpIfFalse(0)); // Placeholder
-                
+
                 // Compilar then_body
                 for stmt in then_body {
                     self.compile_stmt(stmt)?;
                 }
-                
+
                 // Si hay else, saltar sobre él
                 if else_body.is_some() {
                     let jump_to_end_idx = self.program.len();
                     self.program.instructions.push(OpCode::Jump(0)); // Placeholder
-                    
+
                     // Fixear jump_to_else
                     let jump_target = self.program.len();
-                    if let OpCode::JumpIfFalse(_) = &mut self.program.instructions[jump_to_else_idx] {
-                        self.program.instructions[jump_to_else_idx] = OpCode::JumpIfFalse(jump_target);
+                    if let OpCode::JumpIfFalse(_) = &mut self.program.instructions[jump_to_else_idx]
+                    {
+                        self.program.instructions[jump_to_else_idx] =
+                            OpCode::JumpIfFalse(jump_target);
                     }
-                    
+
                     // Compilar else_body
                     if let Some(else_stmts) = else_body {
                         for stmt in else_stmts {
                             self.compile_stmt(stmt)?;
                         }
                     }
-                    
+
                     // Fixear jump_to_end
                     let end_target = self.program.len();
                     if let OpCode::Jump(_) = &mut self.program.instructions[jump_to_end_idx] {
@@ -105,83 +114,85 @@ impl Compiler {
                 } else {
                     // No hay else, solo fixear jump_to_else
                     let jump_target = self.program.len();
-                    if let OpCode::JumpIfFalse(_) = &mut self.program.instructions[jump_to_else_idx] {
-                        self.program.instructions[jump_to_else_idx] = OpCode::JumpIfFalse(jump_target);
+                    if let OpCode::JumpIfFalse(_) = &mut self.program.instructions[jump_to_else_idx]
+                    {
+                        self.program.instructions[jump_to_else_idx] =
+                            OpCode::JumpIfFalse(jump_target);
                     }
                 }
-                
+
                 Ok(())
             }
-            
+
             Stmt::While { condition, body } => {
                 // Marca de inicio del loop
                 let loop_start = self.program.len();
-                
+
                 // Compilar condición
                 self.compile_expr(condition)?;
-                
+
                 // Salto si falso al final
                 let jump_to_end_idx = self.program.len();
                 self.program.instructions.push(OpCode::JumpIfFalse(0)); // Placeholder
-                
+
                 // Compilar body
                 for stmt in body {
                     self.compile_stmt(stmt)?;
                 }
-                
+
                 // Loop back al inicio
                 self.program.instructions.push(OpCode::Loop(loop_start));
-                
+
                 // Fixear jump_to_end
                 let jump_target = self.program.len();
                 if let OpCode::JumpIfFalse(_) = &mut self.program.instructions[jump_to_end_idx] {
                     self.program.instructions[jump_to_end_idx] = OpCode::JumpIfFalse(jump_target);
                 }
-                
+
                 Ok(())
             }
-            
+
             Stmt::Block(stmts) => {
                 // Nuevo scope
                 self.scopes.push(Vec::new());
-                
+
                 for stmt in stmts {
                     self.compile_stmt(stmt)?;
                 }
-                
+
                 // Pop scope
                 self.scopes.pop();
                 Ok(())
             }
-            
+
             Stmt::Function { name, params, body } => {
                 // Agregar función al pool
                 let func_idx = self.program.add_function(name.to_string());
-                
+
                 // Nuevo scope para parámetros
                 self.scopes.push(Vec::new());
-                
+
                 // Agregar parámetros como locales
                 for param in params {
                     if let Some(scope) = self.scopes.last_mut() {
                         scope.push(param.to_string());
                     }
                 }
-                
+
                 // Compilar body
                 for stmt in body {
                     self.compile_stmt(stmt)?;
                 }
-                
+
                 // Return implícito
                 self.program.instructions.push(OpCode::Return);
-                
+
                 // Pop scope
                 self.scopes.pop();
-                
+
                 Ok(())
             }
-            
+
             Stmt::Return(expr) => {
                 if let Some(e) = expr {
                     self.compile_expr(e)?;
@@ -191,61 +202,76 @@ impl Compiler {
                 }
                 Ok(())
             }
-            
+
             Stmt::Expr(expr) => {
                 self.compile_expr(expr)?;
                 // Descartar resultado si no se usa
                 self.program.instructions.push(OpCode::Pop);
                 Ok(())
             }
-            
+
             Stmt::Break => {
                 // Break - por ahora nop (se necesita manejo de loops)
                 self.program.instructions.push(OpCode::Nop);
                 Ok(())
             }
-            
-            Stmt::ForEach { var, iterable, body } => {
+
+            Stmt::ForEach {
+                var,
+                iterable,
+                body,
+            } => {
                 // Compilar iterable (debe ser array)
                 self.compile_expr(iterable)?;
-                
+
                 // Guardar longitud del array
                 self.program.instructions.push(OpCode::Duplicate);
                 // TODO: Implementar longitud de array
-                
+
                 // Nuevo scope para variable del loop
                 self.scopes.push(Vec::new());
                 if let Some(scope) = self.scopes.last_mut() {
                     scope.push(var.to_string());
                 }
-                
+
                 // Compilar body
                 for stmt in body {
                     self.compile_stmt(stmt)?;
                 }
-                
+
                 // Pop scope
                 self.scopes.pop();
-                
+
                 Ok(())
             }
-            
+
             Stmt::Import { module, alias: _ } => {
                 // Import - registrar módulo
                 let _ = self.program.add_global(module.to_string());
                 Ok(())
             }
-            
+
             // Draw commands
-            Stmt::DrawCircle { x, y, radio, color: _ } => {
+            Stmt::DrawCircle {
+                x,
+                y,
+                radio,
+                color: _,
+            } => {
                 self.compile_expr(x)?;
                 self.compile_expr(y)?;
                 self.compile_expr(radio)?;
                 self.program.instructions.push(OpCode::DrawCircle);
                 Ok(())
             }
-            
-            Stmt::DrawRect { x, y, ancho, alto, color: _ } => {
+
+            Stmt::DrawRect {
+                x,
+                y,
+                ancho,
+                alto,
+                color: _,
+            } => {
                 self.compile_expr(x)?;
                 self.compile_expr(y)?;
                 self.compile_expr(ancho)?;
@@ -253,8 +279,14 @@ impl Compiler {
                 self.program.instructions.push(OpCode::DrawRect);
                 Ok(())
             }
-            
-            Stmt::DrawLine { x1, y1, x2, y2, color: _ } => {
+
+            Stmt::DrawLine {
+                x1,
+                y1,
+                x2,
+                y2,
+                color: _,
+            } => {
                 self.compile_expr(x1)?;
                 self.compile_expr(y1)?;
                 self.compile_expr(x2)?;
@@ -262,8 +294,14 @@ impl Compiler {
                 self.program.instructions.push(OpCode::DrawLine);
                 Ok(())
             }
-            
-            Stmt::DrawText { texto, x, y, tamano, color: _ } => {
+
+            Stmt::DrawText {
+                texto,
+                x,
+                y,
+                tamano,
+                color: _,
+            } => {
                 self.compile_expr(texto)?;
                 self.compile_expr(x)?;
                 self.compile_expr(y)?;
@@ -271,8 +309,16 @@ impl Compiler {
                 self.program.instructions.push(OpCode::DrawText);
                 Ok(())
             }
-            
-            Stmt::DrawTriangle { v1_x, v1_y, v2_x, v2_y, v3_x, v3_y, color: _ } => {
+
+            Stmt::DrawTriangle {
+                v1_x,
+                v1_y,
+                v2_x,
+                v2_y,
+                v3_x,
+                v3_y,
+                color: _,
+            } => {
                 self.compile_expr(v1_x)?;
                 self.compile_expr(v1_y)?;
                 self.compile_expr(v2_x)?;
@@ -282,8 +328,14 @@ impl Compiler {
                 self.program.instructions.push(OpCode::DrawTriangle);
                 Ok(())
             }
-            
-            Stmt::DrawRing { center_x, center_y, inner_radius, outer_radius, color: _ } => {
+
+            Stmt::DrawRing {
+                center_x,
+                center_y,
+                inner_radius,
+                outer_radius,
+                color: _,
+            } => {
                 self.compile_expr(center_x)?;
                 self.compile_expr(center_y)?;
                 self.compile_expr(inner_radius)?;
@@ -291,8 +343,14 @@ impl Compiler {
                 self.program.instructions.push(OpCode::DrawRing);
                 Ok(())
             }
-            
-            Stmt::DrawEllipse { center_x, center_y, radius_h, radius_v, color: _ } => {
+
+            Stmt::DrawEllipse {
+                center_x,
+                center_y,
+                radius_h,
+                radius_v,
+                color: _,
+            } => {
                 self.compile_expr(center_x)?;
                 self.compile_expr(center_y)?;
                 self.compile_expr(radius_h)?;
@@ -300,8 +358,14 @@ impl Compiler {
                 self.program.instructions.push(OpCode::DrawEllipse);
                 Ok(())
             }
-            
-            Stmt::DrawRectangleLines { x, y, ancho, alto, color: _ } => {
+
+            Stmt::DrawRectangleLines {
+                x,
+                y,
+                ancho,
+                alto,
+                color: _,
+            } => {
                 self.compile_expr(x)?;
                 self.compile_expr(y)?;
                 self.compile_expr(ancho)?;
@@ -309,8 +373,15 @@ impl Compiler {
                 self.program.instructions.push(OpCode::DrawRect); // Usar DrawRect por ahora
                 Ok(())
             }
-            
-            Stmt::DrawLineThick { x1, y1, x2, y2, thick, color: _ } => {
+
+            Stmt::DrawLineThick {
+                x1,
+                y1,
+                x2,
+                y2,
+                thick,
+                color: _,
+            } => {
                 self.compile_expr(x1)?;
                 self.compile_expr(y1)?;
                 self.compile_expr(x2)?;
@@ -320,20 +391,26 @@ impl Compiler {
                 self.program.instructions.push(OpCode::Nop);
                 Ok(())
             }
-            
+
             Stmt::Call { callee, args } => {
                 // Compilar argumentos
                 for arg in args {
                     self.compile_expr(arg)?;
                 }
-                
+
                 // Llamar función
                 let func_idx = self.program.add_function(callee.to_string());
-                self.program.instructions.push(OpCode::Call(func_idx, args.len() as u8));
+                self.program
+                    .instructions
+                    .push(OpCode::Call(func_idx, args.len() as u8));
                 Ok(())
             }
-            
-            Stmt::IndexAssign { array, index, value } => {
+
+            Stmt::IndexAssign {
+                array,
+                index,
+                value,
+            } => {
                 // Compilar array
                 if let Some(idx) = self.find_local(array) {
                     self.program.instructions.push(OpCode::LoadLocal(idx));
@@ -341,13 +418,13 @@ impl Compiler {
                     let gidx = self.program.add_global(array.to_string());
                     self.program.instructions.push(OpCode::LoadGlobal(gidx));
                 }
-                
+
                 // Compilar índice
                 self.compile_expr(index)?;
-                
+
                 // Compilar valor
                 self.compile_expr(value)?;
-                
+
                 // Setear elemento
                 self.program.instructions.push(OpCode::SetIndex);
                 Ok(())
@@ -363,31 +440,34 @@ impl Compiler {
                 self.program.instructions.push(OpCode::LoadConst(idx));
                 Ok(())
             }
-            
+
             Expr::Texto(s) => {
                 let idx = self.program.add_constant_str(s.to_string());
                 self.program.instructions.push(OpCode::LoadString(idx));
                 Ok(())
             }
-            
+
             Expr::Bool(b) => {
                 self.program.instructions.push(OpCode::LoadBool(*b));
                 Ok(())
             }
-            
+
             Expr::Var(name) => {
                 if let Some(idx) = self.find_local(name) {
                     self.program.instructions.push(OpCode::LoadLocal(idx));
                 } else {
                     // Buscar o agregar como global
-                    let idx = self.program.global_names.iter()
+                    let idx = self
+                        .program
+                        .global_names
+                        .iter()
                         .position(|n| n == *name)
                         .unwrap_or_else(|| self.program.add_global(name.to_string()));
                     self.program.instructions.push(OpCode::LoadGlobal(idx));
                 }
                 Ok(())
             }
-            
+
             Expr::Binary { left, op, right } => {
                 self.compile_expr(left)?;
                 self.compile_expr(right)?;
@@ -410,10 +490,10 @@ impl Compiler {
                 self.program.instructions.push(opcode);
                 Ok(())
             }
-            
+
             Expr::Unary { op, expr } => {
                 self.compile_expr(expr)?;
-                
+
                 match op {
                     UnaryOp::Not => {
                         self.program.instructions.push(OpCode::Not);
@@ -427,32 +507,36 @@ impl Compiler {
                 }
                 Ok(())
             }
-            
+
             Expr::Call { callee, args } => {
                 // Compilar argumentos
                 for arg in args {
                     self.compile_expr(arg)?;
                 }
-                
+
                 // Llamar función
                 let func_idx = if let Expr::Var(name) = callee.as_ref() {
                     self.program.add_function(name.to_string())
                 } else {
                     return Err("Callee must be a variable".to_string());
                 };
-                
-                self.program.instructions.push(OpCode::Call(func_idx, args.len() as u8));
+
+                self.program
+                    .instructions
+                    .push(OpCode::Call(func_idx, args.len() as u8));
                 Ok(())
             }
-            
+
             Expr::Array(items) => {
                 for item in items {
                     self.compile_expr(item)?;
                 }
-                self.program.instructions.push(OpCode::BuildArray(items.len() as u8));
+                self.program
+                    .instructions
+                    .push(OpCode::BuildArray(items.len() as u8));
                 Ok(())
             }
-            
+
             Expr::Index { array, index } => {
                 self.compile_expr(array)?;
                 self.compile_expr(index)?;
@@ -485,14 +569,14 @@ impl Default for Compiler {
 /// Compilar source code a bytecode (convenience)
 pub fn compile_source(source: &str) -> Result<BytecodeProgram, String> {
     use rydit_parser::Parser;
-    
+
     let mut parser = Parser::from_source(source);
     let (program, errors) = parser.parse();
-    
+
     if !errors.is_empty() {
         return Err(format!("Parse errors: {:?}", errors));
     }
-    
+
     let compiler = Compiler::new();
     compiler.compile(&program)
 }
@@ -506,7 +590,7 @@ mod tests {
         let source = "dark.slot x = 100";
         let result = compile_source(source);
         assert!(result.is_ok());
-        
+
         let program = result.unwrap();
         assert!(!program.is_empty());
     }
@@ -516,7 +600,7 @@ mod tests {
         let source = "dark.slot y = 10 + 5";
         let result = compile_source(source);
         assert!(result.is_ok());
-        
+
         let program = result.unwrap();
         // Debería tener: LOAD_CONST, LOAD_CONST, ADD, STORE_GLOBAL
         assert!(program.instructions.len() >= 3);

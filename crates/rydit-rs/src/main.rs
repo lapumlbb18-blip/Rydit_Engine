@@ -47,11 +47,11 @@ pub use rydit_science::ScienceModule;
 
 // Imports necesarios para el código restante en main.rs
 use blast_core::{Executor, Valor};
-use rydit_parser::{Expr, Parser, Stmt, BinaryOp, UnaryOp};
-use rydit_lexer::Lexer;
 use migui::{Color as MiguiColor, Migui, Rect, WidgetId};
 use rydit_gfx::render_queue::{DrawCommand, RenderQueue};
 use rydit_gfx::{ColorRydit, Key, RyditGfx};
+use rydit_lexer::Lexer;
+use rydit_parser::{BinaryOp, Expr, Parser, Stmt, UnaryOp};
 use std::collections::{HashMap, HashSet};
 use std::str::FromStr;
 use std::sync::Mutex;
@@ -241,7 +241,10 @@ pub fn ejecutar_stmt(
         Stmt::Function { name, params, body } => {
             // Guardar función en el registro
             println!("[FUNC] {}({:?}) definida", name, params);
-            funcs.insert(name.to_string(), (params.iter().map(|s| s.to_string()).collect(), body.clone()));
+            funcs.insert(
+                name.to_string(),
+                (params.iter().map(|s| s.to_string()).collect(), body.clone()),
+            );
         }
         Stmt::Call { callee, args } => {
             // Extraer nombre de función
@@ -251,10 +254,14 @@ pub fn ejecutar_stmt(
                 println!("[WARNING] Call requiere función válida");
                 return (false, None);
             };
-            
+
             // Llamar función builtin o de usuario
             // Primero verificar funciones builtin
-            if func_name == "sumar" || func_name == "restar" || func_name == "multiplicar" || func_name == "dividir" {
+            if func_name == "sumar"
+                || func_name == "restar"
+                || func_name == "multiplicar"
+                || func_name == "dividir"
+            {
                 // Funciones builtin ya manejadas en evaluar_expr
                 println!(
                     "[WARNING] Función builtin '{}' debe usarse en expresiones",
@@ -2223,7 +2230,7 @@ pub fn evaluar_expr_gfx(
             } else {
                 return Valor::Error("Call requiere función válida".to_string());
             };
-            
+
             // tecla_presionada("tecla") - retorna 1.0 si presionada, 0.0 si no
             if func_name == "tecla_presionada" && args.len() == 1 {
                 if let Expr::Texto(tecla) = &args[0] {
@@ -2516,7 +2523,8 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (func_name == "__str_replace" || func_name == "strings::replace") && args.len() == 3 {
+            if (func_name == "__str_replace" || func_name == "strings::replace") && args.len() == 3
+            {
                 let s_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 let buscar_val = evaluar_expr_gfx(&args[1], executor, input, funcs);
                 let reemplazar_val = evaluar_expr_gfx(&args[2], executor, input, funcs);
@@ -2544,7 +2552,9 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (func_name == "__str_starts_with" || func_name == "strings::starts_with") && args.len() == 2 {
+            if (func_name == "__str_starts_with" || func_name == "strings::starts_with")
+                && args.len() == 2
+            {
                 let s_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 let prefix_val = evaluar_expr_gfx(&args[1], executor, input, funcs);
                 if let (Valor::Texto(s), Valor::Texto(prefix)) = (s_val, prefix_val) {
@@ -2554,7 +2564,9 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (func_name == "__str_ends_with" || func_name == "strings::ends_with") && args.len() == 2 {
+            if (func_name == "__str_ends_with" || func_name == "strings::ends_with")
+                && args.len() == 2
+            {
                 let s_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 let suffix_val = evaluar_expr_gfx(&args[1], executor, input, funcs);
                 if let (Valor::Texto(s), Valor::Texto(suffix)) = (s_val, suffix_val) {
@@ -2564,7 +2576,9 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (func_name == "__str_replace_all" || func_name == "strings::replace_all") && args.len() == 3 {
+            if (func_name == "__str_replace_all" || func_name == "strings::replace_all")
+                && args.len() == 3
+            {
                 let s_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 let buscar_val = evaluar_expr_gfx(&args[1], executor, input, funcs);
                 let reemplazar_val = evaluar_expr_gfx(&args[2], executor, input, funcs);
@@ -2723,7 +2737,8 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (func_name == "__array_unshift" || func_name == "arrays::unshift") && args.len() == 2 {
+            if (func_name == "__array_unshift" || func_name == "arrays::unshift") && args.len() == 2
+            {
                 let arr_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 let elem_val = evaluar_expr_gfx(&args[1], executor, input, funcs);
                 if let Valor::Array(mut arr) = arr_val {
@@ -2758,7 +2773,8 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (func_name == "__array_reverse" || func_name == "arrays::reverse") && args.len() == 1 {
+            if (func_name == "__array_reverse" || func_name == "arrays::reverse") && args.len() == 1
+            {
                 if let Valor::Array(mut arr) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
                     arr.reverse();
                     return Valor::Array(arr);
@@ -2808,7 +2824,8 @@ pub fn evaluar_expr_gfx(
                 return Valor::Num(s as f64 / u32::MAX as f64);
             }
 
-            if (func_name == "__random_choice" || func_name == "random::choice") && args.len() == 1 {
+            if (func_name == "__random_choice" || func_name == "random::choice") && args.len() == 1
+            {
                 let arr_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 if let Valor::Array(arr) = arr_val {
                     if arr.is_empty() {
@@ -2847,7 +2864,9 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (func_name == "__json_stringify" || func_name == "json::stringify") && args.len() == 1 {
+            if (func_name == "__json_stringify" || func_name == "json::stringify")
+                && args.len() == 1
+            {
                 let val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 match valor_rydit_a_serde(&val) {
                     Ok(serde_val) => match serde_json::to_string(&serde_val) {
@@ -2895,7 +2914,8 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (func_name == "__regex_replace" || func_name == "regex::replace") && args.len() == 3 {
+            if (func_name == "__regex_replace" || func_name == "regex::replace") && args.len() == 3
+            {
                 if let (Valor::Texto(pattern), Valor::Texto(replacement), Valor::Texto(text)) = (
                     &evaluar_expr_gfx(&args[0], executor, input, funcs),
                     &evaluar_expr_gfx(&args[1], executor, input, funcs),
@@ -2936,7 +2956,9 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (func_name == "__regex_find_all" || func_name == "regex::find_all") && args.len() == 2 {
+            if (func_name == "__regex_find_all" || func_name == "regex::find_all")
+                && args.len() == 2
+            {
                 if let (Valor::Texto(pattern), Valor::Texto(text)) = (
                     &evaluar_expr_gfx(&args[0], executor, input, funcs),
                     &evaluar_expr_gfx(&args[1], executor, input, funcs),
@@ -2956,7 +2978,8 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (func_name == "__regex_capture" || func_name == "regex::capture") && args.len() == 2 {
+            if (func_name == "__regex_capture" || func_name == "regex::capture") && args.len() == 2
+            {
                 if let (Valor::Texto(pattern), Valor::Texto(text)) = (
                     &evaluar_expr_gfx(&args[0], executor, input, funcs),
                     &evaluar_expr_gfx(&args[1], executor, input, funcs),
@@ -3233,7 +3256,7 @@ pub fn evaluar_expr_migui(
             } else {
                 return Valor::Error("Call requiere función válida".to_string());
             };
-            
+
             println!("[MIGUI DEBUG] Llamada a funcion: {}", func_name);
             // ========================================================================
             // FUNCIONES MIGUI - V0.4.0 (Immediate Mode GUI)
@@ -3408,7 +3431,9 @@ pub fn evaluar_expr_migui(
             }
 
             // migui::checkbox(id, text, checked, x, y, w, h) -> bool
-            if (func_name == "migui::checkbox" || func_name == "__migui_checkbox") && args.len() == 7 {
+            if (func_name == "migui::checkbox" || func_name == "__migui_checkbox")
+                && args.len() == 7
+            {
                 if let (
                     Valor::Texto(id),
                     Valor::Texto(text),
@@ -3699,7 +3724,8 @@ pub fn evaluar_expr_migui(
             }
 
             // migui::textbox(id, x, y, w, h) -> String
-            if (func_name == "migui::textbox" || func_name == "__migui_textbox") && args.len() == 5 {
+            if (func_name == "migui::textbox" || func_name == "__migui_textbox") && args.len() == 5
+            {
                 if let (
                     Valor::Texto(id),
                     Valor::Num(x),
@@ -3872,7 +3898,9 @@ pub fn evaluar_expr_migui(
             }
 
             // migui::message_box(title, message, buttons, x, y, w, h) -> i32
-            if (func_name == "migui::message_box" || func_name == "__migui_message_box") && args.len() == 7 {
+            if (func_name == "migui::message_box" || func_name == "__migui_message_box")
+                && args.len() == 7
+            {
                 if let (
                     Valor::Texto(title),
                     Valor::Texto(message),
@@ -3995,7 +4023,8 @@ pub fn evaluar_expr_migui(
             }
 
             // migui::is_mouse_button_pressed() -> bool
-            if func_name == "migui::is_mouse_button_pressed" || func_name == "__migui_is_mouse_button_pressed"
+            if func_name == "migui::is_mouse_button_pressed"
+                || func_name == "__migui_is_mouse_button_pressed"
             {
                 return Valor::Bool(gui.is_mouse_pressed());
             }
@@ -4005,7 +4034,11 @@ pub fn evaluar_expr_migui(
                 if funcs.contains_key(func_name) {
                     func_name.clone()
                 } else {
-                    &func_name.split("::").last().unwrap_or(func_name).to_string()
+                    &func_name
+                        .split("::")
+                        .last()
+                        .unwrap_or(func_name)
+                        .to_string()
                 }
             } else {
                 func_name.clone()
@@ -4070,7 +4103,10 @@ pub fn evaluar_expr_migui(
                 return return_value.unwrap_or(Valor::Vacio);
             }
 
-            Valor::Error(format!("Función '{}' no soportada en expresiones", func_name))
+            Valor::Error(format!(
+                "Función '{}' no soportada en expresiones",
+                func_name
+            ))
         }
         Expr::BinOp { left, op, right } => {
             let left_val = evaluar_expr_migui(
@@ -4456,10 +4492,18 @@ pub fn ejecutar_stmt_migui(
         Stmt::Function { name, params, body } => {
             funcs.insert(name.clone(), (params.clone(), body.clone()));
         }
-        Stmt::Call { name, args } => {
+        Stmt::Call { callee, args } => {
+            // Extraer nombre de función
+            let func_name = if let Expr::Var(name) = callee.as_ref() {
+                name.to_string()
+            } else {
+                String::new()
+            };
+            
             // Para migui, evaluar como expresión (las funciones migui generan draw commands)
             let _ = evaluar_expr_migui(
-                &Expr::Call { callee: Box::new(Expr::Var(func_name)),
+                &Expr::Call {
+                    callee: Box::new(Expr::Var(func_name)),
                     args: args.clone(),
                 },
                 executor,

@@ -8,7 +8,7 @@ use std::time::Duration;
 
 fn main() {
     println!("🎵 Nivel 3 - Test Audio Low-End v0.11.1\n");
-    
+
     // Test 1: Inicializar Audio SDL2
     println!("📦 Test 1: Inicializar Audio SDL2");
     let mut audio = match AudioSystemSDL2::new() {
@@ -22,7 +22,7 @@ fn main() {
             return;
         }
     };
-    
+
     // Test 2: Cargar sonido (si existe el archivo)
     println!("🔊 Test 2: Cargar sonido (test_audio.wav)");
     let sonido_cargado = match audio.load_sound("click", "test_audio.wav") {
@@ -36,7 +36,7 @@ fn main() {
             false
         }
     };
-    
+
     // Test 3: Reproducir sonido (si se cargó)
     if sonido_cargado {
         println!("🔊 Test 3: Reproducir sonido");
@@ -48,18 +48,18 @@ fn main() {
             println!("   ❌ Error reproduciendo sonido\n");
         }
     }
-    
+
     // Test 4: Configurar volumen
     println!("🎚️ Test 4: Configurar volumen");
     audio.set_music_volume(0.5);
     audio.set_sound_volume("click", 0.8);
     println!("   ✅ Volumen configurado (música: 0.5, sonido: 0.8)\n");
-    
+
     // Test 5: Stop de música
     println!("⏹️ Test 5: Stop de música");
     audio.stop_music();
     println!("   ✅ Stop ejecutado\n");
-    
+
     // Resumen
     println!("═══════════════════════════════════════════");
     println!("📊 RESUMEN:");

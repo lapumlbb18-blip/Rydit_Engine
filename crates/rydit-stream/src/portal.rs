@@ -1,9 +1,9 @@
 // crates/rydit-stream/src/portal.rs
 // 🆕 Web portal embebido (HTML + HTTP server simple)
 
+use std::io::{Read, Write};
 use std::net::{TcpListener, TcpStream};
 use std::thread;
-use std::io::{Read, Write};
 
 /// Portal web embebido para RyDit Stream
 pub struct WebPortal {
@@ -29,9 +29,9 @@ impl WebPortal {
         let html = self.html;
 
         thread::spawn(move || {
-            let listener = TcpListener::bind(format!("0.0.0.0:{}", port))
-                .expect("Failed to bind portal");
-            
+            let listener =
+                TcpListener::bind(format!("0.0.0.0:{}", port)).expect("Failed to bind portal");
+
             eprintln!("[PORTAL] Serving at http://localhost:{}", port);
 
             for stream in listener.incoming() {

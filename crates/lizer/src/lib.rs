@@ -17,7 +17,7 @@ pub const VERSION: &str = "0.11.2";
 pub fn parse_cached(source: &str) -> Result<Program<'_>, RyDitError> {
     let mut parser = Parser::from_source(source);
     let (program, errors) = parser.parse();
-    
+
     if !errors.is_empty() {
         Err(errors[0].clone())
     } else {

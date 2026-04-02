@@ -14,7 +14,12 @@ pub struct Span {
 
 impl Span {
     pub fn new(start: usize, end: usize, line: usize, column: usize) -> Self {
-        Self { start, end, line, column }
+        Self {
+            start,
+            end,
+            line,
+            column,
+        }
     }
 
     pub fn length(&self) -> usize {
@@ -63,43 +68,43 @@ pub enum TokenKind {
     Break,              // break
 
     // Literales y valores (zero-copy: &'a str)
-    Ident,              // nombres: x, jugador, delta.flow
-    Num,                // números: 100, 0.5
-    Texto,              // strings: "hola"
+    Ident, // nombres: x, jugador, delta.flow
+    Num,   // números: 100, 0.5
+    Texto, // strings: "hola"
 
     // Operadores aritméticos
-    Mas,                // +
-    Menos,              // -
-    Por,                // *
-    Div,                // /
-    MasIgual,           // +=
-    MenosIgual,         // -=
-    PorIgual,           // *=
-    DivIgual,           // /=
+    Mas,        // +
+    Menos,      // -
+    Por,        // *
+    Div,        // /
+    MasIgual,   // +=
+    MenosIgual, // -=
+    PorIgual,   // *=
+    DivIgual,   // /=
 
     // Operadores de comparación
-    Mayor,              // >
-    Menor,              // <
-    Igual,              // == o =
-    MayorIgual,         // >=
-    MenorIgual,         // <=
-    Diferente,          // !=
+    Mayor,      // >
+    Menor,      // <
+    Igual,      // == o =
+    MayorIgual, // >=
+    MenorIgual, // <=
+    Diferente,  // !=
 
     // Operadores lógicos
-    And,                // and
-    Or,                 // or
-    Not,                // not
+    And, // and
+    Or,  // or
+    Not, // not
 
     // Delimitadores
-    LlaveIzq,           // {
-    LlaveDer,           // }
-    ParentIzq,          // (
-    ParentDer,          // )
-    CorcheteIzq,        // [
-    CorcheteDer,        // ]
-    Punto,              // .
-    Coma,               // ,
-    DobleDosPuntos,     // ::
+    LlaveIzq,       // {
+    LlaveDer,       // }
+    ParentIzq,      // (
+    ParentDer,      // )
+    CorcheteIzq,    // [
+    CorcheteDer,    // ]
+    Punto,          // .
+    Coma,           // ,
+    DobleDosPuntos, // ::
 
     // Comentarios (zero-copy: &'a str)
     Comentario,
@@ -172,13 +177,13 @@ impl fmt::Display for TokenKind {
 }
 
 /// Token zero-copy con lifetime
-/// 
+///
 /// Contiene referencias al source original, no copias.
 /// El lifetime 'a asegura que el token no vive más que el source.
 #[derive(Debug, Clone, PartialEq)]
 pub struct Token<'a> {
     pub kind: TokenKind,
-    pub lexeme: &'a str,  // Zero-copy: referencia al source
+    pub lexeme: &'a str, // Zero-copy: referencia al source
     pub span: Span,
 }
 
@@ -213,8 +218,11 @@ impl<'a> Token<'a> {
 
 impl<'a> fmt::Display for Token<'a> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}('{}', line {} col {})", 
-            self.kind, self.lexeme, self.span.line, self.span.column)
+        write!(
+            f,
+            "{}('{}', line {} col {})",
+            self.kind, self.lexeme, self.span.line, self.span.column
+        )
     }
 }
 
@@ -259,7 +267,7 @@ mod tests {
         let span = Span::default();
         let token = Token::new(TokenKind::Num, "100.5", span);
         assert_eq!(token.as_num(), Some(100.5));
-        
+
         let token2 = Token::new(TokenKind::Ident, "x", span);
         assert_eq!(token2.as_num(), None);
     }
@@ -269,7 +277,7 @@ mod tests {
         let span = Span::default();
         let token = Token::new(TokenKind::Ident, "jugador", span);
         assert_eq!(token.as_ident(), Some("jugador"));
-        
+
         let token2 = Token::new(TokenKind::Num, "100", span);
         assert_eq!(token2.as_ident(), None);
     }
@@ -289,7 +297,7 @@ mod tests {
         let source = String::from("x = 100");
         let span = Span::default();
         let token = Token::new(TokenKind::Ident, &source[0..1], span);
-        
+
         // El token referencia una parte del source, no copia
         assert_eq!(token.lexeme, "x");
     }

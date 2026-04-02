@@ -3,9 +3,9 @@
 // Ejecutar: cargo run --bin snake
 
 use blast_core::Executor;
-use rydit_parser::Parser;
-use rydit_lexer::Lexer;
 use rydit_gfx::{ColorRydit, Key, RyditGfx};
+use rydit_lexer::Lexer;
+use rydit_parser::Parser;
 use std::collections::HashMap;
 use std::fs;
 

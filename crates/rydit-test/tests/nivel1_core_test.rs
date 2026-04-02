@@ -75,7 +75,7 @@ mod blast_tests {
         executor.guardar("num", Valor::Num(3.14));
         executor.guardar("text", Valor::Texto("hola".to_string()));
         executor.guardar("bool", Valor::Bool(true));
-        
+
         assert!(matches!(executor.leer("num"), Some(Valor::Num(_))));
         assert!(matches!(executor.leer("text"), Some(Valor::Texto(_))));
         assert!(matches!(executor.leer("bool"), Some(Valor::Bool(_))));
@@ -87,9 +87,9 @@ mod blast_tests {
 // ============================================================================
 
 mod ryditmodule_tests {
+    use rydit_anim::AnimModule;
     use rydit_core::{ModuleRegistry, RyditModule};
     use rydit_physics::PhysicsModule;
-    use rydit_anim::AnimModule;
     use rydit_science::ScienceModule;
     use serde_json::json;
 
@@ -99,7 +99,7 @@ mod ryditmodule_tests {
         registry.register(PhysicsModule);
         registry.register(AnimModule);
         registry.register(ScienceModule);
-        
+
         assert_eq!(registry.len(), 3);
         assert!(registry.contains("physics"));
         assert!(registry.contains("anim"));
@@ -110,26 +110,24 @@ mod ryditmodule_tests {
     fn test_physics_projectile() {
         let mut registry = ModuleRegistry::new();
         registry.register(PhysicsModule);
-        
+
         let module = registry.get("physics").unwrap();
         let params = json!([0.0, 0.0, 10.0, 45.0]);
         let result = module.execute("projectile", params);
-        
+
         assert!(result.is_ok());
     }
 
     #[test]
-
     #[test]
-
     #[test]
     fn test_metadata() {
         let mut registry = ModuleRegistry::new();
         registry.register(PhysicsModule);
-        
+
         let module = registry.get("physics").unwrap();
         let metadata = module.metadata();
-        
+
         assert_eq!(metadata.name, "physics");
         assert!(!metadata.version.is_empty());
     }

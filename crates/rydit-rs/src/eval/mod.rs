@@ -4,7 +4,7 @@
 // ✅ v0.11.4: Migrado a rydit-parser
 
 use blast_core::{Executor, Valor};
-use rydit_parser::{Expr, Stmt, BinaryOp, UnaryOp};
+use rydit_parser::{BinaryOp, Expr, Stmt, UnaryOp};
 use std::collections::{HashMap, HashSet};
 
 // Importar funciones auxiliares desde main.rs
@@ -97,7 +97,7 @@ pub fn evaluar_expr<'a>(
             } else {
                 return Valor::Error("Call requiere función válida".to_string());
             };
-            
+
             if func_name == "tecla_presionada" && args.len() == 1 {
                 // Función especial para input - retorna 0 por defecto (no presionada)
                 // El valor real se obtiene del contexto gráfico
@@ -341,7 +341,8 @@ pub fn evaluar_expr<'a>(
                 }
             }
 
-            if (func_name == "__str_replace" || func_name == "strings::replace") && args.len() == 3 {
+            if (func_name == "__str_replace" || func_name == "strings::replace") && args.len() == 3
+            {
                 let s_val = evaluar_expr(&args[0], executor, funcs);
                 let buscar_val = evaluar_expr(&args[1], executor, funcs);
                 let reemplazar_val = evaluar_expr(&args[2], executor, funcs);
@@ -369,7 +370,9 @@ pub fn evaluar_expr<'a>(
                 }
             }
 
-            if (func_name == "__str_starts_with" || func_name == "strings::starts_with") && args.len() == 2 {
+            if (func_name == "__str_starts_with" || func_name == "strings::starts_with")
+                && args.len() == 2
+            {
                 let s_val = evaluar_expr(&args[0], executor, funcs);
                 let prefix_val = evaluar_expr(&args[1], executor, funcs);
                 if let (Valor::Texto(s), Valor::Texto(prefix)) = (s_val, prefix_val) {
@@ -379,7 +382,9 @@ pub fn evaluar_expr<'a>(
                 }
             }
 
-            if (func_name == "__str_ends_with" || func_name == "strings::ends_with") && args.len() == 2 {
+            if (func_name == "__str_ends_with" || func_name == "strings::ends_with")
+                && args.len() == 2
+            {
                 let s_val = evaluar_expr(&args[0], executor, funcs);
                 let suffix_val = evaluar_expr(&args[1], executor, funcs);
                 if let (Valor::Texto(s), Valor::Texto(suffix)) = (s_val, suffix_val) {
@@ -389,7 +394,9 @@ pub fn evaluar_expr<'a>(
                 }
             }
 
-            if (func_name == "__str_replace_all" || func_name == "strings::replace_all") && args.len() == 3 {
+            if (func_name == "__str_replace_all" || func_name == "strings::replace_all")
+                && args.len() == 3
+            {
                 let s_val = evaluar_expr(&args[0], executor, funcs);
                 let buscar_val = evaluar_expr(&args[1], executor, funcs);
                 let reemplazar_val = evaluar_expr(&args[2], executor, funcs);
@@ -551,7 +558,8 @@ pub fn evaluar_expr<'a>(
                 }
             }
 
-            if (func_name == "__array_unshift" || func_name == "arrays::unshift") && args.len() == 2 {
+            if (func_name == "__array_unshift" || func_name == "arrays::unshift") && args.len() == 2
+            {
                 let arr_val = evaluar_expr(&args[0], executor, funcs);
                 let elem_val = evaluar_expr(&args[1], executor, funcs);
                 if let Valor::Array(mut arr) = arr_val {
@@ -586,7 +594,8 @@ pub fn evaluar_expr<'a>(
                 }
             }
 
-            if (func_name == "__array_reverse" || func_name == "arrays::reverse") && args.len() == 1 {
+            if (func_name == "__array_reverse" || func_name == "arrays::reverse") && args.len() == 1
+            {
                 if let Valor::Array(mut arr) = evaluar_expr(&args[0], executor, funcs) {
                     arr.reverse();
                     return Valor::Array(arr);
@@ -645,7 +654,8 @@ pub fn evaluar_expr<'a>(
                 return Valor::Num(s as f64 / u32::MAX as f64);
             }
 
-            if (func_name == "__random_choice" || func_name == "random::choice") && args.len() == 1 {
+            if (func_name == "__random_choice" || func_name == "random::choice") && args.len() == 1
+            {
                 let arr_val = evaluar_expr(&args[0], executor, funcs);
                 if let Valor::Array(arr) = arr_val {
                     if arr.is_empty() {
@@ -686,7 +696,9 @@ pub fn evaluar_expr<'a>(
                 }
             }
 
-            if (func_name == "__json_stringify" || func_name == "json::stringify") && args.len() == 1 {
+            if (func_name == "__json_stringify" || func_name == "json::stringify")
+                && args.len() == 1
+            {
                 let val = evaluar_expr(&args[0], executor, funcs);
                 match valor_rydit_a_serde(&val) {
                     Ok(serde_val) => match serde_json::to_string(&serde_val) {
@@ -734,7 +746,8 @@ pub fn evaluar_expr<'a>(
                 }
             }
 
-            if (func_name == "__regex_replace" || func_name == "regex::replace") && args.len() == 3 {
+            if (func_name == "__regex_replace" || func_name == "regex::replace") && args.len() == 3
+            {
                 if let (Valor::Texto(pattern), Valor::Texto(replacement), Valor::Texto(text)) = (
                     &evaluar_expr(&args[0], executor, funcs),
                     &evaluar_expr(&args[1], executor, funcs),
@@ -775,7 +788,9 @@ pub fn evaluar_expr<'a>(
                 }
             }
 
-            if (func_name == "__regex_find_all" || func_name == "regex::find_all") && args.len() == 2 {
+            if (func_name == "__regex_find_all" || func_name == "regex::find_all")
+                && args.len() == 2
+            {
                 if let (Valor::Texto(pattern), Valor::Texto(text)) = (
                     &evaluar_expr(&args[0], executor, funcs),
                     &evaluar_expr(&args[1], executor, funcs),
@@ -795,7 +810,8 @@ pub fn evaluar_expr<'a>(
                 }
             }
 
-            if (func_name == "__regex_capture" || func_name == "regex::capture") && args.len() == 2 {
+            if (func_name == "__regex_capture" || func_name == "regex::capture") && args.len() == 2
+            {
                 if let (Valor::Texto(pattern), Valor::Texto(text)) = (
                     &evaluar_expr(&args[0], executor, funcs),
                     &evaluar_expr(&args[1], executor, funcs),
@@ -908,13 +924,19 @@ pub fn evaluar_expr<'a>(
                     func_name.to_string()
                 } else {
                     // Extraer nombre después de ::
-                    func_name.split("::").last().unwrap_or(&func_name).to_string()
+                    func_name
+                        .split("::")
+                        .last()
+                        .unwrap_or(&func_name)
+                        .to_string()
                 }
             } else {
                 func_name.to_string()
             };
 
-            let func_data = funcs.get(&func_name_final).map(|(p, b)| (p.clone(), b.clone()));
+            let func_data = funcs
+                .get(&func_name_final)
+                .map(|(p, b)| (p.clone(), b.clone()));
 
             if let Some((params, body)) = func_data {
                 // Evaluar argumentos
@@ -3401,7 +3423,10 @@ pub fn evaluar_expr<'a>(
                 return entity_get_position(args, executor, funcs);
             }
 
-            Valor::Error(format!("Función '{}' no soportada en expresiones", func_name))
+            Valor::Error(format!(
+                "Función '{}' no soportada en expresiones",
+                func_name
+            ))
         }
         Expr::Binary { left, op, right } => {
             let left_val = evaluar_expr(left, executor, funcs);
