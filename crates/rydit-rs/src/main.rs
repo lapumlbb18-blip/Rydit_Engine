@@ -1265,17 +1265,17 @@ fn ejecutar_stmt_gfx(
         Stmt::Assign { name, value } => {
             let valor = evaluar_expr_gfx(value, executor, input, funcs);
             // Log asignaciones importantes ANTES de guardar (para evitar move)
-            if name.as_str() == "x"
-                || name.as_str() == "y"
-                || name.as_str() == "velocidad"
-                || name.as_str() == "frame"
-                || name.as_str() == "click"
-                || name.as_str() == "mx"
-                || name.as_str() == "my"
-                || name.as_str() == "balas"
-                || name.as_str() == "tanque_x"
-                || name.as_str() == "tanque_y"
-                || name.as_str() == "angulo"
+            if name == "x"
+                || name == "y"
+                || name == "velocidad"
+                || name == "frame"
+                || name == "click"
+                || name == "mx"
+                || name == "my"
+                || name == "balas"
+                || name == "tanque_x"
+                || name == "tanque_y"
+                || name == "angulo"
             {
                 rydit_gfx::debug_log::debug_log(&format!("Asignación: {} = {:?}", name, valor));
             }
