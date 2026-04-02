@@ -397,14 +397,15 @@ pub fn ejecutar_stmt(
             let tokens = Lexer::new(&module_content).scan();
             let mut parser = Parser::new(tokens);
 
-            let program = match parser.parse() {
-                Ok(p) => p,
-                Err(e) => {
-                    println!("[ERROR] Error parseando módulo '{}': {}", module, e);
-                    importing_stack.pop();
-                    return (None, None);
+            let (program, errors) = parser.parse();
+            if !errors.is_empty() {
+                println!("[ERROR] Errores parseando módulo '{}': {} errores", module, errors.len());
+                for e in &errors {
+                    println!("  - {:?}", e);
                 }
-            };
+                importing_stack.pop();
+                return (None, None);
+            }
 
             // Recolectar nombres de funciones originales antes de ejecutar
             let mut original_funcs: Vec<String> = Vec::new();
