@@ -48,7 +48,7 @@ pub use rydit_science::ScienceModule;
 // Imports necesarios para el código restante en main.rs
 use blast_core::{Executor, Valor};
 use rydit_parser::{Expr, Parser, Stmt, Program};
-use rydit_lexer::Lizer;
+use rydit_lexer::Lexer;
 use migui::{Color as MiguiColor, Migui, Rect, WidgetId};
 use rydit_gfx::render_queue::{DrawCommand, RenderQueue};
 use rydit_gfx::{ColorRydit, Key, RyditGfx};

@@ -44,8 +44,8 @@ fn de_casteljau(points: &[(f64, f64)], t: f64) -> (f64, f64) {
 }
 
 /// Evaluar una expresión RyDit
-pub fn evaluar_expr(
-    expr: &Expr,
+pub fn evaluar_expr<'a>(
+    expr: &Expr<'a>,
     executor: &mut Executor,
     funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
 ) -> Valor {
@@ -3392,18 +3392,18 @@ pub fn evaluar_expr(
 
             Valor::Error(format!("Función '{}' no soportada en expresiones", name))
         }
-        Expr::BinOp { left, op, right } => {
+        Expr::Binary { left, op, right } => {
             let left_val = evaluar_expr(left, executor, funcs);
             let right_val = evaluar_expr(right, executor, funcs);
 
             // Operadores lógicos (usan referencias, no mueven valores)
             match op {
-                lizer::BinOp::And => {
+                BinaryOp::And => {
                     let l_bool = valor_a_bool(&left_val);
                     let r_bool = valor_a_bool(&right_val);
                     return Valor::Bool(l_bool && r_bool);
                 }
-                lizer::BinOp::Or => {
+                BinaryOp::Or => {
                     let l_bool = valor_a_bool(&left_val);
                     let r_bool = valor_a_bool(&right_val);
                     return Valor::Bool(l_bool || r_bool);
@@ -3412,7 +3412,7 @@ pub fn evaluar_expr(
             }
 
             // Concatenación de strings con + (con coerción automática de números)
-            if matches!(op, lizer::BinOp::Suma) {
+            if matches!(op, BinaryOp::Suma) {
                 match (&left_val, &right_val) {
                     (Valor::Texto(l), Valor::Texto(r)) => {
                         return Valor::Texto(format!("{}{}", l, r));
@@ -3435,21 +3435,21 @@ pub fn evaluar_expr(
             // Operadores aritméticos/comparación (mueven valores Num)
             if let (Valor::Num(l), Valor::Num(r)) = (left_val, right_val) {
                 return match op {
-                    lizer::BinOp::Suma => Valor::Num(l + r),
-                    lizer::BinOp::Resta => Valor::Num(l - r),
-                    lizer::BinOp::Mult => Valor::Num(l * r),
-                    lizer::BinOp::Div => {
+                    BinaryOp::Suma => Valor::Num(l + r),
+                    BinaryOp::Resta => Valor::Num(l - r),
+                    BinaryOp::Mult => Valor::Num(l * r),
+                    BinaryOp::Div => {
                         if r != 0.0 {
                             Valor::Num(l / r)
                         } else {
                             Valor::Error("División por cero".to_string())
                         }
                     }
-                    lizer::BinOp::Mayor => Valor::Bool(l > r),
-                    lizer::BinOp::Menor => Valor::Bool(l < r),
-                    lizer::BinOp::Igual => Valor::Bool((l - r).abs() < 0.0001),
-                    lizer::BinOp::MayorIgual => Valor::Bool(l >= r),
-                    lizer::BinOp::MenorIgual => Valor::Bool(l <= r),
+                    BinaryOp::Mayor => Valor::Bool(l > r),
+                    BinaryOp::Menor => Valor::Bool(l < r),
+                    BinaryOp::Igual => Valor::Bool((l - r).abs() < 0.0001),
+                    BinaryOp::MayorIgual => Valor::Bool(l >= r),
+                    BinaryOp::MenorIgual => Valor::Bool(l <= r),
                     _ => Valor::Error("Operador no soportado".to_string()),
                 };
             }
@@ -3459,11 +3459,11 @@ pub fn evaluar_expr(
         Expr::Unary { op, expr } => {
             let val = evaluar_expr(expr, executor, funcs);
             match op {
-                lizer::UnaryOp::Not => {
+                UnaryOp::Not => {
                     let b = valor_a_bool(&val);
                     Valor::Bool(!b)
                 }
-                lizer::UnaryOp::Neg => {
+                UnaryOp::Neg => {
                     if let Valor::Num(n) = val {
                         Valor::Num(-n)
                     } else {

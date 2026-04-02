@@ -6,7 +6,7 @@ use std::io::{self, Write};
 
 use blast_core::Executor;
 use rydit_parser::{Parser, Stmt};
-use rydit_lexer::Lizer;
+use rydit_lexer::Lexer;
 
 /// Iniciar modo REPL interactivo
 pub fn repl_mode() {

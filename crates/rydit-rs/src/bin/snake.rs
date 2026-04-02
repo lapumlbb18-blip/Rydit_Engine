@@ -4,7 +4,7 @@
 
 use blast_core::Executor;
 use rydit_parser::Parser;
-use rydit_lexer::Lizer;
+use rydit_lexer::Lexer;
 use rydit_gfx::{ColorRydit, Key, RyditGfx};
 use std::collections::HashMap;
 use std::fs;
