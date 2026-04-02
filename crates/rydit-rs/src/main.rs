@@ -4108,7 +4108,7 @@ pub fn evaluar_expr_migui(
                 func_name
             ))
         }
-        Expr::BinOp { left, op, right } => {
+        Expr::Binary { left, op, right } => {
             let left_val = evaluar_expr_migui(
                 left,
                 executor,
