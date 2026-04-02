@@ -828,6 +828,7 @@ pub struct RyditGfx {
     // ✅ v0.10.4: Input SDL2 para Termux-X11
     pub input_sdl2: input_sdl2::InputState,
     // Contexto SDL2 para eventos
+    #[allow(dead_code)]
     sdl_context: Option<sdl2::Sdl>,
     sdl_event_pump: Option<sdl2::EventPump>,
 }

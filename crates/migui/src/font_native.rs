@@ -11,11 +11,14 @@ use std::collections::HashMap;
 
 /// Gestor de fuentes nativas en Rust
 pub struct NativeFontManager {
+    #[allow(dead_code)]
     fonts: HashMap<u32, FontData>,
+    #[allow(dead_code)]
     default_font: &'static [u8],
 }
 
 struct FontData {
+    #[allow(dead_code)]
     font: FontRef<'static>,
 }
 

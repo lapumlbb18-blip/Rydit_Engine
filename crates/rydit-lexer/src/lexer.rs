@@ -447,7 +447,7 @@ impl<'a> Lexer<'a> {
                     i += 1;
                     column += 1;
                 }
-                c => {
+                _c => {
                     tokens.push(Token::new(
                         TokenKind::Error,
                         &self.source[i..i + 1],

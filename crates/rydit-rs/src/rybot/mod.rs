@@ -1,6 +1,9 @@
 // crates/rydit-rs/src/rybot/mod.rs
 // RyBot - Inspector, Registry y CLI para RyDit
 // v0.11.0 - Fusión RyBot + RyditModule + Alertas
+// Note: Many items are intentionally kept for future use
+
+#![allow(dead_code)]
 
 pub mod registry;
 
@@ -16,14 +19,17 @@ pub struct RyBot {
     pub registry: Registry,
 
     /// ¿RyBot está activo?
+    #[allow(dead_code)]
     is_open: bool,
 
     /// Modo: CLI, UI, o Ambos
+    #[allow(dead_code)]
     mode: RyBotMode,
 }
 
 /// Modo de RyBot
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[allow(dead_code)]
 pub enum RyBotMode {
     CLI,
     UI,

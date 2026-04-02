@@ -12,6 +12,7 @@ use std::fs;
 
 #[derive(Debug, Clone)]
 pub struct EntityConfig {
+    #[allow(dead_code)]
     pub id: String,
     pub tipo: String,
     pub sprite: String,
@@ -23,6 +24,7 @@ pub struct EntityConfig {
 }
 
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub enum ValorConfig {
     Texto(String),
     Numero(f32),

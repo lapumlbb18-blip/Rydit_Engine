@@ -1,6 +1,9 @@
 // crates/rydit-rs/src/rybot/registry.rs
 // RyBot Registry - Registro central de módulos y eventos
 // v0.11.0 - Fusión RyBot + RyditModule + Alertas
+// Note: Many items are intentionally kept for future use
+
+#![allow(dead_code)]
 
 use std::collections::HashMap;
 use std::time::Instant;

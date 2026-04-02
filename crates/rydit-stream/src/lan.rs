@@ -2,11 +2,11 @@
 // 🆕 mDNS discovery para LAN (stub para v0.1.0)
 // Nota: Implementación completa en próxima versión
 
-use std::net::Ipv4Addr;
 
 /// Servicio de streaming RyDit en LAN
 pub struct StreamService {
     name: String,
+    #[allow(dead_code)]
     port: u16,
 }
 

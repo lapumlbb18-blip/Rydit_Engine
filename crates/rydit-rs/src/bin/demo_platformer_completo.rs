@@ -71,7 +71,10 @@ fn main() {
                     keycode: Some(Keycode::Escape),
                     ..
                 } => {
-                    running = false;
+                    #[allow(unused_assignments)]
+                    {
+                        running = false;
+                    }
                     break 'running;
                 }
 

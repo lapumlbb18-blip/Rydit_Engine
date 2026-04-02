@@ -23,5 +23,5 @@ fn main() {
 
     // Fallback: crear archivo vacío
     let dest = Path::new(&out_dir).join("font.ttf");
-    fs::write(&dest, &[]).ok();
+    fs::write(&dest, []).ok();
 }

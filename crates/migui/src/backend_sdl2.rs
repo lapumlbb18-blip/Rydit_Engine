@@ -3,12 +3,11 @@
 // Conecta MiGUI con SDL2 para render e input + Fuentes nativas Rust
 
 use crate::font_native::NativeFontManager;
-use crate::{Color, Migui, Rect};
+use crate::{Color, Migui};
 use sdl2::keyboard::Keycode;
 use sdl2::mouse::MouseButton;
-use sdl2::render::{Canvas, Texture};
+use sdl2::render::Canvas;
 use sdl2::video::Window;
-use std::collections::HashMap;
 
 // ============================================================================
 // FONT MANAGER (Wrapper para NativeFontManager)
@@ -16,6 +15,7 @@ use std::collections::HashMap;
 
 /// Gestor de fuentes (usa NativeFontManager internamente)
 pub struct FontManager {
+    #[allow(dead_code)]
     native: NativeFontManager,
 }
 
@@ -49,6 +49,7 @@ pub struct MiguiSdl2Backend {
     canvas: Canvas<Window>,
     mouse_x: i32,
     mouse_y: i32,
+    #[allow(dead_code)]
     font_manager: Option<FontManager>,
 }
 
@@ -198,7 +199,7 @@ impl MiguiSdl2Backend {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    
 
     #[test]
     fn test_backend_creation() {

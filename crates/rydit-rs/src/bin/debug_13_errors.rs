@@ -7,6 +7,7 @@ use std::collections::{HashMap, HashSet};
 
 // Simular tipos del proyecto
 #[derive(Clone, Debug)]
+#[allow(dead_code)]
 enum Valor {
     Texto(String),
     Num(f64),
@@ -15,6 +16,7 @@ enum Valor {
 }
 
 #[derive(Debug)]
+#[allow(dead_code)]
 enum Expr<'a> {
     Num(f64),
     Texto(&'a str),
@@ -39,7 +41,6 @@ fn main() {
     // ✅ FIX: Usar .to_string() para convertir &str → String
     importing_stack.push(module.to_string());
     println!("  module = '{}'", module);
-    println!("  module.clone() = {:?} (tipo: &str)", module.clone());
     println!("  module.to_string() = {:?} (tipo: String)", module.to_string());
     println!("  ✅ importing_stack.push(module.to_string())\n");
     
@@ -201,12 +202,11 @@ fn main() {
     if loaded_modules.contains(&module.to_string()) {
         println!("  ✅ loaded_modules.contains(&module.to_string())");
     }
-    
-    // También funciona con Borrow
-    use std::borrow::Borrow;
-    let module_str: &str = module.borrow();
+
+    // También funciona con &str directo
+    let module_str: &str = module;
     if loaded_modules.contains(module_str) {
-        println!("  ✅ loaded_modules.contains(module.borrow())");
+        println!("  ✅ loaded_modules.contains(module_str)");
     }
     println!();
     

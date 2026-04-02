@@ -111,7 +111,7 @@ fn debug_lexer_scan(source: &str) -> usize {
     source.len()
 }
 
-fn debug_parser_parse(source: &str) -> usize {
+fn debug_parser_parse(_source: &str) -> usize {
     // Simular parser parse
     1  // 1 statement
 }

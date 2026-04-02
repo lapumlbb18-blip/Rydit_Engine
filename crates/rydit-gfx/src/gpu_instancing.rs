@@ -215,7 +215,7 @@ impl GPUInstancer {
             gl::BindBuffer(gl::ARRAY_BUFFER, self.instance_vbo);
             gl::BufferData(
                 gl::ARRAY_BUFFER,
-                (particles.len() * std::mem::size_of::<ParticleData>()) as isize,
+                std::mem::size_of_val(particles) as isize,
                 particles.as_ptr() as *const _,
                 gl::DYNAMIC_DRAW,
             );

@@ -47,7 +47,7 @@ impl Compiler {
                 Ok(())
             }
 
-            Stmt::Command(cmd) => {
+            Stmt::Command(_cmd) => {
                 // onda.core, ryprime - comandos especiales
                 // Por ahora, nop
                 self.program.instructions.push(OpCode::Nop);
@@ -167,7 +167,7 @@ impl Compiler {
 
             Stmt::Function { name, params, body } => {
                 // Agregar función al pool
-                let func_idx = self.program.add_function(name.to_string());
+                let _func_idx = self.program.add_function(name.to_string());
 
                 // Nuevo scope para parámetros
                 self.scopes.push(Vec::new());

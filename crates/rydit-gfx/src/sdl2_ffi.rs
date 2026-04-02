@@ -159,10 +159,8 @@ impl TextureFFI {
 
 impl Drop for TextureFFI {
     fn drop(&mut self) {
-        unsafe {
-            if !self.surface.is_null() {
-                // SDL_FreeSurface se llama desde el backend SDL2
-            }
+        if !self.surface.is_null() {
+            // SDL_FreeSurface se llama desde el backend SDL2
         }
     }
 }
@@ -360,7 +358,7 @@ impl Drop for FontFFI {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    
 
     #[test]
     fn test_texture_ffi_init() {

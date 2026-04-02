@@ -376,7 +376,7 @@ impl EcsWorld {
         }
 
         // Actualizar lifetime de partículas restantes
-        for (_, e) in &mut self.entities {
+        for e in self.entities.values_mut() {
             if let Some(ref mut p) = e.particle {
                 p.lifetime -= dt;
             }

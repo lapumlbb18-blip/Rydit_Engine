@@ -6,7 +6,6 @@ use gl;
 use gl::types::GLuint;
 use std::ffi::CString;
 use std::fs;
-use std::path::Path;
 
 /// Calidad FSR
 #[derive(Debug, Clone, Copy, PartialEq)]

@@ -162,6 +162,7 @@ pub fn ejecutar_funcion<'a>(
 }
 
 /// Dibujar partículas - se llama desde el game loop
+#[allow(dead_code)]
 pub fn draw_particles<'a>(gfx: &mut rydit_gfx::RyditGfx) {
     PARTICLES.with(|p| {
         let system = p.borrow();

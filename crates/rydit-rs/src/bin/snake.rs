@@ -59,9 +59,12 @@ fn main() {
         ejecutar_programa_gfx(&program, &mut executor, &mut funcs, &mut gfx);
     }
 
-    executor.mostrar_memoria();
-    println!();
-    println!("[INFO] Juego terminado. ¡Gracias por jugar!");
+    #[allow(unreachable_code)]
+    {
+        executor.mostrar_memoria();
+        println!();
+        println!("[INFO] Juego terminado. ¡Gracias por jugar!");
+    }
 }
 
 // Importar tipos necesarios

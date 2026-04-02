@@ -75,6 +75,7 @@ pub fn init_global_loader() {
 /// - No hay mutación después de la inicialización
 /// ✅ v0.11.4: Migrado a OnceLock (sin static_mut_refs)
 pub fn get_loader() -> Option<&'static Mutex<DynamicModuleLoader>> {
+    #[allow(static_mut_refs)]
     unsafe { GLOBAL_LOADER.as_ref() }
 }
 
@@ -348,9 +349,9 @@ pub fn ejecutar_stmt<'stmt, 'data>(
                 println!("[IMPORT] Módulo '{}' ya cargado (usando cache)", module);
                 // Solo renombrar funciones existentes
                 let prefix = if let Some(alias_name) = alias {
-                    alias_name.clone()
+                    alias_name.to_string()
                 } else {
-                    module.clone()
+                    module.to_string()
                 };
 
                 // Copiar funciones con nuevo nombre desde el cache
@@ -441,9 +442,9 @@ pub fn ejecutar_stmt<'stmt, 'data>(
 
             // Renombrar funciones con el prefijo del módulo
             let prefix = if let Some(alias_name) = alias {
-                alias_name.clone()
+                alias_name.to_string()
             } else {
-                module.clone()
+                module.to_string()
             };
 
             // Copiar funciones con nuevo nombre
@@ -1790,9 +1791,9 @@ pub fn ejecutar_stmt_gfx<'stmt, 'data>(
                 println!("[IMPORT] Módulo '{}' ya cargado (usando cache)", module);
                 // Solo renombrar funciones existentes
                 let prefix = if let Some(alias_name) = alias {
-                    alias_name.clone()
+                    alias_name.to_string()
                 } else {
-                    module.clone()
+                    module.to_string()
                 };
 
                 // Copiar funciones con nuevo nombre desde el cache
@@ -1874,9 +1875,9 @@ pub fn ejecutar_stmt_gfx<'stmt, 'data>(
 
                 // Renombrar funciones con el prefio del módulo
                 let prefix = if let Some(alias_name) = alias {
-                    alias_name.clone()
+                    alias_name.to_string()
                 } else {
-                    module.clone()
+                    module.to_string()
                 };
 
                 // Copiar funciones con nuevo nombre
@@ -4510,9 +4511,9 @@ pub fn ejecutar_stmt_migui<'stmt, 'data>(
 
             if loaded_modules.contains(&module.to_string()) {
                 let prefix = if let Some(alias_name) = alias {
-                    alias_name.clone()
+                    alias_name.to_string()
                 } else {
-                    module.clone()
+                    module.to_string()
                 };
 
                 let mut funcs_to_copy: Vec<(String, String)> = Vec::new();
@@ -4575,9 +4576,9 @@ pub fn ejecutar_stmt_migui<'stmt, 'data>(
                 loaded_modules.insert(module.to_string());
 
                 let prefix = if let Some(alias_name) = alias {
-                    alias_name.clone()
+                    alias_name.to_string()
                 } else {
-                    module.clone()
+                    module.to_string()
                 };
 
                 for orig_name in &original_funcs {

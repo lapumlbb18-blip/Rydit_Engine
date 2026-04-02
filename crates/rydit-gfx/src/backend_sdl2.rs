@@ -164,8 +164,8 @@ impl Sdl2Backend {
                     win_event: sdl2::event::WindowEvent::Resized(w, h),
                     ..
                 } => {
-                    self.width = w as i32;
-                    self.height = h as i32;
+                    self.width = w;
+                    self.height = h;
                     let viewport = Rect::new(0, 0, w as u32, h as u32);
                     self.canvas.set_viewport(viewport);
                 }

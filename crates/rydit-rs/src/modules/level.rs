@@ -218,6 +218,7 @@ impl LevelManager {
     // ========================================================================
 
     /// Renderizar nivel con SDL2 (sin cámara)
+    #[allow(dead_code)]
     pub fn render_sdl2(
         &self,
         _canvas: &mut sdl2::render::Canvas<sdl2::video::Window>,
@@ -240,6 +241,7 @@ impl LevelManager {
     }
 
     /// Renderizar nivel con SDL2 + Cámara
+    #[allow(dead_code)]
     pub fn render_with_camera_sdl2(
         &self,
         canvas: &mut sdl2::render::Canvas<sdl2::video::Window>,
@@ -263,6 +265,7 @@ impl LevelManager {
 // ============================================================================
 
 /// Parsear color desde string (ej: "negro", "rojo", "#FF0000")
+#[allow(dead_code)]
 fn parse_color(color_str: &str) -> sdl2::pixels::Color {
     match color_str.to_lowercase().as_str() {
         "negro" | "black" => sdl2::pixels::Color::RGB(0, 0, 0),

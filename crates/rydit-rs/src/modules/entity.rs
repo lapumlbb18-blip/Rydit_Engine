@@ -109,6 +109,7 @@ impl Entity {
     }
 
     /// Renderizar entidad con SDL2 (sin cámara)
+    #[allow(dead_code)]
     pub fn render_sdl2(
         &self,
         canvas: &mut sdl2::render::Canvas<sdl2::video::Window>,
@@ -143,6 +144,7 @@ impl Entity {
     }
 
     /// Renderizar entidad con SDL2 + Cámara
+    #[allow(dead_code)]
     pub fn render_with_camera_sdl2(
         &self,
         canvas: &mut sdl2::render::Canvas<sdl2::video::Window>,

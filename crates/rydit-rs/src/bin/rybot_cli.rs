@@ -2,7 +2,6 @@
 // RyBot CLI - Herramienta de línea de comandos para debug
 // v0.11.0 - RyBot CLI + UI
 
-use std::io::{self, Write};
 
 fn main() {
     println!("🛡️ RyBot CLI v0.11.0");

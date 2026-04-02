@@ -76,46 +76,46 @@ impl<'a> Parser<'a> {
             // Saltar comentarios
             TokenKind::Comentario => {
                 self.advance();
-                return None;
+                None
             }
 
             TokenKind::ShieldInit => {
                 self.advance();
-                return Some(Stmt::Init);
+                Some(Stmt::Init)
             }
 
             TokenKind::OndaCore => {
                 self.advance();
-                return Some(Stmt::Command("onda.core"));
+                Some(Stmt::Command("onda.core"))
             }
 
             TokenKind::RyPrime => {
                 self.advance();
-                return Some(Stmt::Command("ryprime"));
+                Some(Stmt::Command("ryprime"))
             }
 
-            TokenKind::Ryda => return self.parse_while(),
-            TokenKind::Cada => return self.parse_foreach(),
-            TokenKind::Onif => return self.parse_if(),
-            TokenKind::DarkSlot => return self.parse_assignment(),
-            TokenKind::LlaveIzq => return self.parse_block(),
-            TokenKind::Rytmo => return self.parse_function(),
-            TokenKind::Return => return self.parse_return(),
-            TokenKind::Voz => return self.parse_voz(),
-            TokenKind::DrawCircle => return self.parse_draw_circle(),
-            TokenKind::DrawRect => return self.parse_draw_rect(),
-            TokenKind::DrawLine => return self.parse_draw_line(),
-            TokenKind::DrawText => return self.parse_draw_text(),
-            TokenKind::DrawTriangle => return self.parse_draw_triangle(),
-            TokenKind::DrawRing => return self.parse_draw_ring(),
-            TokenKind::DrawRectangleLines => return self.parse_draw_rectangle_lines(),
-            TokenKind::DrawEllipse => return self.parse_draw_ellipse(),
-            TokenKind::DrawLineThick => return self.parse_draw_line_thick(),
+            TokenKind::Ryda => self.parse_while(),
+            TokenKind::Cada => self.parse_foreach(),
+            TokenKind::Onif => self.parse_if(),
+            TokenKind::DarkSlot => self.parse_assignment(),
+            TokenKind::LlaveIzq => self.parse_block(),
+            TokenKind::Rytmo => self.parse_function(),
+            TokenKind::Return => self.parse_return(),
+            TokenKind::Voz => self.parse_voz(),
+            TokenKind::DrawCircle => self.parse_draw_circle(),
+            TokenKind::DrawRect => self.parse_draw_rect(),
+            TokenKind::DrawLine => self.parse_draw_line(),
+            TokenKind::DrawText => self.parse_draw_text(),
+            TokenKind::DrawTriangle => self.parse_draw_triangle(),
+            TokenKind::DrawRing => self.parse_draw_ring(),
+            TokenKind::DrawRectangleLines => self.parse_draw_rectangle_lines(),
+            TokenKind::DrawEllipse => self.parse_draw_ellipse(),
+            TokenKind::DrawLineThick => self.parse_draw_line_thick(),
             TokenKind::Break => {
                 self.advance();
-                return Some(Stmt::Break);
+                Some(Stmt::Break)
             }
-            TokenKind::Import => return self.parse_import(),
+            TokenKind::Import => self.parse_import(),
 
             TokenKind::Ident => {
                 // Verificar si es input() especial
@@ -127,12 +127,12 @@ impl<'a> Parser<'a> {
                         return self.parse_call_or_ident(name);
                     }
                 }
-                return None;
+                None
             }
 
             _ => {
                 // Token no es un statement válido
-                return None;
+                None
             }
         }
     }
@@ -977,12 +977,12 @@ impl<'a> Parser<'a> {
                     token.span.column,
                 ));
                 self.advance();
-                return None;
+                None
             }
             TokenKind::Texto => {
                 let text = token.lexeme.trim_matches('"').trim_matches('\'');
                 self.advance();
-                return Some(Expr::Texto(text));
+                Some(Expr::Texto(text))
             }
             TokenKind::Ident => {
                 if let Some(name) = token.as_ident() {
@@ -1026,7 +1026,7 @@ impl<'a> Parser<'a> {
                         });
                     }
 
-                    return Some(Expr::Var(name_str));
+                    Some(Expr::Var(name_str))
                 } else {
                     self.state.add_error(RyDitError::syntax_error(
                         "Identificador inválido".to_string(),
@@ -1034,14 +1034,14 @@ impl<'a> Parser<'a> {
                         token.span.column,
                     ));
                     self.advance();
-                    return None;
+                    None
                 }
             }
             TokenKind::ParentIzq => {
                 self.advance(); // consumir (
                 let expr = self.parse_expression()?;
                 self.consume(TokenKind::ParentDer, ")")?;
-                return Some(expr);
+                Some(expr)
             }
             _ => {
                 self.state.add_error(RyDitError::unexpected_token(
@@ -1051,7 +1051,7 @@ impl<'a> Parser<'a> {
                     self.current().span.column,
                 ));
                 self.advance();
-                return None;
+                None
             }
         }
     }

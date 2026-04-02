@@ -69,7 +69,8 @@ fn debug_vec_string_vs_str() {
     fn process_vec_string(v: Vec<String>) {
         println!("  Processing Vec<String>: {:?}", v);
     }
-    
+
+    #[allow(dead_code)]
     fn process_vec_str(v: Vec<&str>) {
         println!("  Processing Vec<&str>: {:?}", v);
     }

@@ -2,7 +2,7 @@
 // 🆕 Web portal embebido (HTML + HTTP server simple)
 
 use std::io::{Read, Write};
-use std::net::{TcpListener, TcpStream};
+use std::net::TcpListener;
 use std::thread;
 
 /// Portal web embebido para RyDit Stream
