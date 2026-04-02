@@ -391,12 +391,12 @@ impl Compiler {
             Expr::Binary { left, op, right } => {
                 self.compile_expr(left)?;
                 self.compile_expr(right)?;
-                
+
                 let opcode = match op {
-                    BinaryOp::Suma => OpCode::Add,
-                    BinaryOp::Resta => OpCode::Subtract,
-                    BinaryOp::Mult => OpCode::Multiply,
-                    BinaryOp::Div => OpCode::Divide,
+                    BinaryOp::Suma | BinaryOp::MasIgual => OpCode::Add,
+                    BinaryOp::Resta | BinaryOp::MenosIgual => OpCode::Subtract,
+                    BinaryOp::Mult | BinaryOp::PorIgual => OpCode::Multiply,
+                    BinaryOp::Div | BinaryOp::DivIgual => OpCode::Divide,
                     BinaryOp::Mayor => OpCode::Greater,
                     BinaryOp::Menor => OpCode::Less,
                     BinaryOp::Igual => OpCode::Equal,
@@ -406,7 +406,7 @@ impl Compiler {
                     BinaryOp::And => OpCode::And,
                     BinaryOp::Or => OpCode::Or,
                 };
-                
+
                 self.program.instructions.push(opcode);
                 Ok(())
             }
