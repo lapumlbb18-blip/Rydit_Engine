@@ -333,7 +333,7 @@ pub fn ejecutar_stmt(
             // Cargar desde archivo local o embebido
 
             // DEUDA #2 FIX: Detectar import cíclico
-            if importing_stack.contains(module) {
+            if importing_stack.contains(&module.to_string()) {
                 println!("[ERROR] Importe cíclico detectado: '{}'", module);
                 println!(
                     "[ERROR] Stack de imports: {} -> {}",
@@ -1775,7 +1775,7 @@ fn ejecutar_stmt_gfx(
             let module_path = format!("crates/modules/{}.rydit", module);
 
             // DEUDA #2 FIX: Detectar import cíclico
-            if importing_stack.contains(module) {
+            if importing_stack.contains(&module.to_string()) {
                 println!("[ERROR] Importe cíclico detectado: '{}'", module);
                 println!(
                     "[ERROR] Stack de imports: {} -> {}",
@@ -4512,7 +4512,7 @@ pub fn ejecutar_stmt_migui(
         Stmt::Import { module, alias } => {
             let module_path = format!("crates/modules/{}.rydit", module);
 
-            if importing_stack.contains(module) {
+            if importing_stack.contains(&module.to_string()) {
                 println!("[ERROR] Importe cíclico detectado: '{}'", module);
                 return (None, None);
             }
