@@ -903,19 +903,19 @@ pub fn evaluar_expr<'a>(
 
             // Primero buscar con nombre completo (math::sumar)
             // Si no existe, intentar buscar solo el nombre después de ::
-            let func_name = if name.contains("::") {
+            let func_name_final = if func_name.contains("::") {
                 // Es nombre con namespace, intentar con nombre completo primero
-                if funcs.contains_key(name) {
-                    name.clone()
+                if funcs.contains_key(&func_name) {
+                    func_name.clone()
                 } else {
                     // Extraer nombre después de ::
-                    name.split("::").last().unwrap_or(name).to_string()
+                    func_name.split("::").last().unwrap_or(&func_name).to_string()
                 }
             } else {
-                name.clone()
+                func_name.clone()
             };
 
-            let func_data = funcs.get(&func_name).map(|(p, b)| (p.clone(), b.clone()));
+            let func_data = funcs.get(&func_name_final).map(|(p, b)| (p.clone(), b.clone()));
 
             if let Some((params, body)) = func_data {
                 // Evaluar argumentos
