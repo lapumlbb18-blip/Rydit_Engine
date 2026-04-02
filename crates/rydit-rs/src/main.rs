@@ -84,10 +84,10 @@ fn main() {
 // EJECUTOR DE STATEMENTS (pública para módulos)
 
 /// Ejecutar un statement (pública para módulos)
-pub fn ejecutar_stmt(
-    stmt: &Stmt,
+pub fn ejecutar_stmt<'stmt>(
+    stmt: &'stmt Stmt<'stmt>,
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'stmt>>)>,
     loaded_modules: &mut HashSet<String>,
     importing_stack: &mut Vec<String>,
 ) -> (Option<bool>, Option<Valor>) {
@@ -391,7 +391,7 @@ pub fn ejecutar_stmt(
             };
 
             // Agregar al stack de imports en progreso
-            importing_stack.push(module.clone());
+            importing_stack.push(module.to_string());
 
             // Lexer + Parser
             let tokens = Lexer::new(&module_content).scan();
@@ -1249,10 +1249,10 @@ impl InputEstado {
 }
 
 /// Ejecutar statement en modo gráfico
-fn ejecutar_stmt_gfx(
-    stmt: &Stmt,
+fn ejecutar_stmt_gfx<'stmt>(
+    stmt: &'stmt Stmt<'stmt>,
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'stmt>>)>,
     queue: &mut RenderQueue,
     input: &mut InputEstado,
     loaded_modules: &mut HashSet<String>,
@@ -1448,7 +1448,7 @@ fn ejecutar_stmt_gfx(
             }
         }
         Stmt::Function { name, params, body } => {
-            funcs.insert(name.clone(), (params.iter().map(|s| s.to_string()).collect(), body.clone()));
+            funcs.insert(name.to_string(), (params.iter().map(|s| s.to_string()).collect(), body.clone()));
         }
         Stmt::Call { callee, args } => {
             // callee es &str directo (AST nuevo)
@@ -1737,7 +1737,7 @@ fn ejecutar_stmt_gfx(
                 }
             } else {
                 // Función de usuario - clonar datos para evitar borrow checker issues
-                let func_data = funcs.get(func_name).map(|(p, b)| (p.clone(), b.clone()));
+                let func_data = funcs.get(&func_name).map(|(p, b)| (p.clone(), b.clone()));
 
                 if let Some((_params, body)) = func_data {
                     // Evaluar argumentos
@@ -1828,7 +1828,7 @@ fn ejecutar_stmt_gfx(
                 );
 
                 // Agregar al stack de imports en progreso
-                importing_stack.push(module.clone());
+                importing_stack.push(module.to_string());
 
                 // Lexer + Parser
                 let tokens = Lexer::new(&content).scan();
@@ -2184,7 +2184,7 @@ pub fn evaluar_expr_gfx(
 ) -> Valor {
     match expr {
         Expr::Num(n) => Valor::Num(*n),
-        Expr::Texto(s) => Valor::Texto(s.clone()),
+        Expr::Texto(s) => Valor::Texto(s.to_string()),
         Expr::Var(name) => {
             if *name == "__INPUT__" {
                 return executor.input("> ");
@@ -3181,11 +3181,9 @@ pub fn evaluar_expr_migui(
 ) -> Valor {
     match expr {
         Expr::Num(n) => Valor::Num(*n),
-        Expr::Texto(s) => Valor::Texto(s.clone()),
+        Expr::Texto(s) => Valor::Texto(s.to_string()),
+        Expr::Var("__INPUT__") => return executor.input("> "),
         Expr::Var(name) => {
-            if name == "__INPUT__" {
-                return executor.input("> ");
-            }
             executor.leer(name).unwrap_or(Valor::Vacio)
         }
         Expr::Bool(b) => Valor::Bool(*b),
@@ -4025,21 +4023,14 @@ pub fn evaluar_expr_migui(
             }
 
             // Funciones definidas por el usuario
+            // Normalizar nombre de función (quitar prefijo de módulo si existe)
             let func_name = if func_name.contains("::") {
-                if funcs.contains_key(func_name) {
-                    func_name.clone()
-                } else {
-                    &func_name
-                        .split("::")
-                        .last()
-                        .unwrap_or(func_name)
-                        .to_string()
-                }
+                func_name.split("::").last().unwrap_or("").to_string()
             } else {
                 func_name.clone()
             };
 
-            let func_data = funcs.get(&func_name).map(|(p, b)| (p.clone(), b.clone()));
+            let func_data = funcs.get(func_name.as_str()).map(|(p, b)| (p.clone(), b.clone()));
 
             if let Some((params, body)) = func_data {
                 let mut arg_values = vec![];
@@ -4241,10 +4232,10 @@ pub fn evaluar_expr_migui(
 /// 9. `textbox_states` - Estados de textboxes
 /// 10. `window_states` - Estados de ventanas
 #[allow(clippy::too_many_arguments)]
-pub fn ejecutar_stmt_migui(
-    stmt: &Stmt,
+pub fn ejecutar_stmt_migui<'stmt>(
+    stmt: &'stmt Stmt<'stmt>,
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'stmt>>)>,
     gui: &mut Migui,
     loaded_modules: &mut HashSet<String>,
     importing_stack: &mut Vec<String>,
@@ -4485,11 +4476,11 @@ pub fn ejecutar_stmt_migui(
             }
         }
         Stmt::Function { name, params, body } => {
-            funcs.insert(name.clone(), (params.iter().map(|s| s.to_string()).collect(), body.clone()));
+            funcs.insert(name.to_string(), (params.iter().map(|s| s.to_string()).collect(), body.clone()));
         }
         Stmt::Call { callee, args } => {
             // Extraer nombre de función
-            let func_name = if let Expr::Var(name) = callee.as_ref() {
+            let func_name = if let Expr::Var(name) = callee {
                 name.to_string()
             } else {
                 String::new()
@@ -4498,7 +4489,7 @@ pub fn ejecutar_stmt_migui(
             // Para migui, evaluar como expresión (las funciones migui generan draw commands)
             let _ = evaluar_expr_migui(
                 &Expr::Call {
-                    callee: Box::new(Expr::Var(func_name)),
+                    callee: Box::new(Expr::Var(&func_name)),
                     args: args.clone(),
                 },
                 executor,
@@ -4519,7 +4510,7 @@ pub fn ejecutar_stmt_migui(
                 return (None, None);
             }
 
-            if loaded_modules.contains(module) {
+            if loaded_modules.contains(&module.to_string()) {
                 let prefix = if let Some(alias_name) = alias {
                     alias_name.clone()
                 } else {
@@ -4544,7 +4535,7 @@ pub fn ejecutar_stmt_migui(
             }
 
             if let Ok(content) = std::fs::read_to_string(&module_path) {
-                importing_stack.push(module.clone());
+                importing_stack.push(module.to_string());
 
                 let tokens = Lexer::new(&content).scan();
                 let mut parser = Parser::new(tokens);
