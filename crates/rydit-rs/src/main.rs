@@ -393,7 +393,7 @@ pub fn ejecutar_stmt<'a>(
             // Agregar al stack de imports en progreso
             importing_stack.push(module.to_string());
 
-            // Lexer + Parser
+            // Lexer + Parser (module_content vive mientras se usan tokens)
             let tokens = Lexer::new(&module_content).scan();
             let mut parser = Parser::new(tokens);
 
@@ -415,7 +415,7 @@ pub fn ejecutar_stmt<'a>(
                 }
             }
 
-            // Ejecutar módulo en scope global
+            // Ejecutar módulo en scope global (module_content todavía vivo aquí)
             for s in &program.statements {
                 match ejecutar_stmt(s, executor, funcs, loaded_modules, importing_stack) {
                     (Some(true), _) => {
@@ -429,6 +429,7 @@ pub fn ejecutar_stmt<'a>(
                     _ => {}
                 }
             }
+            // module_content se destruye aquí, después de usar
 
             // Remover del stack de imports en progreso
             importing_stack.pop();
@@ -1830,7 +1831,7 @@ pub fn ejecutar_stmt_gfx<'a>(
                 // Agregar al stack de imports en progreso
                 importing_stack.push(module.to_string());
 
-                // Lexer + Parser
+                // Lexer + Parser (content vive mientras se usa)
                 let tokens = Lexer::new(&content).scan();
                 let mut parser = Parser::new(tokens);
 
@@ -1852,6 +1853,7 @@ pub fn ejecutar_stmt_gfx<'a>(
                     }
                 }
 
+                // Ejecutar (content todavía vivo aquí)
                 for s in &program.statements {
                     ejecutar_stmt_gfx(
                         s,
@@ -1863,6 +1865,7 @@ pub fn ejecutar_stmt_gfx<'a>(
                         importing_stack,
                     );
                 }
+                // content se destruye aquí, después de usar
 
                 // Remover del stack de imports en progreso
                 importing_stack.pop();
@@ -4479,12 +4482,8 @@ pub fn ejecutar_stmt_migui<'a>(
             funcs.insert(name.to_string(), (params.iter().map(|s| s.to_string()).collect(), body.clone()));
         }
         Stmt::Call { callee, args } => {
-            // Extraer nombre de función
-            let func_name = if let Expr::Var(name) = callee {
-                name.to_string()
-            } else {
-                String::new()
-            };
+            // callee es &str directo (AST nuevo)
+            let func_name = callee.to_string();
 
             // Para migui, evaluar como expresión (las funciones migui generan draw commands)
             let _ = evaluar_expr_migui(

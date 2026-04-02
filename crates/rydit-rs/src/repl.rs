@@ -33,9 +33,9 @@ pub fn repl_mode() {
             break;
         }
 
-        let input = input.trim();
+        let input = input.trim().to_string();  // ✅ Poseer String, no &str
 
-        match input {
+        match input.as_str() {
             "" => continue,
             "exit" | "quit" | "q" => {
                 println!("[REPL] Saliendo...");

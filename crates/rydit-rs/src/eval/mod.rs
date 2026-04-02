@@ -1766,7 +1766,7 @@ pub fn evaluar_expr<'a>(
                 };
 
                 // Color opcional (default: blanco)
-                let color = if args.len() >= 4 {
+                let _color = if args.len() >= 4 {
                     let color_val = evaluar_expr(&args[3], executor, funcs);
                     match color_val {
                         Valor::Texto(c) => ColorRydit::from_str(&c).unwrap_or(ColorRydit::Blanco),
