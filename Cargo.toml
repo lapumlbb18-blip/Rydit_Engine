@@ -13,7 +13,7 @@ members = [
     "crates/migui",
     "crates/rydit-loader",
     "crates/rydit-script",
-    "crates/rydit-http",  # HTTP + WebSocket
+    "crates/rydit-stream",  # 🆕 v0.11.2: LAN streaming (WebSocket + mDNS + Portal)
     "crates/rydit-ecs",   # ✅ v0.10.0: ECS (bevy_ecs + N-Body)
     "crates/rydit-test", "crates/rydit-lexer", "crates/rydit-parser", "crates/rydit-vm",  # 🆕 v0.11.1: Tests simplificados (Nivel 1, 2, 3)
 ]

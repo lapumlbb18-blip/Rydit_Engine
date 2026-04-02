@@ -18,7 +18,7 @@ v-shield = { path = "../v-shield" }
 blast-core = { path = "../blast-core" }
 rydit-gfx = { path = "../rydit-gfx" }
 migui = { path = "../migui", features = ["sdl2"] }
-rydit-http = { path = "../rydit-http" }
+rydit-stream = { path = "../rydit-stream" }  # 🆕 v0.11.2: LAN streaming
 raylib = { version = "5.5.1", default-features = false, features = ["nobuild"] }
 gl = "0.14.0"
 sdl2 = "0.37"

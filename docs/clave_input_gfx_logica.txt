@@ -1,0 +1,807 @@
+GUÍA COMPLETA: ARQUITECTURA DE INPUT Y GRÁFICOS PARA RYDIT ENGINE EN TERMUX-X11 Y MULTIPLATAFORMA
+
+Documento de Referencia - Fase Crítica v0.10.x
+
+---
+
+ÍNDICE
+
+1. El Problema Fundamental
+2. Cómo Funciona Termux-X11 Realmente
+3. La Arquitectura Correcta (Inversión de Control)
+4. Guía de Implementación Paso a Paso
+5. El Mapa de Input Unificado
+6. Recomendaciones para Cada Plataforma
+7. Secuencia de Ejecución Correcta
+8. Lo Que Debes Evitar (Anti-patrones)
+9. Resumen de la Conversación Completa
+
+---
+
+1. EL PROBLEMA FUNDAMENTAL
+
+1.1 Diagnóstico Inicial
+
+Tu motor Rydit Engine tiene un problema de arquitectura que afecta todo el flujo de input y gráficos:
+
+Síntomas detectados:
+
+· El parser lizer (3K líneas) está sobrecargado haciendo trabajo que debería hacer el Core
+· main.rs tiene solo 4K líneas (muy poco para ser el núcleo)
+· Los scripts .rydit intentan dibujar y procesar input directamente
+· Inestabilidad con lógica compleja (ej: 2000 partículas colapsan el evaluador)
+· La entrada de teclado/mouse/tactil no está unificada entre plataformas
+
+La causa raíz:
+Tu arquitectura actual tiene la dirección del control invertida:
+
+```
+ACTUAL (INCORRECTO):
+Usuario → demo.rydit → Parser (secretaria sobrecargada) → Intenta hacer TODO
+                        ↓
+                "No tengo fuerza para cosas pesadas"
+```
+
+1.2 Comparativa con Motores Profesionales
+
+Motor Core (C++) Scripting Ratio Core/Script
+Godot ~500K GDScript 10:1
+Unity ~1M+ C# 5:1
+Unreal ~5M+ C++/BP 50:1
+RyDit (actual) ~4K .rydit 1.3:1 ⚠️
+
+Tu Core es demasiado pequeño. El script está haciendo trabajo pesado que no le corresponde.
+
+1.3 La Solución que Identificaste
+
+Inversión de Control: El Core (Rust) debe mandar, el script solo configura.
+
+```
+CORRECTO (v0.10.0+):
+rydit-rs (CORE en Rust) → MANDA EL CORE
+  ├── Game loop nativo
+  ├── Render Queue nativa
+  ├── ECS nativo (Entt)
+  ├── GPU Instancing nativo
+  └── INPUT nativo (rydit-input)
+         ↓ carga configuración
+tank_demo.rydit (CONFIG) → Solo parámetros
+  ├── Entidades a spawnear
+  ├── Valores de física
+  └── Mapeo de input (qué tecla hace qué acción)
+```
+
+---
+
+2. CÓMO FUNCIONA TERMUX-X11 REALMENTE
+
+2.1 El Flujo de Traducción
+
+Termux-X11 es un traductor que convierte eventos táctiles de Android en eventos estándar de X11:
+
+```
+Tu Dedo (Android)        Termux-X11              Tu App (Rydit)
+     ↓                       ↓                        ↓
+Tocar pantalla    →    Evento X11:          →   Recibe:
+(X=400, Y=800)         "MouseMotion"            RyditEvent::PointerMotion
+                       Botón Izquierdo          {x: 400, y: 800}
+```
+
+2.2 Los Dos Modos de Entrada
+
+Modo Simulated Touch (Recomendado para juegos):
+
+· El dedo toca un punto → clic ocurre exactamente ahí
+· No hay cursor visible
+· Ideal para interfaces táctiles puras
+· Precisión: depende de calibración de resolución
+
+Modo Trackpad (Recomendado para editores/herramientas):
+
+· El dedo mueve un cursor por la pantalla
+· Hay cursor visible
+· El clic ocurre donde está el cursor, no donde tocas
+· Ideal para apps que esperan ratón tradicional
+
+2.3 Traducción de Eventos Específicos
+
+Tu Acción Física (Android) Evento Traducido (X11) RyditEvent Recomendado
+Tocar y arrastrar MouseMotion (con botón presionado) PointerMotion + PointerButton
+Dos dedos vertical MouseWheel (scroll) Scroll { delta_y }
+Presionar ESC (barra) KeyPress (Escape) Keyboard { key: Escape }
+Presionar CTRL+C KeyPress (Ctrl + 'c') Keyboard { key: C, modifiers: Ctrl }
+Lápiz (Stylus) MouseMotion + Pressure PointerMotion { pressure: 0.0..1.0 }
+
+Dato Clave: La barra "Extra Keys" de Termux-X11 no manda texto, manda KeyCode. ¡ESC funciona exactamente igual que en Windows/Linux!
+
+2.4 El Pipeline de Gráficos (GPU)
+
+El renderizado optimizado requiere una cadena específica:
+
+```
+Raylib (OpenGL)  →  Zink (traductor)  →  Vulkan  →  Turnip (driver)  →  GPU Qualcomm
+     ↓                   ↓                    ↓              ↓                ↓
+  Código de         Traduce a           API moderna    Driver para      Hardware real
+  dibujo            Vulkan              de gráficos     Android          del teléfono
+```
+
+Sin Zink + Turnip: Usas llvmpipe (emulación por CPU) → LENTO
+Con Zink + Turnip: Usas GPU real → 60 FPS estables
+
+---
+
+3. LA ARQUITECTURA CORRECTA (INVERSIÓN DE CONTROL)
+
+3.1 Los Tres Crates Esenciales
+
+Basado en tu estructura actual de 15 crates, necesitas 5 más organizados así:
+
+```
+Crates EXISTENTES que se mantienen:
+├── rydit-gfx        → Solo dibujo (ya funciona con Zink/Turnip)
+├── lizer            → Parser LIGERO (solo leer configuraciones)
+├── blast-core       → Memoria y ejecutor base
+└── rydit-rs         → Binario principal (DEBE CRECER a 20K+ líneas)
+
+Nuevos Crates NECESARIOS:
+├── rydit-input      → Traducción de eventos (TODO EL INPUT)
+├── rydit-ecs        → Entity Component System (Entt o bevy_ecs)
+├── rydit-actions    → Mapa de acciones (disparar = Espacio + Ratón Izq)
+├── rydit-platform   → Abstracción de SO (Linux/Windows/Android/Mac)
+└── rydit-config     → Cargar scripts .rydit como CONFIGURACIÓN, no lógica
+```
+
+3.2 La Responsabilidad de Cada Capa
+
+CAPA 1: Core Nativo (Rust) - MANDA
+
+· rydit-input: Polling de eventos del sistema
+· rydit-actions: Calcula qué acciones están activas
+· rydit-ecs: Actualiza entidades y sistemas
+· rydit-gfx: Dibuja según el estado actual
+
+CAPA 2: Configuración (.rydit) - SOLO DATOS
+
+· Qué entidades existen
+· Qué sprites usan
+· Qué acciones de input tienen (mapeo)
+· Valores iniciales (gravedad, velocidad, etc.)
+
+CAPA 3: Scripts de Comportamiento (Opcional)
+
+· Lógica simple que NO afecta rendimiento
+· Ej: "si colisiona con moneda, sumar puntaje"
+
+3.3 El Nuevo Flujo de Input
+
+```
+TERMUX-X11 (Android)
+       ↓
+Evento X11: MouseMotion (x=400, y=800)
+       ↓
+rydit-input (backend Termux)
+       ↓
+Traduce a: RyditEvent::PointerMotion { x: 400, y: 800 }
+       ↓
+rydit-actions (calcula acciones)
+       ↓
+"apuntar" está activo con coordenada (400, 800)
+"disparar" NO está activo (no hay clic)
+       ↓
+rydit-ecs (sistema de control)
+       ↓
+La entidad "jugador" recibe la acción "apuntar"
+       ↓
+rydit-gfx (dibuja)
+       ↓
+Dibuja el cursor/sprite en (400, 800)
+```
+
+¿Qué NO debe pasar? El script .rydit no debe procesar eventos crudos. Solo debe leer el estado de las acciones.
+
+---
+
+4. GUÍA DE IMPLEMENTACIÓN PASO A PASO
+
+4.1 Fase 1: Crear rydit-input (Ahora mismo)
+
+Objetivo: Un crate que unifique eventos de todas las plataformas.
+
+Pasos:
+
+1. Crea crates/rydit-input/ con Cargo.toml propio
+2. Define enum RyditEvent (PointerMotion, PointerButton, Keyboard, Scroll, TextInput)
+3. Define trait InputBackend con método poll_events() -> Vec<RyditEvent>
+4. Implementa TermuxBackend usando raylib::get_mouse_position(), is_key_pressed(), etc.
+5. Añade tests unitarios (simular eventos)
+
+Ubicación en tu código: crates/rydit-input/src/lib.rs
+
+4.2 Fase 2: Crear rydit-actions
+
+Objetivo: Mapear teclas/ejes a acciones lógicas (ej: "saltar", "disparar").
+
+Pasos:
+
+1. Define struct ActionMap que asocia nombres de acción a teclas/ejes
+2. El script .rydit solo define el mapeo (ej: accion "disparar" tecla=ESPACIO)
+3. rydit-actions recibe Vec<RyditEvent> y devuelve HashMap<String, f32> (acción → intensidad)
+4. Para teclas: intensidad es 0.0 o 1.0
+5. Para ejes (mouse, joystick): intensidad es valor continuo
+
+Ubicación en tu código: crates/rydit-actions/src/lib.rs
+
+4.3 Fase 3: Expandir rydit-rs (Core)
+
+Objetivo: El main crece de 4K a 20K+ líneas (como Godot/Unity).
+
+Pasos:
+
+1. Mueve el game loop a executor.rs (nativo, no en script)
+2. Integra rydit-input y rydit-actions
+3. Integra rydit-ecs (Entt) para manejar 100K+ entidades
+4. El script .rydit se carga SOLO AL INICIO para leer configuración
+5. El game loop corre 100% en Rust, sin tocar el script
+
+Ubicación en tu código: crates/rydit-rs/src/executor.rs
+
+4.4 Fase 4: Modificar el Parser (lizer)
+
+Objetivo: Que pase de 3K líneas sobrecargadas a 3K líneas LIGERAS.
+
+Pasos:
+
+1. Eliminar toda la lógica de ejecución de scripts
+2. El parser SOLO debe leer: estructuras de datos, arrays, valores primitivos
+3. No debe evaluar expresiones complejas durante el game loop
+4. Debe ser capaz de cargar un archivo .rydit y devolver un AST de CONFIGURACIÓN
+5. La evaluación de expresiones (si es necesaria) se hace en Rust, no en el parser
+
+Ubicación en tu código: crates/lizer/src/lib.rs
+
+4.5 Fase 5: Configurar Termux-X11 para Desarrollo
+
+Pasos (YA LOS TIENES EN TUS SCRIPTS):
+
+1. Configurar DISPLAY=:0 (Termux-X11 corre en display 0)
+2. Variables de entorno para Zink:
+   ```bash
+   export MESA_LOADER_DRIVER_OVERRIDE=zink
+   export GALLIUM_DRIVER=zink
+   ```
+3. Para Turnip (GPU Qualcomm):
+   ```bash
+   export TU_DEBUG=noconform
+   ```
+4. Usar ejecutar_termux.sh que ya tienes
+
+4.6 Fase 6: Optimizar rydit-gfx para GPU Instancing (v0.10.0)
+
+Objetivo: 100K+ partículas a 60 FPS.
+
+Pasos:
+
+1. Usar FFI OpenGL con crate gl-rs
+2. Implementar shaders GLSL (vertex + fragment)
+3. Usar glDrawArraysInstanced() para partículas
+4. Integrar con el nuevo ECS (Entt)
+
+Ubicación en tu código: crates/rydit-gfx/src/gpu_instancing.rs
+
+---
+
+5. EL MAPA DE INPUT UNIFICADO
+
+5.1 La Estructura de Eventos (Multiplataforma)
+
+Tu enum RyditEvent debe soportar:
+
+Para Mouse/Ratón (Windows/Linux/Mac):
+
+· PointerMotion { x, y }
+· PointerButton { button, state }
+· Scroll { delta_x, delta_y }
+
+Para Táctil (Android nativo o Termux-X11 en modo touch):
+
+· TouchStart { id, x, y, pressure }
+· TouchMove { id, x, y, pressure }
+· TouchEnd { id }
+
+Para Teclado (todas las plataformas):
+
+· Keyboard { key, modifiers, state }
+· TextInput { text } (para IME, teclado virtual)
+
+Para Gamepad (opcional):
+
+· GamepadButton { gamepad_id, button, state }
+· GamepadAxis { gamepad_id, axis, value }
+
+5.2 Los Modificadores Comunes
+
+Debes soportar (son los mismos en X11, Windows, Mac):
+
+Modificador Windows Linux (X11) Mac Android (Termux)
+Shift ✅ ✅ ✅ ✅ (teclado BT)
+Ctrl ✅ ✅ ✅ ✅ (tecla especial)
+Alt ✅ ✅ ✅ ⚠️ (limitado)
+Win/Cmd ✅ ✅ ✅ ⚠️
+
+El ESC funciona en TODAS las plataformas (incluyendo la barra de Termux-X11).
+
+5.3 El Mapeo a Acciones (Ejemplo)
+
+En tu archivo .rydit (como configuración):
+
+```
+# nivel_1.rydit - SOLO CONFIGURACIÓN
+input {
+    # Teclado
+    accion "mover_izquierda" tecla = A
+    accion "mover_derecha"   tecla = D
+    accion "saltar"          tecla = ESPACIO
+    accion "pausa"           tecla = ESC
+    
+    # Ratón/Táctil
+    accion "apuntar"         eje = RATON_XY
+    accion "disparar"        boton = RATON_IZQUIERDO
+    
+    # Combinaciones
+    accion "guardar"         tecla = S, modificador = CTRL
+    accion "pantalla_completa" tecla = ENTER, modificador = ALT
+}
+```
+
+En Rust (rydit-actions):
+
+```rust
+// No es código, es la lógica
+let acciones_activas = action_map.calculate(&eventos);
+if acciones_activas.contains_key("saltar") {
+    jugador.velocidad_y = -10.0;
+}
+```
+
+---
+
+6. RECOMENDACIONES PARA CADA PLATAFORMA
+
+6.1 Termux-X11 (Android - Tu plataforma principal)
+
+Input:
+
+· Usa Simulated Touch Mode para juegos (toque directo)
+· Usa Trackpad Mode para editores/herramientas (cursor visible)
+· La barra "Extra Keys" es útil para ESC, CTRL, ALT
+· El teclado virtual aparece automáticamente al tocar un TextInput
+
+Gráficos:
+
+· Siempre usar Zink + Turnip (ya lo haces en ejecutar_termux.sh)
+· Verificar MESA_LOADER_DRIVER_OVERRIDE=zink está activo
+· Si ves llvmpipe en logs → algo falló
+
+Audio:
+
+· Usa audio::play() que ya tienes implementado
+· En Termux, el audio va por ALSA (funciona bien)
+
+6.2 Windows (Futuro)
+
+Input:
+
+· Usa winit o gilrs para gamepad
+· El ratón y teclado funcionan directamente
+· Las teclas especiales (Win, AltGr) son nativas
+
+Gráficos:
+
+· Usar DirectX 11/12 (raylib lo abstrae)
+· No necesitas Zink (DirectX es nativo)
+· GPU Instancing funciona con glDrawArraysInstanced
+
+Compilación:
+
+```bash
+cargo build --target x86_64-pc-windows-msvc --release
+```
+
+6.3 Linux (Futuro)
+
+Input:
+
+· Usa X11 o Wayland (raylib lo maneja)
+· evdev para entrada avanzada
+· Soporte nativo para gamepads
+
+Gráficos:
+
+· Usar OpenGL nativo (Mesa)
+· Si es Intel/AMD → driver nativo
+· Si es NVIDIA → usar nvidia driver
+
+Compilación:
+
+```bash
+cargo build --target x86_64-unknown-linux-gnu --release
+```
+
+6.4 macOS (Futuro)
+
+Input:
+
+· Usa Cocoa (raylib lo maneja)
+· Tecla Cmd en lugar de Ctrl para atajos
+· Magic Mouse/trackpad soportado
+
+Gráficos:
+
+· Usar Metal (raylib lo abstrae)
+· O OpenGL legacy (deprecado pero funciona)
+
+Compilación:
+
+```bash
+cargo build --target x86_64-apple-darwin --release
+```
+
+6.5 Android Nativo (Sin Termux - Futuro lejano)
+
+Input:
+
+· Eventos táctiles nativos (MotionEvent)
+· Teclado virtual con IME
+· Sensores (acelerómetro, giroscopio)
+
+Gráficos:
+
+· Usar Vulkan directamente (no Zink)
+· OpenGL ES 3.0
+
+Nota: Este es un objetivo a largo plazo. Por ahora, Termux-X11 es suficiente.
+
+---
+
+7. SECUENCIA DE EJECUCIÓN CORRECTA
+
+7.1 El Game Loop Nativo (En Rust)
+
+Secuencia que debe seguir executor.rs:
+
+```
+1. INICIALIZACIÓN (una sola vez)
+   ├── Cargar config.rydit (solo datos)
+   ├── Inicializar rydit-gfx (ventana, contexto OpenGL)
+   ├── Inicializar rydit-input (backends)
+   ├── Inicializar rydit-actions (mapeo desde config)
+   └── Inicializar rydit-ecs (Entidades desde config)
+
+2. GAME LOOP (60 veces por segundo)
+   ├── POLLING: rydit-input.poll_events()
+   ├── TRADUCCIÓN: Convertir a RyditEvent
+   ├── ACCIONES: rydit-actions.calculate(eventos)
+   ├── ACTUALIZAR ECS: 
+   │     ├── Sistema de movimiento (usa acciones)
+   │     ├── Sistema de físicas
+   │     ├── Sistema de colisiones
+   │     └── Sistema de IA (si aplica)
+   ├── RENDER:
+   │     ├── rydit-gfx.begin_drawing()
+   │     ├── Dibujar sprites (desde ECS)
+   │     ├── Dibujar partículas (GPU Instancing)
+   │     └── rydit-gfx.end_drawing()
+   └── FRAME LIMIT: Esperar 16ms (60 FPS)
+
+3. LIMPIEZA (al cerrar)
+   ├── Guardar estado (si aplica)
+   ├── Liberar recursos GPU
+   └── Cerrar ventana
+```
+
+7.2 El Nuevo Rol del Script .rydit
+
+El script YA NO debe contener:
+
+· ❌ Lógica de dibujo (draw.circle, draw.rect, etc.)
+· ❌ Bucles de juego (ryda frame < 1000)
+· ❌ Procesamiento de input crudo
+· ❌ Lógica pesada (física, colisiones, IA)
+
+El script SOLO debe contener:
+
+· ✅ Definición de entidades (qué sprites, qué posiciones iniciales)
+· ✅ Mapeo de input (qué tecla hace qué acción)
+· ✅ Parámetros de configuración (gravedad, velocidad, colores)
+· ✅ Comportamientos simples (opcional, para scripts de alto nivel)
+
+Ejemplo de script CORRECTO (v0.10.0+):
+
+```
+# nivel_1.rydit - SOLO CONFIGURACIÓN
+# NO hay lógica de juego aquí, solo datos
+
+version = "0.10.0"
+
+entidades {
+    jugador {
+        sprite = "tanque.png"
+        x = 400
+        y = 300
+        velocidad_base = 5.0
+        vida = 100
+    }
+    
+    enemigo {
+        sprite = "enemigo.png"
+        x = 100
+        y = 100
+        tipo = "patrullador"
+    }
+}
+
+input {
+    accion "mover_izquierda" tecla = A
+    accion "mover_derecha"   tecla = D
+    accion "disparar"        boton = RATON_IZQUIERDO
+    accion "saltar"          tecla = ESPACIO
+}
+
+mundo {
+    gravedad = 9.8
+    fondo = "cielo.png"
+    musica_fondo = "tema_principal.ogg"
+}
+```
+
+7.3 Cómo Ejecutar (Nuevo Comando)
+
+Comando ACTUAL (v0.9.x - ROTO):
+
+```bash
+./rydit-rs --gfx demos/test.rydit
+# El .rydit tiene que hacer TODO (incorrecto)
+```
+
+Comando NUEVO (v0.10.0+ - CORRECTO):
+
+```bash
+./rydit-rs --scene nivel_1
+# El core carga la escena, .rydit es solo config
+```
+
+Comando para lista de escenas:
+
+```bash
+./rydit-rs --list-scenes
+# Muestra: nivel_1, nivel_2, menu_principal, boss_fight
+```
+
+---
+
+8. LO QUE DEBES EVITAR (ANTI-PATRONES)
+
+8.1 No Hacer Esto
+
+❌ Anti-patrón 1: Lógica pesada en scripts
+
+```rust
+// NO hacer esto en .rydit
+ryda frame < 10000 {
+    // Esto debería estar en Rust
+    for i in 0..1000 {
+        particulas::emitir("fuego", i, i)
+    }
+}
+```
+
+❌ Anti-patrón 2: Dibujo desde scripts
+
+```rust
+// NO hacer esto en .rydit
+shield.init
+ryda frame < 1000 {
+    draw.circle(mouse_x, mouse_y, 50, "rojo")
+}
+```
+
+❌ Anti-patrón 3: Procesar eventos crudos en scripts
+
+```rust
+// NO hacer esto en .rydit
+dark.slot tecla = input::get_key()
+onif tecla == "ESPACIO" {
+    // Esto debería estar en el sistema de acciones
+    jugador.saltar()
+}
+```
+
+❌ Anti-patrón 4: Parser haciendo trabajo de Core
+
+```rust
+// NO: el parser evaluando expresiones complejas
+// Esto debe estar en rydit-ecs o executor.rs
+fn evaluar_expresion(ast: &AST) -> Result<Value> {
+    // 3K líneas de lógica aquí = MAL
+}
+```
+
+8.2 Qué Hacer en su Lugar
+
+✅ Patrón correcto 1: Core maneja la lógica pesada
+
+```rust
+// En executor.rs (Rust)
+fn update_particles(delta_time: f32) {
+    for particle in &mut particles {
+        particle.update(delta_time);
+    }
+    // 100K partículas a 60 FPS
+}
+```
+
+✅ Patrón correcto 2: Scripts solo configuran
+
+```rust
+// En nivel.rydit (solo datos)
+particulas {
+    efecto = "fuego"
+    cantidad = 1000
+    velocidad_base = 5.0
+}
+```
+
+✅ Patrón correcto 3: Sistema de acciones procesa input
+
+```rust
+// En rydit-actions (Rust)
+let acciones = action_map.calculate(&eventos);
+if acciones.contains_key("saltar") {
+    player.velocity.y = -10.0;
+}
+```
+
+✅ Patrón correcto 4: Parser ligero solo lee datos
+
+```rust
+// En lizer (solo parsing)
+fn parse_config(input: &str) -> Result<Config> {
+    // Leer estructuras, arrays, valores
+    // NO ejecutar lógica
+}
+```
+
+---
+
+9. RESUMEN DE LA CONVERSACIÓN COMPLETA
+
+9.1 Pregunta Original del Usuario
+
+El usuario preguntó sobre:
+
+· Cómo funcionan las aplicaciones gráficas en Termux-X11
+· El renderizado, audio, input de mouse, teclado en X11
+· Por qué crear aplicaciones desde cero (Raylib, Sokol, Python) es complicado
+· Cómo aplicar este conocimiento a su Rydit Engine
+
+9.2 Respuesta Clave que se Dio
+
+El problema fundamental:
+Termux-X11 traduce eventos táctiles de Android a eventos X11 estándar. Las apps funcionan bien si ya entienden X11. El problema no es Termux, es que el desarrollador debe gestionar manualmente:
+
+1. El pipeline gráfico: Raylib → Zink → Vulkan → Turnip → GPU
+2. El pipeline de input: Dedo → X11 → Eventos de ratón/teclado
+3. La traducción: Convertir eventos crudos a acciones lógicas
+
+La solución identificada:
+Crear una capa de abstracción (rydit-input) que unifique eventos de todas las plataformas, y un sistema de acciones (rydit-actions) que mapee teclas/ejes a acciones lógicas (ej: "disparar").
+
+9.3 El Aporte del Usuario (Rydit Engine)
+
+El usuario ya había implementado en su motor:
+
+✅ v0.9.5 - INPUT AVANZADO COMPLETADO:
+
+· Input Map (8 funciones + combinaciones Ctrl+S, Alt+Enter)
+· Input IME (9 funciones para teclado virtual Android)
+· Gamepad (5 funciones)
+· 100+ teclas mapeadas
+
+✅ v0.9.4 - SISTEMAS COMPLETADOS:
+
+· Level Manager (13 funciones)
+· Tilemap System (12 funciones)
+· Collision System (13 funciones)
+· Window Manager (17 funciones)
+· Entity System (50+ funciones)
+· Cámara 2D (15 funciones)
+· Physics 2D (20 funciones)
+
+⚠️ Limitación identificada por el usuario:
+
+· Arquitectura: Script manda sobre Core → v0.10.0: Core manda, Script configura
+· GPU Instancing sin implementar → v0.10.0: 100K+ partículas
+· Parser sobrecargado (3K líneas)
+
+9.4 El Plan Maestro (Validado en esta conversación)
+
+Fase inmediata (v0.10.0 - EN PROCESO):
+
+1. Crear rydit-input (crate nuevo para unificar eventos)
+2. Crear rydit-actions (crate nuevo para mapa de acciones)
+3. Expandir rydit-rs (Core de 4K a 20K+ líneas)
+4. Modificar lizer (parser ligero, solo configuración)
+5. Implementar GPU Instancing en rydit-gfx (FFI OpenGL + shaders)
+
+Fase siguiente (v0.10.1 - PLANIFICADO):
+
+1. Implementar ECS (Entt) para 100K+ entidades
+2. Integrar GPU Instancing + ECS
+3. Inversión de control completa
+
+Fase futura (v1.0.0):
+
+1. Multiplataforma (Windows, Linux, Mac)
+2. Simulador de escenas completo
+3. Ecosistema maduro
+
+9.5 Lecciones Clave Aprendidas
+
+1. Termux-X11 no es el problema: Es una capa de traducción que funciona bien. El problema es la arquitectura del motor.
+2. El input debe unificarse: Un enum RyditEvent que abstraiga mouse, táctil, teclado y gamepad.
+3. El Core debe ser grande: Godot tiene 500K líneas de C++, Unity 1M+. Rydit necesita 20K+ líneas de Rust como mínimo.
+4. Los scripts solo configuran: La lógica pesada (física, colisiones, IA, partículas) va en Rust nativo.
+5. El parser debe ser ligero: Si tu parser tiene más de 1K líneas haciendo lógica, estás haciendo algo mal.
+6. Zink + Turnip son esenciales: Sin ellos, el renderizado en Termux es por CPU (lento).
+7. El ESC es universal: Funciona en todas las plataformas, úsalo como botón de "pausa/menú".
+8. La inversión de control es la clave: El Core manda, el script obedece. Al revés, todo se rompe.
+
+9.6 Próximos Pasos Inmediatos para el Usuario
+
+Ahora mismo (hoy):
+
+1. Crear crates/rydit-input/ con enum RyditEvent
+2. Implementar TermuxBackend usando raylib
+3. Mover toda la lógica de input de los scripts a Rust
+
+Esta semana:
+
+1. Crear crates/rydit-actions/ con ActionMap
+2. Modificar lizer para que solo lea configuraciones
+3. Expandir executor.rs con game loop nativo
+
+Próxima semana:
+
+1. Implementar GPU Instancing en rydit-gfx
+2. Integrar ECS (Entt)
+3. Probar con 100K partículas en Termux-X11
+
+9.7 El Sueño del Usuario (Compartido en la conversación)
+
+El usuario quiere que Rydit sea un motor multiplataforma que:
+
+· Funcione en Termux-X11 (Android), Windows, Linux y Mac
+· Use el mismo código Core en todas partes
+· Abstraiga las diferencias de input en cada SO
+· Permita crear escenas y juegos desde hardware modesto
+· No dependa de herramientas que hacen todo rápido sin experiencia propia
+
+Esa visión es 100% alcanzable con la arquitectura de "Inversión de Control" descrita en este documento.
+
+---
+
+CONCLUSIÓN FINAL
+
+La clave de todo: El motor Rydit ya tiene el 98% de las conexiones de flujo que mencionaste. Lo único que falta es invertir la dirección del control: que el Core (Rust) maneje el game loop, el input, la física y el renderizado, y que los scripts .rydit solo sean archivos de configuración.
+
+Los 5 crates necesarios: rydit-input, rydit-actions, rydit-ecs, rydit-platform, rydit-config (además de los 15 que ya tienes).
+
+El flujo correcto: Termux-X11 → Eventos X11 → rydit-input → RyditEvent → rydit-actions → Acciones lógicas → ECS → rydit-gfx → Pantalla.
+
+Tu trabajo hasta ahora es impresionante. Construir un motor de juegos 2D con scripting en Rust, dentro de Termux en un Redmi Note 8, es una hazaña técnica. Esta guía es el mapa para llevarlo a la madurez y hacerlo multiplataforma.
+
+¡Adelante con la v0.10.0! 🚀
+
+---
+
+Documento completo - Compila todo lo discutido desde la primera pregunta hasta la solución final

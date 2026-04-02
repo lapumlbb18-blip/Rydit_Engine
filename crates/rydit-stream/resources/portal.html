@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RyDit Stream Portal</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Courier New', monospace;
+            background: #1a1a2e;
+            color: #eee;
+            overflow: hidden;
+        }
+        #viewer {
+            width: 100vw;
+            height: 70vh;
+            background: #000;
+        }
+        #controls {
+            height: 30vh;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        .btn {
+            background: #4a4a6a;
+            border: 2px solid #6a6a8a;
+            color: white;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+        .btn:active { background: #6a6a8a; transform: scale(0.95); }
+        #status {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 10px 20px;
+            background: rgba(0,0,0,0.7);
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .connected { color: #0f0; border: 1px solid #0f0; }
+        .disconnected { color: #f00; border: 1px solid #f00; }
+        #fps {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            padding: 10px;
+            background: rgba(0,0,0,0.7);
+            border-radius: 4px;
+            font-size: 14px;
+            color: #0ff;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="viewer"></canvas>
+    
+    <div id="controls">
+        <button class="btn" onclick="sendAction('up')">⬆️ Arriba</button>
+        <button class="btn" onclick="sendAction('down')">⬇️ Abajo</button>
+        <button class="btn" onclick="sendAction('left')">⬅️ Izq</button>
+        <button class="btn" onclick="sendAction('right')">➡️ Der</button>
+        <button class="btn" onclick="sendAction('action_a')">🅰️ A</button>
+        <button class="btn" onclick="sendAction('action_b')">🅱️ B</button>
+        <button class="btn" onclick="sendAction('pause')">⏸️ Pause</button>
+        <button class="btn" onclick="sendAction('reset')">🔄 Reset</button>
+    </div>
+
+    <div id="status" class="disconnected">● Desconectado</div>
+    <div id="fps">FPS: --</div>
+
+    <script>
+        let ws;
+        let lastFrame = 0;
+        let frameCount = 0;
+        const status = document.getElementById('status');
+        const fps = document.getElementById('fps');
+        const canvas = document.getElementById('viewer');
+        const ctx = canvas.getContext('2d');
+
+        // Conectar a WebSocket
+        function connect() {
+            const wsUrl = 'ws://' + window.location.hostname + ':8765';
+            ws = new WebSocket(wsUrl);
+            
+            ws.onopen = () => {
+                status.textContent = '● Conectado';
+                status.className = 'connected';
+                console.log('[PORTAL] Connected to', wsUrl);
+            };
+
+            ws.onclose = () => {
+                status.textContent = '● Desconectado';
+                status.className = 'disconnected';
+                console.log('[PORTAL] Disconnected, reconnecting...');
+                setTimeout(connect, 2000);
+            };
+
+            ws.onerror = (e) => {
+                console.error('[PORTAL] Error:', e);
+            };
+
+            ws.onmessage = (e) => {
+                try {
+                    const data = JSON.parse(e.data);
+                    render(data);
+                    updateFps();
+                } catch (err) {
+                    console.error('[PORTAL] Parse error:', err);
+                }
+            };
+        }
+
+        // Renderizar frame
+        function render(data) {
+            // Clear canvas
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Render entities
+            if (data.entities && Array.isArray(data.entities)) {
+                data.entities.forEach(entity => {
+                    ctx.fillStyle = entity.color || '#fff';
+                    
+                    if (entity.sprite) {
+                        // TODO: Cargar y renderizar sprite
+                        ctx.fillRect(entity.x, entity.y, entity.width || 50, entity.height || 50);
+                    } else {
+                        ctx.fillRect(entity.x, entity.y, entity.width || 50, entity.height || 50);
+                    }
+                    
+                    // Debug: mostrar ID
+                    if (entity.id !== undefined) {
+                        ctx.fillStyle = '#fff';
+                        ctx.font = '10px monospace';
+                        ctx.fillText('#' + entity.id, entity.x + 2, entity.y + 12);
+                    }
+                });
+            }
+
+            // Mostrar delta time
+            if (data.delta) {
+                ctx.fillStyle = '#0ff';
+                ctx.font = '12px monospace';
+                ctx.fillText('Δ: ' + (data.delta * 1000).toFixed(1) + 'ms', 10, canvas.height - 10);
+            }
+        }
+
+        // Actualizar FPS counter
+        function updateFps() {
+            const now = performance.now();
+            frameCount++;
+            
+            if (now - lastFrame >= 1000) {
+                fps.textContent = 'FPS: ' + frameCount;
+                frameCount = 0;
+                lastFrame = now;
+            }
+        }
+
+        // Enviar acción al servidor
+        function sendAction(action) {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                const msg = JSON.stringify({
+                    jsonrpc: '2.0',
+                    method: 'stream.action',
+                    params: { action: action },
+                    id: Date.now()
+                });
+                ws.send(msg);
+                console.log('[PORTAL] Sent action:', action);
+            } else {
+                console.warn('[PORTAL] Not connected');
+            }
+        }
+
+        // Auto-connect al cargar
+        connect();
+
+        // Resize canvas
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight * 0.7;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Keyboard controls
+        document.addEventListener('keydown', (e) => {
+            const keyMap = {
+                'ArrowUp': 'up',
+                'ArrowDown': 'down',
+                'ArrowLeft': 'left',
+                'ArrowRight': 'right',
+                'KeyA': 'action_a',
+                'KeyB': 'action_b',
+                'Space': 'action_a',
+                'KeyP': 'pause',
+                'KeyR': 'reset'
+            };
+            
+            if (keyMap[e.code]) {
+                sendAction(keyMap[e.code]);
+            }
+        });
+    </script>
+</body>
+</html>

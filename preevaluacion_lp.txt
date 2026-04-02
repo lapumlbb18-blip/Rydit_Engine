@@ -1,0 +1,34 @@
+================================================================================
+ PROCESO DEL PARSER + RYBOT
+================================================================================
+
+Arquitectura Propuesta en la sesion anterior
+
++-----------------------------------------------------------------------+
+| lizer/ (Parser Puro)                                                  |
+| ├── lexer/            # Tokenización zero-copy                        |
+| ├── parser/           # Parsing a AST                                 |
+| ├── ast/              # AST typed                                     |
+| └── bytecode/         # Compilación a bytecode                        |
++-----------------------------------------------------------------------+
+                                  ↓
++-----------------------------------------------------------------------+
+| rybot/ (Inspector + Registry + Helpers)                               |
+| ├── registry.rs       # Registry central                              |
+| ├── alerts.rs         # Alertas                                       |
+| ├── module_state.rs   # Estado de módulos                             |
+| ├── parser_helpers.rs # Helpers para lizer                            |
+| └── cache.rs          # AST caching                                   |
++-----------------------------------------------------------------------+
+
+
+================================================================================
+ TABLA DE MOVIMIENTOS (REFACTORING) esta ers una referencia de que mover
+================================================================================
+
+| Función             | Ubicación Ac...      | Nueva Ubicación           | Razón                        |
+|---------------------|----------------------|---------------------------|------------------------------|
+| parse_cached()      | lizer/lib.rs         | rybot/cache.rs            | Caching es cross-cut...      |
+| AST_CACHE           | lizer/lib.rs         | rybot/cache.rs            | Registry necesita ac...      |
+| Error reporting     | lizer/parser.rs      | rybot/alerts.rs           | RyBot ya maneja alertas      |
+| Module valida...    | lizer/               | `rybot/module_sta...       | RyBot trackea módulos        |
