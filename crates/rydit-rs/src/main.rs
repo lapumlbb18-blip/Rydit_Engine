@@ -247,13 +247,8 @@ pub fn ejecutar_stmt(
             );
         }
         Stmt::Call { callee, args } => {
-            // Extraer nombre de función
-            let func_name = if let Expr::Var(name) = callee.as_ref() {
-                name.to_string()
-            } else {
-                println!("[WARNING] Call requiere función válida");
-                return (false, None);
-            };
+            // callee es &str directo (AST nuevo)
+            let func_name = callee.to_string();
 
             // Llamar función builtin o de usuario
             // Primero verificar funciones builtin
@@ -1455,11 +1450,9 @@ fn ejecutar_stmt_gfx(
             funcs.insert(name.clone(), (params.clone(), body.clone()));
         }
         Stmt::Call { callee, args } => {
-            let func_name = if let Expr::Var(name) = callee.as_ref() {
-                *name
-            } else {
-                return Valor::Error("Call requiere función válida".to_string());
-            };
+            // callee es &str directo (AST nuevo)
+            let func_name = callee.to_string();
+            
             // Verificar si es tecla_presionada("tecla")
             if func_name == "tecla_presionada" && args.len() == 1 {
                 if let Expr::Texto(tecla) = &args[0] {
