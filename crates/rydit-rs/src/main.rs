@@ -47,7 +47,7 @@ pub use rydit_science::ScienceModule;
 
 // Imports necesarios para el código restante en main.rs
 use blast_core::{Executor, Valor};
-use rydit_parser::{Expr, Parser, Stmt, Program};
+use rydit_parser::{Expr, Parser, Stmt, Program, BinaryOp, UnaryOp};
 use rydit_lexer::Lexer;
 use migui::{Color as MiguiColor, Migui, Rect, WidgetId};
 use rydit_gfx::render_queue::{DrawCommand, RenderQueue};
@@ -3036,17 +3036,17 @@ pub fn evaluar_expr_gfx(
 
             Valor::Error(format!("Función '{}' no soportada", name))
         }
-        Expr::BinOp { left, op, right } => {
+        Expr::Binary { left, op, right } => {
             let left_val = evaluar_expr_gfx(left, executor, input, funcs);
             let right_val = evaluar_expr_gfx(right, executor, input, funcs);
 
             match op {
-                lizer::BinOp::And => {
+                BinaryOp::And => {
                     let l_bool = valor_a_bool(&left_val);
                     let r_bool = valor_a_bool(&right_val);
                     return Valor::Bool(l_bool && r_bool);
                 }
-                lizer::BinOp::Or => {
+                BinaryOp::Or => {
                     let l_bool = valor_a_bool(&left_val);
                     let r_bool = valor_a_bool(&right_val);
                     return Valor::Bool(l_bool || r_bool);
@@ -3055,7 +3055,7 @@ pub fn evaluar_expr_gfx(
             }
 
             // Concatenación de strings con + (con coerción automática de números)
-            if matches!(op, lizer::BinOp::Suma) {
+            if matches!(op, BinaryOp::Suma) {
                 match (&left_val, &right_val) {
                     (Valor::Texto(l), Valor::Texto(r)) => {
                         return Valor::Texto(format!("{}{}", l, r));
@@ -3077,21 +3077,21 @@ pub fn evaluar_expr_gfx(
 
             if let (Valor::Num(l), Valor::Num(r)) = (left_val, right_val) {
                 return match op {
-                    lizer::BinOp::Suma => Valor::Num(l + r),
-                    lizer::BinOp::Resta => Valor::Num(l - r),
-                    lizer::BinOp::Mult => Valor::Num(l * r),
-                    lizer::BinOp::Div => {
+                    BinaryOp::Suma => Valor::Num(l + r),
+                    BinaryOp::Resta => Valor::Num(l - r),
+                    BinaryOp::Mult => Valor::Num(l * r),
+                    BinaryOp::Div => {
                         if r != 0.0 {
                             Valor::Num(l / r)
                         } else {
                             Valor::Error("División por cero".to_string())
                         }
                     }
-                    lizer::BinOp::Mayor => Valor::Bool(l > r),
-                    lizer::BinOp::Menor => Valor::Bool(l < r),
-                    lizer::BinOp::Igual => Valor::Bool((l - r).abs() < 0.0001),
-                    lizer::BinOp::MayorIgual => Valor::Bool(l >= r),
-                    lizer::BinOp::MenorIgual => Valor::Bool(l <= r),
+                    BinaryOp::Mayor => Valor::Bool(l > r),
+                    BinaryOp::Menor => Valor::Bool(l < r),
+                    BinaryOp::Igual => Valor::Bool((l - r).abs() < 0.0001),
+                    BinaryOp::MayorIgual => Valor::Bool(l >= r),
+                    BinaryOp::MenorIgual => Valor::Bool(l <= r),
                     _ => Valor::Error("Operador no soportado".to_string()),
                 };
             }
@@ -3101,11 +3101,11 @@ pub fn evaluar_expr_gfx(
         Expr::Unary { op, expr } => {
             let val = evaluar_expr_gfx(expr, executor, input, funcs);
             match op {
-                lizer::UnaryOp::Not => {
+                UnaryOp::Not => {
                     let b = valor_a_bool(&val);
                     Valor::Bool(!b)
                 }
-                lizer::UnaryOp::Neg => {
+                UnaryOp::Neg => {
                     if let Valor::Num(n) = val {
                         Valor::Num(-n)
                     } else {
@@ -4068,12 +4068,12 @@ pub fn evaluar_expr_migui(
             );
 
             match op {
-                lizer::BinOp::And => {
+                BinaryOp::And => {
                     let l_bool = valor_a_bool(&left_val);
                     let r_bool = valor_a_bool(&right_val);
                     return Valor::Bool(l_bool && r_bool);
                 }
-                lizer::BinOp::Or => {
+                BinaryOp::Or => {
                     let l_bool = valor_a_bool(&left_val);
                     let r_bool = valor_a_bool(&right_val);
                     return Valor::Bool(l_bool || r_bool);
@@ -4081,7 +4081,7 @@ pub fn evaluar_expr_migui(
                 _ => {}
             }
 
-            if matches!(op, lizer::BinOp::Suma) {
+            if matches!(op, BinaryOp::Suma) {
                 match (&left_val, &right_val) {
                     (Valor::Texto(l), Valor::Texto(r)) => {
                         return Valor::Texto(format!("{}{}", l, r));
@@ -4101,34 +4101,33 @@ pub fn evaluar_expr_migui(
 
             if let (Valor::Num(l), Valor::Num(r)) = (&left_val, &right_val) {
                 match op {
-                    lizer::BinOp::Suma => return Valor::Num(l + r),
-                    lizer::BinOp::Resta => return Valor::Num(l - r),
-                    lizer::BinOp::Mult => return Valor::Num(l * r),
-                    lizer::BinOp::Div => {
+                    BinaryOp::Suma => return Valor::Num(l + r),
+                    BinaryOp::Resta => return Valor::Num(l - r),
+                    BinaryOp::Mult => return Valor::Num(l * r),
+                    BinaryOp::Div => {
                         if *r != 0.0 {
                             return Valor::Num(l / r);
                         } else {
                             return Valor::Error("División por cero".to_string());
                         }
                     }
-                    // Mod y Exp no existen en lizer::BinOp
-                    lizer::BinOp::Igual => return Valor::Bool((l - r).abs() < f64::EPSILON),
-                    lizer::BinOp::Menor => return Valor::Bool(l < r),
-                    lizer::BinOp::MenorIgual => return Valor::Bool(l <= r),
-                    lizer::BinOp::Mayor => return Valor::Bool(l > r),
-                    lizer::BinOp::MayorIgual => return Valor::Bool(l >= r),
+                    BinaryOp::Igual => return Valor::Bool((l - r).abs() < f64::EPSILON),
+                    BinaryOp::Menor => return Valor::Bool(l < r),
+                    BinaryOp::MenorIgual => return Valor::Bool(l <= r),
+                    BinaryOp::Mayor => return Valor::Bool(l > r),
+                    BinaryOp::MayorIgual => return Valor::Bool(l >= r),
                     _ => {}
                 }
             }
 
             match (&left_val, &right_val) {
                 (Valor::Texto(l), Valor::Texto(r)) => {
-                    if op == &lizer::BinOp::Igual {
+                    if op == &BinaryOp::Igual {
                         return Valor::Bool(l == r);
                     }
                 }
                 (Valor::Bool(l), Valor::Bool(r)) => {
-                    if op == &lizer::BinOp::Igual {
+                    if op == &BinaryOp::Igual {
                         return Valor::Bool(l == r);
                     }
                 }
