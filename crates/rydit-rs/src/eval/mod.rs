@@ -1396,7 +1396,7 @@ pub fn evaluar_expr<'a>(
                     Valor::Texto(s) => s,
                     _ => return Valor::Error("http::get() url debe ser texto".to_string()),
                 };
-                return match ureq::get(&url).call() {
+                return match ureq::get(&url).call().into_string() {
                     Ok(response) => Valor::Texto(response),
                     Err(e) => Valor::Error(e),
                 };
@@ -1420,7 +1420,7 @@ pub fn evaluar_expr<'a>(
                         )
                     }
                 };
-                return match ureq::post(&url).send_string(&data) {
+                return match ureq::post(&url).send_string(&data).map(|r| r.into_string()).unwrap_or(Err("POST error".to_string())) {
                     Ok(response) => Valor::Texto(response),
                     Err(e) => Valor::Error(e),
                 };
@@ -1442,7 +1442,7 @@ pub fn evaluar_expr<'a>(
                         return Valor::Error("http::put() data debe ser texto o número".to_string())
                     }
                 };
-                return match ureq::put(&url).send_string(&data) {
+                return match ureq::put(&url).send_string(&data).map(|r| r.into_string()).unwrap_or(Err("PUT error".to_string())) {
                     Ok(response) => Valor::Texto(response),
                     Err(e) => Valor::Error(e),
                 };
@@ -1456,7 +1456,7 @@ pub fn evaluar_expr<'a>(
                     Valor::Texto(s) => s,
                     _ => return Valor::Error("http::delete() url debe ser texto".to_string()),
                 };
-                return match ureq::delete(&url).call() {
+                return match ureq::delete(&url).call().into_string() {
                     Ok(response) => Valor::Texto(response),
                     Err(e) => Valor::Error(e),
                 };
@@ -3393,7 +3393,7 @@ pub fn evaluar_expr<'a>(
                 return entity_get_position(args, executor, funcs);
             }
 
-            Valor::Error(format!("Función '{}' no soportada en expresiones", name))
+            Valor::Error(format!("Función '{}' no soportada en expresiones", func_name))
         }
         Expr::Binary { left, op, right } => {
             let left_val = evaluar_expr(left, executor, funcs);
