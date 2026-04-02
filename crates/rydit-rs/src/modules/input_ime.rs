@@ -3,7 +3,7 @@
 // v0.9.2: Soporte para input de texto con teclado desplegable
 
 use blast_core::{Executor, Valor};
-use lizer::{Expr, Stmt};
+use rydit_parser::{Expr, Stmt};
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;

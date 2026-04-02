@@ -279,7 +279,7 @@ pub fn get_input_map() -> Rc<RefCell<InputMapState>> {
 // ============================================================================
 
 use blast_core::Executor;
-use lizer::{Expr, Stmt};
+use rydit_parser::{Expr, Stmt};
 
 /// input_map::register(combo, action) - Registrar combinación personalizada
 pub fn input_map_register(

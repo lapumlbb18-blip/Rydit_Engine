@@ -2,7 +2,7 @@
 // RyditModule trait para módulos extensibles
 
 use blast_core::{Executor, Valor};
-use lizer::{Expr, Stmt};
+use rydit_parser::{Expr, Stmt};
 use std::collections::HashMap;
 
 /// Tipo de función registrable en un módulo

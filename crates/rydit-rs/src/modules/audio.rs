@@ -4,7 +4,7 @@
 // Integración con rydit-gfx AudioSystem para reproducción real
 
 use blast_core::{Executor, Valor};
-use lizer::{Expr, Stmt};
+use rydit_parser::{Expr, Stmt};
 use rydit_gfx::AudioSystem;
 use std::cell::RefCell;
 use std::collections::HashMap;

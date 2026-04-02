@@ -36,7 +36,3 @@ path = "src/main.rs"
 [[bin]]
 name = "demo_stream"
 path = "src/bin/demo_stream.rs"
-
-[[bin]]
-name = "demo_migui_sdl2"
-path = "src/bin/demo_migui_sdl2.rs"

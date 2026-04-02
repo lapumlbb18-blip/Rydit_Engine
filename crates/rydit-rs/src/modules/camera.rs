@@ -20,7 +20,7 @@
 // - camera::reset()
 
 use blast_core::{Executor, Valor};
-use lizer::{Expr, Stmt};
+use rydit_parser::{Expr, Stmt};
 use rydit_gfx::camera::get_camera;
 use std::collections::HashMap;
 

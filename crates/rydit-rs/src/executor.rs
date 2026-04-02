@@ -5,7 +5,7 @@ use std::collections::{HashMap, HashSet};
 use std::time::Instant;
 
 use blast_core::Executor;
-use lizer::Program;
+use rydit_parser::Program;
 use migui::Migui;
 use rydit_gfx::render_queue::{DrawCommand, RenderQueue};
 use rydit_gfx::RyditGfx;

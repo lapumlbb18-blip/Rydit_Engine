@@ -799,7 +799,7 @@ pub fn csv_aggregate(
 mod tests {
     use super::*;
     use blast_core::Executor;
-    use lizer::{Expr, Stmt};
+    use rydit_parser::{Expr, Stmt};
 
     fn setup_test() -> (Executor, HashMap<String, (Vec<String>, Vec<Stmt>)>) {
         (Executor::nuevo(), HashMap::new())

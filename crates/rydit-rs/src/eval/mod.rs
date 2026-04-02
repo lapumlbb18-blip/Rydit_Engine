@@ -1,9 +1,10 @@
 // crates/rydit-rs/src/eval/mod.rs
 // Evaluador de expresiones RyDit
 // ✅ v0.10.4: Reconectado con módulos
+// ✅ v0.11.4: Migrado a rydit-parser
 
 use blast_core::{Executor, Valor};
-use lizer::{Expr, Stmt};
+use rydit_parser::{Expr, Stmt, Program, BinaryOp, UnaryOp};
 use std::collections::{HashMap, HashSet};
 
 // Importar funciones auxiliares desde main.rs
