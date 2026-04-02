@@ -246,7 +246,7 @@ pub fn ejecutar_stmt(
         Stmt::Call { callee, args } => {
             // Extraer nombre de función
             let func_name = if let Expr::Var(name) = callee.as_ref() {
-                *name
+                name.to_string()
             } else {
                 println!("[WARNING] Call requiere función válida");
                 return (false, None);
