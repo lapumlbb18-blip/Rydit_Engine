@@ -5,7 +5,7 @@ use std::collections::{HashMap, HashSet};
 use std::time::Instant;
 
 use blast_core::Executor;
-use rydit_parser::Program;
+use rydit_parser::{Program, Stmt};
 use migui::Migui;
 use rydit_gfx::render_queue::{DrawCommand, RenderQueue};
 use rydit_gfx::RyditGfx;
@@ -18,10 +18,10 @@ use crate::{
 use crate::rybot::RyBot;
 
 /// Ejecutar programa en modo comandante (sin gráficos)
-pub fn ejecutar_programa(
-    program: &Program,
+pub fn ejecutar_programa<'a>(
+    program: &Program<'a>,
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<lizer::Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) {
     // Contexto de imports: módulos cargados y stack de imports en progreso
     let mut loaded_modules: HashSet<String> = HashSet::new();
@@ -49,10 +49,10 @@ pub fn ejecutar_programa(
 }
 
 /// Ejecutar programa en modo gráfico (gfx)
-pub fn ejecutar_programa_gfx(
-    program: &Program,
+pub fn ejecutar_programa_gfx<'a>(
+    program: &Program<'a>,
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<lizer::Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
     gfx: &mut RyditGfx,
 ) {
     // Inicializar debug log
@@ -90,7 +90,7 @@ pub fn ejecutar_programa_gfx(
     for stmt in &program.statements {
         match stmt {
             // While y Blocks son game loops - NO ejecutar aquí
-            lizer::Stmt::While { .. } | lizer::Stmt::Block(_) => {
+            Stmt::While { .. } | Stmt::Block(_) => {
                 rydit_gfx::debug_log::debug_info("Statement es game loop (While/Block)");
             }
             // Todo lo demás es inicialización
@@ -116,7 +116,7 @@ pub fn ejecutar_programa_gfx(
     let mut found_loop = false;
     for stmt in &program.statements {
         match stmt {
-            lizer::Stmt::While { condition, body } => {
+            Stmt::While { condition, body } => {
                 found_loop = true;
                 rydit_gfx::debug_log::debug_info("=== ENCONTRADO GAME LOOP WHILE ===");
                 rydit_gfx::debug_log::debug_log(&format!("Body tiene {} statements", body.len()));
@@ -263,7 +263,7 @@ pub fn ejecutar_programa_gfx(
                 ));
                 break; // Solo un game loop principal
             }
-            lizer::Stmt::Block(stmts) => {
+            Stmt::Block(stmts) => {
                 found_loop = true;
                 // Block es game loop - ejecutar en cada frame con RenderQueue
                 while !gfx.should_close() {
@@ -352,7 +352,7 @@ pub fn ejecutar_programa_gfx(
             // Ejecutar todos los statements que no son While/Block
             for stmt in &program.statements {
                 match stmt {
-                    lizer::Stmt::While { .. } | lizer::Stmt::Block(_) => {}
+                    Stmt::While { .. } | Stmt::Block(_) => {}
                     _ => {
                         ejecutar_stmt_gfx(
                             stmt,
@@ -400,10 +400,10 @@ pub fn ejecutar_programa_gfx(
 }
 
 /// Ejecutar programa en modo migui (GUI)
-pub fn ejecutar_programa_migui(
-    program: &Program,
+pub fn ejecutar_programa_migui<'a>(
+    program: &Program<'a>,
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<lizer::Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
     gui: &mut Migui,
     gfx: &mut RyditGfx,
 ) {
@@ -420,10 +420,10 @@ pub fn ejecutar_programa_migui(
     // Primero, ejecutar statements iniciales (definiciones de funciones, variables)
     for stmt in &program.statements {
         match stmt {
-            lizer::Stmt::Function { name, params, body } => {
+            Stmt::Function { name, params, body } => {
                 funcs.insert(name.clone(), (params.clone(), body.clone()));
             }
-            lizer::Stmt::Assign { name, value } => {
+            Stmt::Assign { name, value } => {
                 let valor = evaluar_expr_migui(
                     value,
                     executor,
@@ -441,12 +441,12 @@ pub fn ejecutar_programa_migui(
     }
 
     // Guardar el bloque de código para ejecutar en cada frame
-    let frame_stmts: Vec<&lizer::Stmt> = program
+    let frame_stmts: Vec<&Stmt<'a>> = program
         .statements
         .iter()
-        .filter(|s| matches!(s, lizer::Stmt::Block(_)))
+        .filter(|s| matches!(s, Stmt::Block(_)))
         .flat_map(|s| {
-            if let lizer::Stmt::Block(stmts) = s {
+            if let Stmt::Block(stmts) = s {
                 stmts.iter().collect()
             } else {
                 vec![]
