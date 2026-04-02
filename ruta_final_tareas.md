@@ -391,3 +391,41 @@ cargo run --bin demo_particles
 **Próximo: RyBot Cache (3-4 días) → RyBot UI (1 semana) → Test Demos**
 
 </div>
+
+---
+
+## 🔍 **ESTADO DE INTEGRACIÓN v0.11.4**
+
+### ✅ **CRATES QUE FUNCIONAN (84 tests)**
+
+| Crate | Tests | Estado | Notas |
+|-------|-------|--------|-------|
+| rydit-lexer | 20 | ✅ 100% | Zero-copy funcionando |
+| rydit-parser | 23 | ✅ 100% | Error recovery OK |
+| rydit-vm | 19 | ✅ 100% | Bytecode compilando |
+| rydit-stream | 17 | ✅ 100% | Streaming + portal |
+| rydit-gfx | 2 | ✅ 100% | FSR 1.0 shaders |
+| blast-core | 20 | ✅ 100% | Executor legacy |
+
+### ⚠️ **INTEGRACIÓN PENDIENTE (rydit-rs)**
+
+**Problema**: `eval/mod.rs` usa imports antiguos de `lizer`
+
+**Errores**: 118 errores de compilación
+
+**Causa**: 
+- `lizer::Lizer` → ahora es `rydit_lexer::Lexer`
+- `lizer::Parser` → ahora es `rydit_parser::Parser`
+- `lizer::BinOp` → ahora es `rydit_parser::BinaryOp`
+
+**Solución** (3-4 días):
+1. Actualizar imports en `rydit-rs/src/eval/mod.rs`
+2. Actualizar `evaluar_expr()` para usar nuevo AST
+3. Integrar `rydit-vm` en game loop
+4. Tests de integración
+
+**Workaround actual**:
+- Usar crates individuales (todos funcionan)
+- `demo_stream` usa rydit-stream directamente
+- Tests unitarios passing (84 tests)
+
