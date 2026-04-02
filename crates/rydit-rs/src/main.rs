@@ -1448,7 +1448,7 @@ fn ejecutar_stmt_gfx(
             }
         }
         Stmt::Function { name, params, body } => {
-            funcs.insert(name.clone(), (params.clone(), body.clone()));
+            funcs.insert(name.clone(), (params.iter().map(|s| s.to_string()).collect(), body.clone()));
         }
         Stmt::Call { callee, args } => {
             // callee es &str directo (AST nuevo)
@@ -1834,14 +1834,15 @@ fn ejecutar_stmt_gfx(
                 let tokens = Lexer::new(&content).scan();
                 let mut parser = Parser::new(tokens);
 
-                let program = match parser.parse() {
-                    Ok(p) => p,
-                    Err(e) => {
-                        println!("[ERROR] Error parseando módulo '{}': {}", module, e);
-                        importing_stack.pop();
-                        return None;
+                let (program, errors) = parser.parse();
+                if !errors.is_empty() {
+                    println!("[ERROR] Errores parseando módulo '{}': {} errores", module, errors.len());
+                    for e in &errors {
+                        println!("  - {:?}", e);
                     }
-                };
+                    importing_stack.pop();
+                    return None;
+                }
 
                 // Recolectar nombres de funciones originales
                 let mut original_funcs: Vec<String> = Vec::new();
@@ -4484,7 +4485,7 @@ pub fn ejecutar_stmt_migui(
             }
         }
         Stmt::Function { name, params, body } => {
-            funcs.insert(name.clone(), (params.clone(), body.clone()));
+            funcs.insert(name.clone(), (params.iter().map(|s| s.to_string()).collect(), body.clone()));
         }
         Stmt::Call { callee, args } => {
             // Extraer nombre de función
@@ -4548,14 +4549,16 @@ pub fn ejecutar_stmt_migui(
                 let tokens = Lexer::new(&content).scan();
                 let mut parser = Parser::new(tokens);
 
-                let program = match parser.parse() {
-                    Ok(p) => p,
-                    Err(e) => {
-                        println!("[ERROR] Error parseando módulo '{}': {}", module, e);
-                        importing_stack.pop();
-                        return (None, None);
+                let (program, errors) = parser.parse();
+                if !errors.is_empty() {
+                    println!("[ERROR] Errores parseando módulo '{}': {} errores", module, errors.len());
+                    for e in &errors {
+                        println!("  - {:?}", e);
                     }
-                };
+                    importing_stack.pop();
+                    return (None, None);
+                }
+
 
                 let mut original_funcs: Vec<String> = Vec::new();
                 for s in &program.statements {
