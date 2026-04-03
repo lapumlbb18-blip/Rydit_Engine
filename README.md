@@ -10,13 +10,14 @@
 [![Errors](https://img.shields.io/badge/errors-0-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
 [![Warnings](https://img.shields.io/badge/warnings-0-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
 [![Tests](https://img.shields.io/badge/tests-101+-passing-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
-[![Status](https://img.shields.io/badge/estado-v0.11.6--input%20ttf%20sprites%20rigid%20body-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![Status](https://img.shields.io/badge/estado-v0.11.6--input%20ttf%20sprites%20rigid%20body%20audio-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
 [![SDL2](https://img.shields.io/badge/SDL2-0.37-red.svg)](https://www.libsdl.org/)
 [![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine/blob/main/LICENSE)
+[![Videos](https://img.shields.io/badge/videos-3%20demos-purple.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine/tree/main/screenshots)
 
-[📖 Documentación](#-documentación) • [🔧 Estado Actual](#-estado-actual) • [🎯 Roadmap](#-roadmap) • [✨ v0.11.6](#-v0116---input-ttf-sprites-rigid-body)
+[📖 Documentación](#-documentación) • [🎬 Videos Demo](#-videos-demostrativos-v0116) • [🔧 Estado Actual](#-estado-actual) • [🏆 Logros](#-logros) • [🎯 Roadmap](#-roadmap)
 
 </div>
 
@@ -641,14 +642,45 @@ cargo run --bin rydit-rs -- --gfx snake.rydit
 
 ---
 
-### ✨ Sistema de Partículas v0.5.3
+### ✨ Sistema de Partículas v0.5.3 + Rigid Body + Audio v0.11.6
 
-| Demo Partículas |
-|--------------|
-| ![Partículas Demo](screenshots/particulas.jpg) |
-| **5 efectos: fuego, humo, explosión, lluvia, chispas** - 60 FPS con 500+ partículas |
+| Demo Partículas | Rigid Body + Audio |
+|--------------|--------------|
+| ![Partículas Demo](screenshots/particulas.jpg) | 🎬 **Video:** [Ver partículas](screenshots/particulas.mp4) |
+| **5 efectos: fuego, humo, explosión, lluvia, chispas** - 60 FPS con 500+ partículas | **SDL2_mixer funcionando** - Sonidos de salto y colisión generados dinámicamente |
 
-**Video completo:** [Ver video de partículas](screenshots/particulas.mp4)
+#### 🎬 Videos Demostrativos v0.11.6
+
+<table align="center">
+<tr>
+<td align="center">
+<b>🎮 Rigid Body + TTF + Sprites</b><br>
+<video width="300" controls>
+<source src="screenshots/Rydit_demo1.mp4" type="video/mp4">
+Tu navegador no soporta video.
+</video><br>
+Input SDL2 + Texto TTF + 4 Sprites PNG + Gravedad + Colisiones
+</td>
+<td align="center">
+<b>🔊 Test Audio SDL2_mixer</b><br>
+<video width="300" controls>
+<source src="screenshots/test_demo.mp4" type="video/mp4">
+Tu navegador no soporta video.
+</video><br>
+Generación de tonos WAV + Reproducción SDL2_mixer
+</td>
+</tr>
+<tr>
+<td align="center" colspan="2">
+<b>✨ Sistema de Partículas</b><br>
+<video width="400" controls>
+<source src="screenshots/particulas.mp4" type="video/mp4">
+Tu navegador no soporta video.
+</video><br>
+Fuego, humo, explosión, lluvia, chispas - 60 FPS
+</td>
+</tr>
+</table>
 
 **Controles del Demo:**
 - `F` - Fuego
@@ -882,8 +914,10 @@ Crates:
 | **v0.5.0** | ✅ | **RELEASE ESTABLE** (7 demos funcionales, 157 tests) | 2026-03-26 |
 | **v0.5.1** | 🔜 | **Audio + HTTP + CSV + Assets + Partículas** | Próxima sesión |
 | **v0.7.3.x** | ⏳ | **rydit-geometry** (Ilusiones ópticas, pendiente) | Próxima sesión |
-| **v0.8.0.0** | 🔮 | **Publicación crates.io + Linux/Windows** | 4-6 semanas |
-| **v1.0.0** | 🔮 | Production Ready | 6-8 meses |
+| **v0.11.5** | ✅ | **CLEAN CODE** (0 errores, 0 warnings, lifetimes, 132 problemas → 0) | 2026-04-02 |
+| **v0.11.6** | ✅ | **Input SDL2 + TTF + Sprites + Rigid Body + Audio + 3 Videos** | 2026-04-03 |
+| **v0.11.7** | 🔮 | Migrar audio.rs a SDL2_mixer + Demo .rydit con audio | Próxima sesión |
+| **v0.12.0** | 🔮 | Primer juego completo (platformer) + FSR 1.0 | 2026-04-21 |
 
 </div>
 
@@ -891,7 +925,21 @@ Crates:
 
 ## 🎯 Estado del Proyecto
 
-### ✅ Completado (v0.11.5 - CLEAN CODE)
+### ✅ Completado (v0.11.6 - INPUT + TTF + SPRITES + RIGID BODY + AUDIO)
+- [x] **Input SDL2 Funcional** - `repeat: false` patrón (cada pulsación = acción individual)
+- [x] **← → ↑ ↓ + WASD + SPACE** - Todas las teclas responden en Termux-X11
+- [x] **SDL2_ttf Texto Real** - `draw_text()` con FontFFI, sin parpadeo (texturas cacheadas cada 30 frames)
+- [x] **Sprites PNG Cargados** - 4 sprites con SDL2_image (`tank_16x16`, `helicopter_16x16`, `crate_8x8`, `platform_16x16`)
+- [x] **Rigid Body Demo** - 4 cuerpos con gravedad + colisiones AABB + empuje del jugador
+- [x] **Audio SDL2_mixer** - Sonidos generados dinámicamente (salto 600Hz, empujón 300Hz)
+- [x] **3 Videos Demo** - Rigid Body, Audio Test, Partículas - embebidos y reproducibles en README
+- [x] **demo_colisiones.rs** - Input básico funcionando (cuadro rojo + 6 plataformas)
+- [x] **demo_rigidbody.rs** - Demo completo con todo integrado (input + TTF + sprites + audio + físicas)
+- [x] **test_audio_minimal.rs** - Test independiente de audio SDL2_mixer
+- [x] **CLAVE_INPUT_SDL2.md** - Documentación del patrón de input que funciona
+- [x] **Git Push + Drive Sync** - Commits automáticos con changelog
+
+### ⏳ Completado (v0.11.5 - CLEAN CODE)
 - [x] **0 Errores de compilación** - Código limpio
 - [x] **0 Warnings** - Clippy clean
 - [x] **Lifetimes explícitos** - 34 errores fixeados
@@ -908,12 +956,11 @@ Crates:
 - [x] **Parser Zero-Copy** - 50% menos memoria
 - [x] **RyBot Inspector** - Registry + Alertas + CLI
 
-### ⏳ Pendiente por Testear (v0.11.6)
-- [ ] **Tests gráficos en Termux-X11** - Manuales (limitación del entorno)
-- [ ] **Input SDL2** - Teclado (69 teclas), mouse, gamepad
-- [ ] **Render SDL2** - Formas, sprites, texto con colores
-- [ ] **Audio SDL2** - Sonidos y música
-- [ ] **rydit-rs binario completo** - Ejecutar demos reales
+### ⏳ Pendiente por Testear (v0.11.7+)
+- [ ] **Migrar audio.rs a SDL2_mixer** - Actualmente usa raylib, necesita SDL2
+- [ ] **Demo .rydit con audio** - `audio::load()` + `audio::play()` desde script
+- [ ] **Primer juego completo** - Platformer con input + sprites + audio + colisiones
+- [ ] **Integrar audio en demo_rigidbody** - Sonido al colisionar rigid bodies
 
 ### 📊 Estimación de Tests
 
@@ -1230,33 +1277,23 @@ ryda frame < 500 {
 
 ## 🏆 Logros
 
-### Sesión v0.5.3 - REPL Interactivo + Partículas
-- ✅ **REPL Interactivo** - `:help`, `:load`, `:save`, `:vars`, `:history`, `:clear`, `:exit` (+150 líneas)
-- ✅ **Historial de comandos** - Navegación con ↑ ↓ (listo para implementación con crossterm)
-- ✅ **Auto-completado** - Función `auto_complete()` con keywords RyDit
-- ✅ **Colores en output** - Verde (éxito), Rojo (error), Cyan (ayuda)
-- ✅ **Sistema de Partículas** - ~400 líneas Rust (`particles.rs`)
-- ✅ **5 efectos preset** - fuego, humo, explosión, lluvia, chispas
-- ✅ **Demo Partículas** - Binary independiente (`demo_particles`)
-- ✅ **45+ tests pasando** (core sin gráficos, sin regresiones)
-- ✅ **0 errors, 1 warning menor**
-- ✅ **~1,200 líneas Rust** agregadas (REPL ~150, partículas ~400, demo ~130, docs ~576)
+### Sesión v0.11.6 - Input SDL2 + TTF + Sprites + Rigid Body + Audio
+- ✅ **Input SDL2 Funcional** - `repeat: false` patrón (cada pulsación = acción)
+- ✅ **SDL2_ttf Texto Real** - `draw_text()` con FontFFI, sin parpadeo (texturas cacheadas)
+- ✅ **Sprites PNG Cargados** - 4 sprites con SDL2_image (`tank`, `helicopter`, `crate`, `platform`)
+- ✅ **Rigid Body Demo** - 4 cuerpos con gravedad + colisiones + empuje del jugador
+- ✅ **Audio SDL2_mixer** - Sonidos generados dinámicamente (salto 600Hz, empujón 300Hz)
+- ✅ **3 Videos Demo** - Rigid Body, Audio, Partículas - embebidos en README
+- ✅ **Documentación Completa** - `CLAVE_INPUT_SDL2.md` con patrón de input que funciona
+- ✅ **test_audio_minimal.rs** - Test independiente de audio SDL2_mixer
+- ✅ **Git Push + Drive Sync** - Commit automático con changelog
 
-### Sesión v0.5.2 - Audio + ListBox + Layout
-- ✅ **Audio System** - `audio::load_sound()`, `audio::play()`, `audio::load_music()`, `audio::play_music()` (10 funciones)
-- ✅ **ListBox Widget** - Lista seleccionable con hover y scroll automático
-- ✅ **Layout Automático** - Vertical y horizontal con spacing configurable
-- ✅ **45+ tests pasando** (core sin gráficos, sin regresiones)
-- ✅ **0 warnings, 0 errors**
-- ✅ **~500 líneas Rust** agregadas (audio ~200, migui ~160, main ~130)
-
-### Sesión v0.5.1 - Funciones Assets + Renderizado X11
-- ✅ **Funciones Assets en RyDit** - `assets::load_texture()`, `assets::draw()`, `assets::draw_scaled()`
-- ✅ **Demo Assets Funcional** - Tanque + Helicóptero con sprites (60 FPS)
-- ✅ **Fix Renderizado Termux-X11** - Variables zink, frame variable, evaluar_expr_gfx
-- ✅ **124 tests pasando** (sin regresiones)
-- ✅ **0 warnings, 0 errors**
-- ✅ **~230 líneas Rust** agregadas
+### Sesión v0.11.5 - CLEAN CODE
+- ✅ **0 Errores de compilación** - Código limpio
+- ✅ **0 Warnings** - Clippy clean
+- ✅ **Lifetimes explícitos** - 34 errores fixeados
+- ✅ **18 Errores fixeados** - Imports, parsing, SDL2 helpers
+- ✅ **80 Warnings eliminados** - Dead code, unused vars/imports
 
 ### General
 - ✅ **38+ sesiones en 13 días** (v0.0.1 → v0.5.3)
