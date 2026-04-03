@@ -289,3 +289,25 @@
 -rw-------.   1 u0_a305 u0_a305 4.8K Apr  3 03:39 demo_ttf_sprites.d
 -rwx------.   1 u0_a305 u0_a305 297K Apr  3 05:44 test_audio_minimal
 -rw-------.   1 u0_a305 u0_a305 4.8K Apr  3 05:44 test_audio_minimal.d
+
+2026-04-03 06:41:50 - Binarios sincronizados:
+-rwx------.   1 u0_a305 u0_a305 313K Apr  3 01:37 demo_50k_particulas
+-rw-------.   1 u0_a305 u0_a305 4.8K Apr  3 01:37 demo_50k_particulas.d
+-rwx------.   1 u0_a305 u0_a305 438K Apr  3 00:34 demo_carga_sprites
+-rw-------.   1 u0_a305 u0_a305 4.8K Apr  3 00:34 demo_carga_sprites.d
+-rwx------.   1 u0_a305 u0_a305 309K Apr  3 02:34 demo_colisiones
+-rw-------.   1 u0_a305 u0_a305 4.8K Apr  3 02:34 demo_colisiones.d
+-rwx------.   1 u0_a305 u0_a305 438K Apr  3 03:58 demo_completo_final
+-rw-------.   1 u0_a305 u0_a305 4.8K Apr  3 03:58 demo_completo_final.d
+-rwx------.   1 u0_a305 u0_a305 320K Apr  3 02:18 demo_completo_sdl2
+-rw-------.   1 u0_a305 u0_a305 4.8K Apr  3 02:18 demo_completo_sdl2.d
+-rwx------.   1 u0_a305 u0_a305 446K Apr  3 05:52 demo_rigidbody
+-rw-------.   1 u0_a305 u0_a305 4.8K Apr  3 05:52 demo_rigidbody.d
+-rwx------.   1 u0_a305 u0_a305 296K Apr  3 01:26 demo_sprites_final
+-rw-------.   1 u0_a305 u0_a305 4.8K Apr  3 01:26 demo_sprites_final.d
+-rwx------.   1 u0_a305 u0_a305 418K Apr  3 01:03 demo_sprites_v2
+-rw-------.   1 u0_a305 u0_a305 4.8K Apr  3 01:03 demo_sprites_v2.d
+-rwx------.   1 u0_a305 u0_a305 436K Apr  3 03:39 demo_ttf_sprites
+-rw-------.   1 u0_a305 u0_a305 4.8K Apr  3 03:39 demo_ttf_sprites.d
+-rwx------.   1 u0_a305 u0_a305 297K Apr  3 05:44 test_audio_minimal
+-rw-------.   1 u0_a305 u0_a305 4.8K Apr  3 05:44 test_audio_minimal.d
