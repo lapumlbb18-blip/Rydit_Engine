@@ -1341,9 +1341,9 @@ MIT License - Ver [LICENSE](LICENSE) para más detalles.
 
 *¿Quieres evaluar este proyecto?* Únete al **Discord Mouredev**: https://discord.gg/mouredev y comparte tu opinión en #mostrar-proyecto
 
-*Última actualización:* 2026-03-26 (v0.7.3.3 - 4 crates extraídos: core, science, physics, anim)
-*Próxima versión:* v0.7.3.x (rydit-geometry) → v0.8.0.0 (crates.io + Linux/Windows)
-*Estado:* ✅ **81 TESTS - 4 CRATES INDEPENDIENTES - LAZOS FUNCIONAL - 730 KB**
+**Última actualización:** 2026-04-03 (v0.11.6 - Input SDL2 + TTF + Sprites + Rigid Body + Audio + 3 Videos)
+*Próxima versión:* v0.11.7 (Migrar audio.rs a SDL2_mixer + Demo .rydit con audio)
+*Estado:* ✅ **INPUT + TTF + SPRITES + RIGID BODY + AUDIO + VIDEOS FUNCIONALES**
 
 ---
 
