@@ -659,6 +659,8 @@ cargo run --bin rydit-rs -- --gfx snake.rydit
 
 #### 🎬 Videos Demostrativos v0.11.6
 
+**3 videos MP4 embebidos** - Reproducibles directamente en GitHub:
+
 <table align="center">
 <tr>
 <td align="center">
@@ -667,7 +669,7 @@ cargo run --bin rydit-rs -- --gfx snake.rydit
 <source src="screenshots/Rydit_demo1.mp4" type="video/mp4">
 Tu navegador no soporta video.
 </video><br>
-Input SDL2 + Texto TTF + 4 Sprites PNG + Gravedad + Colisiones
+<sub>Input SDL2 + Texto TTF + 4 Sprites PNG + Gravedad + Colisiones</sub>
 </td>
 <td align="center">
 <b>🔊 Test Audio SDL2_mixer</b><br>
@@ -675,7 +677,7 @@ Input SDL2 + Texto TTF + 4 Sprites PNG + Gravedad + Colisiones
 <source src="screenshots/test_demo.mp4" type="video/mp4">
 Tu navegador no soporta video.
 </video><br>
-Generación de tonos WAV + Reproducción SDL2_mixer
+<sub>Generación de tonos WAV + Reproducción SDL2_mixer</sub>
 </td>
 </tr>
 <tr>
@@ -685,7 +687,7 @@ Generación de tonos WAV + Reproducción SDL2_mixer
 <source src="screenshots/particulas.mp4" type="video/mp4">
 Tu navegador no soporta video.
 </video><br>
-Fuego, humo, explosión, lluvia, chispas - 60 FPS
+<sub>Fuego, humo, explosión, lluvia, chispas - 60 FPS</sub>
 </td>
 </tr>
 </table>
