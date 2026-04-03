@@ -43,31 +43,29 @@
 
 ---
 
-## 🔧 ESTADO ACTUAL - v0.11.5 CLEAN CODE
+## 🔧 ESTADO ACTUAL - v0.11.6 INPUT + TTF + SPRITES + RIGID BODY + AUDIO
 
-### ✅ **ESTADO REAL: v0.11.5 - 0 ERRORES | 0 WARNINGS**
+### ✅ **ESTADO REAL: v0.11.6 - INPUT + TTF + SPRITES + AUDIO + VIDEOS**
 
-**Última actualización**: 2026-04-02  
-**Versión actual**: v0.11.5 ✅ CLEAN CODE  
-**Próxima versión**: v0.11.6 - Snake reescrito + Platformer SDL2  
-**Estado**: COMPILACIÓN 100% ✅ | 0 ERRORES ✅ | 0 WARNINGS ✅
+**Última actualización**: 2026-04-03
+**Versión actual**: v0.11.6 ✅ FUNCIONAL
+**Próxima versión**: v0.11.7 - Migrar audio.rs a SDL2_mixer + Demo .rydit con audio
+**Estado**: INPUT ✅ | TTF ✅ | SPRITES ✅ | RIGID BODY ✅ | AUDIO ✅ | VIDEOS ✅
 
 ---
 
-### ✅ **LO QUE SÍ FUNCIONA (v0.11.5)**
+### ✅ **LO QUE SÍ FUNCIONA (v0.11.6)**
 
 | Sistema | Estado | Errores/Warnings | Notas |
 |---------|--------|------------------|-------|
-| **Compilación** | ✅ 100% | 0 errors | `cargo check` clean |
-| **Warnings** | ✅ 0 warnings | 80 → 0 | Todos fixeados |
-| **Lifetimes** | ✅ Explícitos | 34 → 0 | 19 archivos |
-| **18 Errores** | ✅ Fixeados | 18 → 0 | 5 archivos |
-| **SDL2 Backend** | ✅ Funcional | - | Helpers agregados |
-| **ColorRydit** | ✅ Converter | - | `to_rgb()` |
-| **Binarios** | ✅ 20+ | - | Todos compilados |
-| **Tests** | ✅ 101+ | - | Automáticos |
+| **Input SDL2** | ✅ Funcional | 0 errors | `repeat: false` patrón |
+| **SDL2_ttf** | ✅ Texto real | 0 errors | Texturas cacheadas |
+| **Sprites PNG** | ✅ 4 cargados | 0 errors | SDL2_image |
+| **Rigid Body** | ✅ Gravedad + colisiones | 0 errors | 4 cuerpos |
+| **Audio SDL2** | ✅ Tonos WAV | 0 errors | SDL2_mixer |
+| **Videos** | ✅ 3 demos | - | MP4 embebidos |
 
-**Total**: 132 problemas → 0 (**100% completado**) ✅
+**Total**: Stack completo funcional: Input + TTF + Sprites + Físicas + Audio ✅
 
 ---
 
@@ -95,9 +93,19 @@ cargo test --package rydit-test --test nivel2_integration_test
 - ✅ Evaluator (scripts .rydit)
 - ✅ Modules (assets, audio, physics)
 
-#### **Nivel 3: Gráficos Low-End** ⏳
+#### **Nivel 3: Gráficos SDL2** ✅
 ```bash
-cargo build --bin nivel3_test_lowend
+# Demo rigid body con todo integrado
+cargo run --bin demo_rigidbody --release
+# ✅ Funcional: Input + TTF + Sprites + Audio + Físicas
+```
+
+**Tests**:
+- ✅ Input SDL2 (← → ↑ ↓ WASD SPACE)
+- ✅ Texto TTF (texturas cacheadas)
+- ✅ Sprites PNG (4 cargados)
+- ✅ Audio SDL2_mixer (tonos WAV)
+- ✅ Rigid Body (gravedad + colisiones)
 ./target/debug/nivel3_test_lowend
 # Test manual en Termux-X11
 ```
