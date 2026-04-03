@@ -1,0 +1,214 @@
+# Demo Rigid Body en .rydit
+# Jugador controlable + Sprites con gravedad + colisiones
+#
+# Controles:
+# ← → ó A D = Mover jugador
+# ESPACIO = Saltar
+# G = Toggle gravedad
+
+shield.init
+
+# === JUGADOR ===
+dark.slot j_x = 400
+dark.slot j_y = 500
+dark.slot j_vy = 0
+dark.slot j_en_suelo = 0
+dark.slot saltos = 0
+
+# === GRAVEDAD ===
+dark.slot gravedad = 800
+dark.slot gravedad_on = 1
+dark.slot dt = 0.016
+
+# === RIGID BODIES (4 sprites) ===
+# Cada uno: x, y, vy, en_suelo
+dark.slot rb_x = [150, 350, 550, 650]
+dark.slot rb_y = [100, 80, 120, 60]
+dark.slot rb_vy = [0, 0, 0, 0]
+dark.slot rb_suelo = [0, 0, 0, 0]
+
+# === PLATAFORMAS ===
+# 7 plataformas: x, y, w, h
+dark.slot plat_x = [0, 100, 300, 500, 200, 450, 100]
+dark.slot plat_y = [560, 480, 420, 360, 280, 220, 160]
+dark.slot plat_w = [800, 120, 120, 120, 150, 120, 100]
+dark.slot plat_h = [40, 15, 15, 15, 15, 15, 15]
+
+dark.slot frame = 0
+dark.slot empujones = 0
+
+ryda frame < 50000 {
+    dark.slot frame = frame + 1
+
+    # === INPUT JUGADOR ===
+    
+    # Salto
+    onif tecla_presionada("space") y j_en_suelo == 1 {
+        dark.slot j_vy = -450
+        dark.slot j_en_suelo = 0
+        dark.slot saltos = saltos + 1
+    }
+    
+    # Mover izquierda
+    onif tecla_presionada("arrow_left") o tecla_presionada("a") {
+        dark.slot j_x = j_x - 30
+    }
+    onif tecla_presionada("arrow_right") o tecla_presionada("d") {
+        dark.slot j_x = j_x + 30
+    }
+    onif tecla_presionada("arrow_up") o tecla_presionada("w") {
+        dark.slot j_y = j_y - 30
+    }
+    onif tecla_presionada("arrow_down") o tecla_presionada("s") {
+        dark.slot j_y = j_y + 30
+    }
+    
+    # Toggle gravedad
+    onif tecla_presionada("g") {
+        dark.slot gravedad_on = 1 - gravedad_on
+    }
+    
+    # Reset rigid bodies
+    onif tecla_presionada("r") {
+        dark.slot rb_x = [150, 350, 550, 650]
+        dark.slot rb_y = [100, 80, 120, 60]
+        dark.slot rb_vy = [0, 0, 0, 0]
+        dark.slot rb_suelo = [0, 0, 0, 0]
+    }
+    
+    # Salir
+    onif tecla_presionada("escape") {
+        romper
+    }
+
+    # === FÍSICAS JUGADOR ===
+    dark.slot j_vy = j_vy + gravedad * dt * gravedad_on
+    dark.slot j_y = j_y + j_vy * dt
+    dark.slot j_en_suelo = 0
+    
+    # Colisiones jugador con plataformas
+    dark.slot p = 0
+    ryda p < 7 {
+        dark.slot px = plat_x[p]
+        dark.slot py = plat_y[p]
+        dark.slot pw = plat_w[p]
+        dark.slot ph = plat_h[p]
+        
+        # Verificar intersección simple
+        onif j_x + 40 > px y j_x < px + pw y j_y + 40 > py y j_y < py + ph {
+            # Desde arriba (aterrizar)
+            onif j_vy > 0 y j_y + 40 <= py + 10 {
+                dark.slot j_y = py - 40
+                dark.slot j_vy = 0
+                dark.slot j_en_suelo = 1
+            }
+        }
+        dark.slot p = p + 1
+    }
+    
+    # Límites jugador
+    onif j_x < 0 { dark.slot j_x = 0 }
+    onif j_x > 760 { dark.slot j_x = 760 }
+    onif j_y > 620 {
+        dark.slot j_x = 400
+        dark.slot j_y = 100
+        dark.slot j_vy = 0
+    }
+
+    # === FÍSICAS RIGID BODIES ===
+    dark.slot i = 0
+    ryda i < 4 {
+        # Gravedad
+        dark.slot rb_vy[i] = rb_vy[i] + gravedad * dt * gravedad_on
+        dark.slot rb_y[i] = rb_y[i] + rb_vy[i] * dt
+        
+        # Colisiones con plataformas
+        dark.slot rb_suelo[i] = 0
+        dark.slot j = 0
+        ryda j < 7 {
+            dark.slot px = plat_x[j]
+            dark.slot py = plat_y[j]
+            dark.slot pw = plat_w[j]
+            
+            onif rb_x[i] + 64 > px y rb_x[i] < px + pw y rb_y[i] + 64 > py y rb_y[i] < py + 15 {
+                onif rb_vy[i] > 0 y rb_y[i] + 64 <= py + 10 {
+                    dark.slot rb_y[i] = py - 64
+                    dark.slot rb_vy[i] = 0
+                    dark.slot rb_suelo[i] = 1
+                }
+            }
+            dark.slot j = j + 1
+        }
+        
+        # Respawn si cae
+        onif rb_y[i] > 700 {
+            dark.slot rb_x[i] = 200 + (i * 150)
+            dark.slot rb_y[i] = 50
+            dark.slot rb_vy[i] = 0
+        }
+        
+        dark.slot i = i + 1
+    }
+
+    # === RENDER ===
+    
+    # Fondo
+    draw.rect(0, 0, 800, 600, "negro")
+    
+    # Estrellas
+    dark.slot s = 0
+    ryda s < 20 {
+        dark.slot sx = (s * 37 + frame * 2) % 800
+        dark.slot sy = (s * 51 + frame / 15) % 600
+        draw.rect(sx, sy, 2, 2, "azul_oscuro")
+        dark.slot s = s + 1
+    }
+    
+    # Plataformas con borde verde brillante (parpadeo)
+    dark.slot k = 0
+    ryda k < 7 {
+        draw.rect(plat_x[k], plat_y[k], plat_w[k], plat_h[k], "gris")
+        onif (frame / 30) % 2 == 0 {
+            draw.rect(plat_x[k], plat_y[k], plat_w[k], 3, "verde_brillante")
+        } blelse {
+            draw.rect(plat_x[k], plat_y[k], plat_w[k], 3, "gris_claro")
+        }
+        dark.slot k = k + 1
+    }
+    
+    # Rigid Bodies (sprites con colores)
+    draw.rect(rb_x[0], rb_y[0], 64, 64, "verde")
+    onif rb_suelo[0] == 1 y (frame / 15) % 2 == 0 {
+        draw.rect(rb_x[0], rb_y[0] + 66, 64, 4, "verde_brillante")
+    }
+    
+    draw.rect(rb_x[1], rb_y[1], 64, 64, "cyan")
+    onif rb_suelo[1] == 1 y (frame / 15) % 2 == 0 {
+        draw.rect(rb_x[1], rb_y[1] + 66, 64, 4, "verde_brillante")
+    }
+    
+    draw.rect(rb_x[2], rb_y[2], 32, 32, "marron")
+    onif rb_suelo[2] == 1 y (frame / 15) % 2 == 0 {
+        draw.rect(rb_x[2], rb_y[2] + 34, 32, 4, "verde_brillante")
+    }
+    
+    draw.rect(rb_x[3], rb_y[3], 96, 96, "gris_claro")
+    onif rb_suelo[3] == 1 y (frame / 15) % 2 == 0 {
+        draw.rect(rb_x[3], rb_y[3] + 98, 96, 4, "verde_brillante")
+    }
+    
+    # Jugador (cuadro rojo con brillo)
+    draw.rect(j_x, j_y, 40, 40, "rojo")
+    onif (frame / 20) % 2 == 0 {
+        draw.rect(j_x - 4, j_y - 4, 48, 48, "verde")
+    }
+    
+    # Texto TTF
+    draw.text("🛡️ RyDit - Rigid Body (.rydit)", 15, 15, 18, "blanco")
+    draw.text("Jugador: " + j_x + "," + j_y + " | Saltos: " + saltos + " | Gravedad: " + gravedad_on, 15, 45, 14, "verde")
+    draw.text("Tank: " + rb_x[0] + "," + rb_y[0] + " | Heli: " + rb_x[1] + "," + rb_y[1], 15, 70, 12, "cyan")
+    draw.text("Crate: " + rb_x[2] + "," + rb_y[2] + " | Plat: " + rb_x[3] + "," + rb_y[3], 15, 90, 12, "marron")
+    draw.text("← → ó A/D = Mover | SPACE = Saltar | G = Gravedad | R = Reset | ESC = Salir", 15, 570, 12, "gris")
+}
+
+voz "Demo finalizado! Frames: " + frame

@@ -6,17 +6,17 @@
 
 **"Construido sin prisa, madurado con paciencia"**
 
-[![Version](https://img.shields.io/badge/version-v0.11.5-blue.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![Version](https://img.shields.io/badge/version-v0.11.6-blue.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
 [![Errors](https://img.shields.io/badge/errors-0-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
 [![Warnings](https://img.shields.io/badge/warnings-0-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
 [![Tests](https://img.shields.io/badge/tests-101+-passing-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
-[![Status](https://img.shields.io/badge/estado-v0.11.5--clean%20code-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![Status](https://img.shields.io/badge/estado-v0.11.6--input%20ttf%20sprites%20rigid%20body-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
 [![SDL2](https://img.shields.io/badge/SDL2-0.37-red.svg)](https://www.libsdl.org/)
 [![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine/blob/main/LICENSE)
 
-[📖 Documentación](#-documentación) • [🔧 Estado Actual](#-estado-actual) • [🎯 Roadmap](#-roadmap) • [✨ v0.11.5](#-v0115---código-limpio)
+[📖 Documentación](#-documentación) • [🔧 Estado Actual](#-estado-actual) • [🎯 Roadmap](#-roadmap) • [✨ v0.11.6](#-v0116---input-ttf-sprites-rigid-body)
 
 </div>
 
