@@ -17,7 +17,7 @@
 // - collision::bounce(...) - Aplicar rebote
 
 use blast_core::{Executor, Valor};
-use lizer::{Expr, Stmt};
+use rydit_parser::{Expr, Stmt};
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
@@ -126,19 +126,23 @@ pub fn collision_check_rect_rect<'a>(
         return Valor::Error("collision::check_rect_rect() requiere 8 argumentos".to_string());
     }
 
-    let vals: Vec<f32> = args
-        .iter()
-        .map(|arg| evaluar_expr(arg, executor, funcs))
-        .map(|v| match v {
-            Valor::Num(n) => n as f32,
-            _ => -1.0,
-        })
-        .collect();
+    // Evaluar argumentos y validar que sean números
+    let mut vals = Vec::with_capacity(8);
+    for (i, arg) in args.iter().enumerate() {
+        match evaluar_expr(arg, executor, funcs) {
+            Valor::Num(n) => vals.push(n as f32),
+            other => {
+                return Valor::Error(format!(
+                    "collision::check_rect_rect() argumento {} debe ser número, se obtuvo: {:?}",
+                    i + 1,
+                    other
+                ))
+            }
+        }
+    }
 
     let [x1, y1, w1, h1, x2, y2, w2, h2] = vals[..] else {
-        return Valor::Error(
-            "collision::check_rect_rect() todos los argumentos deben ser números".to_string(),
-        );
+        return Valor::Error("collision::check_rect_rect() error interno".to_string());
     };
 
     let collides = x1 < x2 + w2 && x1 + w1 > x2 && y1 < y2 + h2 && y1 + h1 > y2;

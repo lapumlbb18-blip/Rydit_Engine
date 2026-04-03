@@ -41,7 +41,6 @@ pub struct Executor {
 
 impl Executor {
     pub fn nuevo() -> Self {
-        println!("[BLAST-CORE]: Executor despertado con memoria y stack de scopes.");
         Self {
             memoria: HashMap::new(),
             activo: true,
@@ -54,12 +53,10 @@ impl Executor {
     pub fn guardar(&mut self, nombre: &str, valor: Valor) {
         // Si hay scope local, guardar ahí
         if let Some(scope) = self.scope_stack.last_mut() {
-            scope.insert(nombre.to_string(), valor.clone());
-            println!("[MEMORIA LOCAL] {} = {}", nombre, valor);
+            scope.insert(nombre.to_string(), valor);
         } else {
             // Sino, guardar en global
-            self.memoria.insert(nombre.to_string(), valor.clone());
-            println!("[MEMORIA GLOBAL] {} = {}", nombre, valor);
+            self.memoria.insert(nombre.to_string(), valor);
         }
     }
 
@@ -78,52 +75,31 @@ impl Executor {
     /// Empujar nuevo scope local (para funciones)
     pub fn push_scope(&mut self) {
         self.scope_stack.push(HashMap::new());
-        println!(
-            "[SCOPE] Nuevo scope local creado (nivel {})",
-            self.scope_stack.len()
-        );
     }
 
     /// Pop scope local (salir de función)
     pub fn pop_scope(&mut self) {
-        if let Some(scope) = self.scope_stack.pop() {
-            println!(
-                "[SCOPE] Scope local eliminado (quedan {} niveles)",
-                self.scope_stack.len()
-            );
-            // Opcional: mostrar variables locales que se van
-            for (nombre, valor) in &scope {
-                println!("[SCOPE] {} = {} (eliminado)", nombre, valor);
-            }
-        } else {
-            println!("[WARNING] Pop de scope vacío");
-        }
+        self.scope_stack.pop();
     }
 
     /// Guardar en scope local actual (para parámetros de funciones)
     pub fn guardar_local(&mut self, nombre: &str, valor: Valor) {
         if let Some(scope) = self.scope_stack.last_mut() {
-            scope.insert(nombre.to_string(), valor.clone());
-            println!("[LOCAL] {} = {}", nombre, valor);
+            scope.insert(nombre.to_string(), valor);
         } else {
             // Fallback a global si no hay scope local
-            println!("[WARNING] guardar_local sin scope local, usando global");
-            self.memoria.insert(nombre.to_string(), valor.clone());
+            self.memoria.insert(nombre.to_string(), valor);
         }
     }
 
     /// Ejecutar comando con estilo
-    pub fn ejecutar(&self, comando: &str) {
-        if self.activo {
-            println!("[BLAST-CORE] Ejecutando: {}", comando);
-        }
+    pub fn ejecutar(&self, _comando: &str) {
+        // Stub - no implementado
     }
 
     /// Shock wave con aura
     pub fn shock_wave(&self) {
-        if self.activo {
-            println!("[BLAST-CORE]: Impacto sónico detectado.");
-        }
+        // Stub - no implementado
     }
 
     /// Mostrar estado de memoria
@@ -184,20 +160,15 @@ pub struct BlastCore {
 
 impl BlastCore {
     pub fn despertar() -> Self {
-        println!("[BLAST-CORE]: Motor de audio en guardia.");
         Self { activo: true }
     }
 
-    pub fn ignite(&self, sonido: &str) {
-        if self.activo {
-            println!("[BLAST-CORE]: Ejecutando ráfaga -> {}", sonido);
-        }
+    pub fn ignite(&self, _sonido: &str) {
+        // Stub - no implementado
     }
 
     pub fn shock_wave(&self) {
-        if self.activo {
-            println!("[BLAST-CORE]: Impacto sónico detectado.");
-        }
+        // Stub - no implementado
     }
 }
 

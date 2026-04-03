@@ -54,29 +54,20 @@ use rydit_lexer::Lexer;
 use rydit_parser::{BinaryOp, Expr, Parser, Stmt, UnaryOp};
 use std::collections::{HashMap, HashSet};
 use std::str::FromStr;
-use std::sync::Mutex;
+use std::sync::{Mutex, OnceLock};
 
 // Loader global para módulos dinámicos (v0.8.2)
-static mut GLOBAL_LOADER: Option<Mutex<DynamicModuleLoader>> = None;
+// ✅ v0.11.6: Migrado de static mut a OnceLock (sin UB potencial)
+static GLOBAL_LOADER: OnceLock<Mutex<DynamicModuleLoader>> = OnceLock::new();
 
 /// Inicializar el loader global
 pub fn init_global_loader() {
-    unsafe {
-        GLOBAL_LOADER = Some(Mutex::new(DynamicModuleLoader::new()));
-    }
+    let _ = GLOBAL_LOADER.get_or_init(|| Mutex::new(DynamicModuleLoader::new()));
 }
 
-/// Obtener referencia al loader global
-///
-/// # Safety
-/// Esta función es safe porque:
-/// - GLOBAL_LOADER se inicializa una sola vez al inicio
-/// - El Mutex protege contra data races
-/// - No hay mutación después de la inicialización
-/// ✅ v0.11.4: Migrado a OnceLock (sin static_mut_refs)
+/// Obtener referencia al loader global (safe, sin unsafe)
 pub fn get_loader() -> Option<&'static Mutex<DynamicModuleLoader>> {
-    #[allow(static_mut_refs)]
-    unsafe { GLOBAL_LOADER.as_ref() }
+    GLOBAL_LOADER.get()
 }
 
 fn main() {

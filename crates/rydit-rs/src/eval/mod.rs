@@ -99,8 +99,9 @@ pub fn evaluar_expr<'a>(
             };
 
             if func_name == "tecla_presionada" && args.len() == 1 {
-                // Función especial para input - retorna 0 por defecto (no presionada)
-                // El valor real se obtiene del contexto gráfico
+                // ⚠️ STUB: Input real requiere SDL2 backend
+                // TODO: Conectar con input_map de SDL2 cuando esté disponible
+                eprintln!("[WARNING] tecla_presionada() es un stub - retorna 0 (no presionada)");
                 return Valor::Num(0.0);
             }
 
@@ -3433,22 +3434,31 @@ pub fn evaluar_expr<'a>(
         }
         Expr::Binary { left, op, right } => {
             let left_val = evaluar_expr(left, executor, funcs);
-            let right_val = evaluar_expr(right, executor, funcs);
 
-            // Operadores lógicos (usan referencias, no mueven valores)
+            // Operadores lógicos con short-circuit evaluation
             match op {
                 BinaryOp::And => {
                     let l_bool = valor_a_bool(&left_val);
+                    if !l_bool {
+                        return Valor::Bool(false); // Short-circuit: no evaluar right
+                    }
+                    let right_val = evaluar_expr(right, executor, funcs);
                     let r_bool = valor_a_bool(&right_val);
                     return Valor::Bool(l_bool && r_bool);
                 }
                 BinaryOp::Or => {
                     let l_bool = valor_a_bool(&left_val);
+                    if l_bool {
+                        return Valor::Bool(true); // Short-circuit: no evaluar right
+                    }
+                    let right_val = evaluar_expr(right, executor, funcs);
                     let r_bool = valor_a_bool(&right_val);
                     return Valor::Bool(l_bool || r_bool);
                 }
                 _ => {}
             }
+
+            let right_val = evaluar_expr(right, executor, funcs);
 
             // Concatenación de strings con + (con coerción automática de números)
             if matches!(op, BinaryOp::Suma) {
