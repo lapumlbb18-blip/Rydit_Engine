@@ -34,19 +34,19 @@ impl<'a> Lexer<'a> {
     /// Los tokens referencian el source original (zero-copy).
     pub fn scan(&self) -> Vec<Token<'a>> {
         let mut tokens = Vec::new();
-        let chars: Vec<char> = self.source.chars().collect();
+        let bytes = self.source.as_bytes();
         let mut i = 0;
         let mut line = 1;
         let mut column = 1;
 
-        while i < chars.len() {
+        while i < bytes.len() {
             let start_line = line;
             let start_col = column;
             let start_pos = i;
 
             // Saltar whitespace
-            if chars[i].is_whitespace() {
-                if chars[i] == '\n' {
+            if bytes[i].is_ascii_whitespace() {
+                if bytes[i] == b'\n' {
                     line += 1;
                     column = 1;
                 } else {
@@ -57,11 +57,11 @@ impl<'a> Lexer<'a> {
             }
 
             // Comentario: # ...
-            if chars[i] == '#' {
+            if bytes[i] == b'#' {
                 let start = i + 1;
                 i += 1;
                 column += 1;
-                while i < chars.len() && chars[i] != '\n' {
+                while i < bytes.len() && bytes[i] != b'\n' {
                     i += 1;
                     column += 1;
                 }
@@ -76,15 +76,15 @@ impl<'a> Lexer<'a> {
             }
 
             // String: "..." o '...'
-            if chars[i] == '"' || chars[i] == '\'' {
-                let quote_char = chars[i];
+            if bytes[i] == b'"' || bytes[i] == b'\'' {
+                let quote_char = bytes[i];
                 let start = i;
                 i += 1;
                 column += 1;
 
-                while i < chars.len() && chars[i] != quote_char {
+                while i < bytes.len() && bytes[i] != quote_char {
                     // Soporte para escapes
-                    if chars[i] == '\\' && i + 1 < chars.len() {
+                    if bytes[i] == b'\\' && i + 1 < bytes.len() {
                         i += 2;
                         column += 2;
                     } else {
@@ -93,7 +93,7 @@ impl<'a> Lexer<'a> {
                     }
                 }
 
-                if i < chars.len() {
+                if i < bytes.len() {
                     i += 1; // cerrar quote
                     column += 1;
                 }
@@ -109,15 +109,15 @@ impl<'a> Lexer<'a> {
             }
 
             // Número: 100, 0.5, -5
-            if chars[i].is_numeric()
-                || (chars[i] == '-' && i + 1 < chars.len() && chars[i + 1].is_numeric())
+            if bytes[i].is_ascii_digit()
+                || (bytes[i] == b'-' && i + 1 < bytes.len() && bytes[i + 1].is_ascii_digit())
             {
                 let start = i;
-                if chars[i] == '-' {
+                if bytes[i] == b'-' {
                     i += 1;
                     column += 1;
                 }
-                while i < chars.len() && (chars[i].is_numeric() || chars[i] == '.') {
+                while i < bytes.len() && (bytes[i].is_ascii_digit() || bytes[i] == b'.') {
                     i += 1;
                     column += 1;
                 }
@@ -133,21 +133,21 @@ impl<'a> Lexer<'a> {
             }
 
             // Identificador o comando: shield.init, delta.flow, x
-            if chars[i].is_alphabetic()
-                || chars[i].is_alphanumeric()
-                || chars[i] == '_'
-                || chars[i] == '@'
-                || chars[i] == '$'
-                || chars[i] == '%'
+            if bytes[i].is_ascii_alphabetic()
+                || bytes[i].is_ascii_alphanumeric()
+                || bytes[i] == b'_'
+                || bytes[i] == b'@'
+                || bytes[i] == b'$'
+                || bytes[i] == b'%'
             {
                 let start = i;
-                while i < chars.len()
-                    && (chars[i].is_alphanumeric()
-                        || chars[i] == '.'
-                        || chars[i] == '_'
-                        || chars[i] == '@'
-                        || chars[i] == '$'
-                        || chars[i] == '%')
+                while i < bytes.len()
+                    && (bytes[i].is_ascii_alphanumeric()
+                        || bytes[i] == b'.'
+                        || bytes[i] == b'_'
+                        || bytes[i] == b'@'
+                        || bytes[i] == b'$'
+                        || bytes[i] == b'%')
                 {
                     i += 1;
                     column += 1;
@@ -203,9 +203,9 @@ impl<'a> Lexer<'a> {
             }
 
             // Operadores y símbolos
-            match chars[i] {
-                '=' => {
-                    if i + 1 < chars.len() && chars[i + 1] == '=' {
+            match bytes[i] {
+                b'=' => {
+                    if i + 1 < bytes.len() && bytes[i + 1] == b'=' {
                         tokens.push(Token::new(
                             TokenKind::Igual,
                             "==",
@@ -223,8 +223,8 @@ impl<'a> Lexer<'a> {
                         column += 1;
                     }
                 }
-                '+' => {
-                    if i + 1 < chars.len() && chars[i + 1] == '=' {
+                b'+' => {
+                    if i + 1 < bytes.len() && bytes[i + 1] == b'=' {
                         tokens.push(Token::new(
                             TokenKind::MasIgual,
                             "+=",
@@ -242,8 +242,8 @@ impl<'a> Lexer<'a> {
                         column += 1;
                     }
                 }
-                '-' => {
-                    if i + 1 < chars.len() && chars[i + 1] == '=' {
+                b'-' => {
+                    if i + 1 < bytes.len() && bytes[i + 1] == b'=' {
                         tokens.push(Token::new(
                             TokenKind::MenosIgual,
                             "-=",
@@ -261,8 +261,8 @@ impl<'a> Lexer<'a> {
                         column += 1;
                     }
                 }
-                '*' => {
-                    if i + 1 < chars.len() && chars[i + 1] == '=' {
+                b'*' => {
+                    if i + 1 < bytes.len() && bytes[i + 1] == b'=' {
                         tokens.push(Token::new(
                             TokenKind::PorIgual,
                             "*=",
@@ -280,8 +280,8 @@ impl<'a> Lexer<'a> {
                         column += 1;
                     }
                 }
-                '/' => {
-                    if i + 1 < chars.len() && chars[i + 1] == '=' {
+                b'/' => {
+                    if i + 1 < bytes.len() && bytes[i + 1] == b'=' {
                         tokens.push(Token::new(
                             TokenKind::DivIgual,
                             "/=",
@@ -299,8 +299,8 @@ impl<'a> Lexer<'a> {
                         column += 1;
                     }
                 }
-                '>' => {
-                    if i + 1 < chars.len() && chars[i + 1] == '=' {
+                b'>' => {
+                    if i + 1 < bytes.len() && bytes[i + 1] == b'=' {
                         tokens.push(Token::new(
                             TokenKind::MayorIgual,
                             ">=",
@@ -318,8 +318,8 @@ impl<'a> Lexer<'a> {
                         column += 1;
                     }
                 }
-                '<' => {
-                    if i + 1 < chars.len() && chars[i + 1] == '=' {
+                b'<' => {
+                    if i + 1 < bytes.len() && bytes[i + 1] == b'=' {
                         tokens.push(Token::new(
                             TokenKind::MenorIgual,
                             "<=",
@@ -337,8 +337,8 @@ impl<'a> Lexer<'a> {
                         column += 1;
                     }
                 }
-                '!' => {
-                    if i + 1 < chars.len() && chars[i + 1] == '=' {
+                b'!' => {
+                    if i + 1 < bytes.len() && bytes[i + 1] == b'=' {
                         tokens.push(Token::new(
                             TokenKind::Diferente,
                             "!=",
@@ -356,7 +356,7 @@ impl<'a> Lexer<'a> {
                         column += 1;
                     }
                 }
-                '{' => {
+                b'{' => {
                     tokens.push(Token::new(
                         TokenKind::LlaveIzq,
                         "{",
@@ -365,7 +365,7 @@ impl<'a> Lexer<'a> {
                     i += 1;
                     column += 1;
                 }
-                '}' => {
+                b'}' => {
                     tokens.push(Token::new(
                         TokenKind::LlaveDer,
                         "}",
@@ -374,7 +374,7 @@ impl<'a> Lexer<'a> {
                     i += 1;
                     column += 1;
                 }
-                '(' => {
+                b'(' => {
                     tokens.push(Token::new(
                         TokenKind::ParentIzq,
                         "(",
@@ -383,7 +383,7 @@ impl<'a> Lexer<'a> {
                     i += 1;
                     column += 1;
                 }
-                ')' => {
+                b')' => {
                     tokens.push(Token::new(
                         TokenKind::ParentDer,
                         ")",
@@ -392,7 +392,7 @@ impl<'a> Lexer<'a> {
                     i += 1;
                     column += 1;
                 }
-                '[' => {
+                b'[' => {
                     tokens.push(Token::new(
                         TokenKind::CorcheteIzq,
                         "[",
@@ -401,7 +401,7 @@ impl<'a> Lexer<'a> {
                     i += 1;
                     column += 1;
                 }
-                ']' => {
+                b']' => {
                     tokens.push(Token::new(
                         TokenKind::CorcheteDer,
                         "]",
@@ -410,7 +410,7 @@ impl<'a> Lexer<'a> {
                     i += 1;
                     column += 1;
                 }
-                '.' => {
+                b'.' => {
                     tokens.push(Token::new(
                         TokenKind::Punto,
                         ".",
@@ -419,8 +419,8 @@ impl<'a> Lexer<'a> {
                     i += 1;
                     column += 1;
                 }
-                ':' => {
-                    if i + 1 < chars.len() && chars[i + 1] == ':' {
+                b':' => {
+                    if i + 1 < bytes.len() && bytes[i + 1] == b':' {
                         tokens.push(Token::new(
                             TokenKind::DobleDosPuntos,
                             "::",
@@ -438,7 +438,7 @@ impl<'a> Lexer<'a> {
                         column += 1;
                     }
                 }
-                ',' => {
+                b',' => {
                     tokens.push(Token::new(
                         TokenKind::Coma,
                         ",",
@@ -447,13 +447,16 @@ impl<'a> Lexer<'a> {
                     i += 1;
                     column += 1;
                 }
-                _c => {
+                _ => {
+                    // Caracter desconocido - intentar avanzar 1 byte
+                    // Para caracteres UTF-8 multi-byte, avanzar al siguiente byte ASCII
+                    let byte_len = 1;
                     tokens.push(Token::new(
                         TokenKind::Error,
-                        &self.source[i..i + 1],
-                        Span::new(start_pos, i + 1, start_line, start_col),
+                        &self.source[i..i + byte_len.min(self.source.len() - i)],
+                        Span::new(start_pos, i + byte_len, start_line, start_col),
                     ));
-                    i += 1;
+                    i += byte_len;
                     column += 1;
                 }
             }
@@ -571,5 +574,177 @@ mod tests {
         assert!(tokens
             .iter()
             .any(|t| t.kind == TokenKind::Ident && t.lexeme == "%porcentaje"));
+    }
+
+    // ============================================================
+    // TESTS DE COMENTARIOS (Fase 1: Reproducción del bug)
+    // ============================================================
+
+    #[test]
+    fn test_comentario_al_inicio_ascii() {
+        // Bug original: comentario al inicio corrupta tokens siguientes
+        let tokens = Lexer::new("# Comentario al inicio\ndark.slot x = 10").scan();
+        assert!(tokens.iter().any(|t| t.kind == TokenKind::Comentario));
+        assert!(tokens.iter().any(|t| t.kind == TokenKind::DarkSlot && t.lexeme == "dark.slot"));
+        assert!(tokens.iter().any(|t| t.kind == TokenKind::Ident && t.lexeme == "x"));
+        assert!(tokens.iter().any(|t| t.kind == TokenKind::Num && t.lexeme == "10"));
+    }
+
+    #[test]
+    fn test_multiples_comentarios() {
+        let tokens =
+            Lexer::new("# Primer comentario\n# Segundo comentario\ndark.slot x = 10").scan();
+        let comments: Vec<_> = tokens.iter().filter(|t| t.kind == TokenKind::Comentario).collect();
+        assert_eq!(comments.len(), 2);
+        assert!(tokens.iter().any(|t| t.kind == TokenKind::DarkSlot && t.lexeme == "dark.slot"));
+    }
+
+    #[test]
+    fn test_comentario_vacio() {
+        let tokens = Lexer::new("#\ndark.slot x = 10").scan();
+        assert!(tokens.iter().any(|t| t.kind == TokenKind::Comentario && t.lexeme == ""));
+        assert!(tokens.iter().any(|t| t.kind == TokenKind::DarkSlot && t.lexeme == "dark.slot"));
+    }
+
+    #[test]
+    fn test_comentario_final_sin_newline() {
+        let tokens = Lexer::new("dark.slot x = 10 # comentario final").scan();
+        assert!(tokens.iter().any(|t| t.kind == TokenKind::DarkSlot && t.lexeme == "dark.slot"));
+        assert!(tokens.iter().any(|t| t.kind == TokenKind::Comentario));
+    }
+
+    #[test]
+    fn test_solo_comentarios() {
+        let tokens = Lexer::new("# Solo comentario\n# Otro comentario").scan();
+        assert_eq!(tokens.len(), 2);
+        assert!(tokens.iter().all(|t| t.kind == TokenKind::Comentario));
+    }
+
+    #[test]
+    fn test_span_despues_de_comentario() {
+        let tokens = Lexer::new("# comentario\ndark.slot x = 10").scan();
+        let dark_slot = tokens.iter().find(|t| t.kind == TokenKind::DarkSlot).unwrap();
+        assert_eq!(dark_slot.span.line, 2);
+        assert_eq!(dark_slot.span.column, 1);
+    }
+
+    // ============================================================
+    // TESTS ALTERNATIVOS DE VERIFICACIÓN (por si los 6 principales fallan)
+    // ============================================================
+
+    #[test]
+    fn test_alternativo_comentario_simple() {
+        // Test ultra-simple: solo verificar que comentario no rompe
+        let tokens = Lexer::new("# hola\nx").scan();
+        assert_eq!(tokens.len(), 2);
+        assert_eq!(tokens[0].kind, TokenKind::Comentario);
+        assert_eq!(tokens[1].kind, TokenKind::Ident);
+        assert_eq!(tokens[1].lexeme, "x");
+    }
+
+    #[test]
+    fn test_alternativo_comentario_y_numero() {
+        // Verificar que numero despues de comentario funciona
+        let tokens = Lexer::new("# test\n42").scan();
+        assert_eq!(tokens.len(), 2);
+        assert_eq!(tokens[1].kind, TokenKind::Num);
+        assert_eq!(tokens[1].lexeme, "42");
+    }
+
+    #[test]
+    fn test_alternativo_comentario_y_string() {
+        // Verificar que string despues de comentario funciona
+        let tokens = Lexer::new("# test\n\"hola\"").scan();
+        assert_eq!(tokens.len(), 2);
+        assert_eq!(tokens[1].kind, TokenKind::Texto);
+        assert_eq!(tokens[1].lexeme, "\"hola\"");
+    }
+
+    #[test]
+    fn test_alternativo_comentario_y_operador() {
+        // Verificar que operador despues de comentario funciona
+        let tokens = Lexer::new("# test\n+").scan();
+        assert_eq!(tokens.len(), 2);
+        assert_eq!(tokens[1].kind, TokenKind::Mas);
+    }
+
+    #[test]
+    fn test_alternativo_comentario_y_llaves() {
+        // Verificar que llaves despues de comentario funcionan
+        let tokens = Lexer::new("# test\n{ }").scan();
+        assert_eq!(tokens.len(), 3);
+        assert_eq!(tokens[1].kind, TokenKind::LlaveIzq);
+        assert_eq!(tokens[2].kind, TokenKind::LlaveDer);
+    }
+
+    #[test]
+    fn test_alternativo_comentario_con_emoji() {
+        // Edge case: emoji en comentario (UTF-8 multi-byte)
+        let tokens = Lexer::new("# 🚀 rocket\ndark.slot x = 10").scan();
+        // El emoji genera tokens Error pero dark.slot debe parsearse bien
+        let dark_slot = tokens.iter().find(|t| t.kind == TokenKind::DarkSlot);
+        assert!(
+            dark_slot.is_some(),
+            "dark.slot debe tokenizarse correctamente despues de comentario con emoji"
+        );
+    }
+
+    #[test]
+    fn test_alternativo_comentario_con_unicode() {
+        // Comentario con texto unicode (acentos, eñes)
+        let tokens = Lexer::new("# acción y configuración\ndark.slot x = 10").scan();
+        let dark_slot = tokens.iter().find(|t| t.kind == TokenKind::DarkSlot);
+        assert!(
+            dark_slot.is_some(),
+            "dark.slot debe tokenizarse correctamente despues de comentario con unicode"
+        );
+    }
+
+    #[test]
+    fn test_alternativo_cero_copy_preservado() {
+        // Verificar que zero-copy funciona despues de comentarios
+        let source = String::from("# comentario\ndark.slot x = 10");
+        let tokens = Lexer::new(&source).scan();
+        let dark_slot = tokens.iter().find(|t| t.kind == TokenKind::DarkSlot).unwrap();
+        // Verificar que el lexeme es una referencia al source (mismo buffer base)
+        let source_ptr = source.as_ptr();
+        let lexeme_ptr = dark_slot.lexeme.as_ptr();
+        // El lexeme debe estar dentro del buffer del source
+        let offset = unsafe { lexeme_ptr.offset_from(source_ptr) };
+        assert!(
+            offset >= 0 && (offset as usize) < source.len(),
+            "El lexeme debe ser una referencia dentro del source original"
+        );
+    }
+
+    #[test]
+    fn test_alternativo_script_completo_con_comentarios() {
+        // Script realista con comentarios intercalados
+        let script = r#"# Juego Snake
+dark.slot x = 400
+dark.slot y = 300
+# Game loop
+ryda x < 500 {
+    voz "Frame"
+    dark.slot x = x + 1
+}
+# Fin"#;
+        let tokens = Lexer::new(script).scan();
+        assert!(tokens.iter().any(|t| t.kind == TokenKind::DarkSlot));
+        assert!(tokens.iter().any(|t| t.kind == TokenKind::Ryda));
+        assert!(tokens.iter().any(|t| t.kind == TokenKind::Voz));
+        // Verificar que los comentarios existen
+        let comments: Vec<_> = tokens.iter().filter(|t| t.kind == TokenKind::Comentario).collect();
+        assert_eq!(comments.len(), 3);
+    }
+
+    #[test]
+    fn test_alternativo_comentarios_consecutivos() {
+        // Muchos comentarios seguidos no deben romper el lexer
+        let script = "# 1\n# 2\n# 3\n# 4\n# 5\nx";
+        let tokens = Lexer::new(script).scan();
+        let comments: Vec<_> = tokens.iter().filter(|t| t.kind == TokenKind::Comentario).collect();
+        assert_eq!(comments.len(), 5);
+        assert_eq!(tokens.last().unwrap().lexeme, "x");
     }
 }

@@ -15,11 +15,13 @@
 | **Variables** | ✅ Verificado | `test_rydit_simple` | `dark.slot x = 10` |
 | **Operaciones** | ✅ Verificado | `test_rydit_simple` | Math básico OK |
 | **Bucles (ryda)** | ✅ Verificado | `test_rydit_simple` | While loops OK |
-| **Condicionales** | ⏳ Pendiente | - | Código existe, sin test |
-| **Funciones** | ⏳ Pendiente | - | Código existe, sin test |
+| **Condicionales** | ✅ Verificado | `test_bloques_anidados` | 100 condicionales (502 líneas) |
+| **Funciones** | ✅ Verificado | `test_bloques_anidados` | 20 funciones con bloques (222 líneas) |
 | **Arrays** | ⏳ Pendiente | - | Código existe, sin test |
 | **Módulos stdlib** | ⏳ Pendiente | - | math, random, strings |
 | **VM Bytecode** | ✅ Tests lib | `cargo test -p rydit-vm` | 19 passing |
+| **Scripts 500+ líneas** | ✅ Verificado | `test_bloques_anidados` | 1227 líneas parseadas sin errores |
+| **Bloques anidados** | ✅ Verificado | `test_bloques_anidados` | Sin límite artificial |
 
 ---
 
@@ -83,21 +85,56 @@
 
 **Solución**: Ejecutar manualmente y verificar visualmente.
 
+### 3. ⚠️ BUG: Lexer corta identificadores tras comentarios
+**Descubierto**: 2026-04-02 (test bloques anidados)
+
+**Error**: Cuando un script `.rydit` comienza con comentario `#`, el lexer corta los identificadores siguientes incluyendo saltos de línea.
+
+**Ejemplo**:
+```
+# Comentario al inicio
+dark.slot x = 10
+```
+
+**Tokens generados (INCORRECTOS)**:
+```
+Token { kind: Comentario, lexeme: " Comentario al inicio" }
+Token { kind: Ident, lexeme: "\ndark.slo" }  ← Mal, incluye \n y corta
+Token { kind: Ident, lexeme: " nive" }       ← Mal, espacio incluido
+```
+
+**Tokens esperados (CORRECTOS)**:
+```
+Token { kind: Comentario, lexeme: " Comentario al inicio" }
+Token { kind: DarkSlot, lexeme: "dark.slot" }  ← Bien
+Token { kind: Ident, lexeme: "x" }             ← Bien
+```
+
+**Impacto**: Scripts con comentarios al inicio fallan el parseo (1000+ errores).
+
+**Workaround**: Evitar comentarios `#` al inicio de scripts `.rydit`.
+
+**Causa probable**: El lexer no consume correctamente el salto de línea después del comentario, o el estado del lexer no se resetea.
+
+**Prioridad**: 🔴 ALTA - Afecta usabilidad básica del lenguaje.
+
+**Archivo sospechoso**: `crates/rydit-lexer/src/lexer.rs` - manejo de tokenización tras comentarios.
+
 ---
 
 ## 📊 RESUMEN
 
 | Categoría | Verificado | Pendiente | Total |
 |-----------|------------|-----------|-------|
-| **Core (sin gráficos)** | 6 | 4 | 10 |
+| **Core (sin gráficos)** | 10 | 3 | 13 |
 | **Gráficos** | 0 | 5 | 5 |
 | **Input** | 0 | 3 | 3 |
 | **Audio** | 0 | 3 | 3 |
 | **Módulos** | 0 | 7 | 7 |
-| **TOTAL** | **6** | **22** | **28** |
+| **TOTAL** | **10** | **21** | **31** |
 
-**Funcionalidad core**: 60% verificado  
-**Funcionalidad completa**: ~20% verificado
+**Funcionalidad core**: 77% verificado (10/13)
+**Funcionalidad completa**: ~32% verificado (10/31)
 
 ---
 
