@@ -699,12 +699,13 @@ Fuego, humo, explosión, lluvia, chispas - 60 FPS
 
 ---
 
-### 🎨 Carga de Sprites v0.5.1
+### 🎨 Carga de Sprites v0.5.1 + SDL2 Image v0.11.6
 
-| Tanque + Helicóptero |
-|--------------|
-| ![Carga Sprite](logo_icon_asst/carga_sprite.jpg) |
-| **Assets Manager funcionando** - Tanque y helicóptero con sprites 16x16 escalados |
+| Tanque + Helicóptero | Sprites SDL2 v0.11.6 |
+|--------------|--------------|
+| ![Carga Sprite](logo_icon_asst/carga_sprite.jpg) | 🖼️ **4 sprites cargados:** |
+| **Assets Manager funcionando** - Tanque y helicóptero con sprites 16x16 escalados | `tank_16x16.png` ✅ `helicopter_16x16.png` ✅ |
+| | `crate_8x8.png` ✅ `platform_16x16.png` ✅ |
 
 **Funciones de Assets:**
 ```rydit
