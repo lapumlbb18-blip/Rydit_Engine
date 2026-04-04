@@ -1,0 +1,130 @@
+name: Ry-Dit CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  release:
+    types: [ created ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  # ============================================================================
+  # BUILD + TEST en Linux
+  # ============================================================================
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev
+
+      - name: Cache cargo registry
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Build workspace
+        run: cargo build --workspace --verbose
+
+      - name: Run tests
+        run: cargo test --workspace --verbose
+
+      - name: Check ry-god
+        run: cargo check -p ry-god
+
+  # ============================================================================
+  # BUILD en Windows (MSVC)
+  # ============================================================================
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install SDL2 (vcpkg)
+        run: |
+          vcpkg install sdl2 sdl2-image sdl2-ttf sdl2-mixer
+
+      - name: Build workspace
+        run: cargo build --workspace --verbose
+
+  # ============================================================================
+  # RELEASE: Crear artifacts
+  # ============================================================================
+  release:
+    needs: [build-linux, build-windows]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev
+
+      - name: Build release binaries
+        run: |
+          cargo build --release -p ry-rs
+          cargo build --release -p ry-god
+
+      - name: Create release archive
+        run: |
+          mkdir -p ry-dit-${{ github.event.release.tag_name }}
+          cp target/release/rydit-rs ry-dit-${{ github.event.release.tag_name }}/
+          cp target/release/test_revelacion ry-dit-${{ github.event.release.tag_name }}/ 2>/dev/null || true
+          cp target/release/verify_crates ry-dit-${{ github.event.release.tag_name }}/ 2>/dev/null || true
+          cp -r demos ry-dit-${{ github.event.release.tag_name }}/
+          cp README.md ry-dit-${{ github.event.release.tag_name }}/
+          tar czf ry-dit-${{ github.event.release.tag_name }}-linux-x86_64.tar.gz ry-dit-${{ github.event.release.tag_name }}/
+
+      - name: Upload release asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./ry-dit-${{ github.event.release.tag_name }}-linux-x86_64.tar.gz
+          asset_name: ry-dit-${{ github.event.release.tag_name }}-linux-x86_64.tar.gz
+          asset_content_type: application/gzip
+
+  # ============================================================================
+  # CRATES.IO: Publicar crates automáticamente
+  # ============================================================================
+  publish-crates:
+    needs: [build-linux]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev
+
+      - name: Publish ry-god
+        run: cargo publish -p ry-god --token ${{ secrets.CRATES_TOKEN }}
+        continue-on-error: true
+
+      - name: Publish ry-core
+        run: cargo publish -p ry-core --token ${{ secrets.CRATES_TOKEN }}
+        continue-on-error: true
+
+      - name: Publish ry-lexer
+        run: cargo publish -p ry-lexer --token ${{ secrets.CRATES_TOKEN }}
+        continue-on-error: true
+
+      - name: Publish ry-parser
+        run: cargo publish -p ry-parser --token ${{ secrets.CRATES_TOKEN }}
+        continue-on-error: true
