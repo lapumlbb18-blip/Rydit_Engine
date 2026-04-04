@@ -5,10 +5,10 @@
 // Este crate existe solo para compatibilidad con código existente.
 
 // Re-exportar rydit-lexer
-pub use rydit_lexer::*;
+pub use ry_lexer::*;
 
 // Re-exportar rydit-parser
-pub use rydit_parser::*;
+pub use ry_parser::*;
 
 /// Versión del crate
 pub const VERSION: &str = "0.11.2";

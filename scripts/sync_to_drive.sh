@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================================
-# RyDit Engine - Sincronización a Google Drive
+# Ry-Dit - Sincronización a Google Drive
 # =============================================================================
 # Uso: ./sync_to_drive.sh [carpeta_backup]
 # =============================================================================
@@ -34,7 +34,7 @@ log_error() {
 # Header
 echo ""
 echo "=================================================="
-echo "  🌐 RyDit Engine - Sincronización a Google Drive"
+echo "  🌐 Ry-Dit - Sincronización a Google Drive"
 echo "=================================================="
 echo ""
 

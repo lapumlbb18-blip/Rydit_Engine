@@ -1,4 +1,4 @@
-# 🛠️ RyDit Engine - Scripts de Instalación y Utilidades
+# 🛠️ Ry-Dit - Scripts de Instalación y Utilidades
 
 **Versión**: v0.8.0
 **Estado**: ✅ Listos para usar
@@ -14,13 +14,13 @@
 ./scripts/install.sh
 
 # O directamente desde el repositorio
-curl -sSf https://raw.githubusercontent.com/lapumlbb18-blip/Rydit_Engine/main/scripts/install.sh | bash
+curl -sSf https://raw.githubusercontent.com/lapumlbb18-blip/Ry-Dit/main/scripts/install.sh | bash
 ```
 
 **Qué hace:**
 - ✅ Verifica Termux
 - ✅ Instala Rust y dependencias
-- ✅ Compila RyDit Engine
+- ✅ Compila Ry-Dit
 - ✅ Configura Termux-X11 (opcional)
 - ✅ Crea comandos globales (`rydit`, `rydit-demo`, `rydit-x11`)
 
@@ -33,14 +33,14 @@ curl -sSf https://raw.githubusercontent.com/lapumlbb18-blip/Rydit_Engine/main/sc
 ./scripts/install-linux.sh
 
 # O directamente
-curl -sSf https://raw.githubusercontent.com/lapumlbb18-blip/Rydit_Engine/main/scripts/install-linux.sh | bash
+curl -sSf https://raw.githubusercontent.com/lapumlbb18-blip/Ry-Dit/main/scripts/install-linux.sh | bash
 ```
 
 **Qué hace:**
 - ✅ Detecta distribución
 - ✅ Instala Rust vía rustup
 - ✅ Instala dependencias de raylib
-- ✅ Compila RyDit Engine
+- ✅ Compila Ry-Dit
 - ✅ Crea comando global `rydit`
 
 ---
@@ -52,14 +52,14 @@ curl -sSf https://raw.githubusercontent.com/lapumlbb18-blip/Rydit_Engine/main/sc
 powershell -ExecutionPolicy Bypass -File scripts/install-windows.ps1
 
 # O directamente
-iwr https://raw.githubusercontent.com/lapumlbb18-blip/Rydit_Engine/main/scripts/install-windows.ps1 -useb | iex
+iwr https://raw.githubusercontent.com/lapumlbb18-blip/Ry-Dit/main/scripts/install-windows.ps1 -useb | iex
 ```
 
 **Qué hace:**
 - ✅ Instala Rust vía winget
 - ✅ Instala Visual Studio Build Tools
 - ✅ Instala raylib
-- ✅ Compila RyDit Engine
+- ✅ Compila Ry-Dit
 - ✅ Agrega al PATH (opcional)
 
 ---
@@ -134,7 +134,7 @@ iwr https://raw.githubusercontent.com/lapumlbb18-blip/Rydit_Engine/main/scripts/
 **Ejemplo de output:**
 ```
 ==================================================
-  🔍 RyDit Engine - Detección de Entorno
+  🔍 Ry-Dit - Detección de Entorno
 ==================================================
 
 SISTEMA OPERATIVO
@@ -298,14 +298,14 @@ export DRI3=1
 ## 📞 SOPORTE
 
 - **Documentación**: `README.md`, `docs/`
-- **Issues**: https://github.com/lapumlbb18-blip/Rydit_Engine/issues
-- **Discusión**: https://github.com/lapumlbb18-blip/Rydit_Engine/discussions
+- **Issues**: https://github.com/lapumlbb18-blip/Ry-Dit/issues
+- **Discusión**: https://github.com/lapumlbb18-blip/Ry-Dit/discussions
 
 ---
 
 <div align="center">
 
-**🛡️ RyDit Engine - Scripts v0.8.0**
+**🛡️ Ry-Dit - Scripts v0.8.0**
 
 *Instalación automática multi-plataforma*
 

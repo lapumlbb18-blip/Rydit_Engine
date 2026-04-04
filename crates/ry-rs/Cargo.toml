@@ -1,0 +1,38 @@
+[package]
+name = "ry-rs"
+version = "0.11.2"
+edition = "2021"
+
+[dependencies]
+ry-core = { path = "../ry-core" }
+ry-loader = { path = "../ry-loader" }
+ry-science = { path = "../ry-science" }
+ry-physics = { path = "../ry-physics" }
+ry-anim = { path = "../ry-anim" }
+ry-ecs = { path = "../ry-ecs" }
+ry-vm = { path = "../ry-vm" }  # 🆕 v0.11.2: Bytecode VM
+lizer = { path = "../lizer" }  # Wrapper backward compat
+ry-lexer = { path = "../ry-lexer" }  # 🆕 v0.11.2
+ry-parser = { path = "../ry-parser" }  # 🆕 v0.11.2
+v-shield = { path = "../v-shield" }
+blast-core = { path = "../blast-core" }
+ry-gfx = { path = "../ry-gfx" }
+migui = { path = "../migui", features = ["sdl2"] }
+ry-stream = { path = "../ry-stream" }  # 🆕 v0.11.2: LAN streaming
+raylib = { version = "5.5.1", default-features = false, features = ["nobuild"] }
+gl = "0.14.0"
+sdl2 = "0.37"
+serde_json = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+regex = "1.10"
+csv = "1.3"
+ureq = { version = "2.9", features = ["json"] }
+tungstenite = "0.21"
+
+[[bin]]
+name = "rydit-rs"
+path = "src/main.rs"
+
+[[bin]]
+name = "demo_stream"
+path = "src/bin/demo_stream.rs"

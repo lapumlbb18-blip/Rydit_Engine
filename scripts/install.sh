@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================================
-# RyDit Engine - Instalador para Android/Termux
+# Ry-Dit - Instalador para Android/Termux
 # =============================================================================
 # Versión: v0.8.0
 # Plataforma: Android con Termux
@@ -36,7 +36,7 @@ log_error() {
 # Header
 echo ""
 echo "=================================================="
-echo "  🛡️  RyDit Engine - Instalador para Termux"
+echo "  🛡️  Ry-Dit - Instalador para Termux"
 echo "  Versión: v0.8.0"
 echo "=================================================="
 echo ""
@@ -141,12 +141,12 @@ fi
 
 # Compilar proyecto
 echo ""
-log_info "¿Deseas compilar RyDit Engine ahora?"
+log_info "¿Deseas compilar Ry-Dit ahora?"
 read -p "Compilar? (s/n): " -n 1 -r
 echo
 
 if [[ $REPLY =~ ^[SsY]$ ]]; then
-    log_info "Compilando RyDit Engine..."
+    log_info "Compilando Ry-Dit..."
     echo ""
     
     # Build release
@@ -205,7 +205,7 @@ export DISPLAY=:0
 export MESA_LOADER_DRIVER_OVERRIDE=zink
 export DRI3=1
 
-echo "🛡️ RyDit Engine - Iniciando con Termux-X11"
+echo "🛡️ Ry-Dit - Iniciando con Termux-X11"
 echo "   DISPLAY=$DISPLAY"
 echo "   Driver: $MESA_LOADER_DRIVER_OVERRIDE"
 echo ""
@@ -260,7 +260,7 @@ log_success "Script 'rydit-demo' creado"
 # Resumen final
 echo ""
 echo "=================================================="
-echo "  ✅ ¡Instalación de RyDit Engine completada!"
+echo "  ✅ ¡Instalación de Ry-Dit completada!"
 echo "=================================================="
 echo ""
 echo "📦 Comandos disponibles:"

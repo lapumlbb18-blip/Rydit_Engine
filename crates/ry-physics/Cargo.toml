@@ -1,0 +1,17 @@
+[package]
+name = "ry-physics"
+version = "0.7.34"
+edition = "2021"
+description = "Physics module for Ry - Projectile motion, Gravity, N-body simulation"
+license = "MIT"
+repository = "https://github.com/lapumlbb18-blip/Rydit"
+homepage = "https://github.com/lapumlbb18-blip/Rydit"
+documentation = "https://docs.rs/ry-physics"
+readme = "../../README.md"
+keywords = ["physics", "gravity", "projectile", "simulation", "game-engine"]
+categories = ["game-development", "simulation"]
+
+[dependencies]
+ry-core = { version = "0.8.2", path = "../ry-core" }
+serde_json = "1.0"
+serde = { version = "1.0", features = ["derive"] }

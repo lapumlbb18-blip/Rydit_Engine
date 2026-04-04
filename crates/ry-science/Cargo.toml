@@ -1,0 +1,17 @@
+[package]
+name = "ry-science"
+version = "0.7.34"
+edition = "2021"
+description = "Science module for Ry - Bezier curves, Statistics, Geometry, Optical illusions"
+license = "MIT"
+repository = "https://github.com/lapumlbb18-blip/Rydit"
+homepage = "https://github.com/lapumlbb18-blip/Rydit"
+documentation = "https://docs.rs/ry-science"
+readme = "../../README.md"
+keywords = ["bezier", "statistics", "geometry", "science", "game-engine"]
+categories = ["game-development", "science"]
+
+[dependencies]
+ry-core = { version = "0.8.2", path = "../ry-core" }
+serde_json = "1.0"
+serde = { version = "1.0", features = ["derive"] }

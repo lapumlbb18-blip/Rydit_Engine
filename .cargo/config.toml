@@ -1,4 +1,4 @@
-# Configuración local para RyDit Engine
+# Configuración local para Ry-Dit
 # Deshabilitar sccache por problemas de permisos en Termux
 
 [build]

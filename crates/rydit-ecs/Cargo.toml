@@ -1,9 +1,0 @@
-[package]
-name = "rydit-ecs"
-version = "0.10.0"
-edition = "2021"
-description = "ECS (Entity Component System) para RyDit Engine"
-license = "MIT"
-
-[dependencies]
-bevy_ecs = "0.15"

@@ -1,0 +1,96 @@
+// crates/rydit-rs/src/repl.rs
+// REPL Interactivo para RyDit
+
+use std::collections::{HashMap, HashSet};
+use std::io::{self, Write};
+
+use blast_core::Executor;
+use ry_lexer::Lexer;
+use ry_parser::{Parser, Stmt};
+
+/// Iniciar modo REPL interactivo
+pub fn repl_mode() {
+    println!("=== RYDIT REPL v0.7.0 ===");
+    println!("Escribe comandos RyDit y presiona Enter");
+    println!("Comandos: 'help', 'mem', 'clear', 'exit'");
+    println!();
+
+    let mut executor = Executor::nuevo();
+    let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt<'static>>)> = HashMap::new();
+    let mut loaded_modules = HashSet::new();
+    let mut importing_stack = Vec::new();
+    let stdin = io::stdin();
+
+    loop {
+        print!("rydit> ");
+        if let Err(e) = io::stdout().flush() {
+            eprintln!("[REPL ERROR] Flush falló: {}", e);
+            break;
+        }
+
+        let mut input = String::new();
+        if stdin.read_line(&mut input).is_err() {
+            break;
+        }
+
+        // Leak input string to 'static for storing in funcs HashMap
+        // This is acceptable for a REPL that runs until exit
+        let input: &'static str = Box::leak(input.trim().to_string().into_boxed_str());
+
+        match input {
+            "" => continue,
+            "exit" | "quit" | "q" => {
+                println!("[REPL] Saliendo...");
+                break;
+            }
+            "help" | "h" => {
+                println!("Comandos RyDit:");
+                println!("  shield.init          - Inicializar sistema");
+                println!("  onda.core            - Ejecutar acción");
+                println!("  ryprime              - Operación especial");
+                println!("  dark.slot x = N      - Crear variable");
+                println!("  onif x > 0 ... blelse - Condicional");
+                println!();
+                println!("Comandos REPL:");
+                println!("  help / h    - Esta ayuda");
+                println!("  mem / m     - Ver memoria");
+                println!("  clear / c   - Limpiar pantalla");
+                println!("  exit / q    - Salir");
+                continue;
+            }
+            "mem" | "m" => {
+                executor.mostrar_memoria();
+                continue;
+            }
+            "clear" | "c" => {
+                print!("\x1B[2J\x1B[1;1H");
+                continue;
+            }
+            _ => {
+                // Input must live long enough for parsing and execution
+                let tokens = Lexer::new(input).scan();
+                let mut parser = Parser::new(tokens);
+
+                let (program, errors) = parser.parse();
+                if !errors.is_empty() {
+                    println!("[ERROR] {} errores de parsing", errors.len());
+                    for e in &errors {
+                        println!("  - {:?}", e);
+                    }
+                } else {
+                    println!("[RYDIT] {} statements", program.statements.len());
+                    // Ejecutar statements
+                    for stmt in &program.statements {
+                        crate::ejecutar_stmt(
+                            stmt,
+                            &mut executor,
+                            &mut funcs,
+                            &mut loaded_modules,
+                            &mut importing_stack,
+                        );
+                    }
+                }
+            }
+        }
+    }
+}

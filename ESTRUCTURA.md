@@ -10,7 +10,7 @@
 ## 🎯 ARQUITECTURA v0.11.2
 
 ```
-rydit-engine/
+ry-dit/
 ├── crates/
 │   ├── rydit-lexer/            # 🆕 v0.11.2 Zero-Copy Lexer
 │   │   ├── src/

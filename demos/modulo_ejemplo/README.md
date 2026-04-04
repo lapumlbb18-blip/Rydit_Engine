@@ -1,4 +1,4 @@
-# 🦀 Módulo de Ejemplo para RyDit Engine
+# 🦀 Módulo de Ejemplo para Ry-Dit
 
 **Demo de módulo dinámico cargable en runtime**
 
@@ -220,7 +220,7 @@ La función `create_module()` usa `Box::into_raw()` para transferir ownership. E
 
 <div align="center">
 
-**🛡️ RyDit Engine - Módulo de Ejemplo v1.0.0**
+**🛡️ Ry-Dit - Módulo de Ejemplo v1.0.0**
 
 *Demo de carga dinámica con Sistema Universal Ry v0.8.2*
 

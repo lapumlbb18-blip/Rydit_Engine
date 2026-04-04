@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================================
-# RyDit Engine - Instalador para Linux
+# Ry-Dit - Instalador para Linux
 # =============================================================================
 # Versión: v0.8.0
 # Plataformas: Debian, Ubuntu, Fedora, Arch Linux
@@ -36,7 +36,7 @@ log_error() {
 # Header
 echo ""
 echo "=================================================="
-echo "  🛡️  RyDit Engine - Instalador para Linux"
+echo "  🛡️  Ry-Dit - Instalador para Linux"
 echo "  Versión: v0.8.0"
 echo "=================================================="
 echo ""
@@ -199,12 +199,12 @@ fi
 
 # Compilar proyecto
 echo ""
-log_info "¿Deseas compilar RyDit Engine ahora?"
+log_info "¿Deseas compilar Ry-Dit ahora?"
 read -p "Compilar? (s/n): " -n 1 -r
 echo
 
 if [[ $REPLY =~ ^[SsY]$ ]]; then
-    log_info "Compilando RyDit Engine..."
+    log_info "Compilando Ry-Dit..."
     echo ""
     
     # Build release
@@ -259,7 +259,7 @@ log_success "Script 'rydit-demo' creado"
 # Resumen final
 echo ""
 echo "=================================================="
-echo "  ✅ ¡Instalación de RyDit Engine completada!"
+echo "  ✅ ¡Instalación de Ry-Dit completada!"
 echo "=================================================="
 echo ""
 echo "📦 Comandos disponibles:"

@@ -1,0 +1,13 @@
+[package]
+name = "ry-system-ry"
+version = "0.11.0"
+edition = "2021"
+description = "Sistema Universal Ry - Toolkit de Creación con SDL2"
+authors = ["Shield Project"]
+
+[dependencies]
+ry-gfx = { path = "../ry-gfx", features = ["sdl2"] }
+migui = { path = "../migui", features = ["sdl2"] }
+sdl2 = "0.37"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"

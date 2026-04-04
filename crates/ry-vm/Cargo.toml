@@ -1,0 +1,18 @@
+[package]
+name = "ry-vm"
+version = "0.1.0"
+edition = "2021"
+description = "Bytecode VM for Ry"
+license = "MIT"
+repository = "https://github.com/lapumlbb18-blip/Rydit"
+keywords = ["vm", "bytecode", "compiler", "ry", "game-engine"]
+categories = ["compilers", "game-engines", "virtual-machines"]
+
+[dependencies]
+ry-parser = { path = "../ry-parser", version = "0.1.0" }
+
+[dev-dependencies]
+# Tests no requieren dependencias adicionales
+
+[lib]
+path = "src/lib.rs"

@@ -222,7 +222,7 @@ cargo build --target x86_64-pc-windows-msvc  # Windows
 ## 🤝 Cómo Contribuir
 
 ### 1. Reporta Bugs
-GitHub Issues: https://github.com/lapumlbb18-blip/Rydit_Engine/issues
+GitHub Issues: https://github.com/lapumlbb18-blip/Ry-Dit/issues
 
 ### 2. Propón Features
 Discute primero en Issues. Priorizamos:
@@ -232,8 +232,8 @@ Discute primero en Issues. Priorizamos:
 
 ### 3. Envía PRs
 ```bash
-git clone https://github.com/lapumlbb18-blip/Rydit_Engine
-cd Rydit_Engine
+git clone https://github.com/lapumlbb18-blip/Ry-Dit
+cd Ry-Dit
 # Crea tu rama
 git checkout -b feature/tu-feature
 # Haz cambios
@@ -253,8 +253,8 @@ git push origin feature/tu-feature
 
 ## 📞 Comunidad
 
-- **GitHub**: https://github.com/lapumlbb18-blip/Rydit_Engine
-- **Issues**: https://github.com/lapumlbb18-blip/Rydit_Engine/issues
+- **GitHub**: https://github.com/lapumlbb18-blip/Ry-Dit
+- **Issues**: https://github.com/lapumlbb18-blip/Ry-Dit/issues
 - **Discord**: (próximamente)
 - **Twitter**: (próximamente)
 
@@ -311,7 +311,7 @@ git push origin feature/tu-feature
 **MIT License** - Haz lo que quieras con esto.
 
 ```
-Copyright (c) 2026 RyDit Engine
+Copyright (c) 2026 Ry-Dit
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -330,6 +330,6 @@ copies or substantial portions of the Software.
 
 **🛡️ RyDit v0.6.0 - Construido en Android, para Android**
 
-[GitHub](https://github.com/lapumlbb18-blip/Rydit_Engine) • [Roadmap](#-roadmap-público) • [Demos](#-juegos-hechos-con-rydit)
+[GitHub](https://github.com/lapumlbb18-blip/Ry-Dit) • [Roadmap](#-roadmap-público) • [Demos](#-juegos-hechos-con-rydit)
 
 </div>

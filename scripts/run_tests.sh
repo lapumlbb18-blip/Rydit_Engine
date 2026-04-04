@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================================
-# RyDit Engine - Ejecutor de Tests
+# Ry-Dit - Ejecutor de Tests
 # =============================================================================
 # Uso: ./run_tests.sh [opciones]
 # =============================================================================
@@ -47,7 +47,7 @@ log_error() {
 }
 
 # Header
-log_header "🧪 RyDit Engine - Suite de Tests"
+log_header "🧪 Ry-Dit - Suite de Tests"
 
 # Parsear argumentos
 RUN_RUST_TESTS=true

@@ -2,9 +2,9 @@
 name = "toolkit-ry"
 version = "0.1.0"
 edition = "2021"
-description = "UI Toolkit para RyDit Engine"
+description = "UI Toolkit para Ry-Dit"
 authors = ["Shield Project"]
 
 [dependencies]
 sdl2 = "0.37"
-rydit-gfx = { path = "../rydit-gfx" }
+ry-gfx = { path = "../ry-gfx" }

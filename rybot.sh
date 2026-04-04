@@ -1,6 +1,6 @@
 #!/data/data/com.termux/files/usr/bin/bash
 # =============================================================================
-# RyDit Engine - Bot de Ayuda y Demo Launcher v0.2.0
+# Ry-Dit - Bot de Ayuda y Demo Launcher v0.2.0
 # =============================================================================
 # Menú interactivo para ejecutar demos, ver documentación y aprender RyDit
 # Uso: ./rybot.sh
@@ -336,7 +336,7 @@ main() {
                 show_documentation
                 ;;
             0)
-                echo -e "${CYAN}¡Gracias por usar RyDit Engine! 🛡️${NC}"
+                echo -e "${CYAN}¡Gracias por usar Ry-Dit! 🛡️${NC}"
                 exit 0
                 ;;
             *)

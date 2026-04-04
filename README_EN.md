@@ -2,18 +2,18 @@
 
 <div align="center">
 
-![RyDit Engine Logo](screenshots/logo.png)
+![Ry-Dit Logo](screenshots/logo.png)
 
 **"David vs Goliath - A game engine in Rust, built 100% on a Redmi Note 8"**
 
-[![Version](https://img.shields.io/badge/version-v0.11.0-blue.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
-[![Tests](https://img.shields.io/badge/tests-260%20passing-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![Version](https://img.shields.io/badge/version-v0.11.0-blue.svg)](https://github.com/lapumlbb18-blip/Ry-Dit)
+[![Tests](https://img.shields.io/badge/tests-260%20passing-green.svg)](https://github.com/lapumlbb18-blip/Ry-Dit)
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
 [![raylib](https://img.shields.io/badge/raylib-5.5-purple.svg)](https://www.raylib.com/)
 [![SDL2](https://img.shields.io/badge/SDL2-0.37-red.svg)](https://www.libsdl.org/)
 [![ab_glyph](https://img.shields.io/badge/ab_glyph-0.2-yellow.svg)](https://crates.io/crates/ab_glyph)
-[![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine/blob/main/LICENSE)
+[![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](https://github.com/lapumlbb18-blip/Ry-Dit)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/lapumlbb18-blip/Ry-Dit/blob/main/LICENSE)
 
 [📖 Documentation](#-documentation) • [🎮 Snake Demo](#-snake-game---functional-demo) • [🚀 Roadmap](#-roadmap) • [📱 Built on Android](#-built-on-androidtermux) • [💬 Community](#-community)
 
@@ -157,8 +157,8 @@ pkg install rust
 pkg install libllvm libx11 libxrandr libxi libxcursor libxinerama
 
 # Clone repository
-git clone https://github.com/lapumlbb18-blip/Rydit_Engine.git
-cd Rydit_Engine
+git clone https://github.com/lapumlbb18-blip/Ry-Dit.git
+cd Ry-Dit
 ```
 
 ### 2. Build
@@ -432,7 +432,7 @@ cargo run --bin demo_particulas_sdl2 --release
 - ✅ **6 functional crates**
 - ✅ **~10,500 lines of code**
 - ✅ **Complete documentation** (16+ .md files)
-- ✅ **Public GitHub** (Rydit_Engine)
+- ✅ **Public GitHub** (Ry-Dit)
 - ✅ **Automated Google Drive Backup**
 
 ---

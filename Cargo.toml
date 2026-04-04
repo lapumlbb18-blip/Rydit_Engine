@@ -4,18 +4,18 @@ members = [
     "crates/lizer",
     "crates/v-shield",
     "crates/blast-core",
-    "crates/rydit-core",
-    "crates/rydit-science",
-    "crates/rydit-physics",
-    "crates/rydit-anim",
-    "crates/rydit-rs",
-    "crates/rydit-gfx",
+    "crates/ry-core",
+    "crates/ry-science",
+    "crates/ry-physics",
+    "crates/ry-anim",
+    "crates/ry-rs",
+    "crates/ry-gfx",
     "crates/migui",
-    "crates/rydit-loader",
-    "crates/rydit-script",
-    "crates/rydit-stream",  # 🆕 v0.11.2: LAN streaming (WebSocket + mDNS + Portal)
-    "crates/rydit-ecs",   # ✅ v0.10.0: ECS (bevy_ecs + N-Body)
-    "crates/rydit-test", "crates/rydit-lexer", "crates/rydit-parser", "crates/rydit-vm",  # 🆕 v0.11.1: Tests simplificados (Nivel 1, 2, 3)
+    "crates/ry-loader",
+    "crates/ry-script",
+    "crates/ry-stream",  # 🆕 v0.11.2: LAN streaming (WebSocket + mDNS + Portal)
+    "crates/ry-ecs",   # ✅ v0.10.0: ECS (bevy_ecs + N-Body)
+    "crates/ry-test", "crates/ry-lexer", "crates/ry-parser", "crates/ry-vm",  # 🆕 v0.11.1: Tests simplificados (Nivel 1, 2, 3)
 ]
 
 # =============================================================================

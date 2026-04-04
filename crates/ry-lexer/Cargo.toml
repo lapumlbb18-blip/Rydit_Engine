@@ -1,0 +1,23 @@
+[package]
+name = "ry-lexer"
+version = "0.1.0"
+edition = "2021"
+description = "Zero-copy lexer with lifetimes for Ry"
+license = "MIT"
+repository = "https://github.com/lapumlbb18-blip/Rydit"
+keywords = ["lexer", "tokenizer", "ry", "game-engine", "zero-copy"]
+categories = ["compilers", "game-engines", "parsing"]
+
+[dependencies]
+# Sin dependencias externas - lexer puro en Rust
+
+[dev-dependencies]
+# Tests no requieren dependencias adicionales
+
+[lib]
+path = "src/lib.rs"
+
+# Benchmarks (opcional, requiere nightly)
+# [[bench]]
+# name = "bench_lexer"
+# harness = false

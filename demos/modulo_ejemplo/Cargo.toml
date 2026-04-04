@@ -2,7 +2,7 @@
 name = "modulo_ejemplo"
 version = "1.0.0"
 edition = "2021"
-description = "Demo: Módulo dinámico de ejemplo para RyDit Engine"
+description = "Demo: Módulo dinámico de ejemplo para Ry-Dit"
 license = "MIT"
 
 [workspace]
@@ -13,5 +13,5 @@ name = "modulo_ejemplo"
 crate-type = ["cdylib"]  # Biblioteca dinámica (.so/.dll)
 
 [dependencies]
-rydit-core = { path = "../../crates/rydit-core", version = "0.8.2" }
+ry-core = { path = "../../crates/ry-core", version = "0.8.2" }
 serde_json = "1.0"

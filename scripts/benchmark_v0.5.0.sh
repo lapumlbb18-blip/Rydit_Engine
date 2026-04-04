@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================================
-# SCRIPT DE BENCHMARKING v0.5.0 - RyDit Engine
+# SCRIPT DE BENCHMARKING v0.5.0 - Ry-Dit
 # =============================================================================
 # 
 # Uso: ./scripts/benchmark_v0.5.0.sh
@@ -15,7 +15,7 @@
 set -e  # Salir si hay error
 
 echo "============================================================================="
-echo "  RyDit Engine v0.5.0 - Benchmark Suite"
+echo "  Ry-Dit v0.5.0 - Benchmark Suite"
 echo "============================================================================="
 echo ""
 

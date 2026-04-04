@@ -2,16 +2,16 @@
 name = "lizer"
 version = "0.11.2"
 edition = "2021"
-description = "Legacy wrapper for RyDit lexer + parser (backward compatibility)"
+description = "Legacy wrapper for Ry lexer + parser (backward compatibility)"
 license = "MIT"
-repository = "https://github.com/lapumlbb18-blip/Rydit_Engine"
-keywords = ["lexer", "parser", "rydit", "deprecated"]
+repository = "https://github.com/lapumlbb18-blip/Rydit"
+keywords = ["lexer", "parser", "ry", "deprecated"]
 categories = ["compilers", "game-engines"]
 
 [dependencies]
 # Re-export de nuevos crates para compatibilidad
-rydit-lexer = { path = "../rydit-lexer", version = "0.1.0" }
-rydit-parser = { path = "../rydit-parser", version = "0.1.0" }
+ry-lexer = { path = "../ry-lexer", version = "0.1.0" }
+ry-parser = { path = "../ry-parser", version = "0.1.0" }
 
 # Re-exports públicos
 [package.metadata.docs.rs]
