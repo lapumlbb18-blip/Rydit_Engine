@@ -151,17 +151,25 @@ impl RyGod {
             ));
         }
 
-        // Lexer validation
-        let tokens = ry_lexer::Lexer::new(&source).scan();
-        if tokens.is_empty() {
-            return Err("Script vacío o sin tokens válidos".to_string());
+        // Validación básica: archivo no vacío
+        if source.trim().is_empty() {
+            return Err("Script vacío".to_string());
         }
 
-        // Parser validation
-        let (_program, errors) = ry_parser::Parser::new(tokens).parse();
-        if !errors.is_empty() {
-            let msgs: Vec<_> = errors.iter().map(|e| format!("{}", e)).collect();
-            return Err(format!("Errores de parsing: {:?}", msgs));
+        #[cfg(feature = "integration")]
+        {
+            // Lexer validation
+            let tokens = ry_lexer::Lexer::new(&source).scan();
+            if tokens.is_empty() {
+                return Err("Script vacío o sin tokens válidos".to_string());
+            }
+
+            // Parser validation
+            let (_program, errors) = ry_parser::Parser::new(tokens).parse();
+            if !errors.is_empty() {
+                let msgs: Vec<_> = errors.iter().map(|e| format!("{}", e)).collect();
+                return Err(format!("Errores de parsing: {:?}", msgs));
+            }
         }
 
         Ok(())

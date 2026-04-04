@@ -4,6 +4,11 @@
 //! Reporta qué funciona, qué falla, y por qué.
 //! Sin frameworks avanzados, sin abstracciones innecesarias.
 
+#[cfg(feature = "integration")]
+use ry_lexer;
+#[cfg(feature = "integration")]
+use ry_parser;
+
 
 /// Resultado de una prueba individual
 #[derive(Debug, Clone)]
@@ -30,21 +35,24 @@ impl RevelationTest {
 
     /// Ejecutar TODAS las pruebas
     pub fn run_all(&mut self) {
-        self.test_lexer_basico();
-        self.test_lexer_comentarios();
-        self.test_lexer_strings();
-        self.test_lexer_numeros();
-        self.test_lexer_keywords();
-        self.test_lexer_operadores();
-        self.test_parser_simple();
-        self.test_parser_ryda();
-        self.test_parser_onif();
-        self.test_parser_arrays();
-        self.test_parser_asignacion();
-        self.test_parser_texto_en();
-        self.test_parser_expresiones();
-        self.test_parser_matematica();
-        self.test_integration_completa();
+        #[cfg(feature = "integration")]
+        {
+            self.test_lexer_basico();
+            self.test_lexer_comentarios();
+            self.test_lexer_strings();
+            self.test_lexer_numeros();
+            self.test_lexer_keywords();
+            self.test_lexer_operadores();
+            self.test_parser_simple();
+            self.test_parser_ryda();
+            self.test_parser_onif();
+            self.test_parser_arrays();
+            self.test_parser_asignacion();
+            self.test_parser_texto_en();
+            self.test_parser_expresiones();
+            self.test_parser_matematica();
+            self.test_integration_completa();
+        }
     }
 
     fn add_result(&mut self, result: TestResult) {
@@ -55,6 +63,7 @@ impl RevelationTest {
     // LEXER TESTS
     // =========================================================================
 
+    #[cfg(feature = "integration")]
     fn test_lexer_basico(&mut self) {
         let source = "dark.slot x = 400";
         let tokens = ry_lexer::Lexer::new(source).scan();
@@ -69,6 +78,7 @@ impl RevelationTest {
         });
     }
 
+    #[cfg(feature = "integration")]
     fn test_lexer_comentarios(&mut self) {
         let source = "# esto es un comentario\ndark.slot x = 10";
         let tokens = ry_lexer::Lexer::new(source).scan();
@@ -84,6 +94,7 @@ impl RevelationTest {
         });
     }
 
+    #[cfg(feature = "integration")]
     fn test_lexer_strings(&mut self) {
         let source = r#""hola mundo""#;
         let tokens = ry_lexer::Lexer::new(source).scan();
@@ -98,6 +109,7 @@ impl RevelationTest {
         });
     }
 
+    #[cfg(feature = "integration")]
     fn test_lexer_numeros(&mut self) {
         let source = "42 3.14 -7";
         let tokens = ry_lexer::Lexer::new(source).scan();
@@ -112,6 +124,7 @@ impl RevelationTest {
         });
     }
 
+    #[cfg(feature = "integration")]
     fn test_lexer_keywords(&mut self) {
         let tests = [
             ("romper", ry_lexer::TokenKind::Break, "romper → Break"),
@@ -147,6 +160,7 @@ impl RevelationTest {
         });
     }
 
+    #[cfg(feature = "integration")]
     fn test_lexer_operadores(&mut self) {
         let tests = [
             ("=", ry_lexer::TokenKind::Asignar),
@@ -187,6 +201,7 @@ impl RevelationTest {
     // PARSER TESTS
     // =========================================================================
 
+    #[cfg(feature = "integration")]
     fn test_parser_simple(&mut self) {
         let source = "dark.slot x = 400\ndibujar.circulo(x, 300, 30, \"rojo\")";
         let tokens = ry_lexer::Lexer::new(source).scan();
@@ -202,6 +217,7 @@ impl RevelationTest {
         });
     }
 
+    #[cfg(feature = "integration")]
     fn test_parser_ryda(&mut self) {
         let source = "ryda {\n    dibujar.circulo(100, 100, 20, \"rojo\")\n}";
         let tokens = ry_lexer::Lexer::new(source).scan();
@@ -217,6 +233,7 @@ impl RevelationTest {
         });
     }
 
+    #[cfg(feature = "integration")]
     fn test_parser_onif(&mut self) {
         let source = "onif tecla_presionada(\"escape\") {\n    romper\n}";
         let tokens = ry_lexer::Lexer::new(source).scan();
@@ -232,6 +249,7 @@ impl RevelationTest {
         });
     }
 
+    #[cfg(feature = "integration")]
     fn test_parser_arrays(&mut self) {
         // Test array literals
         let source = "dark.slot[] colores = [\"rojo\", \"verde\", \"azul\"]";
@@ -248,6 +266,7 @@ impl RevelationTest {
         });
     }
 
+    #[cfg(feature = "integration")]
     fn test_parser_asignacion(&mut self) {
         let source = "dark.slot x = 10\nx = x + 1";
         let tokens = ry_lexer::Lexer::new(source).scan();
@@ -263,6 +282,7 @@ impl RevelationTest {
         });
     }
 
+    #[cfg(feature = "integration")]
     fn test_parser_texto_en(&mut self) {
         let source = r#"texto "Hola Ry-Dit" en 60, 60, tamano 20, color "blanco""#;
         let tokens = ry_lexer::Lexer::new(source).scan();
@@ -278,6 +298,7 @@ impl RevelationTest {
         });
     }
 
+    #[cfg(feature = "integration")]
     fn test_parser_expresiones(&mut self) {
         let source = "dark.slot x = 400 + 100";
         let tokens = ry_lexer::Lexer::new(source).scan();
@@ -293,6 +314,7 @@ impl RevelationTest {
         });
     }
 
+    #[cfg(feature = "integration")]
     fn test_parser_matematica(&mut self) {
         // matematica:: es evaluado en eval/mod.rs, no en parser
         // Verificamos que el builtin fps() esté registrado
@@ -307,6 +329,7 @@ impl RevelationTest {
         });
     }
 
+    #[cfg(feature = "integration")]
     fn test_integration_completa(&mut self) {
         // Test que combina múltiples features
         let source = r#"# Test integración

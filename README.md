@@ -6,11 +6,11 @@
 
 **"Construido sin prisa, madurado con paciencia"**
 
-[![Version](https://img.shields.io/badge/version-v0.12.0-blue.svg)](https://github.com/lapumlbb18-blip/Ry-Dit)
+[![Version](https://img.shields.io/badge/version-v0.12.1-blue.svg)](https://github.com/lapumlbb18-blip/Ry-Dit)
 [![Errors](https://img.shields.io/badge/errors-0-green.svg)](https://github.com/lapumlbb18-blip/Ry-Dit)
 [![Warnings](https://img.shields.io/badge/warnings-0-green.svg)](https://github.com/lapumlbb18-blip/Ry-Dit)
 [![Tests](https://img.shields.io/badge/tests-101+-passing-green.svg)](https://github.com/lapumlbb18-blip/Ry-Dit)
-[![Status](https://img.shields.io/badge/estado-v0.12.0--input%20ttf%20sprites%20rigid%20body%20audio-green.svg)](https://github.com/lapumlbb18-blip/Ry-Dit)
+[![Status](https://img.shields.io/badge/estado-v0.12.1--input%20ttf%20sprites%20rigid%20body%20audio-green.svg)](https://github.com/lapumlbb18-blip/Ry-Dit)
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
 [![SDL2](https://img.shields.io/badge/SDL2-0.37-red.svg)](https://www.libsdl.org/)
 [![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](https://github.com/lapumlbb18-blip/Ry-Dit)
@@ -43,18 +43,18 @@
 
 ---
 
-## 🔧 ESTADO ACTUAL - v0.12.0 INPUT + TTF + SPRITES + RIGID BODY + AUDIO
+## 🔧 ESTADO ACTUAL - v0.12.1 INPUT + TTF + SPRITES + RIGID BODY + AUDIO
 
-### ✅ **ESTADO REAL: v0.12.0 - INPUT + TTF + SPRITES + AUDIO + VIDEOS**
+### ✅ **ESTADO REAL: v0.12.1 - INPUT + TTF + SPRITES + AUDIO + VIDEOS**
 
 **Última actualización**: 2026-04-03
-**Versión actual**: v0.12.0 ✅ FUNCIONAL
+**Versión actual**: v0.12.1 ✅ FUNCIONAL
 **Próxima versión**: v0.11.7 - Migrar audio.rs a SDL2_mixer + Demo .rydit con audio
 **Estado**: INPUT ✅ | TTF ✅ | SPRITES ✅ | RIGID BODY ✅ | AUDIO ✅ | VIDEOS ✅
 
 ---
 
-### ✅ **LO QUE SÍ FUNCIONA (v0.12.0)**
+### ✅ **LO QUE SÍ FUNCIONA (v0.12.1)**
 
 | Sistema | Estado | Errores/Warnings | Notas |
 |---------|--------|------------------|-------|
@@ -243,7 +243,7 @@ mundo {
 
 ## 🔧 TAREAS FINALES ANTES DE LANZAMIENTO
 
-### Fase 1: Tests y Verificación (v0.12.0) 🔴 Prioridad
+### Fase 1: Tests y Verificación (v0.12.1) 🔴 Prioridad
 - [ ] Probar ry-rs binario completo en Termux-X11
 - [ ] Tests manuales: input SDL2 (teclado, mouse)
 - [ ] Tests manuales: render SDL2 (formas, sprites, texto)
@@ -251,14 +251,14 @@ mundo {
 - [ ] Snake reescrito con VM bytecode
 - [ ] Platformer demo SDL2 funcional
 
-### Fase 2: Features Esenciales (v0.12.0) 🔴 Prioridad
+### Fase 2: Features Esenciales (v0.12.1) 🔴 Prioridad
 - [ ] FSR 1.0 (FidelityFX Super Resolution) - Shader embebido
 - [ ] Parser 100% bloques anidados sin límites
 - [ ] AST caching en rybot
 - [ ] rybot debug CLI
 - [ ] Bytecode optimization
 
-### Fase 3: GitHub Actions + CI/CD (v0.12.0) 🟡 Paralelo
+### Fase 3: GitHub Actions + CI/CD (v0.12.1) 🟡 Paralelo
 - [ ] `.github/workflows/test.yml` - Tests automáticos
 - [ ] `.github/workflows/build.yml` - Build multi-plataforma
 - [ ] Coverage reports
@@ -291,8 +291,8 @@ La implementación será gradual: primero geometría básica, luego físicas, lu
 | Estado | Score |
 |--------|-------|
 | Actual (v0.11.5) | 9.5/10 ✅ Código limpio |
-| v0.12.0 (Tests) | 9.7/10 |
-| v0.12.0 (FSR + Parser) | 9.8/10 |
+| v0.12.1 (Tests) | 9.7/10 |
+| v0.12.1 (FSR + Parser) | 9.8/10 |
 | v0.13.0 (3D Preview) | 9.9/10 |
 | v1.0.0 (Motor completo) | 10/10 |
 
@@ -310,8 +310,8 @@ La implementación será gradual: primero geometría básica, luego físicas, lu
 ## ✅ LO QUE SÍ HAREMOS
 
 ### Ruta Final de Tareas
-- ✅ **v0.12.0**: Tests manuales Termux-X11 + Snake reescrito
-- ✅ **v0.12.0**: FSR 1.0 + Parser fuerte + GitHub Actions
+- ✅ **v0.12.1**: Tests manuales Termux-X11 + Snake reescrito
+- ✅ **v0.12.1**: FSR 1.0 + Parser fuerte + GitHub Actions
 - ✅ **v0.13.0**: 3D preview (geometría, matrices, ángulos, esqueletos)
 - ✅ **v1.0.0**: Motor completo con editor visual
 
@@ -349,8 +349,8 @@ La implementación será gradual: primero geometría básica, luego físicas, lu
 | Versión | Estado | Features | Fecha |
 |---------|--------|----------|-------|
 | **v0.11.5** | ✅ | 0 Errores + 0 Warnings (Código Limpio) | 2026-04-02 |
-| **v0.12.0** | 🔮 | Snake reescrito + Platformer SDL2 | 2026-04-14 |
-| **v0.12.0** | 🔮 | FSR 1.0 + Parser Fuerte | 2026-04-21 |
+| **v0.12.1** | 🔮 | Snake reescrito + Platformer SDL2 | 2026-04-14 |
+| **v0.12.1** | 🔮 | FSR 1.0 + Parser Fuerte | 2026-04-21 |
 | **v0.13.0** | 🔮 | N-Body Gravity + ECS Maduro | 2026-05-05 |
 | **v0.14.0** | 🔮 | Multi-plataforma (Win, macOS, WASM) | 2026-05-20 |
 | **v1.0.0** | 🔮 | Motor Completo + Editor Visual | 2026-06-01 |
@@ -650,14 +650,14 @@ cargo run --bin ry-rs -- --gfx snake.rydit
 
 ---
 
-### ✨ Sistema de Partículas v0.5.3 + Rigid Body + Audio v0.12.0
+### ✨ Sistema de Partículas v0.5.3 + Rigid Body + Audio v0.12.1
 
 | Demo Partículas | Rigid Body + Audio |
 |--------------|--------------|
 | ![Partículas Demo](screenshots/particulas.jpg) | 🎬 **Video:** [Ver partículas](screenshots/particulas.mp4) |
 | **5 efectos: fuego, humo, explosión, lluvia, chispas** - 60 FPS con 500+ partículas | **SDL2_mixer funcionando** - Sonidos de salto y colisión generados dinámicamente |
 
-#### 🎬 Videos Demostrativos v0.12.0
+#### 🎬 Videos Demostrativos v0.12.1
 
 **3 videos MP4 embebidos** - Reproducibles directamente en GitHub:
 
@@ -701,9 +701,9 @@ Tu navegador no soporta video.
 
 ---
 
-### 🎨 Carga de Sprites v0.5.1 + SDL2 Image v0.12.0
+### 🎨 Carga de Sprites v0.5.1 + SDL2 Image v0.12.1
 
-| Tanque + Helicóptero | Sprites SDL2 v0.12.0 |
+| Tanque + Helicóptero | Sprites SDL2 v0.12.1 |
 |--------------|--------------|
 | ![Carga Sprite](logo_icon_asst/carga_sprite.jpg) | 🖼️ **4 sprites cargados:** |
 | **Assets Manager funcionando** - Tanque y helicóptero con sprites 16x16 escalados | `tank_16x16.png` ✅ `helicopter_16x16.png` ✅ |
@@ -926,9 +926,9 @@ Crates:
 | **v0.5.1** | 🔜 | **Audio + HTTP + CSV + Assets + Partículas** | Próxima sesión |
 | **v0.7.3.x** | ⏳ | **ry-geometry** (Ilusiones ópticas, pendiente) | Próxima sesión |
 | **v0.11.5** | ✅ | **CLEAN CODE** (0 errores, 0 warnings, lifetimes, 132 problemas → 0) | 2026-04-02 |
-| **v0.12.0** | ✅ | **Input SDL2 + TTF + Sprites + Rigid Body + Audio + 3 Videos** | 2026-04-03 |
+| **v0.12.1** | ✅ | **Input SDL2 + TTF + Sprites + Rigid Body + Audio + 3 Videos** | 2026-04-03 |
 | **v0.11.7** | 🔮 | Migrar audio.rs a SDL2_mixer + Demo .rydit con audio | Próxima sesión |
-| **v0.12.0** | 🔮 | Primer juego completo (platformer) + FSR 1.0 | 2026-04-21 |
+| **v0.12.1** | 🔮 | Primer juego completo (platformer) + FSR 1.0 | 2026-04-21 |
 
 </div>
 
@@ -936,7 +936,7 @@ Crates:
 
 ## 🎯 Estado del Proyecto
 
-### ✅ Completado (v0.12.0 - INPUT + TTF + SPRITES + RIGID BODY + AUDIO)
+### ✅ Completado (v0.12.1 - INPUT + TTF + SPRITES + RIGID BODY + AUDIO)
 - [x] **Input SDL2 Funcional** - `repeat: false` patrón (cada pulsación = acción individual)
 - [x] **← → ↑ ↓ + WASD + SPACE** - Todas las teclas responden en Termux-X11
 - [x] **SDL2_ttf Texto Real** - `draw_text()` con FontFFI, sin parpadeo (texturas cacheadas cada 30 frames)
@@ -1288,7 +1288,7 @@ ryda frame < 500 {
 
 ## 🏆 Logros
 
-### Sesión v0.12.0 - Input SDL2 + TTF + Sprites + Rigid Body + Audio
+### Sesión v0.12.1 - Input SDL2 + TTF + Sprites + Rigid Body + Audio
 - ✅ **Input SDL2 Funcional** - `repeat: false` patrón (cada pulsación = acción)
 - ✅ **SDL2_ttf Texto Real** - `draw_text()` con FontFFI, sin parpadeo (texturas cacheadas)
 - ✅ **Sprites PNG Cargados** - 4 sprites con SDL2_image (`tank`, `helicopter`, `crate`, `platform`)
@@ -1343,7 +1343,7 @@ MIT License - Ver [LICENSE](LICENSE) para más detalles.
 
 *¿Quieres evaluar este proyecto?* Únete al **Discord Mouredev**: https://discord.gg/mouredev y comparte tu opinión en #mostrar-proyecto
 
-**Última actualización:** 2026-04-03 (v0.12.0 - Input SDL2 + TTF + Sprites + Rigid Body + Audio + 3 Videos)
+**Última actualización:** 2026-04-03 (v0.12.1 - Input SDL2 + TTF + Sprites + Rigid Body + Audio + 3 Videos)
 *Próxima versión:* v0.11.7 (Migrar audio.rs a SDL2_mixer + Demo .rydit con audio)
 *Estado:* ✅ **INPUT + TTF + SPRITES + RIGID BODY + AUDIO + VIDEOS FUNCIONALES**
 

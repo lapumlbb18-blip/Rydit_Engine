@@ -9,19 +9,14 @@ keywords = ["security", "sandbox", "low-end", "industrial", "audit"]
 categories = ["development-tools", "security"]
 
 [dependencies]
-# Crates internos Ry-Dit
-ry-core = { path = "../ry-core", version = "0.8.2" }
-ry-lexer = { path = "../ry-lexer", version = "0.1.0" }
-ry-parser = { path = "../ry-parser", version = "0.1.0" }
-ry-vm = { path = "../ry-vm", version = "0.1.0" }
+# ry-core, ry-lexer, ry-parser, ry-vm se publicarán después
+# ry-god v0.1.0 es framework independiente de supervisión
 
 # Zero dependencias externas innecesarias (filosofía low-end)
-
-[dev-dependencies]
-# Benchmarks sin dependencias pesadas
 
 [features]
 default = ["sandbox", "audit", "limits"]
 sandbox = []       # Aislamiento de scripts
 audit = []         # Logging de actividades
 limits = []        # Límites de memoria/CPU
+integration = []   # Tests con ry-* crates (requiere path deps)
