@@ -1,7 +1,7 @@
-# 🛡️ Ry-Dit - ROADMAP v0.12.0 → v1.0.0
+# 🛡️ Ry-Dit - ROADMAP v0.12.1 → v1.0.0
 
 **Última actualización**: 2026-04-04
-**Versión actual**: v0.12.0 ✅ PARSER INFALIBLE
+**Versión actual**: v0.12.1 ✅ RY-GOD PUBLICADO EN CRATES.IO
 
 ---
 
@@ -42,6 +42,23 @@
 | Tests viejos movidos | ✅ |
 | Documentación parser | ✅ |
 
+
+### ✅ v0.12.1 - Ry-god publicado + CI/CD (COMPLETADA)
+
+**Fecha**: 2026-04-04
+**Commits**: `8ff8814` → `22252bc` (HEAD, 6 commits)
+
+| Feature | Estado |
+|---------|--------|
+| ry-god creado (Security & Efficiency) | ✅ |
+| Test revelacion: 15/15 tests | ✅ |
+| Verificacion: 13/13 crates compilando | ✅ |
+| ry-god publicado en crates.io v0.1.0 | ✅ |
+| GitHub Actions CI/CD configurado | ✅ |
+| 0 errores compilacion workspace | ✅ |
+
+**Nota**: ~30 warnings en demos (dead_code, unused) - no bloqueantes
+
 ### ⏳ v0.12.1 - Demos Completos
 
 **Prioridad**: ALTA
@@ -57,7 +74,7 @@
 | Screenshots nuevos | ⏳ | Traer imágenes |
 | Videos demostrativos | ⏳ | Grabar demos |
 
-### ⏳ v0.12.2 - Crates Maduros
+### ⏳ v0.13.0 - Demos Completos + Crates Maduros
 
 **Prioridad**: MEDIA
 
@@ -100,9 +117,10 @@
 ## 📈 Progreso General
 
 ```
-v0.11.5 ████████████████████░░░░░░░░░░░░░░ 60%
-v0.12.0 ████████████████████████████░░░░░░ 80% ← ACTUAL
-v1.0.0  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 20%
+v0.12.0 ████████████████████████████████ 100% ✅
+v0.12.1 ████████████████████████████████ 100% ✅
+v0.13.0 ██████████░░░░░░░░░░░░░░░░░░░░░░  33% ← EN PROGRESO
+v1.0.0  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  10%
 ```
 
 ---
@@ -119,7 +137,7 @@ v1.0.0  ░░░░░░░░░░░░░░░░░░░░░░░░
 
 <div align="center">
 
-**🛡️ Ry-Dit v0.12.0 - ROADMAP**
+**🛡️ Ry-Dit v0.12.1 - ROADMAP**
 
 *Parser infalible ✅ | Próximo: Demos completos*
 

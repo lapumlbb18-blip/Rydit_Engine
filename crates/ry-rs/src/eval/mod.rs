@@ -349,6 +349,360 @@ pub fn evaluar_expr<'a>(
             }
 
             // ================================================================
+            // NUEVAS FUNCIONES MATH v0.13.0
+            // ================================================================
+
+            // math::pow(base, exp) - Potencia
+            if (func_name == "math::pow" || func_name == "__math_pow") && args.len() == 2 {
+                let base_val = evaluar_expr(&args[0], executor, funcs);
+                let exp_val = evaluar_expr(&args[1], executor, funcs);
+                if let (Valor::Num(base), Valor::Num(exp)) = (base_val, exp_val) {
+                    return Valor::Num(base.powf(exp));
+                } else {
+                    return Valor::Error("math::pow() requiere dos números".to_string());
+                }
+            }
+
+            // math::log(x) - Logaritmo natural (ln)
+            if (func_name == "math::log" || func_name == "__math_log") && args.len() == 1 {
+                if let Valor::Num(x) = evaluar_expr(&args[0], executor, funcs) {
+                    if x > 0.0 {
+                        return Valor::Num(x.ln());
+                    } else {
+                        return Valor::Error("math::log() requiere número > 0".to_string());
+                    }
+                } else {
+                    return Valor::Error("math::log() requiere número".to_string());
+                }
+            }
+
+            // math::log10(x) - Logaritmo base 10
+            if (func_name == "math::log10" || func_name == "__math_log10") && args.len() == 1 {
+                if let Valor::Num(x) = evaluar_expr(&args[0], executor, funcs) {
+                    if x > 0.0 {
+                        return Valor::Num(x.log10());
+                    } else {
+                        return Valor::Error("math::log10() requiere número > 0".to_string());
+                    }
+                } else {
+                    return Valor::Error("math::log10() requiere número".to_string());
+                }
+            }
+
+            // math::exp(x) - Exponencial e^x
+            if (func_name == "math::exp" || func_name == "__math_exp") && args.len() == 1 {
+                if let Valor::Num(x) = evaluar_expr(&args[0], executor, funcs) {
+                    return Valor::Num(x.exp());
+                } else {
+                    return Valor::Error("math::exp() requiere número".to_string());
+                }
+            }
+
+            // math::min(a, b) - Mínimo
+            if (func_name == "math::min" || func_name == "__math_min") && args.len() == 2 {
+                let a_val = evaluar_expr(&args[0], executor, funcs);
+                let b_val = evaluar_expr(&args[1], executor, funcs);
+                if let (Valor::Num(a), Valor::Num(b)) = (a_val, b_val) {
+                    return Valor::Num(if a < b { a } else { b });
+                } else {
+                    return Valor::Error("math::min() requiere dos números".to_string());
+                }
+            }
+
+            // math::max(a, b) - Máximo
+            if (func_name == "math::max" || func_name == "__math_max") && args.len() == 2 {
+                let a_val = evaluar_expr(&args[0], executor, funcs);
+                let b_val = evaluar_expr(&args[1], executor, funcs);
+                if let (Valor::Num(a), Valor::Num(b)) = (a_val, b_val) {
+                    return Valor::Num(if a > b { a } else { b });
+                } else {
+                    return Valor::Error("math::max() requiere dos números".to_string());
+                }
+            }
+
+            // math::clamp(valor, min, max) - Limitar rango
+            if (func_name == "math::clamp" || func_name == "__math_clamp") && args.len() == 3 {
+                let val_val = evaluar_expr(&args[0], executor, funcs);
+                let min_val = evaluar_expr(&args[1], executor, funcs);
+                let max_val = evaluar_expr(&args[2], executor, funcs);
+                if let (Valor::Num(val), Valor::Num(min_v), Valor::Num(max_v)) = (val_val, min_val, max_val) {
+                    return Valor::Num(val.max(min_v).min(max_v));
+                } else {
+                    return Valor::Error("math::clamp() requiere tres números".to_string());
+                }
+            }
+
+            // math::lerp(a, b, t) - Interpolación lineal: a + (b - a) * t
+            if (func_name == "math::lerp" || func_name == "__math_lerp") && args.len() == 3 {
+                let a_val = evaluar_expr(&args[0], executor, funcs);
+                let b_val = evaluar_expr(&args[1], executor, funcs);
+                let t_val = evaluar_expr(&args[2], executor, funcs);
+                if let (Valor::Num(a), Valor::Num(b), Valor::Num(t)) = (a_val, b_val, t_val) {
+                    return Valor::Num(a + (b - a) * t);
+                } else {
+                    return Valor::Error("math::lerp() requiere tres números".to_string());
+                }
+            }
+
+            // math::sign(x) - Signo: 1.0 si x > 0, -1.0 si x < 0, 0.0 si x == 0
+            if (func_name == "math::sign" || func_name == "__math_sign") && args.len() == 1 {
+                if let Valor::Num(x) = evaluar_expr(&args[0], executor, funcs) {
+                    if x > 0.0 {
+                        return Valor::Num(1.0);
+                    } else if x < 0.0 {
+                        return Valor::Num(-1.0);
+                    } else {
+                        return Valor::Num(0.0);
+                    }
+                } else {
+                    return Valor::Error("math::sign() requiere número".to_string());
+                }
+            }
+
+            // math::mod(a, b) - Módulo (resto de división)
+            if (func_name == "math::mod" || func_name == "__math_mod") && args.len() == 2 {
+                let a_val = evaluar_expr(&args[0], executor, funcs);
+                let b_val = evaluar_expr(&args[1], executor, funcs);
+                if let (Valor::Num(a), Valor::Num(b)) = (a_val, b_val) {
+                    if b != 0.0 {
+                        return Valor::Num(a % b);
+                    } else {
+                        return Valor::Error("math::mod() división por cero".to_string());
+                    }
+                } else {
+                    return Valor::Error("math::mod() requiere dos números".to_string());
+                }
+            }
+
+            // math::round(x) - Redondeo al entero más cercano
+            if (func_name == "math::round" || func_name == "__math_round") && args.len() == 1 {
+                if let Valor::Num(x) = evaluar_expr(&args[0], executor, funcs) {
+                    return Valor::Num(x.round());
+                } else {
+                    return Valor::Error("math::round() requiere número".to_string());
+                }
+            }
+
+            // math::trunc(x) - Truncar parte decimal
+            if (func_name == "math::trunc" || func_name == "__math_trunc") && args.len() == 1 {
+                if let Valor::Num(x) = evaluar_expr(&args[0], executor, funcs) {
+                    return Valor::Num(x.trunc());
+                } else {
+                    return Valor::Error("math::trunc() requiere número".to_string());
+                }
+            }
+
+            // math::fract(x) - Parte fraccional (x - trunc(x))
+            if (func_name == "math::fract" || func_name == "__math_fract") && args.len() == 1 {
+                if let Valor::Num(x) = evaluar_expr(&args[0], executor, funcs) {
+                    return Valor::Num(x.fract());
+                } else {
+                    return Valor::Error("math::fract() requiere número".to_string());
+                }
+            }
+
+            // math::hypot(x, y) - Hipotenusa √(x² + y²)
+            if (func_name == "math::hypot" || func_name == "__math_hypot") && args.len() == 2 {
+                let x_val = evaluar_expr(&args[0], executor, funcs);
+                let y_val = evaluar_expr(&args[1], executor, funcs);
+                if let (Valor::Num(x), Valor::Num(y)) = (x_val, y_val) {
+                    return Valor::Num(x.hypot(y));
+                } else {
+                    return Valor::Error("math::hypot() requiere dos números".to_string());
+                }
+            }
+
+            // math::cbrt(x) - Raíz cúbica
+            if (func_name == "math::cbrt" || func_name == "__math_cbrt") && args.len() == 1 {
+                if let Valor::Num(x) = evaluar_expr(&args[0], executor, funcs) {
+                    return Valor::Num(x.cbrt());
+                } else {
+                    return Valor::Error("math::cbrt() requiere número".to_string());
+                }
+            }
+
+            // ================================================================
+            // CONSTANTES MATEMÁTICAS v0.13.0
+            // ================================================================
+
+            // math::PI → constante π
+            if func_name == "math::PI" || func_name == "matematica::PI" {
+                return Valor::Num(std::f64::consts::PI);
+            }
+
+            // math::E → constante e (base logaritmo natural)
+            if func_name == "math::E" || func_name == "matematica::E" {
+                return Valor::Num(std::f64::consts::E);
+            }
+
+            // math::TAU → constante τ = 2π
+            if func_name == "math::TAU" || func_name == "matematica::TAU" {
+                return Valor::Num(std::f64::consts::TAU);
+            }
+
+            // math::INF → infinito
+            if func_name == "math::INF" || func_name == "matematica::INF" {
+                return Valor::Num(f64::INFINITY);
+            }
+
+            // ================================================================
+            // CÁLCULO NUMÉRICO v0.13.0
+            // ================================================================
+
+            // calc::derivada(func, x, h) - Derivada numérica (diferencias centradas)
+            // f'(x) ≈ [f(x+h) - f(x-h)] / 2h
+            if func_name == "calc::derivada" && args.len() >= 2 {
+                if args.len() < 2 {
+                    return Valor::Error("calc::derivada() requiere al menos 2 argumentos: función, x, [h]".to_string());
+                }
+                // Se evalúa con función identificadora + punto x + paso h opcional
+                // Simplificado: usa valores numéricos directos
+                let x_val = evaluar_expr(&args[1], executor, funcs);
+                let h = if args.len() >= 3 {
+                    if let Valor::Num(hv) = evaluar_expr(&args[2], executor, funcs) {
+                        hv
+                    } else {
+                        1e-8
+                    }
+                } else {
+                    1e-8
+                };
+                if let Valor::Num(x) = x_val {
+                    // La función se pasa como identificador; evaluamos para obtener su referencia
+                    // En este esquema simplificado, usamos un closure basado en el nombre
+                    if let Valor::Texto(ref func_id) = evaluar_expr(&args[0], executor, funcs) {
+                        let f_plus = evaluar_funcion_por_nombre(func_id, x + h, executor, funcs);
+                        let f_minus = evaluar_funcion_por_nombre(func_id, x - h, executor, funcs);
+                        if let (Valor::Num(fp), Valor::Num(fm)) = (f_plus, f_minus) {
+                            return Valor::Num((fp - fm) / (2.0 * h));
+                        } else {
+                            return Valor::Error("calc::derivada() no pudo evaluar la función".to_string());
+                        }
+                    } else {
+                        return Valor::Error("calc::derivada() requiere identificador de función".to_string());
+                    }
+                } else {
+                    return Valor::Error("calc::derivada() requiere número para x".to_string());
+                }
+            }
+
+            // calc::derivada2(func, x, h) - Segunda derivada numérica
+            // f''(x) ≈ [f(x+h) - 2f(x) + f(x-h)] / h²
+            if func_name == "calc::derivada2" && args.len() >= 2 {
+                let x_val = evaluar_expr(&args[1], executor, funcs);
+                let h = if args.len() >= 3 {
+                    if let Valor::Num(hv) = evaluar_expr(&args[2], executor, funcs) {
+                        hv
+                    } else {
+                        1e-8
+                    }
+                } else {
+                    1e-8
+                };
+                if let Valor::Num(x) = x_val {
+                    if let Valor::Texto(ref func_id) = evaluar_expr(&args[0], executor, funcs) {
+                        let f_plus = evaluar_funcion_por_nombre(func_id, x + h, executor, funcs);
+                        let f_zero = evaluar_funcion_por_nombre(func_id, x, executor, funcs);
+                        let f_minus = evaluar_funcion_por_nombre(func_id, x - h, executor, funcs);
+                        if let (Valor::Num(fp), Valor::Num(f0), Valor::Num(fm)) = (f_plus, f_zero, f_minus) {
+                            return Valor::Num((fp - 2.0 * f0 + fm) / (h * h));
+                        } else {
+                            return Valor::Error("calc::derivada2() no pudo evaluar la función".to_string());
+                        }
+                    } else {
+                        return Valor::Error("calc::derivada2() requiere identificador de función".to_string());
+                    }
+                } else {
+                    return Valor::Error("calc::derivada2() requiere número para x".to_string());
+                }
+            }
+
+            // calc::integral(f, a, b, n) - Integral numérica (Regla de Simpson)
+            // ∫f(x)dx ≈ (h/3)·[f(a) + 4f(a+h) + 2f(a+2h) + 4f(a+3h) + ... + f(b)]
+            if func_name == "calc::integral" || func_name == "calc::integral_simpson" {
+                if args.len() < 4 {
+                    return Valor::Error("calc::integral() requiere 4 argumentos: función, a, b, n".to_string());
+                }
+                let a_val = evaluar_expr(&args[1], executor, funcs);
+                let b_val = evaluar_expr(&args[2], executor, funcs);
+                let n_val = evaluar_expr(&args[3], executor, funcs);
+                if let (Valor::Num(a), Valor::Num(b), Valor::Num(nf)) = (a_val, b_val, n_val) {
+                    let n = nf as usize;
+                    if n < 2 {
+                        return Valor::Error("calc::integral() requiere n >= 2 intervalos".to_string());
+                    }
+                    let n = if n % 2 == 0 { n } else { n + 1 }; // Simpson requiere par
+                    let h = (b - a) / n as f64;
+                    if let Valor::Texto(ref func_id) = evaluar_expr(&args[0], executor, funcs) {
+                        let mut suma = 0.0f64;
+                        // f(a)
+                        if let Valor::Num(fa) = evaluar_funcion_por_nombre(func_id, a, executor, funcs) {
+                            suma += fa;
+                        }
+                        // f(b)
+                        if let Valor::Num(fb) = evaluar_funcion_por_nombre(func_id, b, executor, funcs) {
+                            suma += fb;
+                        }
+                        // puntos intermedios
+                        for i in 1..n {
+                            let xi = a + i as f64 * h;
+                            if let Valor::Num(fi) = evaluar_funcion_por_nombre(func_id, xi, executor, funcs) {
+                                let coef = if i % 2 == 0 { 2.0 } else { 4.0 };
+                                suma += coef * fi;
+                            } else {
+                                return Valor::Error("calc::integral() error evaluando función".to_string());
+                            }
+                        }
+                        return Valor::Num(suma * h / 3.0);
+                    } else {
+                        return Valor::Error("calc::integral() requiere identificador de función".to_string());
+                    }
+                } else {
+                    return Valor::Error("calc::integral() requiere números para a, b, n".to_string());
+                }
+            }
+
+            // calc::integral_trapezio(f, a, b, n) - Regla del trapecio
+            // ∫f(x)dx ≈ (h/2)·[f(a) + 2f(a+h) + 2f(a+2h) + ... + f(b)]
+            if func_name == "calc::integral_trapezio" {
+                if args.len() < 4 {
+                    return Valor::Error("calc::integral_trapezio() requiere 4 argumentos: función, a, b, n".to_string());
+                }
+                let a_val = evaluar_expr(&args[1], executor, funcs);
+                let b_val = evaluar_expr(&args[2], executor, funcs);
+                let n_val = evaluar_expr(&args[3], executor, funcs);
+                if let (Valor::Num(a), Valor::Num(b), Valor::Num(nf)) = (a_val, b_val, n_val) {
+                    let n = nf as usize;
+                    if n < 1 {
+                        return Valor::Error("calc::integral_trapezio() requiere n >= 1".to_string());
+                    }
+                    let h = (b - a) / n as f64;
+                    if let Valor::Texto(ref func_id) = evaluar_expr(&args[0], executor, funcs) {
+                        let mut suma = 0.0f64;
+                        if let Valor::Num(fa) = evaluar_funcion_por_nombre(func_id, a, executor, funcs) {
+                            suma += fa;
+                        }
+                        if let Valor::Num(fb) = evaluar_funcion_por_nombre(func_id, b, executor, funcs) {
+                            suma += fb;
+                        }
+                        for i in 1..n {
+                            let xi = a + i as f64 * h;
+                            if let Valor::Num(fi) = evaluar_funcion_por_nombre(func_id, xi, executor, funcs) {
+                                suma += 2.0 * fi;
+                            } else {
+                                return Valor::Error("calc::integral_trapezio() error evaluando función".to_string());
+                            }
+                        }
+                        return Valor::Num(suma * h / 2.0);
+                    } else {
+                        return Valor::Error("calc::integral_trapezio() requiere identificador de función".to_string());
+                    }
+                } else {
+                    return Valor::Error("calc::integral_trapezio() requiere números para a, b, n".to_string());
+                }
+            }
+
+            // ================================================================
             // FIN ALIAS MATH
             // ================================================================
 
@@ -3598,6 +3952,50 @@ pub fn evaluar_expr<'a>(
                 }
             }
         }
+    }
+}
+
+/// Evaluar una función RyDit por nombre con un argumento numérico
+/// Usado por calc::derivada y calc::integral para evaluar funciones del usuario
+fn evaluar_funcion_por_nombre(
+    func_id: &str,
+    arg_val: f64,
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'_>>)>,
+) -> Valor {
+    // Buscar la función en el registro (clonar para evitar borrow conflict)
+    let func_data = funcs.get(func_id).map(|(p, b)| (p.clone(), b.clone()));
+    if let Some((params, body)) = func_data {
+        // Push scope local
+        executor.push_scope();
+
+        // Asignar parámetros
+        if let Some(param0) = params.first() {
+            executor.guardar(param0, Valor::Num(arg_val));
+        }
+
+        // Ejecutar cuerpo y retornar último valor numérico/texto
+        let mut result = Valor::Num(0.0);
+        let mut loaded_modules = HashSet::new();
+        let mut importing_stack = Vec::new();
+        for stmt in &body {
+            let (_continue_flag, val_opt) = crate::ejecutar_stmt(
+                stmt, executor, funcs, &mut loaded_modules, &mut importing_stack,
+            );
+            if let Some(val) = val_opt {
+                match &val {
+                    Valor::Num(_) | Valor::Texto(_) => result = val,
+                    _ => {}
+                }
+            }
+        }
+
+        // Pop scope
+        executor.pop_scope();
+
+        result
+    } else {
+        Valor::Error(format!("Función '{}' no encontrada", func_id))
     }
 }
 

@@ -209,28 +209,6 @@ impl Default for RyGod {
 // Tests
 // ============================================================================
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_rygod_new() {
-        let god = RyGod::new();
-        assert!(!god.sandbox.enabled); // Desactivado por defecto
-    }
-
-    #[test]
-    fn test_secure_defaults() {
-        let mut god = RyGod::new();
-        god.secure_defaults();
-        assert!(god.sandbox.enabled);
-        assert_eq!(god.limits.max_memory_mb, 64);
-    }
-
-    #[test]
-    fn test_validate_nonexistent() {
-        let god = RyGod::new();
-        let result = god.validate_script("no_existe.rydit");
-        assert!(result.is_err());
-    }
-}
+// Tests movidos a tests/ module (revelation.rs, crate_verify.rs)
+// Los tests inline test_rygod_new, test_secure_defaults, test_validate_nonexistent
+// están cubiertos por revelation.rs

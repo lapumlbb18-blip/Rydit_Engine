@@ -2442,6 +2442,163 @@ pub fn evaluar_expr_gfx(
             }
 
             // ================================================================
+            // NUEVAS FUNCIONES MATH v0.13.0 (evaluar_expr_gfx)
+            // ================================================================
+
+            // math::pow(base, exp)
+            if (func_name == "math::pow" || func_name == "__math_pow") && args.len() == 2 {
+                let b = evaluar_expr_gfx(&args[0], executor, input, funcs);
+                let e = evaluar_expr_gfx(&args[1], executor, input, funcs);
+                if let (Valor::Num(bv), Valor::Num(ev)) = (b, e) {
+                    return Valor::Num(bv.powf(ev));
+                }
+                return Valor::Error("math::pow() requiere dos números".to_string());
+            }
+
+            // math::log(x)
+            if (func_name == "math::log" || func_name == "__math_log") && args.len() == 1 {
+                if let Valor::Num(x) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
+                    if x > 0.0 { return Valor::Num(x.ln()); }
+                    return Valor::Error("math::log() requiere número > 0".to_string());
+                }
+                return Valor::Error("math::log() requiere número".to_string());
+            }
+
+            // math::log10(x)
+            if (func_name == "math::log10" || func_name == "__math_log10") && args.len() == 1 {
+                if let Valor::Num(x) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
+                    if x > 0.0 { return Valor::Num(x.log10()); }
+                    return Valor::Error("math::log10() requiere número > 0".to_string());
+                }
+                return Valor::Error("math::log10() requiere número".to_string());
+            }
+
+            // math::exp(x)
+            if (func_name == "math::exp" || func_name == "__math_exp") && args.len() == 1 {
+                if let Valor::Num(x) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
+                    return Valor::Num(x.exp());
+                }
+                return Valor::Error("math::exp() requiere número".to_string());
+            }
+
+            // math::min(a, b)
+            if (func_name == "math::min" || func_name == "__math_min") && args.len() == 2 {
+                let a = evaluar_expr_gfx(&args[0], executor, input, funcs);
+                let b = evaluar_expr_gfx(&args[1], executor, input, funcs);
+                if let (Valor::Num(av), Valor::Num(bv)) = (a, b) {
+                    return Valor::Num(if av < bv { av } else { bv });
+                }
+                return Valor::Error("math::min() requiere dos números".to_string());
+            }
+
+            // math::max(a, b)
+            if (func_name == "math::max" || func_name == "__math_max") && args.len() == 2 {
+                let a = evaluar_expr_gfx(&args[0], executor, input, funcs);
+                let b = evaluar_expr_gfx(&args[1], executor, input, funcs);
+                if let (Valor::Num(av), Valor::Num(bv)) = (a, b) {
+                    return Valor::Num(if av > bv { av } else { bv });
+                }
+                return Valor::Error("math::max() requiere dos números".to_string());
+            }
+
+            // math::clamp(valor, min, max)
+            if (func_name == "math::clamp" || func_name == "__math_clamp") && args.len() == 3 {
+                let v = evaluar_expr_gfx(&args[0], executor, input, funcs);
+                let mn = evaluar_expr_gfx(&args[1], executor, input, funcs);
+                let mx = evaluar_expr_gfx(&args[2], executor, input, funcs);
+                if let (Valor::Num(vv), Valor::Num(mnv), Valor::Num(mxv)) = (v, mn, mx) {
+                    return Valor::Num(vv.max(mnv).min(mxv));
+                }
+                return Valor::Error("math::clamp() requiere tres números".to_string());
+            }
+
+            // math::lerp(a, b, t)
+            if (func_name == "math::lerp" || func_name == "__math_lerp") && args.len() == 3 {
+                let a = evaluar_expr_gfx(&args[0], executor, input, funcs);
+                let b = evaluar_expr_gfx(&args[1], executor, input, funcs);
+                let t = evaluar_expr_gfx(&args[2], executor, input, funcs);
+                if let (Valor::Num(av), Valor::Num(bv), Valor::Num(tv)) = (a, b, t) {
+                    return Valor::Num(av + (bv - av) * tv);
+                }
+                return Valor::Error("math::lerp() requiere tres números".to_string());
+            }
+
+            // math::sign(x)
+            if (func_name == "math::sign" || func_name == "__math_sign") && args.len() == 1 {
+                if let Valor::Num(x) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
+                    return Valor::Num(if x > 0.0 { 1.0 } else if x < 0.0 { -1.0 } else { 0.0 });
+                }
+                return Valor::Error("math::sign() requiere número".to_string());
+            }
+
+            // math::mod(a, b)
+            if (func_name == "math::mod" || func_name == "__math_mod") && args.len() == 2 {
+                let a = evaluar_expr_gfx(&args[0], executor, input, funcs);
+                let b = evaluar_expr_gfx(&args[1], executor, input, funcs);
+                if let (Valor::Num(av), Valor::Num(bv)) = (a, b) {
+                    if bv != 0.0 { return Valor::Num(av % bv); }
+                    return Valor::Error("math::mod() división por cero".to_string());
+                }
+                return Valor::Error("math::mod() requiere dos números".to_string());
+            }
+
+            // math::round(x)
+            if (func_name == "math::round" || func_name == "__math_round") && args.len() == 1 {
+                if let Valor::Num(x) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
+                    return Valor::Num(x.round());
+                }
+                return Valor::Error("math::round() requiere número".to_string());
+            }
+
+            // math::trunc(x)
+            if (func_name == "math::trunc" || func_name == "__math_trunc") && args.len() == 1 {
+                if let Valor::Num(x) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
+                    return Valor::Num(x.trunc());
+                }
+                return Valor::Error("math::trunc() requiere número".to_string());
+            }
+
+            // math::fract(x)
+            if (func_name == "math::fract" || func_name == "__math_fract") && args.len() == 1 {
+                if let Valor::Num(x) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
+                    return Valor::Num(x.fract());
+                }
+                return Valor::Error("math::fract() requiere número".to_string());
+            }
+
+            // math::hypot(x, y)
+            if (func_name == "math::hypot" || func_name == "__math_hypot") && args.len() == 2 {
+                let x = evaluar_expr_gfx(&args[0], executor, input, funcs);
+                let y = evaluar_expr_gfx(&args[1], executor, input, funcs);
+                if let (Valor::Num(xv), Valor::Num(yv)) = (x, y) {
+                    return Valor::Num(xv.hypot(yv));
+                }
+                return Valor::Error("math::hypot() requiere dos números".to_string());
+            }
+
+            // math::cbrt(x)
+            if (func_name == "math::cbrt" || func_name == "__math_cbrt") && args.len() == 1 {
+                if let Valor::Num(x) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
+                    return Valor::Num(x.cbrt());
+                }
+                return Valor::Error("math::cbrt() requiere número".to_string());
+            }
+
+            // CONSTANTES
+            if func_name == "math::PI" || func_name == "matematica::PI" {
+                return Valor::Num(std::f64::consts::PI);
+            }
+            if func_name == "math::E" || func_name == "matematica::E" {
+                return Valor::Num(std::f64::consts::E);
+            }
+            if func_name == "math::TAU" || func_name == "matematica::TAU" {
+                return Valor::Num(std::f64::consts::TAU);
+            }
+            if func_name == "math::INF" || func_name == "matematica::INF" {
+                return Valor::Num(f64::INFINITY);
+            }
+
+            // ================================================================
             // FIN ALIAS MATH - evaluar_expr_gfx
             // ================================================================
 

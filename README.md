@@ -8,9 +8,8 @@
 
 [![Version](https://img.shields.io/badge/version-v0.12.1-blue.svg)](https://github.com/lapumlbb18-blip/Ry-Dit)
 [![Errors](https://img.shields.io/badge/errors-0-green.svg)](https://github.com/lapumlbb18-blip/Ry-Dit)
-[![Warnings](https://img.shields.io/badge/warnings-0-green.svg)](https://github.com/lapumlbb18-blip/Ry-Dit)
-[![Tests](https://img.shields.io/badge/tests-101+-passing-green.svg)](https://github.com/lapumlbb18-blip/Ry-Dit)
-[![Status](https://img.shields.io/badge/estado-v0.12.1--input%20ttf%20sprites%20rigid%20body%20audio-green.svg)](https://github.com/lapumlbb18-blip/Ry-Dit)
+[![Warnings](https://img.shields.io/badge/warnings-~30-yellow.svg)](https://github.com/lapumlbb18-blip/Ry-Dit)
+[![Status](https://img.shields.io/badge/estado-v0.12.1--parser--ry--god--crates.io-green.svg)](https://github.com/lapumlbb18-blip/Ry-Dit)
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
 [![SDL2](https://img.shields.io/badge/SDL2-0.37-red.svg)](https://www.libsdl.org/)
 [![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](https://github.com/lapumlbb18-blip/Ry-Dit)
@@ -50,7 +49,8 @@
 **Última actualización**: 2026-04-04
 **Versión actual**: v0.12.1 ✅ FUNCIONAL
 **Próxima versión**: v0.13.0 - Demos completos + crates maduros
-**Estado**: Parser ✅ | ry-god ✅ | 13/13 crates compilando | 0 errores
+**Estado**: Parser ✅ | ry-god ✅ crates.io | 22 crates en workspace | 0 errores | ~30 warnings
+**Commit**: `22252bc` (HEAD)
 
 ---
 
@@ -294,10 +294,9 @@ La implementación será gradual: primero geometría básica, luego físicas, lu
 
 | Estado | Score |
 |--------|-------|
-| Actual (v0.11.5) | 9.5/10 ✅ Código limpio |
-| v0.12.1 (Tests) | 9.7/10 |
-| v0.12.1 (FSR + Parser) | 9.8/10 |
-| v0.13.0 (3D Preview) | 9.9/10 |
+| Actual (v0.12.1) | 9.7/10 ✅ ry-god publicado |
+| v0.13.0 (Demos) | 9.8/10 |
+| v1.0.0 (Motor completo) | 10/10 |
 | v1.0.0 (Motor completo) | 10/10 |
 
 ---
@@ -352,16 +351,15 @@ La implementación será gradual: primero geometría básica, luego físicas, lu
 
 | Versión | Estado | Features | Fecha |
 |---------|--------|----------|-------|
-| **v0.11.5** | ✅ | 0 Errores + 0 Warnings (Código Limpio) | 2026-04-02 |
-| **v0.12.1** | 🔮 | Snake reescrito + Platformer SDL2 | 2026-04-14 |
-| **v0.12.1** | 🔮 | FSR 1.0 + Parser Fuerte | 2026-04-21 |
-| **v0.13.0** | 🔮 | N-Body Gravity + ECS Maduro | 2026-05-05 |
-| **v0.14.0** | 🔮 | Multi-plataforma (Win, macOS, WASM) | 2026-05-20 |
-| **v1.0.0** | 🔮 | Motor Completo + Editor Visual | 2026-06-01 |
+| **v0.11.5** | ✅ | 0 Errores + lifetimes fixeados | 2026-04-02 |
+| **v0.12.0** | ✅ | Rebrand + Parser Infalible | 2026-04-04 |
+| **v0.12.1** | ✅ | ry-god publicado en crates.io + CI/CD | 2026-04-04 |
+| **v0.13.0** | ⏳ | Demos completos + crates maduros | Próxima versión |
+| **v1.0.0** | ⏳ | Motor Completo + Editor Visual | Futuro |
 
 </div>
 
-**NOTA**: ry-rs corregido parcialmente, pendiente tests completos. Ver [ESTADO_V0.11.5.md](ESTADO_V0.11.5.md)
+**NOTA**: Estado actual verificado con cargo check --workspace: 0 errores, ~30 warnings en demos
 
 ---
 
@@ -384,11 +382,11 @@ La implementación será gradual: primero geometría básica, luego físicas, lu
 
 <div align="center">
 
-## 🛡️ Ry-Dit v0.5.0 - En Maduración
+## Ry-Dit v0.12.1 - Parser Infalible + ry-god en crates.io
 
-*Sin prisa | Sin releases | Solo código bien hecho*
+*0 errores | ~30 warnings en demos | ry-god v0.1.0 publicado*
 
-**Potencial: 9.5/10**
+**Proxima version: v0.13.0 - Demos completos + crates maduros**
 
 </div>
 - 🎮 Game loop integrado
@@ -833,29 +831,22 @@ draw.text("Ry-Dit v0.1.9", 300, 50, "blanco")
 └─────────────────────────────────────────────────────────┘
 ```
 
-### Métricas del Proyecto (v0.6.0)
+### Métricas del Proyecto (v0.12.1)
 ```
-Líneas totales:     ~12,000 líneas
-├── Rust:           ~9,500 líneas
-└── Ry-Dit:          ~2,500 líneas (demos + módulos + tests)
+Líneas Rust:        ~25K+ líneas
+Compilación:        cargo check --workspace → 0 errores
+Warnings:           ~30 (dead_code, unused en demos)
+Crates en workspace: 22 miembros
 
-Tests automáticos:  126 pasando ✅
-Demos funcionales:  19 principales ✅
-Warnings activos:   0 ✅
+Binarios SDL2 principales:
+├── demo_rigidbody        - Input + TTF + Sprites + Audio + Físicas
+├── demo_ttf_sprites      - Texto real con SDL2_ttf
+├── demo_carga_sprites    - Carga de sprites PNG
+├── demo_completo_sdl2    - Demo integrado
+└── demo_ttf_sprites_audio - TTF + Audio
 
-Binarios:
-├── ry-rs:       ~550 KB (release, strip = true)
-├── ry-rs:       ~920 KB (debug)
-└── demo_particles: ~560 KB
-
-Crates:
-├── lizer:          Lexer + Parser + AST (~2,452 líneas)
-├── blast-core:     Executor + Memoria (~465 líneas)
-├── ry-gfx:      Gráficos + Partículas + Audio (~680 líneas)
-├── ry-rs:       Binario + stdlib + REPL (~3,662 líneas)
-├── v-shield:       Wrapper raylib (~120 líneas)
-├── migui:          Immediate Mode GUI (~600 líneas)
-└── modules:        Stdlib embebido (8 módulos ~800 líneas)
+Crates publicados:
+└── ry-god v0.1.0 en crates.io
 ```
 
 ---
@@ -929,10 +920,10 @@ Crates:
 | **v0.5.0** | ✅ | **RELEASE ESTABLE** (7 demos funcionales, 157 tests) | 2026-03-26 |
 | **v0.5.1** | 🔜 | **Audio + HTTP + CSV + Assets + Partículas** | Próxima sesión |
 | **v0.7.3.x** | ⏳ | **ry-geometry** (Ilusiones ópticas, pendiente) | Próxima sesión |
-| **v0.11.5** | ✅ | **CLEAN CODE** (0 errores, 0 warnings, lifetimes, 132 problemas → 0) | 2026-04-02 |
-| **v0.12.1** | ✅ | **Input SDL2 + TTF + Sprites + Rigid Body + Audio + 3 Videos** | 2026-04-03 |
-| **v0.11.7** | 🔮 | Migrar audio.rs a SDL2_mixer + Demo .rydit con audio | Próxima sesión |
-| **v0.12.1** | 🔮 | Primer juego completo (platformer) + FSR 1.0 | 2026-04-21 |
+| **v0.11.5** | ✅ | **CLEAN CODE** (0 errores, lifetimes fixeados) | 2026-04-02 |
+| **v0.12.0** | ✅ | **Rebrand + Parser Infalible** | 2026-04-04 |
+| **v0.12.1** | ✅ | **ry-god publicado en crates.io + CI/CD** | 2026-04-04 |
+| **v0.13.0** | ⏳ | Demos completos + crates maduros | Próxima versión |
 
 </div>
 
@@ -954,7 +945,7 @@ Crates:
 - [x] **CLAVE_INPUT_SDL2.md** - Documentación del patrón de input que funciona
 - [x] **Git Push + Drive Sync** - Commits automáticos con changelog
 
-### ⏳ Completado (v0.11.5 - CLEAN CODE)
+### ✅ Completado (v0.11.5 - CLEAN CODE)
 - [x] **0 Errores de compilación** - Código limpio
 - [x] **0 Warnings** - Clippy clean
 - [x] **Lifetimes explícitos** - 34 errores fixeados
@@ -989,7 +980,7 @@ Crates:
 (X11 sin headless). Los tests de input, render y audio deben ejecutarse manualmente
 y verificarse visualmente. Esto no es una limitación de Ry-Dit, sino del entorno.
 
-### ✅ Completado (v0.6.0 - v0.11.4)
+### ✅ Completado (v0.6.0 - v0.12.1)
 - [x] Lexer + Parser con AST
 - [x] Executor con memoria y scopes
 - [x] Sistema de módulos (import)
@@ -1019,7 +1010,7 @@ y verificarse visualmente. Esto no es una limitación de Ry-Dit, sino del entorn
 - [x] **Stdlib Embebido** - 8 módulos en binario (math, arrays, strings, io, random, time, json, colisiones)
 - [x] **Optimización** - `strip = true`, binario release ~550 KB (-100 KB)
 
-### 🔜 Próximamente (v0.6.0 - v1.0.0)
+### 🔜 Próximamente (v0.13.0 - v1.0.0)
 - [ ] **Animaciones 2D** - Sprite sheets, 12 principios de animación, blending
 - [ ] **Motor de Escenas** - Cambiar entre menús, niveles, nodos
 - [ ] **Prefabs** - Objetos reutilizables
@@ -1347,9 +1338,9 @@ MIT License - Ver [LICENSE](LICENSE) para más detalles.
 
 *¿Quieres evaluar este proyecto?* Únete al **Discord Mouredev**: https://discord.gg/mouredev y comparte tu opinión en #mostrar-proyecto
 
-**Última actualización:** 2026-04-03 (v0.12.1 - Input SDL2 + TTF + Sprites + Rigid Body + Audio + 3 Videos)
-*Próxima versión:* v0.11.7 (Migrar audio.rs a SDL2_mixer + Demo .rydit con audio)
-*Estado:* ✅ **INPUT + TTF + SPRITES + RIGID BODY + AUDIO + VIDEOS FUNCIONALES**
+**Última actualización:** 2026-04-04 (v0.12.1 - Parser infalible + ry-god crates.io + CI/CD)
+*Próxima versión:* v0.13.0 (Demos completos + crates maduros)
+*Estado:* ✅ **PARSER INFALIBLE + RY-GOD EN CRATES.IO + 22 CRATES COMPILANDO**
 
 ---
 
