@@ -85,7 +85,8 @@ pub enum TokenKind {
     // Operadores de comparación
     Mayor,      // >
     Menor,      // <
-    Igual,      // == o =
+    Igual,      // ==
+    Asignar,    // =
     MayorIgual, // >=
     MenorIgual, // <=
     Diferente,  // !=
@@ -153,7 +154,8 @@ impl fmt::Display for TokenKind {
             TokenKind::DivIgual => "/=",
             TokenKind::Mayor => ">",
             TokenKind::Menor => "<",
-            TokenKind::Igual => "=",
+            TokenKind::Asignar => "=",
+            TokenKind::Igual => "==",
             TokenKind::MayorIgual => ">=",
             TokenKind::MenorIgual => "<=",
             TokenKind::Diferente => "!=",

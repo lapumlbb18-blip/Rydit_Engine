@@ -186,7 +186,7 @@ impl<'a> Lexer<'a> {
                     "and" => TokenKind::And,
                     "or" => TokenKind::Or,
                     "not" => TokenKind::Not,
-                    "break" => TokenKind::Break,
+                    "break" | "romper" => TokenKind::Break,
                     "import" => TokenKind::Import,
                     "as" => TokenKind::As,
                     // Input especial
@@ -215,7 +215,7 @@ impl<'a> Lexer<'a> {
                         column += 2;
                     } else {
                         tokens.push(Token::new(
-                            TokenKind::Igual,
+                            TokenKind::Asignar,
                             "=",
                             Span::new(start_pos, i + 1, start_line, start_col),
                         ));

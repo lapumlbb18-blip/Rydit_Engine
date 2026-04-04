@@ -120,6 +120,7 @@ impl<'a> Parser<'a> {
             TokenKind::Ident => {
                 // Verificar si es input() especial
                 if let Some(name) = self.current().as_ident() {
+                    self.advance(); // consumir el ident
                     if name == "input" {
                         return self.parse_input();
                     } else {
@@ -207,12 +208,16 @@ impl<'a> Parser<'a> {
         })
     }
 
-    /// Parsear while: ryda condition { ... }
+    /// Parsear while: ryda condition { ... } o ryda { ... } (condición true implícita)
     fn parse_while(&mut self) -> Option<Stmt<'a>> {
         self.advance(); // consumir ryda
 
-        // Parsear condición
-        let condition = self.parse_expression()?;
+        // Parsear condición - si es { directamente, condición true implícita
+        let condition = if self.check(TokenKind::LlaveIzq) {
+            Expr::Bool(true)
+        } else {
+            self.parse_expression()?
+        };
 
         // Parsear cuerpo
         let body = if self.check(TokenKind::LlaveIzq) {
@@ -404,7 +409,7 @@ impl<'a> Parser<'a> {
         self.advance();
 
         // Consumir =
-        if !self.check(TokenKind::Igual) {
+        if !self.check(TokenKind::Asignar) {
             self.state.add_error(RyDitError::missing_token(
                 "=",
                 self.current().span.line,
@@ -511,7 +516,7 @@ impl<'a> Parser<'a> {
                 self.advance(); // consumir ]
             }
 
-            if self.check(TokenKind::Igual) {
+            if self.check(TokenKind::Asignar) {
                 self.advance(); // consumir =
                 let value = self.parse_expression()?;
                 return Some(Stmt::IndexAssign {
@@ -520,6 +525,16 @@ impl<'a> Parser<'a> {
                     value,
                 });
             }
+        }
+
+        // Verificar si es asignación: ident = expr
+        if self.check(TokenKind::Asignar) {
+            self.advance(); // consumir =
+            let value = self.parse_expression()?;
+            return Some(Stmt::Assign {
+                name: name,
+                value,
+            });
         }
 
         // Solo ident - no es statement válido por sí solo
@@ -1042,6 +1057,22 @@ impl<'a> Parser<'a> {
                 let expr = self.parse_expression()?;
                 self.consume(TokenKind::ParentDer, ")")?;
                 Some(expr)
+            }
+            TokenKind::CorcheteIzq => {
+                self.advance(); // consumir [
+                let mut elements = Vec::new();
+                while !self.is_at_end() && !self.check(TokenKind::CorcheteDer) {
+                    if let Some(expr) = self.parse_expression() {
+                        elements.push(expr);
+                    }
+                    if self.check(TokenKind::Coma) {
+                        self.advance();
+                    }
+                }
+                if self.check(TokenKind::CorcheteDer) {
+                    self.advance();
+                }
+                Some(Expr::Array(elements))
             }
             _ => {
                 self.state.add_error(RyDitError::unexpected_token(
