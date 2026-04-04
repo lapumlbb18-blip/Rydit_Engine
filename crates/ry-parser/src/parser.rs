@@ -676,14 +676,8 @@ impl<'a> Parser<'a> {
     fn parse_texto_en(&mut self) -> Option<Stmt<'a>> {
         self.advance(); // consumir 'texto'
 
-        // Parsear texto literal
-        let texto = if self.check(TokenKind::Texto) {
-            let lexeme = self.current().lexeme.trim_matches('"').trim_matches('\'');
-            self.advance();
-            Expr::Texto(lexeme)
-        } else {
-            self.parse_expression()?
-        };
+        // Parsear texto como expresión completa (soporta "X" + var)
+        let texto = self.parse_expression()?;
 
         // Consumir 'en'
         if !self.consume(TokenKind::En, "en")? {
@@ -696,9 +690,14 @@ impl<'a> Parser<'a> {
         let y = self.parse_expression()?;
 
         // Opcional: tamano N
-        let tamano = if self.check(TokenKind::Ident) && self.current().lexeme == "tamano" {
+        let tamano = if self.check(TokenKind::Coma) {
             self.advance();
-            self.parse_expression()?
+            if self.check(TokenKind::Ident) && self.current().lexeme == "tamano" {
+                self.advance();
+                self.parse_expression()?
+            } else {
+                Expr::Num(16.0)
+            }
         } else {
             Expr::Num(16.0)
         };

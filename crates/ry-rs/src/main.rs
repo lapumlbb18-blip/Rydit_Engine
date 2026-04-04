@@ -15,7 +15,7 @@ mod module;
 mod repl;
 // mod science;  ← AHORA ES CRATE EXTERNO: use ry_science::ScienceModule;
 mod modules;
-mod tests; // ← MÓDULOS EXTENSIBLES (assets, audio, particles, http)
+// mod tests; ← Movido a docs/tests_referencia/ (AST viejo)
 
 // 🆕 RyBot - Inspector + Registry (v0.11.0)
 mod rybot;
