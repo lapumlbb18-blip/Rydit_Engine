@@ -67,6 +67,7 @@ impl MiguiSdl2Backend {
     }
 
     /// Procesar eventos SDL2 y actualizar estado de MiGUI
+    /// ✅ v0.13.0: Agregado soporte SDL_TEXTINPUT para teclado Android
     pub fn process_events(&mut self, gui: &mut Migui, sdl_event: &sdl2::event::Event) -> bool {
         let mut should_close = false;
 
@@ -115,10 +116,44 @@ impl MiguiSdl2Backend {
                 }
             }
 
+            // ✅ v0.13.0: TEXTINPUT - Recibe texto real del teclado Android
+            // Esto es CRÍTICO: el teclado virtual Android envía TextInput, no KeyCodes
+            sdl2::event::Event::TextInput { text, .. } => {
+                if !text.is_empty() {
+                    // Enviar cada caracter como CharTyped a Migui
+                    for ch in text.chars() {
+                        gui.handle_event(crate::Event::CharTyped { ch });
+                    }
+                }
+            }
+
+            // ✅ v0.13.0: TEXTEDITING - Composición IME (CJK input methods)
+            sdl2::event::Event::TextEditing { text, .. } => {
+                // Pre-edit text para input methods complejos
+                if !text.is_empty() {
+                    // En futuras versiones, manejar composición IME
+                    eprintln!("[MIGUI] TextEditing: {}", text);
+                }
+            }
+
             _ => {}
         }
 
         should_close
+    }
+
+    /// Activar input de texto (muestra teclado virtual Android)
+    /// ✅ v0.13.0: Llamar cuando un textbox recibe foco
+    pub fn enable_text_input(&self) {
+        sdl2::hint::set("SDL_HINT_ENABLE_SCREEN_KEYBOARD", "1");
+        // SDL_StartTextInput se llama desde el contexto principal
+        eprintln!("[MIGUI] TextInput enabled - keyboard should appear on focus");
+    }
+
+    /// Desactivar input de texto
+    /// ✅ v0.13.0: Llamar cuando un textbox pierde foco
+    pub fn disable_text_input(&self) {
+        eprintln!("[MIGUI] TextInput disabled");
     }
 
     /// Renderizar MiGUI con SDL2

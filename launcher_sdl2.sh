@@ -6,7 +6,15 @@
 export DISPLAY=:0
 export MESA_LOADER_DRIVER_OVERRIDE=zink
 export DRI3=1
-export VULKAN_DRIVER=tuono  # O el driver Vulkan de tu dispositivo
+# export VULKAN_DRIVER=tuono  # Comentado: puede no existir en todos los dispositivos
+
+# ✅ v0.13.0: Configurar SDL2 para Android/Termux-X11
+export SDL_VIDEODRIVER=x11
+export SDL_RENDER_DRIVER=opengles2
+export SDL_HINT_VIDEO_X11_FORCE_EGL=1
+export SDL_HINT_ANDROID_SEPARATE_MOUSE_AND_TOUCH=1
+export SDL_HINT_TOUCH_MOUSE_EVENTS=1
+export SDL_HINT_ENABLE_SCREEN_KEYBOARD=1
 
 # Directorio del proyecto
 cd /data/data/com.termux/files/home/shield-project

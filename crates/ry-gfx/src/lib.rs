@@ -847,6 +847,25 @@ impl RyditGfx {
 
         // Inicializar SDL2 para eventos
         let sdl_context = sdl2::init().ok();
+
+        // ✅ v0.13.0: Configurar hints SDL2 para Android/Termux-X11
+        if let Some(_) = &sdl_context {
+            // Forzar backend X11 (Termux-X11)
+            sdl2::hint::set("SDL_VIDEODRIVER", "x11");
+            // Forzar EGL sobre GLX (más estable en Android)
+            sdl2::hint::set("SDL_HINT_VIDEO_X11_FORCE_EGL", "1");
+            // Separar eventos mouse y touch
+            sdl2::hint::set("SDL_HINT_ANDROID_SEPARATE_MOUSE_AND_TOUCH", "1");
+            // Mapear touch a mouse events
+            sdl2::hint::set("SDL_HINT_TOUCH_MOUSE_EVENTS", "1");
+            // Habilitar teclado virtual en pantalla
+            sdl2::hint::set("SDL_HINT_ENABLE_SCREEN_KEYBOARD", "1");
+            // Activar input de texto por defecto (para textbox)
+            sdl2::hint::set("SDL_HINT_IME_SHOW_UI", "1");
+
+            eprintln!("[RYDIT-GFX] SDL2 hints configurados para Android/Termux-X11");
+        }
+
         let sdl_event_pump = sdl_context.as_ref().and_then(|ctx| ctx.event_pump().ok());
 
         Self {
