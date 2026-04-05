@@ -102,11 +102,21 @@ Progreso: ░░░░░░░░░░░░░░░░░░░░ 0%
 | Videos tutoriales | ⏳ | YouTube |
 | README completo | ⏳ | Con galería |
 | GitHub Actions CI | ⏳ | Build automático |
-| Editor visual | ⏳ | Integrado |
+| ry-input (SDL2 input + raylib render) | ⏳ | 10-15h |
+| Publicar 10+ crates crates.io | ⏳ | Visibilidad |
 
-```
-Progreso: ██░░░░░░░░░░░░░░░░░░ 10%
-```
+### v0.13.0 - FASE FINAL + LANZAMIENTO (EN PROGRESO — Tareas en paralelo)
+
+**Prioridad**: MÁXIMA — Lanzamiento en días
+
+| Tarea | Estado | Notas |
+|-------|--------|-------|
+| **Raylib + Lorie + Plataformas** | ⏳ | Cerrar soporte multiplataforma |
+| **UI/Editor estilizado** | ⏳ | migui + SDL2: ventanas y botones listos, solo estilizar |
+| **bgfx_libs integración** | ⏳ | Ver ~/bgfx_libs (raylib + lorie) |
+| **GitHub Actions CI/CD** | ⏳ | Tests automáticos + builds multiplataforma |
+| ry-input (SDL2 input + raylib render) | ⏳ | Input directo Termux-X11/Lorie |
+| Lanzamiento público | 🔮 | En unos días |
 
 ---
 
@@ -114,9 +124,8 @@ Progreso: ██░░░░░░░░░░░░░░░░░░ 10%
 
 ```
 v0.12.0 ████████████████████ 100%
-v0.13.0 ░░░░░░░░░░░░░░░░░░░░   0%
-v0.14.0 ░░░░░░░░░░░░░░░░░░░░   0%
-v1.0.0  ██░░░░░░░░░░░░░░░░░░  10%
+v0.13.0 ████████████░░░░░░░░  60% ← Fase final (tareas en paralelo)
+v1.0.0  ████░░░░░░░░░░░░░░░░  20%
 ```
 
 ---
@@ -128,10 +137,9 @@ v1.0.0  ██░░░░░░░░░░░░░░░░░░  10%
 | v0.11.4 | 2026-04-02 | 20+ | 18 | 0 | — | Lifetimes fix |
 | v0.11.5 | 2026-04-02 | 10+ | 18 | 0 | — | 0 errores final |
 | v0.12.0 | 2026-04-04 | 7 | 22 | 0 | 15 | Rebrand + Parser infalible |
-| **v0.12.0** | **2026-04-05** | **18+** | **22** | **0** | **58** | **ry-anim + Quest + Save/Load + ry-stream** |
-| v0.13.0 | 2026-04-xx | — | 22 | — | — | ry-input + Demos completos |
-| v0.14.0 | 2026-04-xx | — | 22 | — | — | LAZOS + Camera3D |
-| v1.0.0 | Futuro | — | 25+ | — | — | Motor completo |
+| **v0.12.0** | **2026-04-05** | **19+** | **22** | **0** | **58** | **ry-anim + Quest + Save/Load + ry-stream + demos** |
+| **v0.13.0** | **2026-04-xx** | **—** | **22** | **—** | **—** | **Fase Final: raylib+lorie+UI+bgfx+CI/CD → LANZAMIENTO** |
+| v1.0.0 | Futuro | — | 25+ | — | — | Motor completo + comunidad |
 
 ---
 
