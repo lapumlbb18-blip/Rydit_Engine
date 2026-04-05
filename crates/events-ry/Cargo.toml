@@ -1,0 +1,27 @@
+[package]
+name = "events-ry"
+version = "0.1.0"
+edition = "2021"
+description = "Input unificado + Text Input + Shell para ry-dit (teclado, mouse, touch, gamepad, comandos)"
+license = "MIT"
+keywords = ["input", "events", "shell", "text-input", "game-engine"]
+categories = ["game-development", "gui"]
+
+[dependencies]
+# Sin dependencias externas por defecto - pure Rust
+
+[features]
+default = []
+sdl2-backend = ["sdl2"]
+raylib-backend = ["raylib"]
+hybrid = ["sdl2", "raylib"]
+
+[dependencies.sdl2]
+version = "0.37"
+optional = true
+features = ["image", "ttf", "mixer"]
+
+[dependencies.raylib]
+version = "5.5.1"
+optional = true
+features = ["nobuild"]

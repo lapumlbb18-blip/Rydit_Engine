@@ -217,3 +217,6 @@ git add -A && git commit -m "mensaje" && git tag -a v0.12.0
 **REGLA DE ORO: NUNCA SED DESPUÉS DE REFACTORIZAR PARSER**
 
 </div>
+
+## Qwen Added Memories
+- CLAVE ARQUITECTÓNICA: Shell + Text Input es el corazón del editor visual ry-dit. No es solo capturar teclas individuales, sino: 1) TextInput para composición de strings (rutas, nombres, comandos), 2) Shell para ejecutar comandos (carga assets, debug, REPL rydit), 3) Console para output en tiempo real. Sin esto, el editor visual no funciona. events-ry debe tener 3 capas: InputEvent (raw) → TextInput (composición) → Shell (ejecución). HybridBackend preferido: SDL2 input + raylib render en Termux-X11.
