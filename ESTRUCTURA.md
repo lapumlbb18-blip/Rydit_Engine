@@ -1,9 +1,9 @@
-# Ry-Dit - ESTRUCTURA DEL PROYECTO v0.13.0
+# Ry-Dit - ESTRUCTURA DEL PROYECTO v0.12.0
 
 **Última actualización**: 2026-04-05
-**Versión**: v0.13.0 Math avanzado + Arrays completos + Cálculo numérico + Vec2 + toolkit-ry + ry3d-gfx
-**Commit**: `7b010d1` (HEAD)
-**Estado**: `cargo check --workspace`: 0 errores | 23 crates compilando | ~43 warnings
+**Versión**: v0.12.0 ry-anim Action Assets + Quest + Save/Load + ry-stream
+**Commit**: `405a945` (HEAD)
+**Estado**: `cargo check --workspace`: 0 errores | 22 crates compilando | 58 tests pasando
 
 ---
 
@@ -11,9 +11,9 @@
 
 ```
 shield-project/
-├── Cargo.toml                  # Workspace (23 crates)
+├── Cargo.toml                  # Workspace (22 crates)
 ├── README.md                   # Documentación principal
-├── ROADMAP.md                  # Planificación v0.13->v1.0
+├── ROADMAP.md                  # Planificación v0.12→v1.0
 ├── QWEN.md                     # Bitácora técnica
 ├── ESTRUCTURA.md               # Este archivo
 ├── CONTRIBUTING.md             # Guía contribuidores
@@ -27,23 +27,23 @@ shield-project/
 │   ├── ry-parser/              # 0.1.0  Parser AST + error recovery
 │   ├── ry-vm/                  #        VM opcodes + compiler
 │   ├── ry-gfx/                 # 0.10.7 Graphics (raylib + SDL2 + OpenGL FFI)
-│   ├── ry-physics/             # 0.7.34 2D projectile + N-body (2 cuerpos)
-│   ├── ry-anim/                # 0.7.34 Easing + Disney principles
-│   ├── ry-ecs/                 # 0.10.0 ECS (bevy_ecs)
+│   ├── ry-physics/             # 0.7.34 2D projectile + N-body + nbody_simulate
+│   ├── ry-anim/                # 0.12.0  Easing + Disney + ilusiones + ciencia + action
 │   ├── ry-science/             #        Geometry 2D + stats + Bezier
 │   ├── ry-script/              # 0.8.2  Script loading
-│   ├── ry-stream/              # 0.1.0  LAN streaming (WebSocket)
-│   ├── ry-god/                 # 0.1.0  Security & efficiency (crates.io)
+│   ├── ry-stream/              # 0.1.0  LAN streaming (WebSocket) ✅ crates.io
+│   ├── ry-god/                 # 0.1.0  Security & efficiency ✅ crates.io
 │   ├── ry-loader/              #        Module loader
 │   ├── ry-rs/                  #        Main binary + demos + eval + modules
 │   ├── ry-system-ry/           # 0.11.0 Universal system (SDL2)
 │   ├── ry-test/                #        Test utilities
-│   ├── ry3d-gfx/               # 0.1.0  NEW: Graphics 3D (cube, sphere, cylinder...)
-│   ├── toolkit-ry/             # 0.1.0  NEW: UI toolkit (5 temas + 20+ widgets)
+│   ├── ry3d-gfx/               # 0.1.0  Graphics 3D (cube, sphere, cylinder...)
+│   ├── toolkit-ry/             # 0.1.0  UI toolkit (5 temas + 20+ widgets)
 │   ├── migui/                  #        Immediate mode GUI (12 widgets)
 │   ├── blast-core/             # 0.1.0  Minimal value executor
 │   ├── lizer/                  # 0.11.2 Legacy lexer wrapper
-│   └── v-shield/               #        (por definir)
+│   └── v-shield/               #        Platform layer (pendiente)
+│   └── ~~ry-ecs~~/             #        🗑️ Eliminado (-1,143 líneas)
 │
 ├── crates/ry-rs/src/
 │   ├── main.rs                 # Entry point + eval modo gráfico + modules
@@ -69,15 +69,43 @@ shield-project/
 │       ├── tilemap.rs          # Tilemap system
 │       └── window.rs           # Creación de ventana SDL2
 │
+├── crates/ry-rs/src/bin/       # ~31 bins
+│   ├── demo_50k_particulas.rs
+│   ├── demo_action_assets.rs
+│   ├── demo_anime_ry           # ← ELF 341K release
+│   ├── demo_carga_sprites.rs
+│   ├── demo_carga_sprites_v1.rs
+│   ├── demo_colisiones.rs
+│   ├── demo_completo_final.rs
+│   ├── demo_completo_sdl2.rs
+│   ├── demo_effects.rs
+│   ├── demo_fsr_audio.rs
+│   ├── demo_illusions.rs
+│   ├── demo_particles.rs
+│   ├── demo_platformer_completo.rs
+│   ├── demo_rigidbody          # ← ELF 446K release
+│   ├── demo_science.rs
+│   ├── demo_sprites_final.rs
+│   ├── demo_sprites_v2.rs
+│   ├── demo_stream.rs
+│   ├── demo_ttf_sprites.rs
+│   ├── demo_ttf_sprites_audio.rs
+│   ├── nivel3_test_audio_lowend.rs
+│   ├── nivel3_test_input_lowend.rs
+│   ├── nivel3_test_lowend.rs
+│   ├── rybot_cli.rs
+│   ├── snake.rs
+│   ├── test_audio_minimal.rs
+│   ├── test_audio_sdl2.rs
+│   ├── test_bloques_anidados.rs
+│   ├── test_callback_sdl2.rs
+│   ├── test_parser.rs
+│   └── test_rydit_simple.rs
+│
 ├── crates/ry-parser/src/
 │   ├── lib.rs                  # API pública
 │   ├── ast.rs                  # Expr<'a>, Stmt<'a>, BinaryOp, UnaryOp
 │   ├── parser.rs               # Parser completo (~1500 líneas)
-│   │   ├── parse_primary()     # Literales, arrays [], vars, calls
-│   │   ├── parse_term()        # *, /, +, - (precedencia)
-│   │   ├── parse_expression()  # Comparaciones, lógicos
-│   │   ├── parse_statement()   # Assign, if, ryda, funciones
-│   │   └── parse_texto_en()    # Texto en A, B con expresiones
 │   └── token.rs                # TokenKind (60+ tipos)
 │
 ├── crates/ry-lexer/src/
@@ -92,65 +120,85 @@ shield-project/
 │   ├── render_queue.rs         # Cola de renderizado
 │   ├── ecs_render.rs           # ECS renderer
 │   ├── fsr.rs                  # FSR 1.0 upscaling
-│   └── shaders/                # GLSL shaders
-│       ├── vertex.glsl
-│       └── fragment.glsl
+│   └── shaders/                # GLSL shaders embebidos
 │
-├── crates/toolkit-ry/src/      # NUEVO v0.13.0
+├── crates/ry-anim/src/         # v0.12.0 - 41 funciones
+│   ├── lib.rs                  # API pública
+│   ├── easing.rs               # ease_in, ease_out, ease_in_out
+│   ├── disney.rs               # 9 principios Disney
+│   ├── illusions.rs            # 6 ilusiones ópticas
+│   ├── effects.rs              # 6 efectos especiales
+│   ├── science.rs              # 8 animaciones científicas
+│   └── action_assets.rs       # 6 action assets (sprite animation)
+│
+├── crates/toolkit-ry/src/
 │   ├── lib.rs                  # UI Toolkit API pública
 │   ├── themes/
-│   │   ├── dark.rs             # Tema oscuro
-│   │   ├── light.rs            # Tema claro
-│   │   ├── retro.rs            # Tema retro
-│   │   ├── neon.rs             # Tema neón
-│   │   └── minimal.rs          # Tema minimalista
+│   │   ├── dark.rs
+│   │   ├── light.rs
+│   │   ├── retro.rs
+│   │   ├── neon.rs
+│   │   └── minimal.rs
 │   └── widgets/
-│       ├── health_bar.rs       # Barra de vida
-│       ├── mana_bar.rs         # Barra de maná
-│       ├── xp_bar.rs           # Barra de experiencia
-│       ├── score.rs            # Marcador
-│       ├── menu.rs             # Menús
-│       ├── inventario.rs       # Inventario
-│       ├── dialogo.rs          # Diálogos
-│       ├── minimap.rs          # Minimapa
-│       ├── loading.rs          # Pantalla de carga
-│       └── notificaciones.rs   # Notificaciones
+│       ├── health_bar.rs
+│       ├── mana_bar.rs
+│       ├── xp_bar.rs
+│       ├── score.rs
+│       ├── menu.rs
+│       ├── inventario.rs
+│       ├── dialogo.rs
+│       ├── minimap.rs
+│       ├── loading.rs
+│       └── notificaciones.rs
 │
-├── crates/ry3d-gfx/src/        # NUEVO v0.13.0
-│   ├── lib.rs                  # 3D Graphics API pública
+├── crates/ry3d-gfx/src/
+│   ├── lib.rs                  # 3D Graphics API
 │   ├── primitives/
-│   │   ├── cube.rs             # Cubo 3D
-│   │   ├── sphere.rs           # Esfera 3D
-│   │   ├── cylinder.rs         # Cilindro 3D
-│   │   └── plane.rs            # Plano 3D
+│   │   ├── cube.rs
+│   │   ├── sphere.rs
+│   │   ├── cylinder.rs
+│   │   └── plane.rs
 │   ├── debug/
-│   │   ├── grid.rs             # Grid 3D
-│   │   ├── axes_gizmo.rs       # Ejes XYZ
-│   │   └── bounding_box.rs     # Bounding box 3D
+│   │   ├── grid.rs
+│   │   ├── axes_gizmo.rs
+│   │   └── bounding_box.rs
 │   └── shapes/
-│       ├── point3D.rs          # Punto 3D
-│       ├── line3D.rs           # Línea 3D
-│       └── triangle3D.rs       # Triángulo 3D
+│       ├── point3D.rs
+│       ├── line3D.rs
+│       └── triangle3D.rs
 │
-├── demos/                      # Scripts .rydit
+├── crates/ry-physics/src/
+│   ├── lib.rs                  # Physics API
+│   ├── projectile.rs           # 2D projectile
+│   ├── nbody.rs               # N-body (2 cuerpos)
+│   └── nbody_simulate.rs       # Movido desde ry-ecs
+│
+├── crates/ry-stream/src/       # ✅ crates.io
+│   ├── lib.rs                  # Streaming API
+│   └── websocket.rs            # WebSocket LAN streaming
+│
+├── crates/ry-god/src/          # ✅ crates.io
+│   ├── lib.rs                  # Security & Efficiency
+│   └── framework.rs            # Security framework
+│
 ├── docs/
-│   ├── actuales/
-│   ├── antiguos/               # Docs de versiones previas
-│   │   ├── sdl2/               # Guías SDL2
-│   │   ├── demos/              # Documentación de demos
-│   │   └── guias/              # Guías varias
-│   ├── sessions/               # Logs de sesiones
-│   ├── tests/
-│   ├── tests_referencia/
-│   └── panorama_v0.13.0.md     # Panorama completo v0.13->v1.0
+│   ├── panorama_v0.13.0.md
+│   ├── plan_limpieza_v0.13.0.md
+│   ├── vision_estrategica.md
+│   ├── vision_ciencia_ry_science_physics.md
+│   ├── vision_ry_stream_comunidad.md
+│   ├── vision_ry_anim.md
+│   ├── analisis_sistema_universal_ry.md
+│   ├── analisis_raylib_2d_3d.md
+│   ├── analisis_display_input_render.md
+│   ├── analisis_ry_ecs.md
+│   ├── sesion_control_total_v0.13.0.md
+│   ├── guia_compilacion_termux.md
+│   └── arquitectura_demos.md
 │
 ├── screenshots/                # Capturas y videos MP4
-├── scripts/                    # Utilidades bash/python
 ├── tests/                      # Tests automáticos
-├── tests_rydit/                # Tests del lenguaje
-└── ejemplos-gfx/               # Demos gráficos pendientes
-    ├── pendientes/
-    └── pendientes-revision/
+└── tests_rydit/                # Tests del lenguaje
 ```
 
 ---
@@ -225,6 +273,26 @@ shield-project/
 | `from_angle(angle)` | 1 | Vec2 |
 | **Constantes**: `zero`, `one`, `up`, `down`, `left`, `right` | 0 | Vec2 |
 
+### quest::
+| Función | Args | Retorna |
+|---------|------|---------|
+| `create(id, name, desc)` | 3 | Quest |
+| `add_objective(quest, desc)` | 2 | Quest |
+| `complete_objective(quest, idx)` | 2 | Quest |
+| `set_reward(quest, type, amount)` | 3 | Quest |
+| `check_completion(quest)` | 1 | bool |
+| `get_state(quest_id)` | 1 | Valor |
+
+### save_load::
+| Función | Args | Retorna |
+|---------|------|---------|
+| `create(slot, name)` | 2 | SaveSlot |
+| `set_var(slot, key, value)` | 3 | bool |
+| `get_var(slot, key)` | 2 | Valor |
+| `save(slot)` | 1 | bool |
+| `load(slot)` | 1 | SaveSlot |
+| `list()` | 0 | Array |
+
 ---
 
 ## PIPELINE DE EJECUCIÓN
@@ -234,25 +302,36 @@ Código .rydit
     |
     v
 ┌─────────────┐
-│  ry-lexer   │  Zero-copy scan -> tokens
+│  ry-lexer   │  Zero-copy scan -> Token<'a>
 └──────┬──────┘
-       | Token<'a>
+       |
        v
 ┌─────────────┐
-│ ry-parser   │  Error recovery -> AST
+│ ry-parser   │  Error recovery -> AST (Expr<'a>, Stmt<'a>)
 └──────┬──────┘
-       | Expr<'a>, Stmt<'a>
+       |
        v
 ┌─────────────┐
-│ evaluar_expr│  Evaluar expresiones (eval/mod.rs)
-│ ejecutar_stmt│ Ejecutar statements (main.rs)
+│evaluar_expr │  Evaluar expresiones (eval/mod.rs)
+│ejecutar_stmt│ Ejecutar statements (main.rs)
 └──────┬──────┘
-       | Valor (Num, Texto, Bool, Array, Vec2)
+       |
+       v
+   Valor (Num, Texto, Bool, Array, Vec2, Quest, SaveSlot)
+       |
        v
 ┌─────────────┐
-│   ry-gfx    │  SDL2/raylib render
+│   ry-gfx    │  SDL2/raylib render + FSR 1.0
 │   ry3d-gfx  │  3D primitives
-│  toolkit-ry │  UI widgets
+│  toolkit-ry │  UI widgets (5 temas)
+│  ry-anim    │  Animaciones (41 funciones)
+│ ry-physics  │  Física 2D + N-body
+└─────────────┘
+       |
+       v
+┌─────────────┐
+│  ry-stream  │  LAN streaming (WebSocket)
+│   ry-god    │  Security & Efficiency
 └─────────────┘
 ```
 
@@ -262,27 +341,43 @@ Código .rydit
 
 | Crate | Versión | Estado | Notas |
 |-------|---------|--------|-------|
-| ry-god | 0.1.0 | crates.io | Security & efficiency |
+| ry-god | 0.1.0 | ✅ crates.io | Security & efficiency |
+| ry-stream | 0.1.0 | ✅ crates.io | LAN streaming |
 | ry-core | 0.8.2 | Listo | Core traits |
 | ry-lexer | 0.1.0 | Listo | Zero-copy |
 | ry-parser | 0.1.0 | Listo | Error recovery |
-| ry-physics | 0.7.34 | Listo | 2D projectile |
-| ry-anim | 0.7.34 | Listo | Easing |
-| ry-ecs | 0.10.0 | Listo | bevy_ecs |
-| ry-script | 0.8.2 | Listo | Script loading |
-| ry-stream | 0.1.0 | Listo | WebSocket |
-| toolkit-ry | 0.1.0 | Listo | UI toolkit (5 temas) |
+| ry-anim | 0.12.0 | Listo | 41 funciones, 58 tests |
+| ry-physics | 0.7.34 | Listo | 2D projectile + N-body |
+| ry-gfx | 0.10.7 | Listo | Graphics FFI |
 | ry3d-gfx | 0.1.0 | Listo | 3D primitives |
+| toolkit-ry | 0.1.0 | Listo | UI toolkit (5 temas) |
 | lizer | 0.11.2 | Listo | Legacy |
-| ry-system-ry | 0.11.0 | | Falta license |
+| ry-system-ry | 0.11.0 | ⚠️ | Falta license |
+
+---
+
+## DEMOS BINARIOS
+
+| Demo | Descripción | Tamaño Release |
+|------|-------------|----------------|
+| demo_anime_ry | Showcase ry-anim v0.12.0 | 341K |
+| demo_rigidbody | Física + colisiones SDL2 | 446K |
+| demo_action_assets | Action assets + sprite anim | — |
+| demo_illusions | Ilusiones ópticas | — |
+| demo_effects | Efectos especiales | — |
+| demo_science | Animaciones científicas | — |
+| demo_50k_particulas | 50K partículas | — |
+| demo_stream | ry-stream demo | — |
+| demo_platformer_completo | Platformer completo | — |
+| snake | Snake game | — |
 
 ---
 
 <div align="center">
 
-**Ry-Dit v0.13.0 -- ESTRUCTURA ACTUALIZADA**
+**Ry-Dit v0.12.0 -- ESTRUCTURA ACTUALIZADA**
 
-*23 crates | 25K+ líneas Rust | Math + Arrays + Vec2 + toolkit-ry + ry3d-gfx*
+*22 crates | ~25K+ líneas Rust | ry-anim v0.12.0 | 58 tests | 2 crates publicados*
 
 *Última actualización: 2026-04-05*
 
