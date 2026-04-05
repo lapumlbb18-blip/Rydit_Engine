@@ -2,11 +2,12 @@
 name = "ry-stream"
 version = "0.1.0"
 edition = "2021"
-description = "LAN streaming for Ry (WebSocket + mDNS + Portal)"
+description = "LAN streaming server with WebSocket + embedded web portal for the Ry-Dit game engine"
 license = "MIT"
-repository = "https://github.com/lapumlbb18-blip/Rydit"
-keywords = ["streaming", "websocket", "lan", "ry", "game-engine"]
-categories = ["game-engines", "network-programming"]
+repository = "https://github.com/lapumlbb18-blip/Ry-dit"
+readme = "README.md"
+keywords = ["streaming", "websocket", "lan", "json-rpc", "game-engine"]
+categories = ["game-engines", "network-programming", "web-programming::websocket"]
 
 [dependencies]
 # ✅ EXISTENTES (ya están en workspace - 0KB extra)
