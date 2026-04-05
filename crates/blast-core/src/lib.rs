@@ -9,7 +9,8 @@ pub enum Valor {
     Num(f64),
     Texto(String),
     Bool(bool),
-    Array(Vec<Valor>), // Array de valores
+    Array(Vec<Valor>),   // Array de valores
+    Vec2(f64, f64),      // Vector 2D (x, y) - v0.13.0
     Vacio,
     Error(String),
 }
@@ -24,6 +25,7 @@ impl std::fmt::Display for Valor {
                 let items: Vec<String> = arr.iter().map(|v| format!("{}", v)).collect();
                 write!(f, "[{}]", items.join(", "))
             }
+            Valor::Vec2(x, y) => write!(f, "vec2({}, {})", x, y),
             Valor::Vacio => write!(f, "vacío"),
             Valor::Error(msg) => write!(f, "[ERROR] {}", msg),
         }

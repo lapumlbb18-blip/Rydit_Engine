@@ -1153,6 +1153,206 @@ pub fn evaluar_expr<'a>(
                 }
             }
 
+            // ================================================================
+            // VEC2 - TIPO NATIVO v0.13.0
+            // ================================================================
+
+            // vec2(x, y) - Constructor
+            if func_name == "vec2" && args.len() == 2 {
+                let x_val = evaluar_expr(&args[0], executor, funcs);
+                let y_val = evaluar_expr(&args[1], executor, funcs);
+                if let (Valor::Num(x), Valor::Num(y)) = (x_val, y_val) {
+                    return Valor::Vec2(x, y);
+                } else {
+                    return Valor::Error("vec2() requiere dos números".to_string());
+                }
+            }
+
+            // vec2::x(v) - Componente X
+            if func_name == "vec2::x" && args.len() == 1 {
+                if let Valor::Vec2(x, _) = evaluar_expr(&args[0], executor, funcs) {
+                    return Valor::Num(x);
+                }
+                return Valor::Error("vec2::x() requiere vec2".to_string());
+            }
+
+            // vec2::y(v) - Componente Y
+            if func_name == "vec2::y" && args.len() == 1 {
+                if let Valor::Vec2(_, y) = evaluar_expr(&args[0], executor, funcs) {
+                    return Valor::Num(y);
+                }
+                return Valor::Error("vec2::y() requiere vec2".to_string());
+            }
+
+            // vec2::add(a, b) - Suma de vectores
+            if func_name == "vec2::add" && args.len() == 2 {
+                let a = evaluar_expr(&args[0], executor, funcs);
+                let b = evaluar_expr(&args[1], executor, funcs);
+                if let (Valor::Vec2(ax, ay), Valor::Vec2(bx, by)) = (a, b) {
+                    return Valor::Vec2(ax + bx, ay + by);
+                }
+                return Valor::Error("vec2::add() requiere dos vec2".to_string());
+            }
+
+            // vec2::sub(a, b) - Resta de vectores
+            if func_name == "vec2::sub" && args.len() == 2 {
+                let a = evaluar_expr(&args[0], executor, funcs);
+                let b = evaluar_expr(&args[1], executor, funcs);
+                if let (Valor::Vec2(ax, ay), Valor::Vec2(bx, by)) = (a, b) {
+                    return Valor::Vec2(ax - bx, ay - by);
+                }
+                return Valor::Error("vec2::sub() requiere dos vec2".to_string());
+            }
+
+            // vec2::scale(v, s) - Escalar vector
+            if func_name == "vec2::scale" && args.len() == 2 {
+                let v = evaluar_expr(&args[0], executor, funcs);
+                let s = evaluar_expr(&args[1], executor, funcs);
+                if let (Valor::Vec2(vx, vy), Valor::Num(sc)) = (v, s) {
+                    return Valor::Vec2(vx * sc, vy * sc);
+                }
+                return Valor::Error("vec2::scale() requiere (vec2, número)".to_string());
+            }
+
+            // vec2::magnitude(v) - Magnitud √(x² + y²)
+            if func_name == "vec2::magnitude" || func_name == "vec2::magnitud" && args.len() == 1 {
+                if let Valor::Vec2(x, y) = evaluar_expr(&args[0], executor, funcs) {
+                    return Valor::Num(x.hypot(y));
+                }
+                return Valor::Error("vec2::magnitude() requiere vec2".to_string());
+            }
+
+            // vec2::normalize(v) - Vector unitario
+            if func_name == "vec2::normalize" || func_name == "vec2::normalizar" && args.len() == 1 {
+                if let Valor::Vec2(x, y) = evaluar_expr(&args[0], executor, funcs) {
+                    let mag = x.hypot(y);
+                    if mag > 0.0 {
+                        return Valor::Vec2(x / mag, y / mag);
+                    }
+                    return Valor::Error("vec2::normalize(): vector cero no se puede normalizar".to_string());
+                }
+                return Valor::Error("vec2::normalize() requiere vec2".to_string());
+            }
+
+            // vec2::dot(a, b) - Producto punto
+            if func_name == "vec2::dot" || func_name == "vec2::producto_punto" && args.len() == 2 {
+                let a = evaluar_expr(&args[0], executor, funcs);
+                let b = evaluar_expr(&args[1], executor, funcs);
+                if let (Valor::Vec2(ax, ay), Valor::Vec2(bx, by)) = (a, b) {
+                    return Valor::Num(ax * bx + ay * by);
+                }
+                return Valor::Error("vec2::dot() requiere dos vec2".to_string());
+            }
+
+            // vec2::cross(a, b) - Producto cruz 2D (escalar)
+            if func_name == "vec2::cross" || func_name == "vec2::producto_cruz" && args.len() == 2 {
+                let a = evaluar_expr(&args[0], executor, funcs);
+                let b = evaluar_expr(&args[1], executor, funcs);
+                if let (Valor::Vec2(ax, ay), Valor::Vec2(bx, by)) = (a, b) {
+                    return Valor::Num(ax * by - ay * bx);
+                }
+                return Valor::Error("vec2::cross() requiere dos vec2".to_string());
+            }
+
+            // vec2::angle(v) - Ángulo en radianes
+            if func_name == "vec2::angle" || func_name == "vec2::ángulo" && args.len() == 1 {
+                if let Valor::Vec2(x, y) = evaluar_expr(&args[0], executor, funcs) {
+                    return Valor::Num(y.atan2(x));
+                }
+                return Valor::Error("vec2::angle() requiere vec2".to_string());
+            }
+
+            // vec2::rotate(v, angle) - Rotar vector
+            if func_name == "vec2::rotate" || func_name == "vec2::rotar" && args.len() == 2 {
+                let v = evaluar_expr(&args[0], executor, funcs);
+                let a = evaluar_expr(&args[1], executor, funcs);
+                if let (Valor::Vec2(vx, vy), Valor::Num(angle)) = (v, a) {
+                    let cos_a = angle.cos();
+                    let sin_a = angle.sin();
+                    return Valor::Vec2(vx * cos_a - vy * sin_a, vx * sin_a + vy * cos_a);
+                }
+                return Valor::Error("vec2::rotate() requiere (vec2, ángulo)".to_string());
+            }
+
+            // vec2::lerp(a, b, t) - Interpolación lineal
+            if func_name == "vec2::lerp" && args.len() == 3 {
+                let a = evaluar_expr(&args[0], executor, funcs);
+                let b = evaluar_expr(&args[1], executor, funcs);
+                let t = evaluar_expr(&args[2], executor, funcs);
+                if let (Valor::Vec2(ax, ay), Valor::Vec2(bx, by), Valor::Num(tv)) = (a, b, t) {
+                    return Valor::Vec2(ax + (bx - ax) * tv, ay + (by - ay) * tv);
+                }
+                return Valor::Error("vec2::lerp() requiere (vec2, vec2, número)".to_string());
+            }
+
+            // vec2::dist(a, b) - Distancia entre vectores
+            if func_name == "vec2::dist" || func_name == "vec2::distancia" && args.len() == 2 {
+                let a = evaluar_expr(&args[0], executor, funcs);
+                let b = evaluar_expr(&args[1], executor, funcs);
+                if let (Valor::Vec2(ax, ay), Valor::Vec2(bx, by)) = (a, b) {
+                    let dx = bx - ax;
+                    let dy = by - ay;
+                    return Valor::Num(dx.hypot(dy));
+                }
+                return Valor::Error("vec2::dist() requiere dos vec2".to_string());
+            }
+
+            // vec2::negate(v) - Negar vector
+            if func_name == "vec2::negate" || func_name == "vec2::negar" && args.len() == 1 {
+                if let Valor::Vec2(x, y) = evaluar_expr(&args[0], executor, funcs) {
+                    return Valor::Vec2(-x, -y);
+                }
+                return Valor::Error("vec2::negate() requiere vec2".to_string());
+            }
+
+            // vec2::midpoint(a, b) - Punto medio
+            if func_name == "vec2::midpoint" || func_name == "vec2::punto_medio" && args.len() == 2 {
+                let a = evaluar_expr(&args[0], executor, funcs);
+                let b = evaluar_expr(&args[1], executor, funcs);
+                if let (Valor::Vec2(ax, ay), Valor::Vec2(bx, by)) = (a, b) {
+                    return Valor::Vec2((ax + bx) / 2.0, (ay + by) / 2.0);
+                }
+                return Valor::Error("vec2::midpoint() requiere dos vec2".to_string());
+            }
+
+            // vec2::from_angle(angle) - Vector unitario desde ángulo
+            if func_name == "vec2::from_angle" || func_name == "vec2::desde_ángulo" && args.len() == 1 {
+                if let Valor::Num(angle) = evaluar_expr(&args[0], executor, funcs) {
+                    return Valor::Vec2(angle.cos(), angle.sin());
+                }
+                return Valor::Error("vec2::from_angle() requiere número".to_string());
+            }
+
+            // vec2::zero() - Vector cero
+            if func_name == "vec2::zero" || func_name == "vec2::cero" && args.is_empty() {
+                return Valor::Vec2(0.0, 0.0);
+            }
+
+            // vec2::one() - Vector unitario (1, 1)
+            if func_name == "vec2::one" || func_name == "vec2::uno" && args.is_empty() {
+                return Valor::Vec2(1.0, 1.0);
+            }
+
+            // vec2::up() - Arriba (0, -1)
+            if func_name == "vec2::up" || func_name == "vec2::arriba" && args.is_empty() {
+                return Valor::Vec2(0.0, -1.0);
+            }
+
+            // vec2::down() - Abajo (0, 1)
+            if func_name == "vec2::down" || func_name == "vec2::abajo" && args.is_empty() {
+                return Valor::Vec2(0.0, 1.0);
+            }
+
+            // vec2::left() - Izquierda (-1, 0)
+            if func_name == "vec2::left" || func_name == "vec2::izquierda" && args.is_empty() {
+                return Valor::Vec2(-1.0, 0.0);
+            }
+
+            // vec2::right() - Derecha (1, 0)
+            if func_name == "vec2::right" || func_name == "vec2::derecha" && args.is_empty() {
+                return Valor::Vec2(1.0, 0.0);
+            }
+
             // ========== FUNCIONES RANDOM (v0.1.6) ==========
             // PRNG xorshift - sin dependencias externas
             if (func_name == "__random_int" || func_name == "random::int") && args.len() == 2 {

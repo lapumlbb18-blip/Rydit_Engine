@@ -46,6 +46,7 @@ pub fn valor_ry_a_serde(val: &Valor) -> Result<serde_json::Value, String> {
                 arr.iter().map(valor_ry_a_serde).collect();
             Ok(serde_json::Value::Array(valores?))
         }
+        Valor::Vec2(x, y) => Ok(serde_json::json!({"x": x, "y": y})),
         Valor::Vacio => Ok(serde_json::Value::Null),
         Valor::Error(msg) => Err(format!("Valor de error: {}", msg)),
     }
