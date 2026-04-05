@@ -3042,6 +3042,99 @@ pub fn evaluar_expr_gfx(
                 return Valor::Error("arrays::unshift() requiere (array, elemento)".to_string());
             }
 
+            // VEC2 - TIPO NATIVO v0.13.0 (gfx mode)
+            if func_name == "vec2" && args.len() == 2 {
+                let x = evaluar_expr_gfx(&args[0], executor, input, funcs);
+                let y = evaluar_expr_gfx(&args[1], executor, input, funcs);
+                if let (Valor::Num(xv), Valor::Num(yv)) = (x, y) { return Valor::Vec2(xv, yv); }
+                return Valor::Error("vec2() requiere dos números".to_string());
+            }
+            if func_name == "vec2::x" && args.len() == 1 {
+                if let Valor::Vec2(x, _) = evaluar_expr_gfx(&args[0], executor, input, funcs) { return Valor::Num(x); }
+                return Valor::Error("vec2::x() requiere vec2".to_string());
+            }
+            if func_name == "vec2::y" && args.len() == 1 {
+                if let Valor::Vec2(_, y) = evaluar_expr_gfx(&args[0], executor, input, funcs) { return Valor::Num(y); }
+                return Valor::Error("vec2::y() requiere vec2".to_string());
+            }
+            if func_name == "vec2::add" && args.len() == 2 {
+                let a = evaluar_expr_gfx(&args[0], executor, input, funcs);
+                let b = evaluar_expr_gfx(&args[1], executor, input, funcs);
+                if let (Valor::Vec2(ax, ay), Valor::Vec2(bx, by)) = (a, b) { return Valor::Vec2(ax+bx, ay+by); }
+                return Valor::Error("vec2::add() requiere dos vec2".to_string());
+            }
+            if func_name == "vec2::sub" && args.len() == 2 {
+                let a = evaluar_expr_gfx(&args[0], executor, input, funcs);
+                let b = evaluar_expr_gfx(&args[1], executor, input, funcs);
+                if let (Valor::Vec2(ax, ay), Valor::Vec2(bx, by)) = (a, b) { return Valor::Vec2(ax-bx, ay-by); }
+                return Valor::Error("vec2::sub() requiere dos vec2".to_string());
+            }
+            if func_name == "vec2::scale" && args.len() == 2 {
+                let v = evaluar_expr_gfx(&args[0], executor, input, funcs);
+                let s = evaluar_expr_gfx(&args[1], executor, input, funcs);
+                if let (Valor::Vec2(vx, vy), Valor::Num(sc)) = (v, s) { return Valor::Vec2(vx*sc, vy*sc); }
+                return Valor::Error("vec2::scale() requiere (vec2, número)".to_string());
+            }
+            if (func_name == "vec2::magnitude" || func_name == "vec2::magnitud") && args.len() == 1 {
+                if let Valor::Vec2(x, y) = evaluar_expr_gfx(&args[0], executor, input, funcs) { return Valor::Num(x.hypot(y)); }
+                return Valor::Error("vec2::magnitude() requiere vec2".to_string());
+            }
+            if (func_name == "vec2::normalize" || func_name == "vec2::normalizar") && args.len() == 1 {
+                if let Valor::Vec2(x, y) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
+                    let m = x.hypot(y);
+                    if m > 0.0 { return Valor::Vec2(x/m, y/m); }
+                    return Valor::Error("vec2::normalize(): vector cero".to_string());
+                }
+                return Valor::Error("vec2::normalize() requiere vec2".to_string());
+            }
+            if (func_name == "vec2::dot" || func_name == "vec2::producto_punto") && args.len() == 2 {
+                let a = evaluar_expr_gfx(&args[0], executor, input, funcs);
+                let b = evaluar_expr_gfx(&args[1], executor, input, funcs);
+                if let (Valor::Vec2(ax, ay), Valor::Vec2(bx, by)) = (a, b) { return Valor::Num(ax*bx + ay*by); }
+                return Valor::Error("vec2::dot() requiere dos vec2".to_string());
+            }
+            if (func_name == "vec2::cross" || func_name == "vec2::producto_cruz") && args.len() == 2 {
+                let a = evaluar_expr_gfx(&args[0], executor, input, funcs);
+                let b = evaluar_expr_gfx(&args[1], executor, input, funcs);
+                if let (Valor::Vec2(ax, ay), Valor::Vec2(bx, by)) = (a, b) { return Valor::Num(ax*by - ay*bx); }
+                return Valor::Error("vec2::cross() requiere dos vec2".to_string());
+            }
+            if (func_name == "vec2::angle" || func_name == "vec2::ángulo") && args.len() == 1 {
+                if let Valor::Vec2(x, y) = evaluar_expr_gfx(&args[0], executor, input, funcs) { return Valor::Num(y.atan2(x)); }
+                return Valor::Error("vec2::angle() requiere vec2".to_string());
+            }
+            if (func_name == "vec2::rotate" || func_name == "vec2::rotar") && args.len() == 2 {
+                let v = evaluar_expr_gfx(&args[0], executor, input, funcs);
+                let a = evaluar_expr_gfx(&args[1], executor, input, funcs);
+                if let (Valor::Vec2(vx, vy), Valor::Num(ang)) = (v, a) {
+                    return Valor::Vec2(vx*ang.cos() - vy*ang.sin(), vx*ang.sin() + vy*ang.cos());
+                }
+                return Valor::Error("vec2::rotate() requiere (vec2, ángulo)".to_string());
+            }
+            if func_name == "vec2::lerp" && args.len() == 3 {
+                let a = evaluar_expr_gfx(&args[0], executor, input, funcs);
+                let b = evaluar_expr_gfx(&args[1], executor, input, funcs);
+                let t = evaluar_expr_gfx(&args[2], executor, input, funcs);
+                if let (Valor::Vec2(ax, ay), Valor::Vec2(bx, by), Valor::Num(tv)) = (a, b, t) {
+                    return Valor::Vec2(ax+(bx-ax)*tv, ay+(by-ay)*tv);
+                }
+                return Valor::Error("vec2::lerp() requiere (vec2, vec2, número)".to_string());
+            }
+            if (func_name == "vec2::dist" || func_name == "vec2::distancia") && args.len() == 2 {
+                let a = evaluar_expr_gfx(&args[0], executor, input, funcs);
+                let b = evaluar_expr_gfx(&args[1], executor, input, funcs);
+                if let (Valor::Vec2(ax, ay), Valor::Vec2(bx, by)) = (a, b) {
+                    return Valor::Num((bx-ax).hypot(by-ay));
+                }
+                return Valor::Error("vec2::dist() requiere dos vec2".to_string());
+            }
+            if func_name == "vec2::zero" || func_name == "vec2::cero" { return Valor::Vec2(0.0, 0.0); }
+            if func_name == "vec2::one" || func_name == "vec2::uno" { return Valor::Vec2(1.0, 1.0); }
+            if func_name == "vec2::up" || func_name == "vec2::arriba" { return Valor::Vec2(0.0, -1.0); }
+            if func_name == "vec2::down" || func_name == "vec2::abajo" { return Valor::Vec2(0.0, 1.0); }
+            if func_name == "vec2::left" || func_name == "vec2::izquierda" { return Valor::Vec2(-1.0, 0.0); }
+            if func_name == "vec2::right" || func_name == "vec2::derecha" { return Valor::Vec2(1.0, 0.0); }
+
             // ========== FUNCIONES RANDOM (v0.1.6) ==========
             if (func_name == "__random_int" || func_name == "random::int") && args.len() == 2 {
                 let min_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
