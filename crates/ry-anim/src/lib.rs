@@ -18,6 +18,7 @@ pub mod particles;
 pub mod disney;
 pub mod illusions;
 pub mod effects;
+pub mod science_anim;
 
 pub use disney::{
     appeal, arc_path, exaggerate, follow_through, overlapping_action, pose_to_pose,
@@ -34,6 +35,11 @@ pub use effects::{
     neon_glow, particle_trails,
 };
 
+pub use science_anim::{
+    cell_division, chemical_crystallization, flight_pattern,
+    lsystem_tree, pendulum_waves, tusi_couple, walk_cycle, wave_interference,
+};
+
 use ry_core::{ModuleError, ModuleResult, RyditModule};
 use serde_json::{json, Value};
 use std::collections::HashMap;
@@ -43,7 +49,7 @@ pub struct AnimModule;
 
 impl RyditModule for AnimModule {
     fn name(&self) -> &'static str { "anim" }
-    fn version(&self) -> &'static str { "0.10.0" }
+    fn version(&self) -> &'static str { "0.11.0" }
 
     fn register(&self) -> HashMap<&'static str, &'static str> {
         let mut cmds = HashMap::new();
@@ -76,6 +82,15 @@ impl RyditModule for AnimModule {
         cmds.insert("bloom_effect", "Bloom - brillo difuso en zonas claras");
         cmds.insert("particle_trails", "Particle Trails - estelas de partículas");
         cmds.insert("morph_shapes", "Morphing - transición entre formas");
+        // ✅ v0.11.0: Ciencia animada
+        cmds.insert("chemical_crystallization", "Chemical - cristalización animada");
+        cmds.insert("cell_division", "Biological - división celular");
+        cmds.insert("walk_cycle", "Fauna - ciclo de caminata");
+        cmds.insert("flight_pattern", "Fauna - aleteo de aves");
+        cmds.insert("lsystem_tree", "Flora - árbol L-System animado");
+        cmds.insert("tusi_couple", "Historical - Pareja de Tusi");
+        cmds.insert("pendulum_waves", "Physics - ondas de péndulos");
+        cmds.insert("wave_interference", "Physics - interferencia de ondas");
         cmds
     }
 
@@ -111,6 +126,15 @@ impl RyditModule for AnimModule {
             "bloom_effect" => self.bloom_effect(params),
             "particle_trails" => self.particle_trails(params),
             "morph_shapes" => self.morph_shapes(params),
+            // ✅ v0.11.0: Ciencia animada
+            "chemical_crystallization" => self.chemical_crystallization(params),
+            "cell_division" => self.cell_division(params),
+            "walk_cycle" => self.walk_cycle(params),
+            "flight_pattern" => self.flight_pattern(params),
+            "lsystem_tree" => self.lsystem_tree(params),
+            "tusi_couple" => self.tusi_couple(params),
+            "pendulum_waves" => self.pendulum_waves(params),
+            "wave_interference" => self.wave_interference(params),
             _ => Err(ModuleError { code: "UNKNOWN_COMMAND".to_string(), message: format!("Comando desconocido: {}", command) }),
         }
     }
@@ -314,6 +338,56 @@ impl AnimModule {
         let easing = a.get(3).and_then(|v| v.as_str()).unwrap_or("linear");
         Ok(json!(effects::morph_shapes(&sa, &sb, a[2].as_f64().unwrap_or(0.0), easing)))
     }
+
+    // ===== v0.11.0: CIENCIA ANIMADA =====
+
+    fn chemical_crystallization(&self, p: Value) -> ModuleResult {
+        let a = p.as_array().ok_or_else(|| ModuleError { code: "INVALID_PARAMS".to_string(), message: "chemical_crystallization requiere [cx, cy, num, radius, t, growth]".to_string() })?;
+        if a.len() < 6 { return Err(ModuleError { code: "INVALID_PARAMS".to_string(), message: "chemical_crystallization requiere 6 params".to_string() }); }
+        Ok(json!(science_anim::chemical_crystallization(a[0].as_f64().unwrap_or(400.0), a[1].as_f64().unwrap_or(300.0), a[2].as_f64().unwrap_or(12.0) as usize, a[3].as_f64().unwrap_or(100.0), a[4].as_f64().unwrap_or(0.0), a[5].as_f64().unwrap_or(1.5))))
+    }
+
+    fn cell_division(&self, p: Value) -> ModuleResult {
+        let a = p.as_array().ok_or_else(|| ModuleError { code: "INVALID_PARAMS".to_string(), message: "cell_division requiere [cx, cy, radius, div_time, max_div, t]".to_string() })?;
+        if a.len() < 6 { return Err(ModuleError { code: "INVALID_PARAMS".to_string(), message: "cell_division requiere 6 params".to_string() }); }
+        Ok(json!(science_anim::cell_division(a[0].as_f64().unwrap_or(400.0), a[1].as_f64().unwrap_or(300.0), a[2].as_f64().unwrap_or(30.0), a[3].as_f64().unwrap_or(1.0), a[4].as_f64().unwrap_or(3.0) as usize, a[5].as_f64().unwrap_or(0.0))))
+    }
+
+    fn walk_cycle(&self, p: Value) -> ModuleResult {
+        let a = p.as_array().ok_or_else(|| ModuleError { code: "INVALID_PARAMS".to_string(), message: "walk_cycle requiere [cx, cy, body, legs, stride, t, phase]".to_string() })?;
+        if a.len() < 7 { return Err(ModuleError { code: "INVALID_PARAMS".to_string(), message: "walk_cycle requiere 7 params".to_string() }); }
+        Ok(json!(science_anim::walk_cycle(a[0].as_f64().unwrap_or(400.0), a[1].as_f64().unwrap_or(300.0), a[2].as_f64().unwrap_or(20.0), a[3].as_f64().unwrap_or(4.0) as usize, a[4].as_f64().unwrap_or(15.0), a[5].as_f64().unwrap_or(0.0), a[6].as_f64().unwrap_or(0.25))))
+    }
+
+    fn flight_pattern(&self, p: Value) -> ModuleResult {
+        let a = p.as_array().ok_or_else(|| ModuleError { code: "INVALID_PARAMS".to_string(), message: "flight_pattern requiere [cx, cy, wingspan, flap_speed, t]".to_string() })?;
+        if a.len() < 5 { return Err(ModuleError { code: "INVALID_PARAMS".to_string(), message: "flight_pattern requiere 5 params".to_string() }); }
+        Ok(json!(science_anim::flight_pattern(a[0].as_f64().unwrap_or(400.0), a[1].as_f64().unwrap_or(300.0), a[2].as_f64().unwrap_or(80.0), a[3].as_f64().unwrap_or(5.0), a[4].as_f64().unwrap_or(0.0))))
+    }
+
+    fn lsystem_tree(&self, p: Value) -> ModuleResult {
+        let a = p.as_array().ok_or_else(|| ModuleError { code: "INVALID_PARAMS".to_string(), message: "lsystem_tree requiere [bx, by, trunk, angle, ratio, depth, t]".to_string() })?;
+        if a.len() < 7 { return Err(ModuleError { code: "INVALID_PARAMS".to_string(), message: "lsystem_tree requiere 7 params".to_string() }); }
+        Ok(json!(science_anim::lsystem_tree(a[0].as_f64().unwrap_or(400.0), a[1].as_f64().unwrap_or(500.0), a[2].as_f64().unwrap_or(80.0), a[3].as_f64().unwrap_or(0.5), a[4].as_f64().unwrap_or(0.7), a[5].as_f64().unwrap_or(4.0) as usize, a[6].as_f64().unwrap_or(0.0))))
+    }
+
+    fn tusi_couple(&self, p: Value) -> ModuleResult {
+        let a = p.as_array().ok_or_else(|| ModuleError { code: "INVALID_PARAMS".to_string(), message: "tusi_couple requiere [cx, cy, large_radius, t]".to_string() })?;
+        if a.len() < 4 { return Err(ModuleError { code: "INVALID_PARAMS".to_string(), message: "tusi_couple requiere 4 params".to_string() }); }
+        Ok(json!(science_anim::tusi_couple(a[0].as_f64().unwrap_or(400.0), a[1].as_f64().unwrap_or(300.0), a[2].as_f64().unwrap_or(100.0), a[3].as_f64().unwrap_or(0.0))))
+    }
+
+    fn pendulum_waves(&self, p: Value) -> ModuleResult {
+        let a = p.as_array().ok_or_else(|| ModuleError { code: "INVALID_PARAMS".to_string(), message: "pendulum_waves requiere [base_x, base_y, num, length, freq_spread, t]".to_string() })?;
+        if a.len() < 6 { return Err(ModuleError { code: "INVALID_PARAMS".to_string(), message: "pendulum_waves requiere 6 params".to_string() }); }
+        Ok(json!(science_anim::pendulum_waves(a[0].as_f64().unwrap_or(400.0), a[1].as_f64().unwrap_or(100.0), a[2].as_f64().unwrap_or(12.0) as usize, a[3].as_f64().unwrap_or(100.0), a[4].as_f64().unwrap_or(0.05), a[5].as_f64().unwrap_or(0.0))))
+    }
+
+    fn wave_interference(&self, p: Value) -> ModuleResult {
+        let a = p.as_array().ok_or_else(|| ModuleError { code: "INVALID_PARAMS".to_string(), message: "wave_interference requiere [cx1, cy1, cx2, cy2, wavelength, amp, grid, t]".to_string() })?;
+        if a.len() < 8 { return Err(ModuleError { code: "INVALID_PARAMS".to_string(), message: "wave_interference requiere 8 params".to_string() }); }
+        Ok(json!(science_anim::wave_interference(a[0].as_f64().unwrap_or(250.0), a[1].as_f64().unwrap_or(300.0), a[2].as_f64().unwrap_or(550.0), a[3].as_f64().unwrap_or(300.0), a[4].as_f64().unwrap_or(40.0), a[5].as_f64().unwrap_or(1.0), a[6].as_f64().unwrap_or(15.0) as usize, a[7].as_f64().unwrap_or(0.0))))
+    }
 }
 
 #[cfg(test)]
@@ -324,7 +398,7 @@ mod tests {
     fn test_anim_module_name() {
         let m = AnimModule;
         assert_eq!(m.name(), "anim");
-        assert_eq!(m.version(), "0.10.0");
+        assert_eq!(m.version(), "0.11.0");
     }
 
     #[test]
