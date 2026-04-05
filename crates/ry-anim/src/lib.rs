@@ -19,6 +19,7 @@ pub mod disney;
 pub mod illusions;
 pub mod effects;
 pub mod science_anim;
+pub mod action_assets;
 
 pub use disney::{
     appeal, arc_path, exaggerate, follow_through, overlapping_action, pose_to_pose,
@@ -40,6 +41,11 @@ pub use science_anim::{
     lsystem_tree, pendulum_waves, tusi_couple, walk_cycle, wave_interference,
 };
 
+pub use action_assets::{
+    animation_blend, animation_state_machine, frame_animation,
+    sprite_events, sprite_flip, sprite_sheet_parse,
+};
+
 use ry_core::{ModuleError, ModuleResult, RyditModule};
 use serde_json::{json, Value};
 use std::collections::HashMap;
@@ -49,7 +55,7 @@ pub struct AnimModule;
 
 impl RyditModule for AnimModule {
     fn name(&self) -> &'static str { "anim" }
-    fn version(&self) -> &'static str { "0.11.0" }
+    fn version(&self) -> &'static str { "0.12.0" }
 
     fn register(&self) -> HashMap<&'static str, &'static str> {
         let mut cmds = HashMap::new();
@@ -91,6 +97,13 @@ impl RyditModule for AnimModule {
         cmds.insert("tusi_couple", "Historical - Pareja de Tusi");
         cmds.insert("pendulum_waves", "Physics - ondas de péndulos");
         cmds.insert("wave_interference", "Physics - interferencia de ondas");
+        // ✅ v0.12.0: Action Assets (Sprite Animation)
+        cmds.insert("frame_animation", "Sprites - animacion cuadro por cuadro");
+        cmds.insert("sprite_sheet_parse", "Sprites - parsear hoja de sprites");
+        cmds.insert("animation_state", "Sprites - maquina de estados");
+        cmds.insert("animation_blend", "Sprites - transicion entre estados");
+        cmds.insert("sprite_events", "Sprites - eventos de animacion");
+        cmds.insert("sprite_flip", "Sprites - voltear sprite");
         cmds
     }
 
@@ -135,6 +148,13 @@ impl RyditModule for AnimModule {
             "tusi_couple" => self.tusi_couple(params),
             "pendulum_waves" => self.pendulum_waves(params),
             "wave_interference" => self.wave_interference(params),
+            // ✅ v0.12.0: Action Assets
+            "frame_animation" => self.frame_animation(params),
+            "sprite_sheet_parse" => self.sprite_sheet_parse(params),
+            "animation_state" => self.animation_state(params),
+            "animation_blend" => self.animation_blend(params),
+            "sprite_events" => self.sprite_events(params),
+            "sprite_flip" => self.sprite_flip(params),
             _ => Err(ModuleError { code: "UNKNOWN_COMMAND".to_string(), message: format!("Comando desconocido: {}", command) }),
         }
     }
@@ -388,6 +408,57 @@ impl AnimModule {
         if a.len() < 8 { return Err(ModuleError { code: "INVALID_PARAMS".to_string(), message: "wave_interference requiere 8 params".to_string() }); }
         Ok(json!(science_anim::wave_interference(a[0].as_f64().unwrap_or(250.0), a[1].as_f64().unwrap_or(300.0), a[2].as_f64().unwrap_or(550.0), a[3].as_f64().unwrap_or(300.0), a[4].as_f64().unwrap_or(40.0), a[5].as_f64().unwrap_or(1.0), a[6].as_f64().unwrap_or(15.0) as usize, a[7].as_f64().unwrap_or(0.0))))
     }
+
+    // ===== v0.12.0: ACTION ASSETS =====
+
+    fn frame_animation(&self, p: Value) -> ModuleResult {
+        let a = p.as_array().ok_or_else(|| ModuleError { code: "INVALID_PARAMS".to_string(), message: "frame_animation requiere [frames, duration, t, loop_mode]".to_string() })?;
+        if a.len() < 4 { return Err(ModuleError { code: "INVALID_PARAMS".to_string(), message: "frame_animation requiere 4 params".to_string() }); }
+        let loop_mode = a.get(3).and_then(|v| v.as_str()).unwrap_or("loop");
+        Ok(json!(action_assets::frame_animation(a[0].as_f64().unwrap_or(4.0) as usize, a[1].as_f64().unwrap_or(0.25), a[2].as_f64().unwrap_or(0.0), loop_mode)))
+    }
+
+    fn sprite_sheet_parse(&self, p: Value) -> ModuleResult {
+        let a = p.as_array().ok_or_else(|| ModuleError { code: "INVALID_PARAMS".to_string(), message: "sprite_sheet_parse requiere [sw, sh, fw, fh, idx, cols]".to_string() })?;
+        if a.len() < 6 { return Err(ModuleError { code: "INVALID_PARAMS".to_string(), message: "sprite_sheet_parse requiere 6 params".to_string() }); }
+        Ok(json!(action_assets::sprite_sheet_parse(a[0].as_f64().unwrap_or(256.0), a[1].as_f64().unwrap_or(256.0), a[2].as_f64().unwrap_or(64.0), a[3].as_f64().unwrap_or(64.0), a[4].as_f64().unwrap_or(0.0) as usize, a[5].as_f64().unwrap_or(0.0) as usize)))
+    }
+
+    fn animation_state(&self, p: Value) -> ModuleResult {
+        let a = p.as_array().ok_or_else(|| ModuleError { code: "INVALID_PARAMS".to_string(), message: "animation_state requiere [state, states[], durations[], t, trigger]".to_string() })?;
+        if a.len() < 5 { return Err(ModuleError { code: "INVALID_PARAMS".to_string(), message: "animation_state requiere 5 params".to_string() }); }
+        let state = a[0].as_str().unwrap_or("idle");
+        let states: Vec<String> = a[1].as_array().map(|arr| arr.iter().filter_map(|v| v.as_str().map(|s| s.to_string())).collect()).unwrap_or(vec!["idle".to_string()]);
+        let durations: Vec<f64> = a[2].as_array().map(|arr| arr.iter().filter_map(|v| v.as_f64()).collect()).unwrap_or(vec![1.0]);
+        let t = a[3].as_f64().unwrap_or(0.0);
+        let trigger = a.get(4).and_then(|v| v.as_str()).unwrap_or("");
+        Ok(json!(action_assets::animation_state_machine(state, &states, &durations, t, trigger)))
+    }
+
+    fn animation_blend(&self, p: Value) -> ModuleResult {
+        let a = p.as_array().ok_or_else(|| ModuleError { code: "INVALID_PARAMS".to_string(), message: "animation_blend requiere [prog_a, prog_b, factor, duration, t]".to_string() })?;
+        if a.len() < 5 { return Err(ModuleError { code: "INVALID_PARAMS".to_string(), message: "animation_blend requiere 5 params".to_string() }); }
+        Ok(json!(action_assets::animation_blend(a[0].as_f64().unwrap_or(0.0), a[1].as_f64().unwrap_or(1.0), a[2].as_f64().unwrap_or(1.0), a[3].as_f64().unwrap_or(1.0), a[4].as_f64().unwrap_or(0.0))))
+    }
+
+    fn sprite_events(&self, p: Value) -> ModuleResult {
+        let a = p.as_array().ok_or_else(|| ModuleError { code: "INVALID_PARAMS".to_string(), message: "sprite_events requiere [type, frame, total, state, progress]".to_string() })?;
+        if a.len() < 5 { return Err(ModuleError { code: "INVALID_PARAMS".to_string(), message: "sprite_events requiere 5 params".to_string() }); }
+        let etype = a[0].as_str().unwrap_or("frame_change");
+        let frame = a[1].as_f64().unwrap_or(0.0) as usize;
+        let total = a[2].as_f64().unwrap_or(4.0) as usize;
+        let state = a[3].as_str().unwrap_or("idle");
+        let progress = a[4].as_f64().unwrap_or(0.0);
+        Ok(json!(action_assets::sprite_events(etype, frame, total, state, progress)))
+    }
+
+    fn sprite_flip(&self, p: Value) -> ModuleResult {
+        let a = p.as_array().ok_or_else(|| ModuleError { code: "INVALID_PARAMS".to_string(), message: "sprite_flip requiere [hflip, vflip, ox, oy]".to_string() })?;
+        if a.len() < 4 { return Err(ModuleError { code: "INVALID_PARAMS".to_string(), message: "sprite_flip requiere 4 params".to_string() }); }
+        let hflip = a[0].as_f64().map(|v| v != 0.0).unwrap_or(false);
+        let vflip = a[1].as_f64().map(|v| v != 0.0).unwrap_or(false);
+        Ok(json!(action_assets::sprite_flip(hflip, vflip, a[2].as_f64().unwrap_or(0.5), a[3].as_f64().unwrap_or(0.5))))
+    }
 }
 
 #[cfg(test)]
@@ -398,7 +469,7 @@ mod tests {
     fn test_anim_module_name() {
         let m = AnimModule;
         assert_eq!(m.name(), "anim");
-        assert_eq!(m.version(), "0.11.0");
+        assert_eq!(m.version(), "0.12.0");
     }
 
     #[test]
