@@ -1036,6 +1036,123 @@ pub fn evaluar_expr<'a>(
                 }
             }
 
+            // arrays::len(arr) - Longitud
+            if (func_name == "__array_len" || func_name == "arrays::len") && args.len() == 1 {
+                if let Valor::Array(arr) = evaluar_expr(&args[0], executor, funcs) {
+                    return Valor::Num(arr.len() as f64);
+                } else {
+                    return Valor::Error("arrays::len() requiere array".to_string());
+                }
+            }
+
+            // arrays::insert(arr, index, elem) - Insertar en posición
+            if (func_name == "__array_insert" || func_name == "arrays::insert") && args.len() == 3 {
+                let arr_val = evaluar_expr(&args[0], executor, funcs);
+                let idx_val = evaluar_expr(&args[1], executor, funcs);
+                let elem_val = evaluar_expr(&args[2], executor, funcs);
+                if let (Valor::Array(mut arr), Valor::Num(idx)) = (arr_val, idx_val) {
+                    let i = idx as usize;
+                    if i <= arr.len() {
+                        arr.insert(i, elem_val);
+                        return Valor::Array(arr);
+                    } else {
+                        return Valor::Error("arrays::insert(): índice fuera de rango".to_string());
+                    }
+                } else {
+                    return Valor::Error("arrays::insert() requiere (array, índice, elemento)".to_string());
+                }
+            }
+
+            // arrays::remove(arr, index) - Eliminar por índice
+            if (func_name == "__array_remove" || func_name == "arrays::remove") && args.len() == 2 {
+                let arr_val = evaluar_expr(&args[0], executor, funcs);
+                let idx_val = evaluar_expr(&args[1], executor, funcs);
+                if let (Valor::Array(mut arr), Valor::Num(idx)) = (arr_val, idx_val) {
+                    let i = idx as usize;
+                    if i < arr.len() {
+                        let removed = arr.remove(i);
+                        return removed;
+                    } else {
+                        return Valor::Error("arrays::remove(): índice fuera de rango".to_string());
+                    }
+                } else {
+                    return Valor::Error("arrays::remove() requiere (array, índice)".to_string());
+                }
+            }
+
+            // arrays::contains(arr, elem) - ¿Contiene elemento?
+            if (func_name == "__array_contains" || func_name == "arrays::contains") && args.len() == 2 {
+                let arr_val = evaluar_expr(&args[0], executor, funcs);
+                let elem_val = evaluar_expr(&args[1], executor, funcs);
+                if let Valor::Array(arr) = arr_val {
+                    return Valor::Bool(arr.contains(&elem_val));
+                } else {
+                    return Valor::Error("arrays::contains() requiere array".to_string());
+                }
+            }
+
+            // arrays::find(arr, elem) - Encontrar índice (-1 si no existe)
+            if (func_name == "__array_find" || func_name == "arrays::find") && args.len() == 2 {
+                let arr_val = evaluar_expr(&args[0], executor, funcs);
+                let elem_val = evaluar_expr(&args[1], executor, funcs);
+                if let Valor::Array(arr) = arr_val {
+                    let pos = arr.iter().position(|x| x == &elem_val);
+                    return Valor::Num(pos.map_or(-1.0, |i| i as f64));
+                } else {
+                    return Valor::Error("arrays::find() requiere array".to_string());
+                }
+            }
+
+            // arrays::join(arr, sep) - Unir elementos con separador
+            if (func_name == "__array_join" || func_name == "arrays::join") && args.len() == 2 {
+                let arr_val = evaluar_expr(&args[0], executor, funcs);
+                let sep_val = evaluar_expr(&args[1], executor, funcs);
+                if let (Valor::Array(arr), Valor::Texto(sep)) = (arr_val, sep_val) {
+                    let partes: Vec<String> = arr.iter().map(|v| match v {
+                        Valor::Num(n) => n.to_string(),
+                        Valor::Texto(s) => s.clone(),
+                        Valor::Bool(b) => if *b { "true" } else { "false" }.to_string(),
+                        _ => "null".to_string(),
+                    }).collect();
+                    return Valor::Texto(partes.join(&sep));
+                } else {
+                    return Valor::Error("arrays::join() requiere (array, separador)".to_string());
+                }
+            }
+
+            // arrays::clear(arr) - Vaciar array
+            if (func_name == "__array_clear" || func_name == "arrays::clear") && args.len() == 1 {
+                if let Valor::Array(_) = evaluar_expr(&args[0], executor, funcs) {
+                    return Valor::Array(vec![]);
+                } else {
+                    return Valor::Error("arrays::clear() requiere array".to_string());
+                }
+            }
+
+            // arrays::first(arr) - Primer elemento
+            if (func_name == "__array_first" || func_name == "arrays::first") && args.len() == 1 {
+                if let Valor::Array(arr) = evaluar_expr(&args[0], executor, funcs) {
+                    if arr.is_empty() {
+                        return Valor::Error("arrays::first(): array vacío".to_string());
+                    }
+                    return arr[0].clone();
+                } else {
+                    return Valor::Error("arrays::first() requiere array".to_string());
+                }
+            }
+
+            // arrays::last(arr) - Último elemento
+            if (func_name == "__array_last" || func_name == "arrays::last") && args.len() == 1 {
+                if let Valor::Array(arr) = evaluar_expr(&args[0], executor, funcs) {
+                    if arr.is_empty() {
+                        return Valor::Error("arrays::last(): array vacío".to_string());
+                    }
+                    return arr.last().unwrap().clone();
+                } else {
+                    return Valor::Error("arrays::last() requiere array".to_string());
+                }
+            }
+
             // ========== FUNCIONES RANDOM (v0.1.6) ==========
             // PRNG xorshift - sin dependencias externas
             if (func_name == "__random_int" || func_name == "random::int") && args.len() == 2 {

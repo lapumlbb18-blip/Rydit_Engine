@@ -2929,6 +2929,119 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
+            // arrays::len
+            if (func_name == "__array_len" || func_name == "arrays::len") && args.len() == 1 {
+                if let Valor::Array(arr) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
+                    return Valor::Num(arr.len() as f64);
+                }
+                return Valor::Error("arrays::len() requiere array".to_string());
+            }
+
+            // arrays::insert
+            if (func_name == "__array_insert" || func_name == "arrays::insert") && args.len() == 3 {
+                let a = evaluar_expr_gfx(&args[0], executor, input, funcs);
+                let i = evaluar_expr_gfx(&args[1], executor, input, funcs);
+                let e = evaluar_expr_gfx(&args[2], executor, input, funcs);
+                if let (Valor::Array(mut arr), Valor::Num(idx)) = (a, i) {
+                    let ix = idx as usize;
+                    if ix <= arr.len() { arr.insert(ix, e); return Valor::Array(arr); }
+                    return Valor::Error("arrays::insert(): índice fuera de rango".to_string());
+                }
+                return Valor::Error("arrays::insert() requiere (array, índice, elemento)".to_string());
+            }
+
+            // arrays::remove
+            if (func_name == "__array_remove" || func_name == "arrays::remove") && args.len() == 2 {
+                let a = evaluar_expr_gfx(&args[0], executor, input, funcs);
+                let i = evaluar_expr_gfx(&args[1], executor, input, funcs);
+                if let (Valor::Array(mut arr), Valor::Num(idx)) = (a, i) {
+                    let ix = idx as usize;
+                    if ix < arr.len() { return arr.remove(ix); }
+                    return Valor::Error("arrays::remove(): índice fuera de rango".to_string());
+                }
+                return Valor::Error("arrays::remove() requiere (array, índice)".to_string());
+            }
+
+            // arrays::contains
+            if (func_name == "__array_contains" || func_name == "arrays::contains") && args.len() == 2 {
+                let a = evaluar_expr_gfx(&args[0], executor, input, funcs);
+                let e = evaluar_expr_gfx(&args[1], executor, input, funcs);
+                if let Valor::Array(arr) = a { return Valor::Bool(arr.contains(&e)); }
+                return Valor::Error("arrays::contains() requiere array".to_string());
+            }
+
+            // arrays::find
+            if (func_name == "__array_find" || func_name == "arrays::find") && args.len() == 2 {
+                let a = evaluar_expr_gfx(&args[0], executor, input, funcs);
+                let e = evaluar_expr_gfx(&args[1], executor, input, funcs);
+                if let Valor::Array(arr) = a {
+                    return Valor::Num(arr.iter().position(|x| x == &e).map_or(-1.0, |i| i as f64));
+                }
+                return Valor::Error("arrays::find() requiere array".to_string());
+            }
+
+            // arrays::join
+            if (func_name == "__array_join" || func_name == "arrays::join") && args.len() == 2 {
+                let a = evaluar_expr_gfx(&args[0], executor, input, funcs);
+                let s = evaluar_expr_gfx(&args[1], executor, input, funcs);
+                if let (Valor::Array(arr), Valor::Texto(sep)) = (a, s) {
+                    let partes: Vec<String> = arr.iter().map(|v| match v {
+                        Valor::Num(n) => n.to_string(),
+                        Valor::Texto(t) => t.clone(),
+                        Valor::Bool(b) => if *b { "true" } else { "false" }.to_string(),
+                        _ => "null".to_string(),
+                    }).collect();
+                    return Valor::Texto(partes.join(&sep));
+                }
+                return Valor::Error("arrays::join() requiere (array, separador)".to_string());
+            }
+
+            // arrays::clear
+            if (func_name == "__array_clear" || func_name == "arrays::clear") && args.len() == 1 {
+                if let Valor::Array(_) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
+                    return Valor::Array(vec![]);
+                }
+                return Valor::Error("arrays::clear() requiere array".to_string());
+            }
+
+            // arrays::first
+            if (func_name == "__array_first" || func_name == "arrays::first") && args.len() == 1 {
+                if let Valor::Array(arr) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
+                    if arr.is_empty() { return Valor::Error("arrays::first(): array vacío".to_string()); }
+                    return arr[0].clone();
+                }
+                return Valor::Error("arrays::first() requiere array".to_string());
+            }
+
+            // arrays::last
+            if (func_name == "__array_last" || func_name == "arrays::last") && args.len() == 1 {
+                if let Valor::Array(arr) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
+                    if arr.is_empty() { return Valor::Error("arrays::last(): array vacío".to_string()); }
+                    return arr.last().unwrap().clone();
+                }
+                return Valor::Error("arrays::last() requiere array".to_string());
+            }
+
+            // arrays::shift (faltante en gfx)
+            if (func_name == "__array_shift" || func_name == "arrays::shift") && args.len() == 1 {
+                if let Valor::Array(mut arr) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
+                    if arr.is_empty() { return Valor::Error("arrays::shift(): array vacío".to_string()); }
+                    return arr.remove(0);
+                }
+                return Valor::Error("arrays::shift() requiere array".to_string());
+            }
+
+            // arrays::unshift (faltante en gfx)
+            if (func_name == "__array_unshift" || func_name == "arrays::unshift") && args.len() == 2 {
+                let a = evaluar_expr_gfx(&args[0], executor, input, funcs);
+                let e = evaluar_expr_gfx(&args[1], executor, input, funcs);
+                if let Valor::Array(mut arr) = a {
+                    arr.insert(0, e);
+                    return Valor::Array(arr);
+                }
+                return Valor::Error("arrays::unshift() requiere (array, elemento)".to_string());
+            }
+
             // ========== FUNCIONES RANDOM (v0.1.6) ==========
             if (func_name == "__random_int" || func_name == "random::int") && args.len() == 2 {
                 let min_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
