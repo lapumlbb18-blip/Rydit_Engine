@@ -16,3 +16,4 @@ pub mod physics;
 pub mod tilemap;
 pub mod window;
 pub mod quest;     // 🆕 v0.13.1: Quest System (objetivos, progreso, recompensas)
+pub mod save;      // 🆕 v0.13.1: Save/Load System (guardar/cargar progreso)

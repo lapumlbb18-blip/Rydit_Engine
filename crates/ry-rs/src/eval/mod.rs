@@ -23,6 +23,10 @@ use crate::modules::quest::{
     quest_add_objective, quest_complete, quest_count, quest_create, quest_get_progress,
     quest_list_active, quest_list_completed, quest_set_reward, quest_start, quest_update_progress,
 };
+use crate::modules::save::{
+    save_create, save_delete, save_exists, save_get_player_pos, save_get_var, save_list,
+    save_load, save_overwrite, save_set_player_pos, save_set_var,
+};
 
 /// Algoritmo de De Casteljau para evaluar curvas de Bezier
 fn de_casteljau(points: &[(f64, f64)], t: f64) -> (f64, f64) {
@@ -2759,6 +2763,60 @@ pub fn evaluar_expr<'a>(
             // quest::count([state])
             if func_name == "quest::count" {
                 return quest_count(args, executor, funcs);
+            }
+
+            // ========================================================================
+            // SAVE/LOAD SYSTEM (v0.13.1) 💾
+            // ========================================================================
+
+            // save::create(slot)
+            if func_name == "save::create" && args.len() == 1 {
+                return save_create(args, executor, funcs);
+            }
+
+            // save::overwrite(slot)
+            if func_name == "save::overwrite" && args.len() == 1 {
+                return save_overwrite(args, executor, funcs);
+            }
+
+            // save::set_var(slot, key, value)
+            if func_name == "save::set_var" && args.len() == 3 {
+                return save_set_var(args, executor, funcs);
+            }
+
+            // save::get_var(slot, key)
+            if func_name == "save::get_var" && args.len() == 2 {
+                return save_get_var(args, executor, funcs);
+            }
+
+            // save::set_player_pos(slot, x, y)
+            if func_name == "save::set_player_pos" && args.len() == 3 {
+                return save_set_player_pos(args, executor, funcs);
+            }
+
+            // save::get_player_pos(slot)
+            if func_name == "save::get_player_pos" && args.len() == 1 {
+                return save_get_player_pos(args, executor, funcs);
+            }
+
+            // save::load(slot)
+            if func_name == "save::load" && args.len() == 1 {
+                return save_load(args, executor, funcs);
+            }
+
+            // save::list()
+            if func_name == "save::list" {
+                return save_list(args, executor, funcs);
+            }
+
+            // save::delete(slot)
+            if func_name == "save::delete" && args.len() == 1 {
+                return save_delete(args, executor, funcs);
+            }
+
+            // save::exists(slot)
+            if func_name == "save::exists" && args.len() == 1 {
+                return save_exists(args, executor, funcs);
             }
 
             // ========================================================================
