@@ -1,9 +1,9 @@
-# Ry-Dit - ESTRUCTURA DEL PROYECTO v0.13.0
+# Ry-Dit - ESTRUCTURA DEL PROYECTO v0.14.0
 
-**Última actualización**: 2026-04-05
-**Versión**: v0.13.0 events-ry + Panel Visual + RyBot IPC + LAZOS
-**Commit**: `118ee6a` (HEAD)
-**Estado**: `cargo check --workspace`: 0 errores | 23 crates compilando | 95 tests pasando
+**Última actualización**: 2026-04-06
+**Versión**: v0.14.0 demo_torreta_vs_sprites + 25 crates + juego completo
+**Commit**: `df4ec17`
+**Estado**: `cargo check --workspace`: 0 errores | 25 crates compilando | 95+ tests pasando
 
 ---
 
@@ -11,12 +11,12 @@
 
 ```
 shield-project/
-├── Cargo.toml                  # Workspace (23 crates)
-├── README.md                   # Documentación principal (v0.13.0)
-├── ROADMAP.md                  # Planificación v0.13→v1.0
+├── Cargo.toml                  # Workspace (25 crates)
+├── README.md                   # Documentación principal (v0.14.0)
+├── ROADMAP.md                  # Planificación v0.14→v1.0
 ├── QWEN.md                     # Bitácora técnica
 ├── ESTRUCTURA.md               # Este archivo
-├── TASKS.md                    # 🆕 Tareas principales y paralelas
+├── TASKS.md                    # Tareas principales y paralelas
 ├── CONTRIBUTING.md             # Guía contribuidores
 ├── MANIFIESTO.md               # Filosofía del proyecto
 ├── LICENSE                     # MIT
@@ -35,27 +35,29 @@ shield-project/
 │   ├── ry-stream/              # 0.1.0  LAN streaming (WebSocket) ✅ crates.io
 │   ├── ry-god/                 # 0.1.0  Security & efficiency ✅ crates.io
 │   ├── ry-loader/              #        Module loader
-│   ├── ry-rs/                  #        Main binary + demos + eval + modules
-│   ├── ry-system-ry/           # 0.11.0 Universal system (SDL2)
+│   ├── ry-rs/                  #        Main binary + lib + demos + eval
+│   ├── ry-system-ry/           # 0.14.0 Sistema unificado (RySystem: core + gui)
 │   ├── ry-test/                #        Test utilities
 │   ├── ry3d-gfx/               # 0.1.0  Graphics 3D (cube, sphere, cylinder...)
 │   ├── toolkit-ry/             # 0.1.0  UI toolkit (5 temas + 20+ widgets)
-│   ├── migui/                  #        Immediate mode GUI (12 widgets)
+│   ├── migui/                  # 0.4.1  Immediate mode GUI (conectado a ry-backend)
 │   ├── blast-core/             # 0.1.0  Minimal value executor
-│   ├── lizer/                  # 0.11.2 Legacy lexer wrapper (con AST cache)
-│   ├── events-ry/              # 🆕 0.1.0  Input unificado + TextInput + Shell
+│   ├── lizer/                  # 0.11.2 Legacy lexer wrapper (con AST cache real FNV-1a)
+│   ├── events-ry/              # 0.1.0  Input unificado 3 capas + Sdl2InputBackend
+│   ├── ry-backend/             # 0.1.0  Dual backend: raylib drawing + SDL2 TTF/input/audio
+│   ├── ry-config/              # 0.1.0  Config parser (entities, levels, checkpoints) - zero deps
 │   └── v-shield/               #        Platform layer (pendiente)
 │   └── ~~ry-ecs~~/             #        🗑️ Eliminado (-1,143 líneas)
 │
 ├── crates/ry-rs/src/
-│   ├── main.rs                 # Entry point + eval modo gráfico + modules
+│   ├── main.rs                 # Entry point + eval modo gráfico
+│   ├── lib.rs                  # 🆕 Library crate (antes solo bin)
 │   ├── eval/
 │   │   └── mod.rs              # Evaluar expresiones (~4100 líneas)
 │   │                           #   - Math: sin, cos, tan, sqrt, pow, log, exp...
 │   │                           #   - Arrays: push, pop, len, slice, insert...
 │   │                           #   - Cálculo: derivada, integral (Simpson)
 │   │                           #   - Strings, regex, CSV, JSON, random...
-│   ├── module.rs               # Registro de módulos (math, arrays, strings...)
 │   ├── json_helpers.rs         # Conversión Serde <-> Valor
 │   ├── rybot/                  # Asistente de código
 │   └── modules/                # Módulos del lenguaje
@@ -71,26 +73,28 @@ shield-project/
 │       ├── tilemap.rs          # Tilemap system
 │       └── window.rs           # Creación de ventana SDL2
 │
-├── crates/ry-rs/src/bin/       # ~31 bins
-│   ├── demo_50k_particulas.rs
+├── crates/ry-rs/src/bin/       # ~33+ bins
+│   ├── demo_50k_particulas.rs      # 313K release
 │   ├── demo_action_assets.rs
-│   ├── demo_anime_ry           # ← ELF 341K release
+│   ├── demo_anime_ry               # 341K release
 │   ├── demo_carga_sprites.rs
-│   ├── demo_carga_sprites_v1.rs
-│   ├── demo_colisiones.rs
+│   ├── demo_colisiones.rs          # 309K release
 │   ├── demo_completo_final.rs
 │   ├── demo_completo_sdl2.rs
 │   ├── demo_effects.rs
 │   ├── demo_fsr_audio.rs
 │   ├── demo_illusions.rs
+│   ├── demo_menu_bar               # 🆕 330K release
+│   ├── demo_panel_visual           # 🆕 339K release
 │   ├── demo_particles.rs
 │   ├── demo_platformer_completo.rs
-│   ├── demo_rigidbody          # ← ELF 446K release
+│   ├── demo_rigidbody              # 446K release
 │   ├── demo_science.rs
 │   ├── demo_sprites_final.rs
 │   ├── demo_sprites_v2.rs
 │   ├── demo_stream.rs
-│   ├── demo_ttf_sprites.rs
+│   ├── demo_torreta_vs_sprites     # 🆕 434K release - JUEGO COMPLETO
+│   ├── demo_ttf_sprites.rs         # 436K release
 │   ├── demo_ttf_sprites_audio.rs
 │   ├── nivel3_test_audio_lowend.rs
 │   ├── nivel3_test_input_lowend.rs
@@ -123,6 +127,26 @@ shield-project/
 │   ├── ecs_render.rs           # ECS renderer
 │   ├── fsr.rs                  # FSR 1.0 upscaling
 │   └── shaders/                # GLSL shaders embebidos
+│
+├── crates/ry-backend/src/      # 🆕 v0.1.0
+│   ├── lib.rs                  # API pública + features
+│   ├── raylib_backend.rs       # Raylib drawing backend
+│   ├── sdl2_backend.rs         # SDL2 TTF/input/audio backend
+│   └── traits.rs               # Backend traits comunes
+│
+├── crates/events-ry/src/       # 🆕 v0.1.0
+│   ├── lib.rs                  # API pública
+│   ├── input_event.rs          # CAPA 1: 41 variantes + 90+ teclas
+│   ├── text_input.rs           # CAPA 2: Composición IME
+│   ├── shell.rs                # CAPA 3: 9 handlers (help, load, exec...)
+│   ├── manager.rs              # InputManager unificado
+│   └── sdl2_backend.rs         # Sdl2InputBackend (feature-gated)
+│
+├── crates/ry-config/src/       # 🆕 v0.1.0
+│   ├── lib.rs                  # API pública
+│   ├── entities.rs             # Parseo de entidades
+│   ├── levels.rs               # Gestión de niveles
+│   └── checkpoints.rs          # Puntos de control
 │
 ├── crates/ry-anim/src/         # v0.12.0 - 41 funciones
 │   ├── lib.rs                  # API pública
@@ -183,6 +207,10 @@ shield-project/
 │   ├── lib.rs                  # Security & Efficiency
 │   └── framework.rs            # Security framework
 │
+├── crates/lizer/src/
+│   ├── lib.rs                  # API pública
+│   └── cache.rs                # AST cache real (FNV-1a, 256 entradas, LRU)
+│
 ├── docs/
 │   ├── panorama_v0.13.0.md
 │   ├── plan_limpieza_v0.13.0.md
@@ -196,7 +224,8 @@ shield-project/
 │   ├── analisis_ry_ecs.md
 │   ├── sesion_control_total_v0.13.0.md
 │   ├── guia_compilacion_termux.md
-│   └── arquitectura_demos.md
+│   ├── arquitectura_demos.md
+│   └── tests_referencia/       # Tests desactualizados movidos
 │
 ├── screenshots/                # Capturas y videos MP4
 ├── tests/                      # Tests automáticos
@@ -322,18 +351,30 @@ Código .rydit
    Valor (Num, Texto, Bool, Array, Vec2, Quest, SaveSlot)
        |
        v
+┌─────────────────────────────────────────┐
+│          ry-backend (dual)              │
+│  ┌──────────────┐  ┌─────────────────┐  │
+│  │ raylib-only  │  │ sdl2-only       │  │
+│  │ dual-backend │  │ mobile-hybrid   │  │
+│  └──────────────┘  └─────────────────┘  │
+└─────────────────┬───────────────────────┘
+       |
+       v
 ┌─────────────┐
 │   ry-gfx    │  SDL2/raylib render + FSR 1.0
 │   ry3d-gfx  │  3D primitives
 │  toolkit-ry │  UI widgets (5 temas)
 │  ry-anim    │  Animaciones (41 funciones)
 │ ry-physics  │  Física 2D + N-body
+│  events-ry  │  Input 3 capas + Shell
+│    migui    │  Immediate mode GUI
 └─────────────┘
        |
        v
 ┌─────────────┐
 │  ry-stream  │  LAN streaming (WebSocket)
 │   ry-god    │  Security & Efficiency
+│  ry-config  │  Config parser (entities, levels)
 └─────────────┘
 ```
 
@@ -353,8 +394,11 @@ Código .rydit
 | ry-gfx | 0.10.7 | Listo | Graphics FFI |
 | ry3d-gfx | 0.1.0 | Listo | 3D primitives |
 | toolkit-ry | 0.1.0 | Listo | UI toolkit (5 temas) |
-| lizer | 0.11.2 | Listo | Legacy |
-| ry-system-ry | 0.11.0 | ⚠️ | Falta license |
+| lizer | 0.11.2 | Listo | AST cache real (FNV-1a) |
+| events-ry | 0.1.0 | Listo | Input 3 capas |
+| ry-backend | 0.1.0 | Listo | Dual backend |
+| ry-config | 0.1.0 | Listo | Config parser |
+| ry-system-ry | 0.14.0 | ⚠️ | Falta license |
 
 ---
 
@@ -362,13 +406,18 @@ Código .rydit
 
 | Demo | Descripción | Tamaño Release |
 |------|-------------|----------------|
+| demo_torreta_vs_sprites | JUEGO COMPLETO: menú + 3 niveles + cámara + AI + audio | 434K |
+| demo_rigidbody | Física + colisiones + audio + TTF | 446K |
+| demo_ttf_sprites | TTF + sprites | 436K |
+| demo_panel_visual | 4 paneles + consola interactiva | 339K |
+| demo_menu_bar | Menús Dear ImGui + mouse + touch | 330K |
 | demo_anime_ry | Showcase ry-anim v0.12.0 | 341K |
-| demo_rigidbody | Física + colisiones SDL2 | 446K |
+| demo_50k_particulas | 50K partículas | 313K |
+| demo_colisiones | Sistema colisiones | 309K |
 | demo_action_assets | Action assets + sprite anim | — |
 | demo_illusions | Ilusiones ópticas | — |
 | demo_effects | Efectos especiales | — |
 | demo_science | Animaciones científicas | — |
-| demo_50k_particulas | 50K partículas | — |
 | demo_stream | ry-stream demo | — |
 | demo_platformer_completo | Platformer completo | — |
 | snake | Snake game | — |
@@ -377,10 +426,10 @@ Código .rydit
 
 <div align="center">
 
-**Ry-Dit v0.13.0 -- ESTRUCTURA ACTUALIZADA**
+**Ry-Dit v0.14.0 -- ESTRUCTURA ACTUALIZADA**
 
-*23 crates | ~27K+ líneas Rust | events-ry v0.1.0 | 95 tests | 2 crates publicados*
+*25 crates | ~30K+ líneas Rust | demo_torreta_vs_sprites 434K | 95+ tests | 2 crates publicados*
 
-*Última actualización: 2026-04-05*
+*Última actualización: 2026-04-06*
 
 </div>
