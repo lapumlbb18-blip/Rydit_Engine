@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=RyDit Torreta vs Sprites
+Comment=Game engine 2D demo - Torreta vs enemigos con 3 niveles
+Exec=/data/data/com.termux/files/home/shield-project/demo_torreta.sh
+Icon=/data/data/com.termux/files/home/shield-project/screenshots/logo.png
+Terminal=true
+Categories=Game;
+Keywords=rydit;torreta;game;sdl2;zink;
+StartupWMClass=demo_torreta_vs_sprites

@@ -2,11 +2,11 @@
 # launcher_sdl2.sh - Launcher para apps SDL2 con GPU activada
 # Uso: ./launcher_sdl2.sh <nombre_de_la_app>
 
-# Configurar entorno GPU
-export DISPLAY=:0
+# Configurar entorno GPU - Zink + DRI3 1
 export MESA_LOADER_DRIVER_OVERRIDE=zink
+export GALLIUM_DRIVER=zink
 export DRI3=1
-# export VULKAN_DRIVER=tuono  # Comentado: puede no existir en todos los dispositivos
+export LIBGL_ALWAYS_SOFTWARE=0  # Forzar GPU hardware
 
 # ✅ v0.13.0: Configurar SDL2 para Android/Termux-X11
 export SDL_VIDEODRIVER=x11
