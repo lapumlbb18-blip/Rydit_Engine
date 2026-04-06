@@ -249,7 +249,7 @@ fn get_nivel(n: usize) -> NivelConfig {
 // ============================================================================
 
 fn main() -> Result<(), String> {
-    println!("🛡️ RyDit v0.14.0 - Torreta vs Sprites");
+    println!("[RyDit] Torreta vs Sprites");
     println!("======================================\n");
 
     // Backend SDL2 (patrón demo_rigidbody)
@@ -281,9 +281,9 @@ fn main() -> Result<(), String> {
     let tc = &backend.canvas.texture_creator();
 
     // Texturas de texto pre-cargadas
-    let txt_titulo = crear_textura(&backend.font, "🛡️ RyDit - Torreta vs Sprites", 255, 255, 255, tc);
-    let txt_menu_start = crear_textura(&backend.font, "▶  START GAME", 0, 255, 100, tc);
-    let txt_menu_controls = crear_textura(&backend.font, "◈  CONTROLES", 100, 200, 255, tc);
+    let txt_titulo = crear_textura(&backend.font, "[RyDit] Torreta vs Sprites", 255, 255, 255, tc);
+    let txt_menu_start = crear_textura(&backend.font, "> START GAME", 0, 255, 100, tc);
+    let txt_menu_controls = crear_textura(&backend.font, "- CONTROLES", 100, 200, 255, tc);
     let txt_controls = crear_textura(&backend.font, "← → ó A/D = Mover | SPACE = Disparar | P = Pausa | ESC = Salir", 150, 150, 150, tc);
 
     // ====================================================================
@@ -315,7 +315,7 @@ fn main() -> Result<(), String> {
     let mut win_timer: u32 = 0;
     let mut mensaje: String = String::new();
 
-    println!("✅ Inicializado. Presiona ENTER en el menú.\n");
+    println!("Inicializado. Presiona ENTER en el menú.\n");
 
     'running: loop {
         let dt = 0.016f32;
@@ -341,7 +341,6 @@ fn main() -> Result<(), String> {
                 Event::KeyDown { keycode: Some(kc), repeat: false, .. } => match &state {
                     GameState::Menu => {
                         if kc == Keycode::Return || kc == Keycode::Return2 {
-                            // Iniciar nivel 1
                             nivel_actual = 0;
                             cargar_nivel(&mut torreta, &mut enemigos, &mut plataformas, &mut huecos, &mut balas, nivel_actual, &backend.canvas);
                             state = GameState::Playing { nivel: 0 };
@@ -350,16 +349,15 @@ fn main() -> Result<(), String> {
                     GameState::Playing { nivel } => {
                         match kc {
                             Keycode::Space if cooldown == 0 => {
-                                // Disparar
                                 balas.push(Bala {
-                                    x: torreta.x + 16.0,
-                                    y: torreta.y + 10.0,
-                                    vx: torreta.dir as f32 * 500.0,
-                                    activa: true,
+                                    x: torreta.x + 16.0, y: torreta.y + 10.0,
+                                    vx: torreta.dir as f32 * 500.0, activa: true,
                                 });
                                 cooldown = 15;
                                 if let Some(ref mut a) = audio { let _ = a.play_sound("shoot"); }
                             }
+                            Keycode::Left | Keycode::A => { torreta.x -= 4.0; torreta.dir = -1; }
+                            Keycode::Right | Keycode::D => { torreta.x += 4.0; torreta.dir = 1; }
                             Keycode::P => state = GameState::Paused { nivel: *nivel },
                             Keycode::R => {
                                 cargar_nivel(&mut torreta, &mut enemigos, &mut plataformas, &mut huecos, &mut balas, *nivel, &backend.canvas);
@@ -374,25 +372,19 @@ fn main() -> Result<(), String> {
                     }
                     GameState::GameOver => {
                         if kc == Keycode::Return || kc == Keycode::Return2 {
-                            torreta.vidas = 3;
-                            torreta.puntaje = 0;
-                            nivel_actual = 0;
+                            torreta.vidas = 3; torreta.puntaje = 0; nivel_actual = 0;
                             cargar_nivel(&mut torreta, &mut enemigos, &mut plataformas, &mut huecos, &mut balas, 0, &backend.canvas);
                             state = GameState::Playing { nivel: 0 };
                         }
                     }
                     GameState::GameWin => {
-                        if kc == Keycode::Return || kc == Keycode::Return2 {
-                            state = GameState::Menu;
-                        }
+                        if kc == Keycode::Return || kc == Keycode::Return2 { state = GameState::Menu; }
                     }
                     GameState::LevelComplete { nivel } => {
                         if kc == Keycode::Return || kc == Keycode::Return2 {
                             nivel_actual = nivel + 1;
-                            if nivel_actual > 2 {
-                                state = GameState::GameWin;
-                                win_timer = 120;
-                            } else {
+                            if nivel_actual > 2 { state = GameState::GameWin; win_timer = 120; }
+                            else {
                                 cargar_nivel(&mut torreta, &mut enemigos, &mut plataformas, &mut huecos, &mut balas, nivel_actual, &backend.canvas);
                                 state = GameState::Playing { nivel: nivel_actual };
                             }
@@ -408,16 +400,6 @@ fn main() -> Result<(), String> {
         // LÓGICA DEL JUEGO
         // ====================================================================
         if let GameState::Playing { .. } = state {
-            // Movimiento torreta
-            let keys = backend.input.teclas_pressionadas_frame.clone();
-            for &key in &keys {
-                match key {
-                    sdl2::keyboard::Keycode::Left | sdl2::keyboard::Keycode::A => { torreta.x -= 4.0; torreta.dir = -1; }
-                    sdl2::keyboard::Keycode::Right | sdl2::keyboard::Keycode::D => { torreta.x += 4.0; torreta.dir = 1; }
-                    _ => {}
-                }
-            }
-
             // Gravedad torreta
             torreta.vy += 800.0 * dt;
             torreta.y += torreta.vy * dt;
@@ -449,12 +431,12 @@ fn main() -> Result<(), String> {
                 if torreta.vidas <= 0 {
                     state = GameState::GameOver;
                     death_timer = 120;
-                    mensaje = "💀 GAME OVER - Presiona ENTER".to_string();
+                    mensaje = "GAME OVER - Presiona ENTER".to_string();
                 } else {
                     torreta.x = 100.0;
                     torreta.y = 100.0;
                     torreta.vy = 0.0;
-                    mensaje = format!("💀 -1 vida! Restantes: {}", torreta.vidas);
+                    mensaje = format!("-1 vida! Restantes: {}", torreta.vidas);
                 }
             }
 
@@ -521,9 +503,9 @@ fn main() -> Result<(), String> {
                     if torreta.vidas <= 0 {
                         state = GameState::GameOver;
                         death_timer = 120;
-                        mensaje = "💀 GAME OVER - Presiona ENTER".to_string();
+                        mensaje = "GAME OVER - Presiona ENTER".to_string();
                     } else {
-                        mensaje = format!("💀 -1 vida! Restantes: {}", torreta.vidas);
+                        mensaje = format!("-1 vida! Restantes: {}", torreta.vidas);
                         torreta.x = 100.0;
                         torreta.y = 100.0;
                         torreta.vy = 0.0;
@@ -553,7 +535,7 @@ fn main() -> Result<(), String> {
                 let lvl = get_nivel(nivel_actual);
                 txt_level = crear_textura(&backend.font, lvl.nombre, 0, 200, 255, tc).map(|t| unsafe { std::mem::transmute(t) });
                 txt_info = crear_textura(&backend.font,
-                    &format!("❤️ {} | ⭐ {} | Enemigos: {}", torreta.vidas, torreta.puntaje, vivos),
+                    &format!("HP: {} | Score: {} | Enemigos: {}", torreta.vidas, torreta.puntaje, vivos),
                     0, 255, 0, tc).map(|t| unsafe { std::mem::transmute(t) });
                 last_cache = frame;
             }
@@ -709,7 +691,7 @@ fn main() -> Result<(), String> {
                 if matches!(state, GameState::Paused { .. }) {
                     backend.canvas.set_draw_color(Color::RGBA(0, 0, 0, 150));
                     let _ = backend.canvas.fill_rect(Rect::new(0, 0, 800, 600));
-                    if let Some(ref tex) = crear_textura(&backend.font, "⏸️  PAUSA - ESC para continuar", 255, 255, 0, tc) {
+                    if let Some(ref tex) = crear_textura(&backend.font, "PAUSA - ESC para continuar", 255, 255, 0, tc) {
                         let q = tex.query();
                         let _ = backend.canvas.copy(tex, None, Rect::new(150, 280, q.width, q.height));
                     }
@@ -719,7 +701,7 @@ fn main() -> Result<(), String> {
             GameState::GameOver => {
                 backend.canvas.set_draw_color(Color::RGBA(80, 0, 0, 200));
                 let _ = backend.canvas.fill_rect(Rect::new(0, 0, 800, 600));
-                if let Some(ref tex) = crear_textura(&backend.font, "💀 GAME OVER", 255, 0, 0, tc) {
+                if let Some(ref tex) = crear_textura(&backend.font, "GAME OVER", 255, 0, 0, tc) {
                     let q = tex.query();
                     let _ = backend.canvas.copy(tex, None, Rect::new(250, 200, q.width, q.height));
                 }
@@ -733,7 +715,7 @@ fn main() -> Result<(), String> {
             GameState::GameWin => {
                 backend.canvas.set_draw_color(Color::RGBA(0, 50, 0, 200));
                 let _ = backend.canvas.fill_rect(Rect::new(0, 0, 800, 600));
-                if let Some(ref tex) = crear_textura(&backend.font, "🏆 ¡GAME WIN! ¡La Snake Boss ha caído!", 0, 255, 0, tc) {
+                if let Some(ref tex) = crear_textura(&backend.font, "GAME WIN - La Snake Boss ha caído", 0, 255, 0, tc) {
                     let q = tex.query();
                     let _ = backend.canvas.copy(tex, None, Rect::new(50, 200, q.width, q.height));
                 }
@@ -747,7 +729,7 @@ fn main() -> Result<(), String> {
             GameState::LevelComplete { .. } => {
                 backend.canvas.set_draw_color(Color::RGBA(0, 30, 60, 200));
                 let _ = backend.canvas.fill_rect(Rect::new(0, 0, 800, 600));
-                if let Some(ref tex) = crear_textura(&backend.font, "✅ ¡Nivel Completado!", 0, 255, 100, tc) {
+                if let Some(ref tex) = crear_textura(&backend.font, "Nivel Completado", 0, 255, 100, tc) {
                     let q = tex.query();
                     let _ = backend.canvas.copy(tex, None, Rect::new(200, 250, q.width, q.height));
                 }
@@ -761,7 +743,7 @@ fn main() -> Result<(), String> {
         backend.end_draw();
     }
 
-    println!("\n✅ Demo completado: {} frames | Puntaje: {}", frame, torreta.puntaje);
+    println!("\nDemo completado: {} frames | Puntaje: {}", frame, torreta.puntaje);
     Ok(())
 }
 
@@ -830,5 +812,5 @@ fn cargar_nivel(
         });
     }
 
-    println!("📦 Nivel {}: {} enemigos, {} plataformas", nivel + 1, config.enemigo_count, plataformas.len());
+    println!("Nivel {}: {} enemigos, {} plataformas", nivel + 1, config.enemigo_count, plataformas.len());
 }
