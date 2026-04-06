@@ -6,19 +6,76 @@
 
 **"Construido sin prisa, madurado con paciencia"**
 
-[![Version](https://img.shields.io/badge/version-v0.13.0-blue.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
+[![Version](https://img.shields.io/badge/version-v0.14.0-blue.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
 [![Errors](https://img.shields.io/badge/errors-0-green.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
 [![Tests](https://img.shields.io/badge/tests-95%2F95-brightgreen.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
-[![Status](https://img.shields.io/badge/estado-v0.13.0--events--ry--panel--visual-green.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
+[![Status](https://img.shields.io/badge/estado-v0.14.0--dual--backend-green.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
 [![SDL2](https://img.shields.io/badge/SDL2-0.37-red.svg)](https://www.libsdl.org/)
+[![Raylib](https://img.shields.io/badge/raylib-5.0-orange.svg)](https://www.raylib.com/)
 [![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/lapumlbb18-blip/Ry-dit/blob/main/LICENSE)
 [![crates.io](https://img.shields.io/badge/crates.io-2%20publicados-purple.svg)](https://crates.io/crates/ry-god)
 
-[📖 Documentación](#-documentación) • [🆕 Qué hay de nuevo en v0.13.0](#-qué-hay-de-nuevo-en-v0130) • [🔧 Estado Actual](#-estado-actual) • [🔌 events-ry v0.1.0](#-events-ry-v010--input-unificado--text-input--shell) • [🎮 Panel Visual](#-panel-visual-demo_panel_visual) • [🏆 Logros](#-logros) • [🎯 Roadmap](#-roadmap)
+[📖 Documentación](#-documentación) • [🆕 Qué hay de nuevo en v0.14.0](#-qué-hay-de-nuevo-en-v0140) • [🔧 Estado Actual](#-estado-actual) • [🔌 events-ry v0.1.0](#-events-ry-v010--input-unificado--text-input--shell) • [🎮 Panel Visual](#-panel-visual-demo_panel_visual) • [🏆 Logros](#-logros) • [🎯 Roadmap](#-roadmap)
 
 </div>
+
+---
+
+## 🆕 ¿Qué hay de nuevo en v0.14.0?
+
+**Última actualización**: 2026-04-06
+**Versión actual**: v0.14.0 ✅ FUNCIONAL
+**Commit**: `HEAD`
+**Estado**: 24 crates compilando | 0 errores | 95 tests pasando
+
+### 🎨 ry-backend v0.1.0 - Dual Backend (raylib + SDL2 TTF) ✅
+| Feature | Descripción | Estado |
+|---------|-------------|--------|
+| **raylib-backend** | Render + input vía raylib | ✅ |
+| **SDL2 TTF** | Texto profesional anti-alias blended | ✅ |
+| **dual-backend** | Ambos backends simultáneos | ✅ |
+| **mobile-hybrid** | SDL2 input + raylib render (Termux-X11) | ✅ |
+
+### 🖱️ Mouse Events Completos ✅
+| Evento | Descripción |
+|--------|-------------|
+| Click | Click izquierdo |
+| Doble Click | Doble click detectado |
+| Click Derecho | Right button event |
+| Scroll | Wheel up/down |
+
+### 📱 Touch Android Completo ✅
+| Evento | Descripción |
+|--------|-------------|
+| FingerDown | Touch inicio detectado |
+| FingerMotion | Movimiento en pantalla |
+| FingerUp | Touch fin detectado |
+
+### 🏗️ ry-system-ry - Sistema Unificado ✅
+| Componente | Descripción |
+|------------|-------------|
+| **RySystem struct** | Sistema unificado de gestión |
+| **Init/Shutdown** | Lifecycle completo |
+| **Event Loop** | Loop unificado multi-backend |
+
+### 🎨 migui con ry-backend ✅
+| Cambio | Antes | Ahora |
+|--------|-------|-------|
+| **Backend** | sdl2 directo | ry-backend (abstracción) |
+| **Texto TTF** | Básico | Profesional anti-alias blended |
+| **Features** | sdl2-only | raylib-only, sdl2-only, dual-backend, mobile-hybrid |
+
+### Sesión Completa v0.14.0 (todo lo hecho)
+1. ✅ **ry-backend v0.1.0**: Dual backend raylib + SDL2 TTF
+2. ✅ **migui migra a ry-backend**: Abstracción de render
+3. ✅ **ry-system-ry**: Sistema unificado con RySystem struct
+4. ✅ **Texto TTF profesional**: Anti-alias blended rendering
+5. ✅ **Mouse events completos**: Click, doble click, derecho, scroll
+6. ✅ **Touch Android completo**: FingerDown/Motion/Up
+7. ✅ **Features multi-backend**: raylib-only, sdl2-only, dual-backend, mobile-hybrid
+8. ✅ **24 crates compilando**: 0 errores en workspace completo
 
 ---
 
@@ -64,24 +121,31 @@
 
 ---
 
-## 🔧 ESTADO ACTUAL - v0.13.0 EVENTS-RY + PANEL VISUAL
+## 🔧 ESTADO ACTUAL - v0.14.0 DUAL BACKEND + MIGUI RY-BACKEND
 
-### ✅ **ESTADO REAL: v0.13.0 - 23 CRATES COMPILANDO | 0 ERRORES | 95 TESTS**
+### ✅ **ESTADO REAL: v0.14.0 - 24 CRATES COMPILANDO | 0 ERRORES | 95 TESTS**
 
-**Última actualización**: 2026-04-05
-**Versión actual**: v0.13.0 ✅ FUNCIONAL
-**Próxima versión**: v0.14.0 - migui texto real + v-shield platform layer
-**Estado**: events-ry ✅ | Panel Visual ✅ | ry-anim ✅ | ry-stream ✅ | ry-god ✅
-**Commit**: `2f48a44` (HEAD)
-**Crates**: 23 en workspace | 0 errores | 95 tests pasando
+**Última actualización**: 2026-04-06
+**Versión actual**: v0.14.0 ✅ FUNCIONAL
+**Próxima versión**: v0.15.0 - Demos funcionales en Termux-X11 + v-shield platform layer
+**Estado**: ry-backend ✅ | migui ry-backend ✅ | ry-system-ry ✅ | Touch Android ✅ | Mouse Events ✅
+**Commit**: `HEAD`
+**Crates**: 24 en workspace | 0 errores | 95 tests pasando
 **Crates publicados**: 2 (ry-god + ry-stream)
 
 ---
 
-### ✅ **LO QUE SÍ FUNCIONA (v0.13.0)**
+### ✅ **LO QUE SÍ FUNCIONA (v0.14.0)**
 
 | Sistema | Estado | Notas |
 |---------|--------|-------|
+| **ry-backend** | ✅ v0.1.0 | Dual backend: raylib + SDL2 TTF |
+| **migui** | ✅ ry-backend | Usa ry-backend (no sdl2 directo) |
+| **ry-system-ry** | ✅ RySystem | Sistema unificado |
+| **Texto TTF** | ✅ Profesional | Anti-alias blended |
+| **Mouse Events** | ✅ Completos | Click, doble click, derecho, scroll |
+| **Touch Android** | ✅ Completo | FingerDown/Motion/Up |
+| **Features** | ✅ 4 modos | raylib-only, sdl2-only, dual-backend, mobile-hybrid |
 | **events-ry** | ✅ v0.1.0 | Input unificado + TextInput + Shell + Sdl2InputBackend |
 | **demo_panel_visual** | ✅ 4 paneles | Screen, Console, Input, Controls |
 | **ry-anim** | ✅ v0.12.0 | 41 funciones, 58 tests, 6 escenas en panel |
@@ -132,7 +196,7 @@ demo_50k_particulas, demo_action_assets, demo_anime_ry, demo_carga_sprites, demo
 
 ---
 
-## 📊 Lista de Crates (23)
+## 📊 Lista de Crates (24)
 
 | Crate | Versión | Estado |
 |-------|---------|--------|
@@ -149,15 +213,16 @@ demo_50k_particulas, demo_action_assets, demo_anime_ry, demo_carga_sprites, demo
 | ry-god | 0.1.0 | ✅ crates.io |
 | ry-loader | — | ⚠️ |
 | ry-rs | — | Main binary |
-| ry-system-ry | 0.11.0 | ⚠️ |
+| ry-system-ry | 0.11.0 | ✅ RySystem struct |
 | ry-test | — | ⚠️ |
 | toolkit-ry | 0.1.0 | ✅ |
-| migui | — | ✅ 12 widgets |
+| migui | — | ✅ ry-backend |
 | blast-core | 0.1.0 | ✅ |
 | lizer | 0.11.2 | ✅ |
 | v-shield | — | ⚠️ |
 | ry3d-gfx | 0.1.0 | ✅ |
-| **events-ry** | **0.1.0** | ✅ **NUEVO** |
+| events-ry | 0.1.0 | ✅ |
+| **ry-backend** | **0.1.0** | ✅ **NUEVO** |
 | ~~ry-ecs~~ | — | 🗑️ Eliminado |
 
 ---
@@ -171,7 +236,8 @@ demo_50k_particulas, demo_action_assets, demo_anime_ry, demo_carga_sprites, demo
 | **v0.11.5** | ✅ | 0 Errores + lifetimes fixeados | 2026-04-02 |
 | **v0.12.0** | ✅ | ry-anim v0.12.0 + Quest + Save/Load + ry-stream crates.io | 2026-04-05 |
 | **v0.13.0** | ✅ | events-ry + Panel Visual + Demo Panel + Warnings fix | 2026-04-05 |
-| **v0.14.0** | ⏳ | migui texto real + v-shield platform layer | Próxima versión |
+| **v0.14.0** | ✅ | ry-backend dual + migui ry-backend + ry-system-ry + Touch/Mouse | 2026-04-06 |
+| **v0.15.0** | ⏳ | Demos Termux-X11 + v-shield platform layer | Próxima versión |
 | **v1.0.0** | ⏳ | Motor Completo + Editor Visual | Futuro |
 
 </div>
@@ -182,13 +248,12 @@ demo_50k_particulas, demo_action_assets, demo_anime_ry, demo_carga_sprites, demo
 
 | Tarea | Esfuerzo | Prioridad |
 |-------|----------|-----------|
-| migui texto real (ab_glyph) | 4-6h | 🔴 Alta |
-| Sdl2InputBackend en demo real | 2-3h | 🔴 Alta |
-| v-shield platform layer | 15-20h | 🟡 Media |
-| Consola visual en ry-gfx | 3-4h | 🟡 Media |
+| Demos funcionales en Termux-X11 | 8-12h | 🔴 Alta |
+| v-shield platform layer | 15-20h | 🔴 Alta |
 | ry-stream v0.2.0 (mDNS) | 8-12h | 🟡 Media |
 | ry-physics N-cuerpos >2 | 10-15h | 🟡 Media |
-| HybridBackend (SDL2+raylib) | 6-8h | 🟡 Media |
+| ry-backend v0.2.0 (optimizaciones) | 6-8h | 🟡 Media |
+| Consola visual en ry-gfx | 3-4h | 🟡 Media |
 | LAZOS Python bridge | 20-30h | 🔮 Futuro |
 | Editor visual | 24-32h | 🔮 Futuro |
 
@@ -251,10 +316,10 @@ demo_50k_particulas, demo_action_assets, demo_anime_ry, demo_carga_sprites, demo
 
 <div align="center">
 
-## Ry-Dit v0.13.0 - events-ry + Panel Visual
+## Ry-Dit v0.14.0 - Dual Backend + Touch Android + Mouse Events
 
-*0 errores | 23 crates compilando | 95 tests | 2 crates publicados*
+*0 errores | 24 crates compilando | 95 tests | 2 crates publicados*
 
-**Proxima version: v0.14.0 - migui texto real + v-shield platform layer**
+**Proxima version: v0.15.0 - Demos Termux-X11 + v-shield platform layer**
 
 </div>

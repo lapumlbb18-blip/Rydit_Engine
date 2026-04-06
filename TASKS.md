@@ -1,8 +1,8 @@
-# 🛡️ Ry-Dit - Tareas Principales y Paralelas v0.13.0+
+# 🛡️ Ry-Dit - Tareas Principales y Paralelas v0.14.0+
 
-**Última actualización**: 2026-04-05
-**Versión actual**: v0.13.0 ✅ events-ry + Panel Visual + RyBot IPC + LAZOS
-**Próxima versión**: v0.14.0 - migui texto real + v-shield platform layer
+**Última actualización**: 2026-04-06
+**Versión actual**: v0.14.0 ✅ ry-backend dual + migui conectado + ry-system-ry
+**Próxima versión**: v0.15.0 - Demos Termux-X11 + v-shield platform layer
 
 ---
 
@@ -10,55 +10,49 @@
 
 | Métrica | Valor |
 |---------|-------|
-| **Crates** | 23 |
+| **Crates** | 24 |
 | **Errores** | 0 |
 | **Tests** | 95/95 pasando |
 | **Crates publicados** | 2 (ry-god + ry-stream) |
-| **Commit** | `118ee6a` |
+| **Commit** | `ebe7c81` |
 
 ---
 
-## 🔴 TAREAS PRINCIPALES (v0.14.0)
+## 🔴 TAREAS PRINCIPALES COMPLETADAS v0.14.0
 
-### 1. migui Texto Real (ab_glyph)
+| # | Tarea | Estado | Commit |
+|---|-------|--------|--------|
+| 1 | ry-backend v0.1.0 creado | ✅ | `9a0c4e7` |
+| 2 | raylib_draw: 2D/3D drawing | ✅ | `9a0c4e7` |
+| 3 | sdl2_core: TTF profesional + mouse + input | ✅ | `9a0c4e7` |
+| 4 | migui conectado a ry-backend | ✅ | `ebe7c81` |
+| 5 | ry-system-ry creado (RySystem) | ✅ | `ebe7c81` |
+| 6 | Texto TTF anti-alias blended | ✅ | `9a0c4e7` |
+| 7 | Mouse: click, doble click, derecho, scroll | ✅ | `9a0c4e7` |
+| 8 | Touch Android: FingerDown/Motion/Up | ✅ | `9a0c4e7` |
+| 9 | Features backend: raylib/sdl2/dual/mobile | ✅ | `9a0c4e7` |
+| 10 | 24 crates compilando sin errores | ✅ | `ebe7c81` |
+
+---
+
+## 🟡 TAREAS PENDIENTES (v0.15.0)
+
+### 1. Demos funcionales Termux-X11 con RySystem
 | Campo | Valor |
 |-------|-------|
 | **Prioridad** | 🔴 ALTA |
-| **EsFuerzo** | 4-6h |
-| **Bloquea** | TODOS los widgets muestran texto legible |
+| **EsFuerzo** | 6-8h |
+| **Bloquea** | Demo visual completo con menús + TTF |
 | **Estado** | ⏳ Pendiente |
 
 **Detalle**:
-- `migui/font_native.rs` usa placeholder (rectángulos como texto)
-- Implementar `ab_glyph` para renderizado real de fuentes TTF
-- Desbloquea: consola visual, HUD, menús, editor
-
-**Archivos**:
-- `crates/migui/src/font_native.rs` → implementar render_text real
-- `crates/migui/src/backend_sdl2.rs` → conectar con SDL2_ttf si disponible
+- Crear demo usando `RySystem` en vez de backends directos
+- Integrar menu_bar de migui con TTF real
+- Conectar events-ry input unificado
 
 ---
 
-### 2. Sdl2InputBackend en Demo Real
-| Campo | Valor |
-|-------|-------|
-| **Prioridad** | 🔴 ALTA |
-| **EsFuerzo** | 2-3h |
-| **Bloquea** | Panel visual con input real |
-| **Estado** | ⏳ Pendiente |
-
-**Detalle**:
-- `events-ry` tiene `Sdl2InputBackend` feature-gated
-- Conectar con `demo_panel_visual` para input real
-- Reemplazar input simulado por SDL2 event_pump
-
-**Archivos**:
-- `crates/ry-rs/src/bin/demo_panel_visual.rs`
-- `crates/events-ry/src/sdl2_backend.rs`
-
----
-
-### 3. v-shield Platform Layer
+### 2. v-shield platform layer
 | Campo | Valor |
 |-------|-------|
 | **Prioridad** | 🟡 MEDIA |
@@ -66,33 +60,9 @@
 | **Bloquea** | Multiplataforma real |
 | **Estado** | ⏳ Pendiente |
 
-**Detalle**:
-- Detectar plataforma (Android/Linux/Windows/macOS/iOS)
-- Config defaults por OS
-- Verificar deps disponibles
-- Platform report visual
-
-**Archivos**:
-- `crates/v-shield/src/lib.rs` → expandir de wrapper mínimo a platform layer
-
 ---
 
-### 4. Consola Visual en ry-gfx
-| Campo | Valor |
-|-------|-------|
-| **Prioridad** | 🟡 MEDIA |
-| **EsFuerzo** | 3-4h |
-| **Bloquea** | Output visual de shell |
-| **Estado** | ⏳ Pendiente |
-
-**Detalle**:
-- Integrar `events-ry::Shell` output en ry-gfx render
-- Panel de consola con scroll y colores por tipo
-- Conectar con `demo_panel_visual`
-
----
-
-### 5. ry-stream v0.2.0 (mDNS)
+### 3. ry-stream v0.2.0 (mDNS)
 | Campo | Valor |
 |-------|-------|
 | **Prioridad** | 🟡 MEDIA |
@@ -100,14 +70,9 @@
 | **Bloquea** | LAN streaming mejorado |
 | **Estado** | ⏳ Pendiente |
 
-**Detalle**:
-- mDNS para auto-descubrimiento
-- Portal web mejorado
-- Multi-client support
-
 ---
 
-### 6. ry-physics N-cuerpos >2
+### 4. ry-physics N-cuerpos >2
 | Campo | Valor |
 |-------|-------|
 | **Prioridad** | 🟡 MEDIA |
@@ -115,121 +80,62 @@
 | **Bloquea** | Simulaciones gravitacionales reales |
 | **Estado** | ⏳ Pendiente |
 
-**Detalle**:
-- Actual `nbody_simulate` soporta N cuerpos pero es O(n²)
-- Optimizar con Barnes-Hut o similar
-- Integrar con ry-gfx para visualización
-
 ---
 
-## 🟡 TAREAS PARALELAS
-
-### 7. HybridBackend (SDL2 input + raylib render)
-| Campo | Valor |
-|-------|-------|
-| **EsFuerzo** | 6-8h |
-| **Estado** | ⏳ Pendiente |
-
-**Detalle**: Ideal para Termux-X11. SDL2 captura input, raylib renderiza.
-
----
-
-### 8. RaylibInputBackend
-| Campo | Valor |
-|-------|-------|
-| **EsFuerzo** | 4-6h |
-| **Estado** | ⏳ Pendiente |
-
-**Detalle**: Conectar raylib input → events-ry InputEvent. Limitado en Termux.
-
----
-
-### 9. 37 Warnings dead_code → API doc
-| Campo | Valor |
-|-------|-------|
-| **EsFuerzo** | 2-3h |
-| **Estado** | ⏳ Pendiente |
-
-**Detalle**: Quest system, config_parser, entity system son API futura. Documentar como tal.
-
----
-
-### 10. Integrar toolkit-ry en demo_panel_visual
-| Campo | Valor |
-|-------|-------|
-| **EsFuerzo** | 3-4h |
-| **Estado** | ⏳ Pendiente |
-
-**Detalle**: Usar widgets reales de toolkit-ry en lugar de block text.
-
----
-
-## 🔮 TAREAS FUTURO (v0.15.0+)
+## 🔮 TAREAS FUTURO (v0.16.0+)
 
 | # | Tarea | EsFuerzo | Descripción |
 |---|-------|----------|-------------|
-| 11 | LAZOS Python bridge completo | 20-30h | API completa + async |
-| 12 | Editor visual básico | 24-32h | migui + toolkit-ry + events-ry |
-| 13 | bgfx_libs referencias | 10-15h | imgui, sokol, SDL3 inspiración |
-| 14 | ry-geometry (Vec3/Mat4) | 12-16h | Base para 3D completo |
-| 15 | CI/CD GitHub Actions | 4-6h | Build automatizado |
-| 16 | Publicar 5+ crates en crates.io | 4-6h | ry-core, ry-lexer, ry-parser, ry-anim, ry-physics |
+| 5 | LAZOS Python bridge completo | 20-30h | API completa + async |
+| 6 | Editor visual | 24-32h | RySystem + migui + events-ry |
+| 7 | bgfx_libs referencias | 10-15h | imgui, sokol, SDL3 inspiración |
+| 8 | ry-geometry (Vec3/Mat4) | 12-16h | Base para 3D completo |
+| 9 | CI/CD GitHub Actions | 4-6h | Build automatizado |
+| 10 | Publicar 5+ crates en crates.io | 4-6h | ry-core, ry-lexer, ry-parser, ry-anim, ry-physics |
 
 ---
 
-## ✅ TAREAS COMPLETADAS v0.13.0
+## ✅ HISTORIAL COMPLETO DE SESIONES
 
-| # | Tarea | EsFuerzo | Commit |
-|---|-------|----------|--------|
-| 1 | events-ry v0.1.0 completo | 7 archivos | `2933a38` |
-| 2 | Sdl2InputBackend feature-gated | 1 archivo | `2b1cc64` |
-| 3 | demo_panel_visual SDL2 | 535 líneas | `2f48a44` |
-| 4 | Limpieza warnings 146→37 | 14 archivos | `ef11b5f` |
-| 5 | README actualizado a v0.13.0 | 1 archivo | `0f70d6b` |
-| 6 | lizer AST cache real | 215 líneas | `d919a3c` |
-| 7 | RyBot CLI IPC completo | 4 archivos | `118ee6a` |
-| 8 | LAZOS JSON-RPC + Python verificado | Tests | `118ee6a` |
-| 9 | snake movido a pendientes | 1 archivo | `d919a3c` |
-| 10 | Tag v0.13.0 creado | git tag | - |
+| Versión | Fecha | Features Principales |
+|---------|-------|---------------------|
+| **v0.14.0** | 2026-04-06 | ry-backend dual + migui conectado + ry-system-ry |
+| **v0.13.0** | 2026-04-05 | events-ry + Panel Visual + RyBot IPC + LAZOS |
+| **v0.12.0** | 2026-04-05 | ry-anim v0.12.0 + Quest + Save/Load + ry-stream crates.io |
+| **v0.11.5** | 2026-04-02 | 0 errores + lifetimes fixeados |
 
 ---
 
 ## 📋 DEPENDENCIAS ENTRE TAREAS
 
 ```
-migui texto real (1)
+ry-backend ✅
     │
-    ├──→ Integrar toolkit-ry en demo (10)
+    ├──→ migui conectado ✅
     │       │
-    │       └──→ Consola visual (4)
+    │       └──→ ry-system-ry ✅
     │               │
-    │               └──→ Editor visual (12)
+    │               └──→ Demos Termux-X11 (v0.15.0)
     │
-    └──→ ry-system-ry unificador
-            │
-            └──→ v-shield platform layer (3)
+    └──→ v-shield platform layer (v0.15.0)
 
-events-ry completo (✅)
+events-ry ✅
     │
-    ├──→ Sdl2InputBackend en demo (2)
-    │       │
-    │       └──→ HybridBackend (7)
-    │
-    └──→ RaylibInputBackend (8)
+    └──→ Input unificado en RySystem ✅
 
-LAZOS funcional (✅)
+LAZOS funcional ✅
     │
-    └──→ LAZOS Python bridge completo (11)
+    └──→ LAZOS Python bridge (v0.16.0)
 ```
 
 ---
 
 <div align="center">
 
-**🛡️ Ry-Dit v0.13.0 - Tareas Documentadas**
+**🛡️ Ry-Dit v0.14.0 - Tareas Documentadas**
 
-*0 errores | 23 crates | 95 tests | 10 tareas principales completadas*
+*0 errores | 24 crates | 95 tests | 10 tareas v0.14.0 completadas*
 
-**Próxima: v0.14.0 - migui texto real + v-shield**
+**Próxima: v0.15.0 - Demos Termux-X11 + v-shield**
 
 </div>

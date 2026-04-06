@@ -1,70 +1,4 @@
-# 🛡️ QWEN.md - Bitácora Técnica Ry-Dit
-
-**Última actualización**: 2026-04-05
-**Versión actual**: v0.12.0 ✅ ry-anim v0.12.0 + Action Assets
-**Versión anterior**: v0.11.5 (0 errores + lifetimes)
-**Próxima versión**: v0.13.0 - ry-input + Demos completos
-**Commit**: `405a945`
-**Repositorio**: `https://github.com/lapumlbb18-blip/Ry-dit`
-**Crates publicados**: ry-god v0.1.0 + ry-stream v0.1.0 ✅
-
----
-
-## 🎉 v0.12.0 COMPLETADA
-
-### ✅ **ESTADO ACTUAL: 22 CRATES COMPILANDO | 0 ERRORES | 58 TESTS**
-
-| Sistema | Estado | Cambios | Notas |
-|---------|--------|---------|-------|
-| **ry-anim** | ✅ v0.12.0 | 41 funciones | 58 tests, 4 demos |
-| **ry-stream** | ✅ crates.io | v0.1.0 publicado | LAN streaming |
-| **ry-god** | ✅ crates.io | v0.1.0 publicado | Security & Efficiency |
-| **Crates** | ✅ 22/22 | 0 errores | Workspace completo |
-| **ELFs** | ✅ 2 compilados | demo_anime_ry 341K, demo_rigidbody 446K | release |
-| **Bins** | ✅ ~31 | src/bin/ | Demos + tests |
-
-**Total**: ry-anim completo | 2 crates publicados | Push + Sync ✅
-
----
-
-## 📋 METODOLOGÍA APLICADA v0.12.0
-
-### **Sesión Completa (todo lo hecho)**
-
-| # | Feature | Estado | Detalles |
-|---|---------|--------|----------|
-| 1 | Math avanzado | ✅ | 23 funciones (pow, log, derivadas, integrales, PI, E...) |
-| 2 | Arrays completos | ✅ | 16 funciones (push, pop, len, insert, remove, contains...) |
-| 3 | Vec2 tipo nativo | ✅ | 22 operaciones (add, sub, scale, normalize, dot, cross...) |
-| 4 | toolkit-ry v0.1.0 | ✅ | 5 temas + 20+ widgets UI |
-| 5 | ry3d-gfx v0.1.0 | ✅ | 15 funciones 3D (cube, sphere, cylinder, grid...) |
-| 6 | Fix input Android | ✅ | SDL_TEXTINPUT + 7 hints SDL2 |
-| 7 | FSR 1.0 | ✅ | Shaders embebidos |
-| 8 | Quest System | ✅ | 10 funciones |
-| 9 | Save/Load System | ✅ | 10 funciones |
-| 10 | One-way platforms | ✅ | 2 funciones |
-| 11 | ry-stream crates.io | ✅ | v0.1.0 publicado |
-| 12 | ry-ecs eliminado | ✅ | -1,143 líneas |
-| 13 | nbody_simulate → ry-physics | ✅ | Movido correctamente |
-| 14 | ry-anim v0.8→v0.12 | ✅ | 41 funciones, 58 tests, 4 demos |
-| 15 | Fix linking raylib | ✅ | build.rs corregido |
-| 16 | demo_anime_ry ELF | ✅ | 341K release |
-| 17 | Documentos nuevos | ✅ | 9 creados |
-| 18 | Docs organizados | ✅ | 17 archivos en docs/ |
-
-### **ry-anim Evolución**
-
-| Versión | Features | Tests | Demos |
-|---------|----------|-------|-------|
-| v0.8.0 | 15 Disney completo | 28 | — |
-| v0.9.0 | 21 + 6 ilusiones | 35 | demo_illusions |
-| v0.10.0 | 27 + 6 efectos | 42 | demo_effects |
-| v0.11.0 | 35 + 8 ciencia | 50 | demo_science |
-| v0.12.0 | 41 + 6 action_assets | 58 | demo_action_assets |
-
----
-
-## 📦 Lista de Crates (22)
+## 📦 Lista de Crates (24)
 
 | Crate | Versión | Estado | Notas |
 |-------|---------|--------|-------|
@@ -81,14 +15,16 @@
 | ry-god | 0.1.0 | ✅ | crates.io publicado |
 | ry-loader | — | ⚠️ | Module loader |
 | ry-rs | — | Main | Binary principal |
-| ry-system-ry | 0.11.0 | ⚠️ | Universal system (SDL2) |
+| ry-system-ry | 0.14.0 | ✅ | Sistema unificado: RySystem |
 | ry-test | — | ⚠️ | Test utilities |
+| **ry-backend** | **0.1.0** | ✅ **NUEVO** | Dual backend: raylib + SDL2 TTF |
 | toolkit-ry | 0.1.0 | ✅ | 5 temas + 20+ widgets |
-| migui | — | ✅ | 12 widgets UI |
+| migui | 0.4.1 | ✅ | Conectado a ry-backend |
 | blast-core | 0.1.0 | ✅ | Minimal value executor |
-| lizer | 0.11.2 | ✅ | Legacy lexer wrapper |
+| lizer | 0.11.2 | ✅ | Legacy + AST cache real |
 | v-shield | — | ⚠️ | Platform layer (pendiente) |
 | ry3d-gfx | 0.1.0 | ✅ | 15 funciones 3D |
+| events-ry | 0.1.0 | ✅ | Input unificado + TextInput + Shell |
 | ~~ry-ecs~~ | — | 🗑️ | Eliminado (-1,143 líneas) |
 
 ---
@@ -115,23 +51,27 @@
 - 151 errores de tests por nombres de AST viejos
 - Solución: mover a docs/tests_referencia/ y crear nuevos
 
+### **No dar vueltas en círculos con demos**
+- demo_rigidbody YA funciona con Sdl2Backend de ry-gfx
+- No crear demos duplicados (demo_ttf_sprites_real falló)
+- Usar los que ya compilan: demo_rigidbody, demo_ttf_sprites, demo_anime_ry
+
 ---
 
-## 🚀 PRÓXIMOS PASOS (v0.13.0)
+## 🚀 PRÓXIMOS PASOS (v0.15.0)
 
 ### **Pendientes - Prioridad Alta**
 
 | Tarea | Esfuerzo | Prioridad |
 |-------|----------|-----------|
-| ry-input crate (SDL2 input + raylib render) | 10-15h | 🔴 Alta |
-| Sprite animation en juegos reales | 15-20h | 🟡 Media |
+| Demos funcionales Termux-X11 con RySystem | 6-8h | 🔴 Alta |
 | v-shield platform layer | 15-20h | 🟡 Media |
 | ry-stream v0.2.0 (mDNS) | 8-12h | 🟡 Media |
 | ry-physics N-cuerpos >2 | 10-15h | 🟡 Media |
 | LAZOS Python bridge | 20-30h | 🔮 Futuro |
 | Editor visual | 24-32h | 🔮 Futuro |
 
-### **Después de v0.13.0**
+### **Después de v0.15.0**
 
 1. Demos funcionales en Termux-X11
 2. Galería actualizada en README
@@ -182,7 +122,7 @@ git log --oneline -10
 git tag -l
 
 # Commit + tag
-git add -A && git commit -m "mensaje" && git tag -a v0.12.0
+git add -A && git commit -m "mensaje" && git tag -a v0.14.0
 ```
 
 ---
@@ -191,32 +131,34 @@ git add -A && git commit -m "mensaje" && git tag -a v0.12.0
 
 ### **✅ LO QUE SÍ FUNCIONÓ**
 
-1. **Debug tests antes de fixear** - Identificar tipos exactos
-2. **Agente para inspección** - Análisis profundo de errores
-3. **Fix manual (NO sed)** - Control total de cambios
-4. **Commits frecuentes** - Puntos de reversión claros
-5. **Tags descriptivos** - Cada fix importante tiene tag
-6. **Cargo clippy --fix** - Identifica warnings ocultos
+1. **ry-backend dual**: Raylib drawing + SDL2 TTF profesional
+2. **migui conectado a ry-backend**: Texto real, mouse completo
+3. **ry-system-ry unificado**: RySystem con core + gui
+4. **Debug tests antes de fixear** - Identificar tipos exactos
+5. **Agente para inspección** - Análisis profundo de errores
+6. **Fix manual (NO sed)** - Control total de cambios
+7. **Commits frecuentes** - Puntos de reversión claros
+8. **Tags descriptivos** - Cada fix importante tiene tag
+9. **Cargo clippy --fix** - Identifica warnings ocultos
 
 ### **❌ LO QUE NO FUNCIONÓ**
 
 1. **sed automático** - Rompió código, tuvo que revertir
 2. **Arc<str> option** - Evaluada pero rechazada (muy riesgosa)
 3. **Lifetime elision** - Compilador requirió explícitos
+4. **Crear demos duplicados** - demo_ttf_sprites_real falló linker
+5. **Dar vueltas en círculos** - Analizar lo que ya funciona primero
 
 ---
 
 <div align="center">
 
-**🛡️ RyDit v0.12.0 - ry-anim Action Assets + 58 Tests**
+**🛡️ RyDit v0.14.0 - ry-backend dual + migui conectado + ry-system-ry**
 
-*0 errores | 22 crates compilando | 58 tests pasando | 2 crates publicados*
+*0 errores | 24 crates compilando | 95 tests pasando | 2 crates publicados*
 
-**Próximo: v0.13.0 - ry-input + Demos completos**
+**Próximo: v0.15.0 - Demos Termux-X11 + v-shield platform layer**
 
 **REGLA DE ORO: NUNCA SED DESPUÉS DE REFACTORIZAR PARSER**
 
 </div>
-
-## Qwen Added Memories
-- CLAVE ARQUITECTÓNICA: Shell + Text Input es el corazón del editor visual ry-dit. No es solo capturar teclas individuales, sino: 1) TextInput para composición de strings (rutas, nombres, comandos), 2) Shell para ejecutar comandos (carga assets, debug, REPL rydit), 3) Console para output en tiempo real. Sin esto, el editor visual no funciona. events-ry debe tener 3 capas: InputEvent (raw) → TextInput (composición) → Shell (ejecución). HybridBackend preferido: SDL2 input + raylib render en Termux-X11.
