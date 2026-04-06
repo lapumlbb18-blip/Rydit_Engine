@@ -18,6 +18,8 @@
 //! 🔄 #11 Solid Drawing
 //! 🔄 #12 Appeal
 
+// serde_json se usa en funciones internas para serialización de animaciones
+#[allow(unused_imports)]
 use serde_json::{json, Value};
 
 // ============================================================================

@@ -108,7 +108,7 @@ impl RyditModule for AnimModule {
     }
 
     fn execute(&self, command: &str, params: Value) -> ModuleResult {
-        let invalid = || ModuleError { code: "INVALID_PARAMS".to_string(), message: format!("Parámetros inválidos para {}", command) };
+        let _invalid = || ModuleError { code: "INVALID_PARAMS".to_string(), message: format!("Parámetros inválidos para {}", command) };
         match command {
             "ease_in" => self.ease_in(params),
             "ease_out" => self.ease_out(params),

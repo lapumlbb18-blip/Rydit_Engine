@@ -54,7 +54,7 @@ fn main() {
     ];
 
     let mut existentes = 0;
-    for (nombre, archivo, _, _, _, _) in &mut sprites {
+    for (_nombre, archivo, _, _, _, _) in &mut sprites {
         let path = format!("{}/{}", sprites_dir, archivo);
         let existe = Path::new(&path).exists();
         if existe { existentes += 1; }
@@ -71,7 +71,7 @@ fn main() {
     let mut sel = 0;
     let mut frame = 0;
     let mut anim = true;
-    let mut running = true;
+    let running = true;
 
     println!("🎮 CONTROLES (PATRÓN DOS EVENTOS):");
     println!("   ← → ↑ ↓ = Mover (MANTENER)");

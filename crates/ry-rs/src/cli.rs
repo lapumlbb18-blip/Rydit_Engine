@@ -8,7 +8,8 @@ use blast_core::Executor;
 use migui::Migui;
 use ry_gfx::RyditGfx;
 
-// ✅ v0.10.4: ConfigParser desde lib.rs
+// ✅ v0.10.4: ConfigParser desde lib.rs (pendiente de uso activo)
+#[allow(unused_imports)]
 use crate::config_parser::ConfigParser;
 
 use crate::{

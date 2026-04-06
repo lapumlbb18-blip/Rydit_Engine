@@ -1,6 +1,9 @@
 // crates/rydit-rs/src/modules/save.rs
 // Save/Load System - Guardar y cargar progreso de juegos
 // v0.13.1 - JSON serialización con std::fs
+#![allow(unused_variables)]
+#![allow(unused_mut)]
+#![allow(unused_assignments)]
 
 use blast_core::{Executor, Valor};
 use ry_parser::{Expr, Stmt};

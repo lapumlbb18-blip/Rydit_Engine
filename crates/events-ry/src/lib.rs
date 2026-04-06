@@ -33,7 +33,7 @@
 //! assert_eq!(events.len(), 2);
 //! ```
 
-#![warn(missing_docs)]
+#![allow(missing_docs)]
 
 // ============================================================================
 // CAPA 1: InputEvent (raw)

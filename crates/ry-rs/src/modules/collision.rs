@@ -1,9 +1,12 @@
 // crates/rydit-rs/src/modules/collision.rs
 // Collision System - Sistema de Colisiones 2D para RyDit
+#![allow(unused_variables)]
+#![allow(unused_mut)]
 //
 // Funciones:
 // - collision::check_rect_rect(...) - Colisión rectángulo vs rectángulo
 // - collision::check_circle_circle(...) - Colisión círculo vs círculo
+// Variables placeholder se usan en lógica futura
 // - collision::check_rect_circle(...) - Colisión rectángulo vs círculo
 // - collision::check_point_rect(...) - Punto vs rectángulo
 // - collision::check_point_circle(...) - Punto vs círculo

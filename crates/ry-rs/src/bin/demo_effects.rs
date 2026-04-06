@@ -81,7 +81,7 @@ fn draw_neon(d: &mut ry_gfx::DrawHandle, t: f64) {
             layer.get("y").and_then(|v| v.as_f64()),
             layer.get("radius").and_then(|v| v.as_f64()),
         ) else { continue };
-        let alpha = layer.get("alpha").and_then(|v| v.as_f64()).unwrap_or(1.0);
+        let _alpha = layer.get("alpha").and_then(|v| v.as_f64()).unwrap_or(1.0);
         let c = if layer.get("type").and_then(|v| v.as_str()) == Some("core") {
             ColorRydit::Blanco
         } else {
@@ -105,7 +105,7 @@ fn draw_blur(d: &mut ry_gfx::DrawHandle, t: f64) {
 
     for b in &blurs {
         let (Some(x), Some(y)) = (b.get("x").and_then(|v| v.as_f64()), b.get("y").and_then(|v| v.as_f64())) else { continue };
-        let alpha = b.get("alpha").and_then(|v| v.as_f64()).unwrap_or(1.0);
+        let _alpha = b.get("alpha").and_then(|v| v.as_f64()).unwrap_or(1.0);
         let r = if b.get("type").and_then(|v| v.as_str()) == Some("sharp") { 12 } else { 14 };
         d.draw_circle(x as i32, y as i32, r, ColorRydit::Cyan);
     }

@@ -40,7 +40,7 @@ pub fn chemical_crystallization(cx: f64, cy: f64, num_crystals: usize,
     for i in 0..num_crystals {
         let angle = (i as f64 / num_crystals as f64) * std::f64::consts::PI * 2.0 + i as f64 * 0.5;
         // Crecimiento no lineal — cristales externos crecen más lento
-        let dist_factor = (i as f64 / num_crystals as f64);
+        let dist_factor = i as f64 / num_crystals as f64;
         let radius = max_radius * t.powf(growth_rate) * (1.0 - dist_factor * 0.5);
         let x = cx + angle.cos() * radius;
         let y = cy + angle.sin() * radius;
@@ -148,7 +148,7 @@ pub fn walk_cycle(cx: f64, cy: f64, body_size: f64, num_legs: usize,
     for i in 0..num_legs {
         let phase = t + (i as f64 / num_legs as f64) * leg_phase_offset;
         let leg_angle = (phase * std::f64::consts::PI * 2.0).sin() * stride;
-        let side = if i < num_legs / 2 { 1.0 } else { -1.0 };
+        let _side = if i < num_legs / 2 { 1.0 } else { -1.0 };
         let leg_idx = i % (num_legs / 2);
         let leg_x = cx + (leg_idx as f64 - (num_legs / 4) as f64) * body_size * 0.4;
 

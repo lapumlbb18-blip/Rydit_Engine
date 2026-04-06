@@ -174,7 +174,7 @@ fn main() -> Result<(), String> {
     let fuerza_salto = -450.0f32;
     let movimiento = 30.0f32;
 
-    'running: loop {
+    loop {
         let dt = 0.016f32;
         frame += 1;
 

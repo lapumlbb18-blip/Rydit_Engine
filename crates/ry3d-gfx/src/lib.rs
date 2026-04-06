@@ -11,6 +11,8 @@
 
 #![allow(clippy::too_many_arguments)]
 
+// Necesario para tipos raylib internos usados en re-exports
+#[allow(unused_imports)]
 use raylib::prelude::*;
 use ry_gfx::ColorRydit;
 

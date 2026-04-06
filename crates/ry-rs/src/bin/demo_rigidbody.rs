@@ -222,7 +222,7 @@ fn main() -> Result<(), String> {
                 unsafe {
                     let sdl_surface = sdl2::surface::Surface::from_ll(surface_ptr as *mut sdl2::sys::SDL_Surface);
                     if let Ok(tex) = tc.create_texture_from_surface(&sdl_surface) {
-                        return Some(unsafe { std::mem::transmute(tex) });
+                        return Some(std::mem::transmute(tex));
                     }
                 }
             }

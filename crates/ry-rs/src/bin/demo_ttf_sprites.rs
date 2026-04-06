@@ -12,8 +12,6 @@ use sdl2::pixels::Color;
 use sdl2::rect::Rect;
 use sdl2::surface::Surface;
 use sdl2::image::LoadSurface;
-use sdl2::event::Event;
-use sdl2::keyboard::Keycode;
 
 fn main() -> Result<(), String> {
     println!("🛡️ RyDit v0.11.6 - Demo TTF + Sprites");
@@ -116,11 +114,11 @@ fn main() -> Result<(), String> {
 
     let mut frame = 0u64;
     let mut saltos = 0u64;
-    let mut running = true;
+    let _running = true;
 
     println!("\n🎮 ← → = Mover | SPACE = Saltar | R = Reset | ESC = Salir\n");
 
-    'running: loop {
+    loop {
         let dt = 0.016f32;
         frame += 1;
 
