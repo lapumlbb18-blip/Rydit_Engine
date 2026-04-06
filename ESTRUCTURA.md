@@ -1,9 +1,9 @@
-# Ry-Dit - ESTRUCTURA DEL PROYECTO v0.12.0
+# Ry-Dit - ESTRUCTURA DEL PROYECTO v0.13.0
 
 **Última actualización**: 2026-04-05
-**Versión**: v0.12.0 ry-anim Action Assets + Quest + Save/Load + ry-stream
-**Commit**: `405a945` (HEAD)
-**Estado**: `cargo check --workspace`: 0 errores | 22 crates compilando | 58 tests pasando
+**Versión**: v0.13.0 events-ry + Panel Visual + RyBot IPC + LAZOS
+**Commit**: `118ee6a` (HEAD)
+**Estado**: `cargo check --workspace`: 0 errores | 23 crates compilando | 95 tests pasando
 
 ---
 
@@ -11,11 +11,12 @@
 
 ```
 shield-project/
-├── Cargo.toml                  # Workspace (22 crates)
-├── README.md                   # Documentación principal
-├── ROADMAP.md                  # Planificación v0.12→v1.0
+├── Cargo.toml                  # Workspace (23 crates)
+├── README.md                   # Documentación principal (v0.13.0)
+├── ROADMAP.md                  # Planificación v0.13→v1.0
 ├── QWEN.md                     # Bitácora técnica
 ├── ESTRUCTURA.md               # Este archivo
+├── TASKS.md                    # 🆕 Tareas principales y paralelas
 ├── CONTRIBUTING.md             # Guía contribuidores
 ├── MANIFIESTO.md               # Filosofía del proyecto
 ├── LICENSE                     # MIT
@@ -41,7 +42,8 @@ shield-project/
 │   ├── toolkit-ry/             # 0.1.0  UI toolkit (5 temas + 20+ widgets)
 │   ├── migui/                  #        Immediate mode GUI (12 widgets)
 │   ├── blast-core/             # 0.1.0  Minimal value executor
-│   ├── lizer/                  # 0.11.2 Legacy lexer wrapper
+│   ├── lizer/                  # 0.11.2 Legacy lexer wrapper (con AST cache)
+│   ├── events-ry/              # 🆕 0.1.0  Input unificado + TextInput + Shell
 │   └── v-shield/               #        Platform layer (pendiente)
 │   └── ~~ry-ecs~~/             #        🗑️ Eliminado (-1,143 líneas)
 │
@@ -375,9 +377,9 @@ Código .rydit
 
 <div align="center">
 
-**Ry-Dit v0.12.0 -- ESTRUCTURA ACTUALIZADA**
+**Ry-Dit v0.13.0 -- ESTRUCTURA ACTUALIZADA**
 
-*22 crates | ~25K+ líneas Rust | ry-anim v0.12.0 | 58 tests | 2 crates publicados*
+*23 crates | ~27K+ líneas Rust | events-ry v0.1.0 | 95 tests | 2 crates publicados*
 
 *Última actualización: 2026-04-05*
 
