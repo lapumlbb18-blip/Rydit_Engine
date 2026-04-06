@@ -284,7 +284,7 @@ fn main() -> Result<(), String> {
     let txt_titulo = crear_textura(&backend.font, "[RyDit] Torreta vs Sprites", 255, 255, 255, tc);
     let txt_menu_start = crear_textura(&backend.font, "> START GAME", 0, 255, 100, tc);
     let txt_menu_controls = crear_textura(&backend.font, "- CONTROLES", 100, 200, 255, tc);
-    let txt_controls = crear_textura(&backend.font, "← → ó A/D = Mover | SPACE = Disparar | P = Pausa | ESC = Salir", 150, 150, 150, tc);
+    let txt_controls = crear_textura(&backend.font, "← → ó ← → ó A/D = Mover | W ó ↑ = Saltar | SPACE = Disparar | P = Pausa | ESC = Salir", 150, 150, 150, tc);
 
     // ====================================================================
     // GAME STATE
@@ -355,6 +355,15 @@ fn main() -> Result<(), String> {
                                 });
                                 cooldown = 15;
                                 if let Some(ref mut a) = audio { let _ = a.play_sound("shoot"); }
+                            }
+                            Keycode::Up | Keycode::W => {
+                                if torreta.en_suelo {
+                                    torreta.vy = -450.0;
+                                    torreta.en_suelo = false;
+                                }
+                            }
+                            Keycode::Down | Keycode::S => {
+                                torreta.vy += 200.0;
                             }
                             Keycode::Left | Keycode::A => { torreta.x -= 4.0; torreta.dir = -1; }
                             Keycode::Right | Keycode::D => { torreta.x += 4.0; torreta.dir = 1; }
