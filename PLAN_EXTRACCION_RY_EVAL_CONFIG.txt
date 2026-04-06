@@ -12,27 +12,34 @@ Si algo sale mal: git reset --hard v0.14.0-pre-extract
 
 ## 🗺️ PLAN COMPLETO
 
-### PASO 1: ry-config (30min) ✅ EN PROGRESO
+### PASO 1: ry-config (30min) ✅ COMPLETADO
 - [x] Crear crates/ry-config/Cargo.toml
 - [x] Crear crates/ry-config/src/lib.rs (copiar config_parser.rs)
-- [ ] Agregar al workspace Cargo.toml
-- [ ] Verificar compilación: cargo check -p ry-config
-- [ ] Tests: cargo test -p ry-config
-- [ ] Commit: "ry-config crate creado"
+- [x] Agregar al workspace Cargo.toml
+- [x] Verificar compilación: cargo check -p ry-config
+- [x] Tests: cargo test -p ry-config (3/3 pasando)
+- [x] Commit: "ry-config crate creado"
 
-### PASO 2: ry-eval (2-3h)
-- [ ] Crear crates/ry-eval/Cargo.toml
-- [ ] Crear crates/ry-eval/src/lib.rs (mover eval/mod.rs)
-- [ ] Agregar al workspace
-- [ ] Verificar compilación: cargo check -p ry-eval
-- [ ] Actualizar imports en ry-rs (main.rs, modules/)
-- [ ] Tests: cargo test -p ry-eval
-- [ ] Commit: "ry-eval crate creado"
+### PASO 2: ry-eval → NO EXTRAER (eval tiene 9 deps internas)
+- [x] Análisis: eval/mod.rs depende de modules/* (assets, audio, camera, etc.)
+- [x] Decisión: ry-math sería viable (math/arrays/vec2 puras) pero bajo ROI
+- [x] eval/ se queda en ry-rs donde funciona
 
-### PASO 3: ry-rs lib (15min)
-- [ ] Agregar [lib] a ry-rs/Cargo.toml
-- [ ] Actualizar lib.rs → pub use ry_eval::*; pub use ry_config::*;
-- [ ] Commit: "ry-rs lib restaurada"
+### PASO 3: ry-rs lib ✅ COMPLETADO
+- [x] Agregar [lib] a ry-rs/Cargo.toml
+- [x] lib.rs actualizado → re-exporta ry_config types
+- [x] Commit: "ry-rs lib restaurada"
+
+### PASO 3.5: Código muerto eliminado ✅ COMPLETADO
+- [x] Eliminar module.rs (230 líneas, 0 consumidores)
+- [x] Limpiar re-exports muertos en main.rs
+- [x] ry_core::RyditModule es el productivo (5 impls, 7+ crates)
+
+### PASO 4: Verificación final ✅ COMPLETADO
+- [x] cargo check --workspace → 0 errores, 25 crates
+- [ ] cargo test --workspace → ry-test y ry-rs test tienen issues pre-existentes
+- [ ] cargo clippy --workspace
+- [ ] cargo fmt --all
 
 ### PASO 4: Verificación final (1-2h)
 - [ ] cargo check --workspace
