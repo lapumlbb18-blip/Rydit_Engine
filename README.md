@@ -6,59 +6,57 @@
 
 **"Construido sin prisa, madurado con paciencia"**
 
-[![Version](https://img.shields.io/badge/version-v0.12.0-blue.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
+[![Version](https://img.shields.io/badge/version-v0.13.0-blue.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
 [![Errors](https://img.shields.io/badge/errors-0-green.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
-[![Tests](https://img.shields.io/badge/tests-58%2F58-brightgreen.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
-[![Status](https://img.shields.io/badge/estado-v0.12.0--anim--action--assets-green.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
+[![Tests](https://img.shields.io/badge/tests-95%2F95-brightgreen.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
+[![Status](https://img.shields.io/badge/estado-v0.13.0--events--ry--panel--visual-green.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
 [![SDL2](https://img.shields.io/badge/SDL2-0.37-red.svg)](https://www.libsdl.org/)
 [![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/lapumlbb18-blip/Ry-dit/blob/main/LICENSE)
 [![crates.io](https://img.shields.io/badge/crates.io-2%20publicados-purple.svg)](https://crates.io/crates/ry-god)
 
-[📖 Documentación](#-documentación) • [🆕 Qué hay de nuevo en v0.12.0](#-qué-hay-de-nuevo-en-v0120) • [🔧 Estado Actual](#-estado-actual) • [🎬 ry-anim v0.12.0](#-ry-anim-v0120--41-funciones--58-tests) • [🏆 Logros](#-logros) • [🎯 Roadmap](#-roadmap)
+[📖 Documentación](#-documentación) • [🆕 Qué hay de nuevo en v0.13.0](#-qué-hay-de-nuevo-en-v0130) • [🔧 Estado Actual](#-estado-actual) • [🔌 events-ry v0.1.0](#-events-ry-v010--input-unificado--text-input--shell) • [🎮 Panel Visual](#-panel-visual-demo_panel_visual) • [🏆 Logros](#-logros) • [🎯 Roadmap](#-roadmap)
 
 </div>
 
 ---
 
-## 🆕 ¿Qué hay de nuevo en v0.12.0?
+## 🆕 ¿Qué hay de nuevo en v0.13.0?
 
 **Última actualización**: 2026-04-05
-**Versión actual**: v0.12.0 ✅ FUNCIONAL
-**Commit**: `405a945`
-**Estado**: 22 crates compilando | 0 errores | 58 tests pasando
+**Versión actual**: v0.13.0 ✅ FUNCIONAL
+**Commit**: `2f48a44`
+**Estado**: 23 crates compilando | 0 errores | 95 tests pasando
 
-### ry-anim v0.12.0 Completo ✅
-| Versión | Features | Tests | Demos |
-|---------|----------|-------|-------|
-| v0.8.0 | 15 Disney completo | 28 | — |
-| v0.9.0 | 21 + 6 ilusiones | 35 | demo_illusions |
-| v0.10.0 | 27 + 6 efectos | 42 | demo_effects |
-| v0.11.0 | 35 + 8 ciencia | 50 | demo_science |
-| v0.12.0 | 41 + 6 action_assets | 58 | demo_action_assets |
+### 🔌 events-ry v0.1.0 Completo ✅
+| Capa | Funciones | Tests | Descripción |
+|------|-----------|-------|-------------|
+| **CAPA 1: InputEvent** | 41 variantes + 90+ teclas | 37 | Input unificado (teclado, mouse, touch, gamepad) |
+| **CAPA 2: TextInput** | Composición IME completa | — | Backspace, cursor, commit/cancel, max_length |
+| **CAPA 3: Shell** | 9 handlers integrados | — | help, load, exec, debug, echo, clear, version |
+| **MANAGER** | InputManager unificado | — | Conecta las 3 capas + MockBackend |
+| **SDL2 Backend** | Sdl2InputBackend (feature) | — | EventPump → InputEvent real |
 
-### Sesión Completa (todo lo hecho)
-1. ✅ Math avanzado: 23 funciones nuevas (pow, log, derivadas, integrales, PI, E...)
-2. ✅ Arrays completos: 16 funciones (push, pop, len, insert, remove, contains...)
-3. ✅ Vec2 tipo nativo: 22 operaciones (add, sub, scale, normalize, dot, cross...)
-4. ✅ toolkit-ry v0.1.0: 5 temas + 20+ widgets UI
-5. ✅ ry3d-gfx v0.1.0: 15 funciones 3D (cube, sphere, cylinder, grid...)
-6. ✅ Fix input Android: SDL_TEXTINPUT + 7 hints SDL2
-7. ✅ FSR 1.0 integrado con shaders embebidos
-8. ✅ Quest System: 10 funciones
-9. ✅ Save/Load System: 10 funciones
-10. ✅ One-way platforms: 2 funciones
-11. ✅ ry-stream v0.1.0 publicado en crates.io
-12. ✅ ry-ecs eliminado (-1,143 líneas)
-13. ✅ nbody_simulate movido a ry-physics
-14. ✅ ry-anim v0.8.0 → v0.12.0 completo (41 funciones, 58 tests, 4 demos)
-15. ✅ Fix linking raylib en build.rs
-16. ✅ demo_anime_ry ELF compilado (341K release)
-17. ✅ 9 documentos nuevos creados
-18. ✅ 17 archivos antiguos organizados en docs/
+### 🎮 Panel Visual (inspirado en bgfx_libs) ✅
+| Panel | Contenido | Activación |
+|-------|-----------|------------|
+| **Screen** | 6 escenas ry-anim animadas | Tecla 1 |
+| **Console** | Shell interactivo + comandos | Tecla 2 |
+| **Input State** | Mouse, keys, FPS en vivo | Tecla 3 |
+| **Controls** | Key bindings del panel | Tecla 4 |
 
-### ELFs Compilados
+### Sesión Completa v0.13.0 (todo lo hecho)
+1. ✅ **events-ry v0.1.0**: Input unificado + TextInput + Shell (95 tests totales)
+2. ✅ **Sdl2InputBackend**: Backend real con SDL2 event_pump (feature-gated)
+3. ✅ **demo_panel**: Panel consola puro con shell interactivo
+4. ✅ **demo_panel_visual**: Panel visual SDL2 completo (inspirado en bgfx_libs/console_emulator_prototype.cpp)
+5. ✅ **6 escenas animadas**: Disney Follow Through, Arcs, Rotating Snakes, Neon Glow, Morphing, Tusi Couple
+6. ✅ **Pipeline gráfico**: Zink/DRI3 → OpenGL ES → VirGL fallback
+7. ✅ **Limpieza warnings**: 146→37 warnings (0 errores)
+8. ✅ **events-ry integrado** como dependencia de ry-rs
+9. ✅ **TextInputAction exportado** públicamente
+10. ✅ **Tag v0.13.0** creado y publicado
 | Demo | Tamaño | Modo |
 |------|--------|------|
 | demo_anime_ry | 341K | release |
@@ -66,40 +64,40 @@
 
 ---
 
-## 🔧 ESTADO ACTUAL - v0.12.0 ANIM + ACTION ASSETS
+## 🔧 ESTADO ACTUAL - v0.13.0 EVENTS-RY + PANEL VISUAL
 
-### ✅ **ESTADO REAL: v0.12.0 - 22 CRATES COMPILANDO | 0 ERRORES | 58 TESTS**
+### ✅ **ESTADO REAL: v0.13.0 - 23 CRATES COMPILANDO | 0 ERRORES | 95 TESTS**
 
 **Última actualización**: 2026-04-05
-**Versión actual**: v0.12.0 ✅ FUNCIONAL
-**Próxima versión**: v0.13.0 - ry-input + Demos completos
-**Estado**: ry-anim ✅ | ry-stream ✅ | ry-god ✅ | Quest ✅ | Save/Load ✅ | FSR ✅
-**Commit**: `405a945` (HEAD)
-**Crates**: 22 en workspace | 0 errores | 58 tests pasando
+**Versión actual**: v0.13.0 ✅ FUNCIONAL
+**Próxima versión**: v0.14.0 - migui texto real + v-shield platform layer
+**Estado**: events-ry ✅ | Panel Visual ✅ | ry-anim ✅ | ry-stream ✅ | ry-god ✅
+**Commit**: `2f48a44` (HEAD)
+**Crates**: 23 en workspace | 0 errores | 95 tests pasando
 **Crates publicados**: 2 (ry-god + ry-stream)
 
 ---
 
-### ✅ **LO QUE SÍ FUNCIONA (v0.12.0)**
+### ✅ **LO QUE SÍ FUNCIONA (v0.13.0)**
 
 | Sistema | Estado | Notas |
 |---------|--------|-------|
-| **ry-anim** | ✅ v0.12.0 | 41 funciones, 58 tests, 4 demos |
+| **events-ry** | ✅ v0.1.0 | Input unificado + TextInput + Shell + Sdl2InputBackend |
+| **demo_panel_visual** | ✅ 4 paneles | Screen, Console, Input, Controls |
+| **ry-anim** | ✅ v0.12.0 | 41 funciones, 58 tests, 6 escenas en panel |
 | **ry-stream** | ✅ v0.1.0 crates.io | LAN streaming |
 | **ry-god** | ✅ v0.1.0 crates.io | Security & Efficiency |
-| **Math avanzado** | ✅ 23 funciones | pow, log, exp, PI, derivada, integral |
+| **Math avanzado** | ✅ 33 funciones | pow, log, exp, PI, derivada, integral |
 | **Arrays** | ✅ 16 funciones | push, pop, slice, contains, join... |
 | **Vec2** | ✅ 22 operaciones | add, sub, normalize, dot, rotate... |
 | **toolkit-ry** | ✅ v0.1.0 | 5 temas + 20+ widgets |
 | **ry3d-gfx** | ✅ v0.1.0 | 15 funciones 3D |
 | **Quest System** | ✅ 10 funciones | create, objectives, rewards... |
 | **Save/Load** | ✅ 10 funciones | create, set_var, load, list... |
-| **One-way platforms** | ✅ 2 funciones | check_one_way, resolve_one_way |
 | **FSR 1.0** | ✅ Integrado | Shaders embebidos |
 | **Parser** | ✅ Infalible | 6 bugs raíz resueltos |
-| **Input SDL2** | ✅ Fix Android | SDL_TEXTINPUT + 7 hints |
 | **SDL2_ttf** | ✅ Texto real | Texturas cacheadas |
-| **Sprites PNG** | ✅ 4 cargados | SDL2_image |
+| **Sprites PNG** | ✅ Cargados | SDL2_image |
 | **Audio SDL2** | ✅ Tonos WAV | SDL2_mixer |
 | **Demos binarios** | ✅ ~20+ | src/bin/ |
 
@@ -134,7 +132,7 @@ demo_50k_particulas, demo_action_assets, demo_anime_ry, demo_carga_sprites, demo
 
 ---
 
-## 📊 Lista de Crates (22)
+## 📊 Lista de Crates (23)
 
 | Crate | Versión | Estado |
 |-------|---------|--------|
@@ -159,6 +157,7 @@ demo_50k_particulas, demo_action_assets, demo_anime_ry, demo_carga_sprites, demo
 | lizer | 0.11.2 | ✅ |
 | v-shield | — | ⚠️ |
 | ry3d-gfx | 0.1.0 | ✅ |
+| **events-ry** | **0.1.0** | ✅ **NUEVO** |
 | ~~ry-ecs~~ | — | 🗑️ Eliminado |
 
 ---
@@ -171,7 +170,8 @@ demo_50k_particulas, demo_action_assets, demo_anime_ry, demo_carga_sprites, demo
 |---------|--------|----------|-------|
 | **v0.11.5** | ✅ | 0 Errores + lifetimes fixeados | 2026-04-02 |
 | **v0.12.0** | ✅ | ry-anim v0.12.0 + Quest + Save/Load + ry-stream crates.io | 2026-04-05 |
-| **v0.13.0** | ⏳ | ry-input + Demos completos | Próxima versión |
+| **v0.13.0** | ✅ | events-ry + Panel Visual + Demo Panel + Warnings fix | 2026-04-05 |
+| **v0.14.0** | ⏳ | migui texto real + v-shield platform layer | Próxima versión |
 | **v1.0.0** | ⏳ | Motor Completo + Editor Visual | Futuro |
 
 </div>
@@ -182,11 +182,13 @@ demo_50k_particulas, demo_action_assets, demo_anime_ry, demo_carga_sprites, demo
 
 | Tarea | Esfuerzo | Prioridad |
 |-------|----------|-----------|
-| ry-input crate (SDL2 input + raylib render) | 10-15h | 🔴 Alta |
-| Sprite animation en juegos reales | 15-20h | 🟡 Media |
+| migui texto real (ab_glyph) | 4-6h | 🔴 Alta |
+| Sdl2InputBackend en demo real | 2-3h | 🔴 Alta |
 | v-shield platform layer | 15-20h | 🟡 Media |
+| Consola visual en ry-gfx | 3-4h | 🟡 Media |
 | ry-stream v0.2.0 (mDNS) | 8-12h | 🟡 Media |
 | ry-physics N-cuerpos >2 | 10-15h | 🟡 Media |
+| HybridBackend (SDL2+raylib) | 6-8h | 🟡 Media |
 | LAZOS Python bridge | 20-30h | 🔮 Futuro |
 | Editor visual | 24-32h | 🔮 Futuro |
 
@@ -249,10 +251,10 @@ demo_50k_particulas, demo_action_assets, demo_anime_ry, demo_carga_sprites, demo
 
 <div align="center">
 
-## Ry-Dit v0.12.0 - ry-anim Action Assets + 58 Tests
+## Ry-Dit v0.13.0 - events-ry + Panel Visual
 
-*0 errores | 22 crates compilando | 58 tests | 2 crates publicados*
+*0 errores | 23 crates compilando | 95 tests | 2 crates publicados*
 
-**Proxima version: v0.13.0 - ry-input + Demos completos**
+**Proxima version: v0.14.0 - migui texto real + v-shield platform layer**
 
 </div>
