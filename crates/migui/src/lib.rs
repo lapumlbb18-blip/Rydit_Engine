@@ -291,6 +291,58 @@ pub enum DrawCommand {
 }
 
 // ============================================================================
+// MENU BAR SYSTEM (Dear ImGui style)
+// ============================================================================
+
+pub struct MenuItem {
+    pub label: String,
+    pub enabled: bool,
+    pub shortcut: String,
+    pub selected: bool,
+    pub submenu: Option<Vec<MenuItem>>,
+}
+
+impl MenuItem {
+    pub fn new(label: &str) -> Self {
+        Self { label: label.into(), enabled: true, shortcut: String::new(), selected: false, submenu: None }
+    }
+    pub fn separator() -> Self {
+        Self { label: "---".into(), enabled: false, shortcut: String::new(), selected: false, submenu: None }
+    }
+    pub fn with_submenu(mut self, items: Vec<MenuItem>) -> Self {
+        self.submenu = Some(items); self
+    }
+    pub fn shortcut(mut self, s: &str) -> Self {
+        self.shortcut = s.into(); self
+    }
+}
+
+pub struct Menu {
+    pub label: String,
+    pub items: Vec<MenuItem>,
+    pub open: bool,
+    pub hovered_item: Option<usize>,
+}
+
+impl Menu {
+    pub fn new(label: &str, items: Vec<MenuItem>) -> Self {
+        Self { label: label.into(), items, open: false, hovered_item: None }
+    }
+}
+
+pub struct MenuBar {
+    pub menus: Vec<Menu>,
+    pub active_menu: Option<usize>,
+    pub selected_item: Option<(usize, usize)>,
+}
+
+impl MenuBar {
+    pub fn new(menus: Vec<Menu>) -> Self {
+        Self { menus, active_menu: None, selected_item: None }
+    }
+}
+
+// ============================================================================
 // BACKEND TRAIT
 // ============================================================================
 
@@ -1222,6 +1274,151 @@ impl Migui {
     /// Finalizar layout horizontal
     pub fn end_horizontal(&mut self, _id: WidgetId) {
         // Limpieza opcional
+    }
+
+    // ========================================================================
+    // MENU BAR (Dear ImGui style)
+    // ========================================================================
+
+    /// Renderizar barra de menús
+    pub fn menu_bar(&mut self, menu_bar: &mut MenuBar, x: f32, y: f32, total_width: f32) {
+        let bar_h = 24.0;
+        let menu_w = total_width / menu_bar.menus.len() as f32;
+
+        self.draw_commands.push(DrawCommand::DrawRect {
+            rect: Rect { x, y, w: total_width, h: bar_h },
+            color: Color { r: 45, g: 45, b: 55, a: 255 },
+        });
+
+        let num_menus = menu_bar.menus.len();
+        for mi in 0..num_menus {
+            let mx = x + mi as f32 * menu_w;
+            let hovered = self.mouse_x >= mx && self.mouse_x < mx + menu_w
+                && self.mouse_y >= y && self.mouse_y < y + bar_h;
+
+            let is_open = menu_bar.menus[mi].open;
+            let label = menu_bar.menus[mi].label.clone();
+            let bg = if is_open || hovered {
+                Color { r: 60, g: 60, b: 80, a: 255 }
+            } else {
+                Color { r: 45, g: 45, b: 55, a: 255 }
+            };
+            self.draw_commands.push(DrawCommand::DrawRect {
+                rect: Rect { x: mx, y, w: menu_w, h: bar_h },
+                color: bg,
+            });
+            self.draw_commands.push(DrawCommand::DrawText {
+                text: label,
+                x: mx + 8.0,
+                y: y + 4.0,
+                size: 14,
+                color: Color { r: 220, g: 220, b: 230, a: 255 },
+            });
+
+            if hovered && self.mouse_pressed {
+                if menu_bar.active_menu == Some(mi) {
+                    menu_bar.menus[mi].open = false;
+                    menu_bar.active_menu = None;
+                } else {
+                    if let Some(prev) = menu_bar.active_menu {
+                        menu_bar.menus[prev].open = false;
+                    }
+                    menu_bar.active_menu = Some(mi);
+                    menu_bar.menus[mi].open = true;
+                }
+            }
+
+            if menu_bar.menus[mi].open {
+                let mw = menu_w * 1.5;
+                self.render_menu_items(&mut menu_bar.menus[mi], mx, y + bar_h, mw);
+            }
+        }
+    }
+
+    /// Renderizar items de un menú desplegable
+    fn render_menu_items(&mut self, menu: &mut Menu, x: f32, y: f32, w: f32) {
+        let item_h = 22.0;
+        let total_h = menu.items.len() as f32 * item_h;
+
+        // Fondo del dropdown
+        self.draw_commands.push(DrawCommand::DrawRect {
+            rect: Rect { x, y, w, h: total_h },
+            color: Color { r: 50, g: 50, b: 65, a: 255 },
+        });
+
+        // Borde
+        self.draw_commands.push(DrawCommand::DrawLine {
+            x1: x, y1: y, x2: x + w, y2: y,
+            color: Color { r: 70, g: 70, b: 90, a: 255 }, thickness: 1.0,
+        });
+        self.draw_commands.push(DrawCommand::DrawLine {
+            x1: x, y1: y + total_h, x2: x + w, y2: y + total_h,
+            color: Color { r: 70, g: 70, b: 90, a: 255 }, thickness: 1.0,
+        });
+
+        for (ii, item) in menu.items.iter().enumerate() {
+            let iy = y + ii as f32 * item_h;
+            let hovered = self.mouse_x >= x && self.mouse_x < x + w
+                && self.mouse_y >= iy && self.mouse_y < iy + item_h;
+
+            if item.label == "---" {
+                // Separador
+                self.draw_commands.push(DrawCommand::DrawLine {
+                    x1: x + 4.0, y1: iy + item_h / 2.0,
+                    x2: x + w - 4.0, y2: iy + item_h / 2.0,
+                    color: Color { r: 70, g: 70, b: 90, a: 255 }, thickness: 1.0,
+                });
+            } else {
+                // Item normal o hover
+                let bg = if hovered {
+                    Color { r: 70, g: 100, b: 180, a: 255 }
+                } else {
+                    Color { r: 50, g: 50, b: 65, a: 0 }
+                };
+                if bg.a > 0 {
+                    self.draw_commands.push(DrawCommand::DrawRect {
+                        rect: Rect { x: x + 2.0, y: iy + 1.0, w: w - 4.0, h: item_h - 2.0 },
+                        color: bg,
+                    });
+                }
+
+                // Texto
+                let text_color = if item.enabled {
+                    Color { r: 220, g: 220, b: 230, a: 255 }
+                } else {
+                    Color { r: 120, g: 120, b: 130, a: 255 }
+                };
+                self.draw_commands.push(DrawCommand::DrawText {
+                    text: item.label.clone(),
+                    x: x + 12.0,
+                    y: iy + 4.0,
+                    size: 13,
+                    color: text_color,
+                });
+
+                // Shortcut
+                if !item.shortcut.is_empty() {
+                    self.draw_commands.push(DrawCommand::DrawText {
+                        text: item.shortcut.clone(),
+                        x: x + w - 60.0,
+                        y: iy + 4.0,
+                        size: 11,
+                        color: Color { r: 150, g: 150, b: 160, a: 255 },
+                    });
+                }
+
+                // Submenu indicator
+                if item.submenu.is_some() {
+                    self.draw_commands.push(DrawCommand::DrawText {
+                        text: "▶".into(),
+                        x: x + w - 16.0,
+                        y: iy + 4.0,
+                        size: 12,
+                        color: Color { r: 180, g: 180, b: 190, a: 255 },
+                    });
+                }
+            }
+        }
     }
 }
 
