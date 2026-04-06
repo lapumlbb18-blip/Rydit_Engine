@@ -1,7 +1,6 @@
-// crates/rydit-rs/src/config_parser.rs
-// Parser de Configuración - RyDit v0.10.2
-// Parsea archivos .rydit como configuración (NO como script)
-// Solo datos, sin lógica, sin evaluator pesado
+// ry-config - Config parser for Ry-Dit
+// Parsea archivos .rydit como configuración (entidades, niveles, checkpoints)
+// Sin dependencias externas - pure Rust
 
 use std::collections::HashMap;
 use std::fs;
@@ -58,7 +57,7 @@ impl ConfigParser {
     }
 
     /// Parsear contenido de configuración
-    fn parse_contenido(contenido: &str) -> Result<NivelConfig, String> {
+    pub fn parse_contenido(contenido: &str) -> Result<NivelConfig, String> {
         let mut config = NivelConfig {
             nombre: String::new(),
             gravedad: 9.8,
@@ -74,31 +73,25 @@ impl ConfigParser {
         for linea in contenido.lines() {
             let linea = linea.trim();
 
-            // Saltar comentarios y líneas vacías
             if linea.is_empty() || linea.starts_with('#') {
                 continue;
             }
 
-            // Metadata
             if linea.starts_with("@nombre") {
                 config.nombre = Self::extraer_texto(linea, "@nombre")?;
             } else if linea.starts_with("@descripcion") {
-                // Ignorar descripción
+                // Ignorar
             } else if linea.starts_with("@autor") {
-                // Ignorar autor
+                // Ignorar
             } else if linea.starts_with("@version") {
-                // Ignorar versión
-            }
-            // Mundo
-            else if linea.contains("gravedad:") {
+                // Ignorar
+            } else if linea.contains("gravedad:") {
                 config.gravedad = Self::extraer_numero(linea, "gravedad:")?;
             } else if linea.contains("fondo:") {
                 config.fondo = Self::extraer_texto(linea, "fondo:")?;
             } else if linea.contains("musica:") {
                 config.musica = Self::extraer_texto(linea, "musica:")?;
-            }
-            // Entidades
-            else if linea.starts_with("entidad") {
+            } else if linea.starts_with("entidad") {
                 if let Some(ent) = entidad_actual.take() {
                     config.entidades.push(ent);
                 }
@@ -114,9 +107,7 @@ impl ConfigParser {
                     propiedades: HashMap::new(),
                 });
                 bloque_actual = "entidad".to_string();
-            }
-            // Propiedades de entidad
-            else if !bloque_actual.is_empty() {
+            } else if !bloque_actual.is_empty() {
                 if let Some(ref mut ent) = entidad_actual {
                     if linea.contains("tipo:") {
                         ent.tipo = Self::extraer_texto(linea, "tipo:")?;
@@ -150,24 +141,17 @@ impl ConfigParser {
                         ent.propiedades
                             .insert("estatica".to_string(), ValorConfig::Bool(val == "true"));
                     }
-
-                    // Fin de bloque entidad
                     if linea == "}" {
                         config.entidades.push(ent.clone());
                         entidad_actual = None;
                         bloque_actual = String::new();
                     }
                 }
-            }
-            // Checkpoints
-            else if linea.starts_with("checkpoint") {
+            } else if linea.starts_with("checkpoint") {
                 let _id = Self::extraer_id(linea)?;
                 bloque_actual = "checkpoint".to_string();
-                // Leer x, y en las siguientes líneas
-                // (implementación simplificada)
             } else if bloque_actual == "checkpoint" {
                 if linea.contains("x:") && linea.contains("y:") {
-                    // Formato: x: 100, y: 200
                     let partes: Vec<&str> = linea.split(',').collect();
                     if partes.len() == 2 {
                         let x = Self::extraer_numero(partes[0], "x:")?;
@@ -189,7 +173,6 @@ impl ConfigParser {
             }
         }
 
-        // Agregar última entidad si existe
         if let Some(ent) = entidad_actual {
             config.entidades.push(ent);
         }
@@ -201,7 +184,7 @@ impl ConfigParser {
     // HELPERS
     // ========================================================================
 
-    fn extraer_texto(linea: &str, clave: &str) -> Result<String, String> {
+    pub fn extraer_texto(linea: &str, clave: &str) -> Result<String, String> {
         let partes: Vec<&str> = linea.splitn(2, clave).collect();
         if partes.len() < 2 {
             return Err(format!("No se encontró '{}' en: {}", clave, linea));
@@ -210,15 +193,14 @@ impl ConfigParser {
         Ok(valor.to_string())
     }
 
-    fn extraer_numero(linea: &str, clave: &str) -> Result<f32, String> {
+    pub fn extraer_numero(linea: &str, clave: &str) -> Result<f32, String> {
         let texto = Self::extraer_texto(linea, clave)?;
         texto
             .parse::<f32>()
             .map_err(|e| format!("Error parseando número '{}': {}", texto, e))
     }
 
-    fn extraer_id(linea: &str) -> Result<String, String> {
-        // entidad "nombre" { → extraer "nombre"
+    pub fn extraer_id(linea: &str) -> Result<String, String> {
         let inicio = linea.find('"').ok_or("No se encontró '\"' en la línea")?;
         let fin = linea[inicio + 1..]
             .find('"')

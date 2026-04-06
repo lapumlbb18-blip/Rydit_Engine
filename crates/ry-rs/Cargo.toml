@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 ry-core = { path = "../ry-core" }
+ry-config = { path = "../ry-config" }  # 🆕 v0.14.0: Config parser
 ry-loader = { path = "../ry-loader" }
 ry-science = { path = "../ry-science" }
 ry-physics = { path = "../ry-physics" }

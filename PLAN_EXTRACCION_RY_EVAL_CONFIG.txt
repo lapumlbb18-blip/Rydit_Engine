@@ -1,0 +1,85 @@
+# PROCESO: Extracción ry-eval + ry-config (Opción C+B)
+
+## 📌 PUNTO DE RESTAURACIÓN
+Tag git: v0.14.0-pre-extract
+Si algo sale mal: git reset --hard v0.14.0-pre-extract
+
+## ⚠️ REGLAS DE ORO
+1. NUNCA usar sed para código estructural
+2. Usar SOLO: edit tool, cargo fix, cargo clippy --fix, cargo fmt
+3. Verificar después de cada paso: cargo check --workspace
+4. Commits frecuentes por paso completado
+
+## 🗺️ PLAN COMPLETO
+
+### PASO 1: ry-config (30min) ✅ EN PROGRESO
+- [x] Crear crates/ry-config/Cargo.toml
+- [x] Crear crates/ry-config/src/lib.rs (copiar config_parser.rs)
+- [ ] Agregar al workspace Cargo.toml
+- [ ] Verificar compilación: cargo check -p ry-config
+- [ ] Tests: cargo test -p ry-config
+- [ ] Commit: "ry-config crate creado"
+
+### PASO 2: ry-eval (2-3h)
+- [ ] Crear crates/ry-eval/Cargo.toml
+- [ ] Crear crates/ry-eval/src/lib.rs (mover eval/mod.rs)
+- [ ] Agregar al workspace
+- [ ] Verificar compilación: cargo check -p ry-eval
+- [ ] Actualizar imports en ry-rs (main.rs, modules/)
+- [ ] Tests: cargo test -p ry-eval
+- [ ] Commit: "ry-eval crate creado"
+
+### PASO 3: ry-rs lib (15min)
+- [ ] Agregar [lib] a ry-rs/Cargo.toml
+- [ ] Actualizar lib.rs → pub use ry_eval::*; pub use ry_config::*;
+- [ ] Commit: "ry-rs lib restaurada"
+
+### PASO 4: Verificación final (1-2h)
+- [ ] cargo check --workspace
+- [ ] cargo test --workspace
+- [ ] cargo clippy --workspace
+- [ ] cargo fmt --all
+- [ ] Commit: "Verificación completa"
+
+### PASO 5: Publicación (opcional)
+- [ ] Publicar ry-config en crates.io
+- [ ] Publicar ry-eval en crates.io
+- [ ] Commit: "crates publicados"
+
+## 📊 DEPENDENCIAS
+
+ry-config:
+  └── Zero deps (std::collections, std::fs)
+
+ry-eval:
+  ├── ry-core
+  ├── ry-parser
+  ├── ry-lexer
+  └── serde_json
+
+ry-rs (después):
+  ├── ry-config (en vez de config_parser local)
+  ├── ry-eval (en vez de eval/ local)
+  ├── ry-gfx
+  ├── ry-backend
+  └── ... resto de deps actuales
+
+## 🔄 ROLLBACK
+
+Si algo falla en cualquier paso:
+git reset --hard v0.14.0-pre-extract
+git push origin main --force
+
+## 📁 ARCHIVOS INVOLUCRADOS
+
+ry-rs/src/config_parser.rs → crates/ry-config/src/lib.rs
+ry-rs/src/eval/mod.rs → crates/ry-eval/src/lib.rs
+Cargo.toml (workspace) → agregar ry-config, ry-eval
+ry-rs/Cargo.toml → agregar ry-config, ry-eval como deps
+ry-rs/src/lib.rs → actualizar exports
+ry-rs/src/main.rs → actualizar imports
+
+## ⏱️ TIEMPO ESTIMADO
+Total: 7-10h
+Inicio: 2026-04-06
+Fin estimado: 2026-04-07

@@ -7,10 +7,7 @@ use std::{env, fs};
 use blast_core::Executor;
 use migui::Migui;
 use ry_gfx::RyditGfx;
-
-// ✅ v0.10.4: ConfigParser desde lib.rs (pendiente de uso activo)
-#[allow(unused_imports)]
-use crate::config_parser::ConfigParser;
+use ry_config::ConfigParser;  // 🆕 v0.14.0: ry-config crate
 
 use crate::{
     ejecutar_programa, ejecutar_programa_gfx, ejecutar_programa_migui, init_global_loader,

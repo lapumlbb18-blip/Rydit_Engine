@@ -1,0 +1,11 @@
+[package]
+name = "ry-config"
+version = "0.1.0"
+edition = "2021"
+description = "Config parser for Ry-Dit (.rydit config files, entities, levels)"
+license = "MIT"
+keywords = ["config", "parser", "game-engine", "ry-dit"]
+categories = ["config", "game-development"]
+
+[dependencies]
+# Zero external dependencies - pure Rust

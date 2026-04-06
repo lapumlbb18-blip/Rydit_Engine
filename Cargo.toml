@@ -19,6 +19,7 @@ members = [
     "crates/toolkit-ry", # 🆕 v0.13.0: UI Toolkit para juegos (HUD, menús, inventario)
     "crates/ry3d-gfx",   # 🆕 v0.14.0: 3D Graphics (primitives, camera3D, models)
     "crates/ry-backend",   # Dual backend: raylib drawing + SDL2 input/TTF
+    "crates/ry-config",    # 🆕 v0.14.0: Config parser (entities, levels)
     "crates/events-ry",  # 🆕 v0.13.0: Input unificado + Text Input + Shell (corazón del editor)
 ]
 

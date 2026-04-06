@@ -5,7 +5,6 @@
 mod bindings;
 mod cli;
 mod config;
-mod config_parser; // ✅ v0.10.4: Agregado para cli.rs
 mod eval;
 mod executor;
 mod json_helpers;
