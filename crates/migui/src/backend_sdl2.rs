@@ -6,63 +6,34 @@ use crate::font_native::NativeFontManager;
 use crate::{Color, Migui};
 use sdl2::keyboard::Keycode;
 use sdl2::mouse::MouseButton;
-use sdl2::render::Canvas;
+use sdl2::render::{Canvas, Texture, TextureCreator};
 use sdl2::video::Window;
-
-// ============================================================================
-// FONT MANAGER (Wrapper para NativeFontManager)
-// ============================================================================
-
-/// Gestor de fuentes (usa NativeFontManager internamente)
-pub struct FontManager {
-    #[allow(dead_code)]
-    native: NativeFontManager,
-}
-
-impl FontManager {
-    pub fn new() -> Result<Self, String> {
-        Ok(Self {
-            native: NativeFontManager::with_fallback(),
-        })
-    }
-
-    /// Renderizar texto a superficie SDL2
-    pub fn render_text(
-        &mut self,
-        _text: &str,
-        _size: u32,
-        _color: Color,
-    ) -> Result<sdl2::surface::Surface<'_>, String> {
-        // Placeholder: retorna superficie vacía
-        // En producción, usar ab_glyph o SDL2_ttf
-        sdl2::surface::Surface::new(100, 20, sdl2::pixels::PixelFormatEnum::RGBA8888)
-            .map_err(|e| e.to_string())
-    }
-}
 
 // ============================================================================
 // MIGUI BACKEND SDL2
 // ============================================================================
 
 /// Backend SDL2 para MiGUI
-pub struct MiguiSdl2Backend {
+pub struct MiguiSdl2Backend<'a> {
     canvas: Canvas<Window>,
+    texture_creator: TextureCreator<sdl2::video::WindowContext>,
     mouse_x: i32,
     mouse_y: i32,
-    #[allow(dead_code)]
-    font_manager: Option<FontManager>,
+    font_manager: NativeFontManager,
+    _temp_textures: Vec<Texture<'a>>,
 }
 
-impl MiguiSdl2Backend {
+impl<'a> MiguiSdl2Backend<'a> {
     /// Crear nuevo backend SDL2 para MiGUI
     pub fn new(canvas: Canvas<Window>) -> Self {
-        let font_manager = FontManager::new().ok();
-
+        let texture_creator = canvas.texture_creator();
         Self {
             canvas,
+            texture_creator,
             mouse_x: 0,
             mouse_y: 0,
-            font_manager,
+            font_manager: NativeFontManager::new(),
+            _temp_textures: Vec::new(),
         }
     }
 
@@ -194,20 +165,36 @@ impl MiguiSdl2Backend {
                         .ok();
                 }
                 crate::DrawCommand::DrawText {
-                    text: _,
+                    text,
                     x,
                     y,
-                    size: _,
+                    size,
                     color,
                 } => {
-                    // Placeholder: dibujar rect en vez de texto
-                    // En producción, usar SDL2_ttf o ab_glyph
-                    self.canvas.set_draw_color(sdl2::pixels::Color::RGBA(
-                        color.r, color.g, color.b, color.a,
-                    ));
-                    self.canvas
-                        .fill_rect(sdl2::rect::Rect::new(*x as i32, *y as i32, 50, 20))
-                        .ok();
+                    if let Some(tex_data) = self.font_manager.render_text(text, *size as f32, *color) {
+                        if let Ok(mut texture) = self.texture_creator.create_texture(
+                            sdl2::pixels::PixelFormatEnum::RGBA8888,
+                            sdl2::render::TextureAccess::Streaming,
+                            tex_data.width,
+                            tex_data.height,
+                        ) {
+                            let _ = texture.update(None, &tex_data.pixels, (tex_data.width * 4) as usize);
+                            let dst_rect = sdl2::rect::Rect::new(
+                                *x as i32,
+                                *y as i32,
+                                tex_data.width,
+                                tex_data.height,
+                            );
+                            let _ = self.canvas.copy(&texture, None, dst_rect);
+                        }
+                    } else {
+                        self.canvas.set_draw_color(sdl2::pixels::Color::RGBA(
+                            color.r, color.g, color.b, color.a,
+                        ));
+                        let _ = self.canvas.fill_rect(sdl2::rect::Rect::new(
+                            *x as i32, *y as i32, 50, 20,
+                        ));
+                    }
                 }
                 crate::DrawCommand::Clear { color } => {
                     self.canvas.set_draw_color(sdl2::pixels::Color::RGBA(
