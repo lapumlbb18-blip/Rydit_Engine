@@ -1,8 +1,7 @@
-# Ry-Dit - ROADMAP v0.14.0 -> v1.0.0
+# Ry-Dit - ROADMAP v0.15.0 -> v1.0.0
 
-**Última actualización**: 2026-04-06
-**Versión actual**: v0.14.0 ✅ demo_torreta_vs_sprites + 25 crates + juego completo
-**Commit**: `df4ec17`
+**Última actualización**: 2026-04-07
+**Versión actual**: v0.15.0 ✅ GPU Instancing + FSR + 8 demos Termux-X11 + 25 crates
 
 ---
 
@@ -15,8 +14,11 @@
 | **Compilación** | 0 errores |
 | **Tests** | 95+ pasando |
 | **Crates publicados** | 2 (ry-god + ry-stream) |
-| **ELFs compilados** | demo_torreta_vs_sprites 434K, demo_rigidbody 446K, demo_ttf_sprites 436K, demo_panel_visual 339K, demo_menu_bar 330K, demo_anime_ry 341K, demo_50k_particulas 313K, demo_colisiones 309K |
-| **Bins en src/bin/** | ~33+ |
+| **GPU Instancing** | 50K partículas a 48 FPS (Adreno 610 vía Zink) |
+| **FSR 1.0** | 960x540 → 1280x720 a 48 FPS (FBO render-to-texture) |
+| **Demos Termux-X11** | 8 funcionales |
+| **ELFs compilados** | demo_gpu_instancing, demo_fsr, demo_torreta_vs_sprites 434K, demo_rigidbody 446K, demo_ttf_sprites 436K, demo_panel_visual 339K, demo_menu_bar 330K, demo_anime_ry 341K, demo_50k_particulas 313K, demo_colisiones 309K |
+| **Bins en src/bin/** | ~35+ |
 | **Repositorio** | `github.com/lapumlbb18-blip/Ry-dit` |
 
 ---
@@ -53,18 +55,86 @@
 Progreso: ████████████████████ 100%
 ```
 
-### v0.15.0 - Demos Termux-X11 + v-shield platform layer (PLANIFICADA)
+### v0.15.0 - GPU Instancing + FSR + 8 demos Termux-X11 (COMPLETADA ✅)
+
+**Fecha**: 2026-04-07
+
+| Feature | Estado |
+|---------|--------|
+| GPU Instancing funcional: 50K partículas animadas a 48 FPS en Adreno 610 vía Zink | ✅ |
+| FSR 1.0 funcional: pipeline FBO render-to-texture, 960x540 → 1280x720 a 48 FPS | ✅ |
+| demo_gpu_instancing.rs: Pipeline SDL2 + OpenGL directo (sin Canvas) | ✅ |
+| demo_fsr.rs: FSR 1.0 upscaling demo | ✅ |
+| 8 demos funcionales en Termux-X11 | ✅ |
+| patron_gpu_instancing.md documentado | ✅ |
+| Pipeline SDL2 + OpenGL directo para GPU instancing | ✅ |
+| Shaders FSR embebidos con FBO | ✅ |
+| Pipeline raylib para círculos/dibujo nativo | ✅ |
+| 25 crates compilando | ✅ 0 errores |
+
+```
+Progreso: ████████████████████ 100%
+```
+
+### v0.16.0 - Bordes Suaves, Opacidad, Shaders Avanzados (PLANIFICADA)
 
 **Prioridad**: ALTA
 
 | Feature | Estado | Tiempo est. |
 |---------|--------|-------------|
-| Demos funcionales en Termux-X11 con RySystem | ⏳ | 6-8h |
+| Bordes suaves (antialiasing) | ⏳ | 8-12h |
+| Opacidad/transparencia | ⏳ | 6-8h |
+| Shaders avanzados | ⏳ | 10-15h |
+
+```
+Progreso: ░░░░░░░░░░░░░░░░░░░░ 0%
+```
+
+### v0.17.0 - 3D en PC (PLANIFICADA)
+
+**Prioridad**: MEDIA
+
+| Feature | Estado | Tiempo est. |
+|---------|--------|-------------|
+| 3D en PC | ⏳ | 12-16h |
+
+```
+Progreso: ░░░░░░░░░░░░░░░░░░░░ 0%
+```
+
+### v0.18.0 - v-shield + GitHub Actions (PLANIFICADA)
+
+**Prioridad**: MEDIA
+
+| Feature | Estado | Tiempo est. |
+|---------|--------|-------------|
 | v-shield platform layer | ⏳ | 15-20h |
-| ry-stream v0.2.0 (mDNS) | ⏳ | 8-12h |
-| ry-physics N-cuerpos >2 | ⏳ | 10-15h |
-| ry-backend v0.2.0 (optimizaciones) | ⏳ | 6-8h |
-| Consola visual en ry-gfx | ⏳ | 3-4h |
+| GitHub Actions CI | ⏳ | 6-8h |
+
+```
+Progreso: ░░░░░░░░░░░░░░░░░░░░ 0%
+```
+
+### v0.19.0 - Texturas + Sprite Animation System (PLANIFICADA)
+
+**Prioridad**: MEDIA
+
+| Feature | Estado | Tiempo est. |
+|---------|--------|-------------|
+| Texturas | ⏳ | 10-15h |
+| Sprite animation system | ⏳ | 12-16h |
+
+```
+Progreso: ░░░░░░░░░░░░░░░░░░░░ 0%
+```
+
+### v0.20.0 - Motor Multiplataforma Completo (PLANIFICADA)
+
+**Prioridad**: MEDIA
+
+| Feature | Estado | Tiempo est. |
+|---------|--------|-------------|
+| Motor multiplataforma completo | ⏳ | 20-30h |
 
 ```
 Progreso: ░░░░░░░░░░░░░░░░░░░░ 0%
@@ -111,6 +181,8 @@ Progreso: ░░░░░░░░░░░░░░░░░░░░ 0%
 v0.12.0 ████████████████████ 100%
 v0.13.0 ████████████████████ 100%
 v0.14.0 ████████████████████ 100%
+v0.15.0 ████████████████████ 100%
+v0.16.0 ░░░░░░░░░░░░░░░░░░░░   0%
 v1.0.0  ██████░░░░░░░░░░░░░░  30%
 ```
 
@@ -118,14 +190,19 @@ v1.0.0  ██████░░░░░░░░░░░░░░  30%
 
 ## Tabla de Versiones
 
-| Versión | Fecha | Commits | Crates | Errores | Tests | Features Clave |
+| Version | Fecha | Commits | Crates | Errores | Tests | Features Clave |
 |---------|-------|---------|--------|---------|-------|----------------|
 | v0.11.4 | 2026-04-02 | 20+ | 18 | 0 | — | Lifetimes fix |
 | v0.11.5 | 2026-04-02 | 10+ | 18 | 0 | — | 0 errores final |
 | v0.12.0 | 2026-04-05 | 19+ | 22 | 0 | 58 | ry-anim + Quest + Save/Load + ry-stream |
 | **v0.13.0** | **2026-04-05** | **10+** | **23** | **0** | **95+** | **events-ry + Panel Visual + RyBot IPC + LAZOS** |
 | **v0.14.0** | **2026-04-06** | **df4ec17** | **25** | **0** | **95+** | **ry-backend dual + juego completo + 25 crates** |
-| v0.15.0 | 2026-04-xx | — | 25+ | — | — | Demos Termux-X11 + v-shield + ry-stream v0.2.0 |
+| **v0.15.0** | **2026-04-07** | **—** | **25** | **0** | **95+** | **GPU Instancing 50K@48FPS + FSR 1.0 + 8 demos Termux-X11** |
+| v0.16.0 | 2026-04-xx | — | 25+ | — | — | Bordes suaves, opacidad, shaders avanzados |
+| v0.17.0 | 2026-04-xx | — | 25+ | — | — | 3D en PC |
+| v0.18.0 | 2026-04-xx | — | 25+ | — | — | v-shield platform layer + GitHub Actions |
+| v0.19.0 | 2026-04-xx | — | 25+ | — | — | Texturas + sprite animation system |
+| v0.20.0 | 2026-04-xx | — | 25+ | — | — | Motor multiplataforma completo |
 | v1.0.0 | Futuro | — | 25+ | — | — | Motor completo + Editor Visual + Comunidad |
 
 ---
@@ -144,10 +221,10 @@ v1.0.0  ██████░░░░░░░░░░░░░░  30%
 
 <div align="center">
 
-**Ry-Dit v0.14.0 - ROADMAP**
+**Ry-Dit v0.15.0 - ROADMAP**
 
-*demo_torreta_vs_sprites 434K | 25 crates | 95+ tests | 2 crates publicados*
+*GPU Instancing 50K@48FPS | FSR 1.0 | 8 demos Termux-X11 | 25 crates | 95+ tests | 2 crates publicados*
 
-*Próxima versión: v0.15.0 - Demos Termux-X11 + v-shield platform layer*
+*Próxima versión: v0.16.0 - Bordes suaves, opacidad, shaders avanzados*
 
 </div>

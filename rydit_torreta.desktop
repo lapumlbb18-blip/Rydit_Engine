@@ -8,3 +8,4 @@ Terminal=true
 Categories=Game;
 Keywords=rydit;torreta;game;sdl2;zink;
 StartupWMClass=demo_torreta_vs_sprites
+StartupNotify=true

@@ -1,6 +1,6 @@
 // crates/ry-gfx/src/fsr.rs
 // FSR 1.0 - FidelityFX Super Resolution (2D Simplificado)
-// v0.13.1 - Shaders embebidos + integración en RyditGfx
+// v0.15.0 - FBO render-to-texture + upscaling completo funcional
 
 use gl;
 use gl::types::GLuint;
@@ -9,6 +9,15 @@ use std::ffi::CString;
 // Shaders embebidos en el binario
 const FSR_UPSCALE_SRC: &str = include_str!("../shaders/fsr_upscale.glsl");
 const FSR_SHARPEN_SRC: &str = include_str!("../shaders/fsr_sharpen.glsl");
+
+// Vertex shader genérico para fullscreen quad
+const FSR_VS_SRC: &str = r#"#version 330 core
+layout(location=0) in vec3 aPos;
+out vec2 vUV;
+void main(){
+    gl_Position = vec4(aPos.xy, 0.0, 1.0);
+    vUV = aPos.xy * 0.5 + 0.5;
+}"#;
 
 /// Calidad FSR
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -51,14 +60,23 @@ pub struct FsrUpscaler {
     enabled: bool,
 }
 
+/// Framebuffer Object para render-to-texture
+pub struct FboFrame {
+    fbo: GLuint,
+    texture: GLuint,
+    rbo: GLuint, // renderbuffer para depth/stencil
+    width: u32,
+    height: u32,
+}
+
 impl FsrUpscaler {
     /// Crear FSR upscaler
     pub fn new() -> Result<Self, String> {
         // Crear fullscreen quad
         let (vao, vbo) = Self::create_quad();
 
-        // Cargar shaders embebidos
-        let program = Self::load_shaders_from_src(FSR_UPSCALE_SRC, FSR_SHARPEN_SRC)?;
+        // Cargar shaders: VS genérico + FS upscale (que incluye sharpen integrado)
+        let program = Self::load_shaders_from_src(FSR_VS_SRC, FSR_UPSCALE_SRC)?;
 
         // Obtener uniform locations
         unsafe {
@@ -244,6 +262,122 @@ impl FsrUpscaler {
             FsrQuality::Balanced => FsrQuality::Quality,
             FsrQuality::Quality => FsrQuality::Performance,
         };
+    }
+}
+
+// ============================================================================
+// FBO FRAME - Render to Texture para FSR
+// ============================================================================
+
+impl FboFrame {
+    /// Crear framebuffer para render-to-texture
+    pub fn new(width: u32, height: u32) -> Result<Self, String> {
+        unsafe {
+            let mut fbo = 0;
+            let mut texture = 0;
+            let mut rbo = 0;
+
+            // Crear framebuffer
+            gl::GenFramebuffers(1, &mut fbo);
+            gl::BindFramebuffer(gl::FRAMEBUFFER, fbo);
+
+            // Crear textura para color
+            gl::GenTextures(1, &mut texture);
+            gl::BindTexture(gl::TEXTURE_2D, texture);
+            gl::TexImage2D(
+                gl::TEXTURE_2D,
+                0,
+                gl::RGBA as i32,
+                width as i32,
+                height as i32,
+                0,
+                gl::RGBA,
+                gl::UNSIGNED_BYTE,
+                std::ptr::null(),
+            );
+            gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MIN_FILTER, gl::LINEAR as i32);
+            gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MAG_FILTER, gl::LINEAR as i32);
+            gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_WRAP_S, gl::CLAMP_TO_EDGE as i32);
+            gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_WRAP_T, gl::CLAMP_TO_EDGE as i32);
+
+            // Adjuntar textura al framebuffer
+            gl::FramebufferTexture2D(
+                gl::FRAMEBUFFER,
+                gl::COLOR_ATTACHMENT0,
+                gl::TEXTURE_2D,
+                texture,
+                0,
+            );
+
+            // Crear renderbuffer para depth/stencil
+            gl::GenRenderbuffers(1, &mut rbo);
+            gl::BindRenderbuffer(gl::RENDERBUFFER, rbo);
+            gl::RenderbufferStorage(
+                gl::RENDERBUFFER,
+                gl::DEPTH24_STENCIL8,
+                width as i32,
+                height as i32,
+            );
+            gl::FramebufferRenderbuffer(
+                gl::FRAMEBUFFER,
+                gl::DEPTH_STENCIL_ATTACHMENT,
+                gl::RENDERBUFFER,
+                rbo,
+            );
+
+            // Verificar completitud
+            if gl::CheckFramebufferStatus(gl::FRAMEBUFFER) != gl::FRAMEBUFFER_COMPLETE {
+                return Err("Framebuffer incompleto".to_string());
+            }
+
+            // Unbind
+            gl::BindFramebuffer(gl::FRAMEBUFFER, 0);
+            gl::BindRenderbuffer(gl::RENDERBUFFER, 0);
+
+            Ok(Self {
+                fbo,
+                texture,
+                rbo,
+                width,
+                height,
+            })
+        }
+    }
+
+    /// Bind el framebuffer para renderizar
+    pub fn bind(&self) {
+        unsafe {
+            gl::BindFramebuffer(gl::FRAMEBUFFER, self.fbo);
+            gl::Viewport(0, 0, self.width as i32, self.height as i32);
+        }
+    }
+
+    /// Unbind (volver al framebuffer default)
+    pub fn unbind(&self, screen_width: u32, screen_height: u32) {
+        unsafe {
+            gl::BindFramebuffer(gl::FRAMEBUFFER, 0);
+            gl::Viewport(0, 0, screen_width as i32, screen_height as i32);
+        }
+    }
+
+    /// Obtener texture ID
+    pub fn texture(&self) -> GLuint {
+        self.texture
+    }
+
+    /// Obtener dimensiones
+    pub fn size(&self) -> (u32, u32) {
+        (self.width, self.height)
+    }
+}
+
+impl Drop for FboFrame {
+    fn drop(&mut self) {
+        unsafe {
+            gl::DeleteFramebuffers(1, &self.fbo);
+            gl::DeleteTextures(1, &self.texture);
+            gl::DeleteRenderbuffers(1, &self.rbo);
+        }
     }
 }
 

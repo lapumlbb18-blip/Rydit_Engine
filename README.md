@@ -6,10 +6,10 @@
 
 **"Construido sin prisa, madurado con paciencia"**
 
-[![Version](https://img.shields.io/badge/version-v0.14.0-blue.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
+[![Version](https://img.shields.io/badge/version-v0.15.0-blue.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
 [![Errors](https://img.shields.io/badge/errors-0-green.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
 [![Tests](https://img.shields.io/badge/tests-95%2F95-brightgreen.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
-[![Status](https://img.shields.io/badge/estado-v0.14.0--dual--backend-green.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
+[![Status](https://img.shields.io/badge/estado-v0.15.0--gpu--instancing--fsr-green.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
 [![SDL2](https://img.shields.io/badge/SDL2-0.37-red.svg)](https://www.libsdl.org/)
 [![Raylib](https://img.shields.io/badge/raylib-5.0-orange.svg)](https://www.raylib.com/)
@@ -17,9 +17,67 @@
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/lapumlbb18-blip/Ry-dit/blob/main/LICENSE)
 [![crates.io](https://img.shields.io/badge/crates.io-2%20publicados-purple.svg)](https://crates.io/crates/ry-god)
 
-[📖 Documentación](#-documentación) • [🆕 Qué hay de nuevo en v0.14.0](#-qué-hay-de-nuevo-en-v0140) • [🔧 Estado Actual](#-estado-actual) • [🔌 events-ry v0.1.0](#-events-ry-v010--input-unificado--text-input--shell) • [🎮 Panel Visual](#-panel-visual-demo_panel_visual) • [🏆 Logros](#-logros) • [🎯 Roadmap](#-roadmap)
+[📖 Documentación](#-documentación) • [🆕 Qué hay de nuevo en v0.15.0](#-qué-hay-de-nuevo-en-v0150) • [🆕 Qué hay de nuevo en v0.14.0](#-qué-hay-de-nuevo-en-v0140) • [🔧 Estado Actual](#-estado-actual) • [🔌 events-ry v0.1.0](#-events-ry-v010--input-unificado--text-input--shell) • [🎮 Panel Visual](#-panel-visual-demo_panel_visual) • [🏆 Logros](#-logros) • [🎯 Roadmap](#-roadmap)
 
 </div>
+
+---
+
+## 🆕 ¿Qué hay de nuevo en v0.15.0?
+
+**Última actualización**: 2026-04-07
+**Versión actual**: v0.15.0 ✅ FUNCIONAL
+**Estado**: 25 crates compilando | 0 errores | 95+ tests pasando
+**Plataforma**: Termux-X11/Android (Redmi Note 8, Adreno 610)
+
+### 🚀 GPU Instancing — 50K Partículas a 48 FPS ✅
+| Feature | Benchmark | Notas |
+|---------|-----------|-------|
+| **50K partículas animadas** | 48 FPS | Adreno 610 vía Zink |
+| **Pipeline SDL2 + OpenGL directo** | Sin Canvas | Instancing nativo |
+| **Shaders GLSL embebidos** | FBO render-to-texture | Zero overhead |
+| **demo_gpu_instancing.rs** | Nuevo bin | GPU instancing demo |
+
+### 🎨 FSR 1.0 Upscaling — 960x540 → 1280x720 a 48 FPS ✅
+| Feature | Benchmark | Notas |
+|---------|-----------|-------|
+| **FSR 1.0 pipeline** | 48 FPS | FBO render-to-texture |
+| **Resolución interna** | 960x540 | Rendimiento optimizado |
+| **Resolución output** | 1280x720 | Upscaling AMD FSR |
+| **Shaders embebidos** | GLSL | Sin dependencias externas |
+| **demo_fsr.rs** | Nuevo bin | FSR upscaling demo |
+
+### 📱 Demos Funcionales en Termux-X11 ✅
+| Demo | Descripción | Tamaño Release |
+|------|-------------|----------------|
+| demo_gpu_instancing | 🆕 50K partículas GPU instancing | — |
+| demo_fsr | 🆕 FSR 1.0 upscaling 960x540 → 1280x720 | — |
+| demo_torreta_vs_sprites | Juego completo: menú + 3 niveles + cámara + AI + audio | 434K |
+| demo_panel_visual | 4 paneles + consola interactiva | 339K |
+| demo_rigidbody | Física + colisiones + audio + TTF | 446K |
+| demo_anime_ry | Showcase ry-anim v0.12.0 | 341K |
+| demo_platformer_completo | Plataformas + gravedad + salto | — |
+| demo_50k_particulas | 50K partículas | 313K |
+| demo_menu_bar | Menús Dear ImGui + mouse + touch | 330K |
+
+### 🏗️ Pipeline Gráfico v0.15.0
+```
+Zink → DRI3 → OpenGL ES → VirGL fallback
+SDL2 + OpenGL directo para GPU instancing (sin Canvas)
+Shaders FSR embebidos con FBO
+raylib para círculos/dibujo nativo
+```
+
+### Sesión Completa v0.15.0 (todo lo hecho)
+1. ✅ **GPU Instancing funcional**: 50K partículas animadas a 48 FPS en Adreno 610 vía Zink
+2. ✅ **FSR 1.0 funcional**: Pipeline FBO render-to-texture, 960x540 → 1280x720 a 48 FPS
+3. ✅ **demo_gpu_instancing.rs**: Nuevo demo con pipeline SDL2 + OpenGL directo
+4. ✅ **demo_fsr.rs**: Nuevo demo con FSR 1.0 upscaling
+5. ✅ **8 demos funcionales en Termux-X11**: gpu_instancing, fsr, torreta_vs_sprites, panel_visual, rigidbody, anime_ry, platformer_completo, 50k_particulas
+6. ✅ **patron_gpu_instancing.md**: Patrón documentado para GPU instancing
+7. ✅ **Pipeline SDL2 + OpenGL directo**: Sin Canvas, instancing nativo
+8. ✅ **Shaders FSR embebidos con FBO**: Zero overhead
+9. ✅ **25 crates compilando**: 0 errores en workspace completo
 
 ---
 
@@ -165,25 +223,29 @@
 
 ---
 
-## 🔧 ESTADO ACTUAL - v0.14.0 DUAL BACKEND + JUEGO COMPLETO + 25 CRATES
+## 🔧 ESTADO ACTUAL - v0.15.0 GPU INSTANCING + FSR + 8 DEMOS TERMUX-X11 + 25 CRATES
 
-### ✅ **ESTADO REAL: v0.14.0 - 25 CRATES COMPILANDO | 0 ERRORES | 95+ TESTS**
+### ✅ **ESTADO REAL: v0.15.0 - 25 CRATES COMPILANDO | 0 ERRORES | 95+ TESTS**
 
-**Última actualización**: 2026-04-06
-**Versión actual**: v0.14.0 ✅ FUNCIONAL
-**Commit**: `df4ec17`
-**Próxima versión**: v0.15.0 - Demos funcionales en Termux-X11 + v-shield platform layer
-**Estado**: ry-backend ✅ | migui ry-backend ✅ | ry-system-ry ✅ | events-ry ✅ | ry-config ✅ | demo_torreta_vs_sprites ✅
+**Última actualización**: 2026-04-07
+**Versión actual**: v0.15.0 ✅ FUNCIONAL
+**Próxima versión**: v0.16.0 - Bordes suaves, opacidad, shaders avanzados
+**Estado**: GPU Instancing ✅ | FSR 1.0 ✅ | 8 demos Termux-X11 ✅ | ry-backend ✅ | ry-system-ry ✅ | events-ry ✅ | ry-config ✅
 **Crates**: 25 en workspace | 0 errores | 95+ tests pasando
 **Crates publicados**: 2 (ry-god + ry-stream)
-**ELF más nuevo**: demo_torreta_vs_sprites 434K release
+**Nuevos ELF**: demo_gpu_instancing, demo_fsr
 
 ---
 
-### ✅ **LO QUE SÍ FUNCIONA (v0.14.0)**
+### ✅ **LO QUE SÍ FUNCIONA (v0.15.0)**
 
 | Sistema | Estado | Notas |
 |---------|--------|-------|
+| **GPU Instancing** | ✅ Nuevo | 50K partículas a 48 FPS, Adreno 610 vía Zink |
+| **FSR 1.0** | ✅ Nuevo | 960x540 → 1280x720 a 48 FPS, FBO render-to-texture |
+| **demo_gpu_instancing** | ✅ Nuevo | Pipeline SDL2 + OpenGL directo (sin Canvas) |
+| **demo_fsr** | ✅ Nuevo | FSR 1.0 upscaling demo |
+| **Termux-X11 demos** | ✅ 8 funcionales | gpu_instancing, fsr, torreta, panel, rigidbody, anime, platformer, 50k |
 | **ry-backend** | ✅ v0.1.0 | Dual backend: raylib + SDL2 TTF/input/audio |
 | **migui** | ✅ ry-backend | Usa ry-backend (no sdl2 directo) |
 | **ry-system-ry** | ✅ v0.14.0 | Sistema unificado: RySystem (core + gui) |
@@ -220,9 +282,12 @@
 | **Audio SDL2** | ✅ Tonos WAV | SDL2_mixer |
 | **lizer** | ✅ 0.11.2 | AST cache real (FNV-1a, 256 entradas, LRU) |
 | **ry-rs** | ✅ bin + lib | Antes solo bin |
-| **Demos binarios** | ✅ ~33+ | src/bin/ |
+| **Demos binarios** | ✅ ~35+ | src/bin/ (incluye gpu_instancing, fsr) |
+| **patron_gpu_instancing** | ✅ Documentado | Patrón GPU instancing |
+| **Pipeline SDL2+OpenGL** | ✅ Directo | Sin Canvas, instancing nativo |
+| **Shaders GLSL** | ✅ Embebidos | FBO render-to-texture |
 
-**Total**: Stack completo funcional + 2 crates publicados ✅
+**Total**: Stack completo funcional + GPU Instancing + FSR + 2 crates publicados ✅
 
 ---
 
@@ -295,42 +360,53 @@ demo_50k_particulas, demo_action_assets, demo_anime_ry, demo_carga_sprites, demo
 | **v0.12.0** | ✅ | ry-anim v0.12.0 + Quest + Save/Load + ry-stream crates.io | 2026-04-05 |
 | **v0.13.0** | ✅ | events-ry + Panel Visual + Demo Panel + Warnings fix | 2026-04-05 |
 | **v0.14.0** | ✅ | ry-backend dual + migui ry-backend + ry-system-ry + ry-config + demo_torreta_vs_sprites | 2026-04-06 |
-| **v0.15.0** | ⏳ | Demos Termux-X11 + v-shield platform layer + ry-stream v0.2.0 | Próxima versión |
+| **v0.15.0** | ✅ | GPU Instancing 50K@48FPS + FSR 1.0 + 8 demos Termux-X11 + patron_gpu_instancing | 2026-04-07 |
+| **v0.16.0** | ⏳ | Bordes suaves, opacidad, shaders avanzados | Próxima versión |
+| **v0.17.0** | ⏳ | 3D en PC | Futuro |
+| **v0.18.0** | ⏳ | v-shield platform layer + GitHub Actions | Futuro |
+| **v0.19.0** | ⏳ | Texturas + sprite animation system | Futuro |
+| **v0.20.0** | ⏳ | Motor multiplataforma completo | Futuro |
 | **v1.0.0** | ⏳ | Motor Completo + Editor Visual | Futuro |
 
 </div>
 
-### Features pendientes (v0.15.0+)
+### Features pendientes (v0.16.0+)
 
 | Feature | Prioridad | Notas |
 |---------|-----------|-------|
-| Platform crate (abstracción multiplataforma) | 🔮 Futuro | |
+| Bordes suaves (antialiasing) | 🔴 Alta | v0.16.0 |
+| Opacidad/transparencia | 🔴 Alta | v0.16.0 |
+| Shaders avanzados | 🟡 Media | v0.16.0 |
+| 3D en PC | 🟡 Media | v0.17.0 |
+| v-shield platform layer | 🟡 Media | v0.18.0 |
+| GitHub Actions CI | 🟡 Media | v0.18.0 |
+| Texturas + sprite animation system | 🔮 Futuro | v0.19.0 |
+| Motor multiplataforma completo | 🔮 Futuro | v0.20.0 |
 | Soporte de emojis en TTF | 🔮 Futuro | |
 | GIF animation | 🔮 Futuro | |
-| GPU instancing (gpu_instancing.rs de ry-gfx) | 🔮 Futuro | |
-| Features 3D paso a paso | 🔮 Futuro | |
-| ry-stream v0.2.0 mDNS | 🟡 Media | |
-| Editor visual | 🔮 Futuro | |
 | LAZOS Python bridge async | 🔮 Futuro | |
+| Editor visual | 🔮 Futuro | |
 
 ---
 
 ## 📋 Tareas Pendientes
 
-| Tarea | Esfuerzo | Prioridad |
-|-------|----------|-----------|
-| Demos funcionales en Termux-X11 | 8-12h | 🔴 Alta |
-| v-shield platform layer | 15-20h | 🔴 Alta |
-| ry-stream v0.2.0 (mDNS) | 8-12h | 🟡 Media |
-| ry-physics N-cuerpos >2 | 10-15h | 🟡 Media |
-| ry-backend v0.2.0 (optimizaciones) | 6-8h | 🟡 Media |
-| Consola visual en ry-gfx | 3-4h | 🟡 Media |
-| Platform crate (abstracción multiplataforma) | 15-20h | 🔮 Futuro |
-| Soporte de emojis en TTF | 4-6h | 🔮 Futuro |
-| GIF animation | 8-12h | 🔮 Futuro |
-| GPU instancing (revisar gpu_instancing.rs) | 10-15h | 🔮 Futuro |
-| LAZOS Python bridge | 20-30h | 🔮 Futuro |
-| Editor visual | 24-32h | 🔮 Futuro |
+| Tarea | Esfuerzo | Prioridad | Versión |
+|-------|----------|-----------|---------|
+| Bordes suaves (antialiasing) | 8-12h | 🔴 Alta | v0.16.0 |
+| Opacidad/transparencia | 6-8h | 🔴 Alta | v0.16.0 |
+| Shaders avanzados | 10-15h | 🟡 Media | v0.16.0 |
+| 3D en PC | 12-16h | 🟡 Media | v0.17.0 |
+| v-shield platform layer | 15-20h | 🟡 Media | v0.18.0 |
+| GitHub Actions CI | 6-8h | 🟡 Media | v0.18.0 |
+| Texturas + sprite animation system | 10-15h | 🔮 Futuro | v0.19.0 |
+| Motor multiplataforma completo | 20-30h | 🔮 Futuro | v0.20.0 |
+| ry-stream v0.2.0 (mDNS) | 8-12h | 🟡 Media | |
+| ry-physics N-cuerpos >2 | 10-15h | 🟡 Media | |
+| Soporte de emojis en TTF | 4-6h | 🔮 Futuro | |
+| GIF animation | 8-12h | 🔮 Futuro | |
+| LAZOS Python bridge | 20-30h | 🔮 Futuro | |
+| Editor visual | 24-32h | 🔮 Futuro | |
 
 ---
 
@@ -391,10 +467,10 @@ demo_50k_particulas, demo_action_assets, demo_anime_ry, demo_carga_sprites, demo
 
 <div align="center">
 
-## Ry-Dit v0.14.0 - Dual Backend + Juego Completo + 25 Crates
+## Ry-Dit v0.15.0 - GPU Instancing + FSR + 8 Demos Termux-X11 + 25 Crates
 
 *0 errores | 25 crates compilando | 95+ tests | 2 crates publicados*
 
-**Proxima version: v0.15.0 - Demos Termux-X11 + v-shield platform layer**
+**Proxima version: v0.16.0 - Bordes suaves, opacidad, shaders avanzados**
 
 </div>

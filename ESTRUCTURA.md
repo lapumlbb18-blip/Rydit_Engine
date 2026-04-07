@@ -1,8 +1,7 @@
-# Ry-Dit - ESTRUCTURA DEL PROYECTO v0.14.0
+# Ry-Dit - ESTRUCTURA DEL PROYECTO v0.15.0
 
-**Última actualización**: 2026-04-06
-**Versión**: v0.14.0 demo_torreta_vs_sprites + 25 crates + juego completo
-**Commit**: `df4ec17`
+**Última actualización**: 2026-04-07
+**Versión**: v0.15.0 GPU Instancing + FSR + 8 demos Termux-X11 + 25 crates
 **Estado**: `cargo check --workspace`: 0 errores | 25 crates compilando | 95+ tests pasando
 
 ---
@@ -12,10 +11,11 @@
 ```
 shield-project/
 ├── Cargo.toml                  # Workspace (25 crates)
-├── README.md                   # Documentación principal (v0.14.0)
-├── ROADMAP.md                  # Planificación v0.14→v1.0
+├── README.md                   # Documentación principal (v0.15.0)
+├── ROADMAP.md                  # Planificación v0.15→v1.0
 ├── QWEN.md                     # Bitácora técnica
 ├── ESTRUCTURA.md               # Este archivo
+├── patron_gpu_instancing.md    # 🆕 Patrón GPU instancing documentado
 ├── TASKS.md                    # Tareas principales y paralelas
 ├── CONTRIBUTING.md             # Guía contribuidores
 ├── MANIFIESTO.md               # Filosofía del proyecto
@@ -73,7 +73,7 @@ shield-project/
 │       ├── tilemap.rs          # Tilemap system
 │       └── window.rs           # Creación de ventana SDL2
 │
-├── crates/ry-rs/src/bin/       # ~33+ bins
+├── crates/ry-rs/src/bin/       # ~35+ bins
 │   ├── demo_50k_particulas.rs      # 313K release
 │   ├── demo_action_assets.rs
 │   ├── demo_anime_ry               # 341K release
@@ -82,10 +82,12 @@ shield-project/
 │   ├── demo_completo_final.rs
 │   ├── demo_completo_sdl2.rs
 │   ├── demo_effects.rs
+│   ├── demo_fsr.rs                 # 🆕 FSR 1.0 upscaling 960x540 → 1280x720
 │   ├── demo_fsr_audio.rs
+│   ├── demo_gpu_instancing.rs      # 🆕 50K partículas GPU instancing a 48 FPS
 │   ├── demo_illusions.rs
-│   ├── demo_menu_bar               # 🆕 330K release
-│   ├── demo_panel_visual           # 🆕 339K release
+│   ├── demo_menu_bar               # 330K release
+│   ├── demo_panel_visual           # 339K release
 │   ├── demo_particles.rs
 │   ├── demo_platformer_completo.rs
 │   ├── demo_rigidbody              # 446K release
@@ -93,7 +95,7 @@ shield-project/
 │   ├── demo_sprites_final.rs
 │   ├── demo_sprites_v2.rs
 │   ├── demo_stream.rs
-│   ├── demo_torreta_vs_sprites     # 🆕 434K release - JUEGO COMPLETO
+│   ├── demo_torreta_vs_sprites     # 434K release - JUEGO COMPLETO
 │   ├── demo_ttf_sprites.rs         # 436K release
 │   ├── demo_ttf_sprites_audio.rs
 │   ├── nivel3_test_audio_lowend.rs
@@ -406,6 +408,8 @@ Código .rydit
 
 | Demo | Descripción | Tamaño Release |
 |------|-------------|----------------|
+| demo_gpu_instancing | 🆕 50K partículas GPU instancing a 48 FPS (Adreno 610) | — |
+| demo_fsr | 🆕 FSR 1.0 upscaling 960x540 → 1280x720 a 48 FPS | — |
 | demo_torreta_vs_sprites | JUEGO COMPLETO: menú + 3 niveles + cámara + AI + audio | 434K |
 | demo_rigidbody | Física + colisiones + audio + TTF | 446K |
 | demo_ttf_sprites | TTF + sprites | 436K |
@@ -414,22 +418,23 @@ Código .rydit
 | demo_anime_ry | Showcase ry-anim v0.12.0 | 341K |
 | demo_50k_particulas | 50K partículas | 313K |
 | demo_colisiones | Sistema colisiones | 309K |
+| demo_platformer_completo | Plataformas + gravedad + salto | — |
+| demo_fsr_audio | FSR + audio | — |
 | demo_action_assets | Action assets + sprite anim | — |
 | demo_illusions | Ilusiones ópticas | — |
 | demo_effects | Efectos especiales | — |
 | demo_science | Animaciones científicas | — |
 | demo_stream | ry-stream demo | — |
-| demo_platformer_completo | Platformer completo | — |
 | snake | Snake game | — |
 
 ---
 
 <div align="center">
 
-**Ry-Dit v0.14.0 -- ESTRUCTURA ACTUALIZADA**
+**Ry-Dit v0.15.0 -- ESTRUCTURA ACTUALIZADA**
 
-*25 crates | ~30K+ líneas Rust | demo_torreta_vs_sprites 434K | 95+ tests | 2 crates publicados*
+*25 crates | ~30K+ líneas Rust | GPU Instancing 50K@48FPS | FSR 1.0 | 8 demos Termux-X11 | 95+ tests | 2 crates publicados*
 
-*Última actualización: 2026-04-06*
+*Última actualización: 2026-04-07*
 
 </div>

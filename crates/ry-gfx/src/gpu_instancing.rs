@@ -41,6 +41,8 @@ pub struct GPUInstancer {
     particle_count: usize,
     projection: [f32; 16],
     camera: [f32; 2],
+    resolution: [f32; 2], // FIX v0.15.0: coordenadas directas de pantalla
+    use_resolution: bool, // true = modo uResolution, false = modo uProjection
 }
 
 impl GPUInstancer {
@@ -57,13 +59,17 @@ impl GPUInstancer {
             gl::GenBuffers(1, &mut vbo);
             gl::BindBuffer(gl::ARRAY_BUFFER, vbo);
 
-            // Quad de 4 vértices (2 triángulos) - 16 floats
-            let quad_vertices: [f32; 16] = [
-                // Vértice 1
-                -0.5_f32, -0.5_f32, 0.0_f32, 1.0_f32, // Vértice 2
-                0.5_f32, -0.5_f32, 0.0_f32, 1.0_f32, // Vértice 3
-                0.5_f32, 0.5_f32, 0.0_f32, 1.0_f32, // Vértice 4
-                -0.5_f32, 0.5_f32, 0.0_f32, 1.0_f32,
+            // Quad de 4 vértices → 2 triángulos (6 vértices) para OpenGL Core Profile
+            // QUADS no existe en Core Profile 3.3+
+            let quad_vertices: [f32; 24] = [
+                // Triángulo 1
+                -0.5_f32, -0.5_f32, 0.0_f32, 1.0_f32,
+                 0.5_f32, -0.5_f32, 0.0_f32, 1.0_f32,
+                 0.5_f32,  0.5_f32, 0.0_f32, 1.0_f32,
+                // Triángulo 2
+                -0.5_f32, -0.5_f32, 0.0_f32, 1.0_f32,
+                 0.5_f32,  0.5_f32, 0.0_f32, 1.0_f32,
+                -0.5_f32,  0.5_f32, 0.0_f32, 1.0_f32,
             ];
             gl::BufferData(
                 gl::ARRAY_BUFFER,
@@ -75,17 +81,28 @@ impl GPUInstancer {
             // Crear instance VBO para datos de partículas
             let mut instance_vbo = 0;
             gl::GenBuffers(1, &mut instance_vbo);
+            // FIX v0.15.0 CRÍTICO: Bind instance_vbo ANTES de configurar atributos de instancia
+            gl::BindBuffer(gl::ARRAY_BUFFER, instance_vbo);
+            // Buffer vacío inicial — se llena con set_particles()
+            gl::BufferData(gl::ARRAY_BUFFER, 1, std::ptr::null(), gl::DYNAMIC_DRAW);
+
+            // Volver a bind quad VBO para atributo de posición (location 0)
+            gl::BindBuffer(gl::ARRAY_BUFFER, vbo);
 
             // Configurar atributo de posición (location = 0)
+            // FIX v0.15.0: Stride = 16 bytes (4 floats por vértice), NO 8
             gl::VertexAttribPointer(
                 0,
                 2,
                 gl::FLOAT,
                 gl::FALSE,
-                (2 * std::mem::size_of::<f32>()) as GLsizei,
+                (4 * std::mem::size_of::<f32>()) as GLsizei,
                 std::ptr::null(),
             );
             gl::EnableVertexAttribArray(0);
+
+            // Bind instance_vbo para atributos de instancia
+            gl::BindBuffer(gl::ARRAY_BUFFER, instance_vbo);
 
             // Configurar atributos de instancia (location = 1, 2, 3)
             // Offset (location = 1)
@@ -134,6 +151,8 @@ impl GPUInstancer {
                 particle_count: 0,
                 projection: [0.0; 16],
                 camera: [0.0; 2],
+                resolution: [1280.0, 720.0],
+                use_resolution: true, // Por defecto: modo coordenadas directas
             }
         }
     }
@@ -250,6 +269,16 @@ impl GPUInstancer {
         self.camera = [x, y];
     }
 
+    /// FIX v0.15.0: Set screen resolution for direct coordinate mode
+    pub fn set_resolution(&mut self, width: f32, height: f32) {
+        self.resolution = [width, height];
+    }
+
+    /// Toggle between resolution mode and projection mode
+    pub fn set_use_resolution(&mut self, val: bool) {
+        self.use_resolution = val;
+    }
+
     pub fn draw(&self) {
         if self.particle_count == 0 {
             return;
@@ -258,15 +287,30 @@ impl GPUInstancer {
         unsafe {
             gl::UseProgram(self.program);
 
-            let proj_loc =
-                gl::GetUniformLocation(self.program, b"uProjection\0".as_ptr() as *const _);
-            let cam_loc = gl::GetUniformLocation(self.program, b"uCamera\0".as_ptr() as *const _);
-
-            gl::UniformMatrix4fv(proj_loc, 1, gl::FALSE, self.projection.as_ptr());
-            gl::Uniform2f(cam_loc, self.camera[0], self.camera[1]);
+            if self.use_resolution {
+                // FIX v0.15.0: modo coordenadas directas de pantalla
+                let res_loc =
+                    gl::GetUniformLocation(self.program, b"uResolution\0".as_ptr() as *const _);
+                gl::Uniform2f(res_loc, self.resolution[0], self.resolution[1]);
+            } else {
+                // modo proyección + cámara (legacy)
+                let proj_loc =
+                    gl::GetUniformLocation(self.program, b"uProjection\0".as_ptr() as *const _);
+                let cam_loc =
+                    gl::GetUniformLocation(self.program, b"uCamera\0".as_ptr() as *const _);
+                gl::UniformMatrix4fv(proj_loc, 1, gl::FALSE, self.projection.as_ptr());
+                gl::Uniform2f(cam_loc, self.camera[0], self.camera[1]);
+            }
 
             gl::BindVertexArray(self.vao);
-            gl::DrawArraysInstanced(gl::QUADS, 0, 4, self.particle_count as GLsizei);
+            gl::DrawArraysInstanced(gl::TRIANGLES, 0, 6, self.particle_count as GLsizei);
+
+            // DEBUG: check GL errors
+            let err = gl::GetError();
+            if err != gl::NO_ERROR {
+                eprintln!("[GPUInst] GL ERROR: 0x{:X}", err);
+            }
+
             gl::BindVertexArray(0);
             gl::UseProgram(0);
         }

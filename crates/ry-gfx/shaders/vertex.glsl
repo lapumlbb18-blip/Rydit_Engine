@@ -1,31 +1,30 @@
-// Vertex Shader para GPU Instancing - RyDit v0.10.1
-// Renderiza 100K+ partículas en un solo draw call
+// Vertex Shader GPU Instancing - RyDit v0.15.0 FIX
+// Coordenadas de pantalla directas (0-w, 0-h) — compatible con Termux-X11
 
 #version 330 core
 
-// Atributos por vértice (posición del quad)
-layout(location = 0) in vec2 aPosition;  // Posición del vértice en el quad (-0.5 a 0.5)
+layout(location = 0) in vec2 aPosition;  // Quad local (-0.5 a 0.5)
+layout(location = 1) in vec2 aOffset;    // Posición partícula (coordenadas de pantalla)
+layout(location = 2) in float aSize;
+layout(location = 3) in vec4 aColor;
 
-// Atributos por instancia (datos de cada partícula)
-layout(location = 1) in vec2 aOffset;    // Posición de la partícula
-layout(location = 2) in float aSize;     // Tamaño de la partícula
-layout(location = 3) in vec4 aColor;     // Color de la partícula
-
-// Salida al fragment shader
 out vec4 vColor;
+out vec2 vLocalPos;
 
-// Uniforms
-uniform mat4 uProjection;
-uniform vec2 uCamera;
+uniform vec2 uResolution; // Ancho y alto de pantalla
 
 void main() {
-    // Escalar y trasladar el quad
-    vec2 scaledPos = aPosition * aSize;
-    vec2 worldPos = scaledPos + aOffset - uCamera;
-    
-    // Transformar a coordenadas de clip
-    gl_Position = uProjection * vec4(worldPos, 0.0, 1.0);
-    
-    // Pasar color al fragment shader
+    // Escalar quad local
+    vec2 localQuad = aPosition * aSize;
+
+    // Posición final en coordenadas de pantalla
+    vec2 screenPos = localQuad + aOffset;
+
+    // Convertir a NDC (-1 a 1)
+    vec2 ndc = (screenPos / uResolution) * 2.0 - 1.0;
+
+    gl_Position = vec4(ndc.x, -ndc.y, 0.0, 1.0);
+
     vColor = aColor;
+    vLocalPos = aPosition;
 }
