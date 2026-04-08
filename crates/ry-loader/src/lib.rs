@@ -133,7 +133,7 @@ impl DynamicModuleLoader {
     /// un puntero a un objeto que implemente `RyditModule`.
     #[cfg(not(target_os = "android"))]
     #[cfg(unix)]
-    pub fn load_library<P: AsRef<OsStr>>(&mut self, path: P) -> Result<&str, LoaderError> {
+    pub fn load_library<P: AsRef<OsStr>>(&mut self, path: P) -> Result<String, LoaderError> {
         use libloading::Library;
         use ry_core::RyditModule;
 
@@ -153,7 +153,7 @@ impl DynamicModuleLoader {
             })?;
 
         // Crear instancia del módulo
-        let module_ptr = create_module();
+        let module_ptr = unsafe { create_module() };
         let module = unsafe { Box::from_raw(module_ptr) };
         let module_name = module.name().to_string();
         let module_metadata = module.metadata();
@@ -170,7 +170,7 @@ impl DynamicModuleLoader {
         };
         self.loaded_modules.insert(module_name.clone(), info);
 
-        Ok(&module_name)
+        Ok(module_name)
     }
 
     /// Recarga un módulo (hot reload)
