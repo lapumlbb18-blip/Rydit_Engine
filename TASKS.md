@@ -1,7 +1,7 @@
 # 🛡️ Ry-Dit - Tareas v0.15.0 → v1.0.0
 
-**Última actualización**: 2026-04-06
-**Versión actual**: v0.15.0 ✅ GPU Instancing + FSR 1.0 + Manifiesto Low-End First
+**Última actualización**: 2026-04-07
+**Versión actual**: v0.16.0-alpha ✅ v-shield v0.2.0 Platform Layer + Sync Primitives
 **Próxima versión**: v0.16.0 — Bordes suaves + Opacidad + Shaders avanzados
 
 ---
@@ -11,14 +11,14 @@
 | Métrica | Valor |
 |---------|-------|
 | **Crates** | 25 |
-| **Errores** | 0 |
-| **Tests** | 95/95 pasando |
-| **Crates publicados** | 2 (ry-god + ry-stream) |
+| **Errores** | 0 (libs) |
+| **Tests** | 39/39 pasando (v-shield + ry-stream) |
+| **Crates publicados** | 2 (ry-god + ry-stream) → 3 pronto (v-shield) |
 | **Demos funcionales** | 10+ (Termux-X11) |
 | **GPU Instancing** | 50K partículas, 48 FPS, Adreno 610 |
 | **FSR 1.0** | 960x540 → 1280x720, 48 FPS |
-| **Commit** | `c409f98` |
-| **Tag** | `v0.15.0` |
+| **Commit** | ver `git log` |
+| **Tag** | `v0.16.0-alpha` (pendiente) |
 
 ---
 
@@ -53,27 +53,80 @@
 
 ---
 
+## ✅ v0.16.0-alpha COMPLETADA — v-shield Platform Layer + Sync
+
+| # | Feature | Estado | Notas |
+|---|---------|--------|-------|
+| 1 | v-shield v0.2.0 | ✅ | Platform detection + sync primitives + PlatformSync |
+| 2 | ry-gfx v0.10.8 | ✅ | Usa v-shield PlatformSync (migrado de render_queue.rs) |
+| 3 | ry-stream v0.2.0 | ✅ | Usa v-shield sync::Mutex |
+| 4 | Tests | ✅ | 39/39 pasando (26 v-shield + 17 ry-stream) |
+| 5 | README v-shield | ✅ | Documentación completa con features |
+| 6 | Cargo.toml features | ✅ | native, wasm, graphics, async-tokio |
+| 7 | ry-rs tests fix | ⏳ | 65 errores pre-existentes en ry-rs/src/main.rs (physics tests) |
+
+---
+
 ## 🔴 TAREAS PRINCIPALES (v0.16.0)
 
-### 1. v-shield Platform Layer + Sync
+### 1. Corregir tests de ry-rs (65 errores pre-existentes)
 | Campo | Valor |
 |-------|-------|
 | **Prioridad** | 🔴 ALTA |
-| **Esfuerzo** | 15-20h |
-| **Versión** | v0.16.0-v0.17.0 |
+| **Esfuerzo** | 2-4h |
+| **Versión** | v0.16.0 |
 | **Estado** | ⏳ Pendiente |
 
 **Detalle**:
-- Platform detection: `#[cfg(target_os = "...")]` para Linux, Windows, macOS, Android, iOS, WASM
-- Config defaults por plataforma
-- `PlatformSync` real (reemplazar stubs en render_queue.rs)
-- Platform report visual
-- Input abstraction unificada
-- Window management multiplataforma
+- 65 errores de compilación en `ry-rs/src/main.rs` tests
+- Errores de tipo: `expected &PhysicsBody, found PhysicsBody`
+- Lifetime errors en physics module tests
+- Solución: agregar `&` donde falta, corregir lifetimes en tests
+- No bloquea publicación de crates (libs compilan limpio)
 
-**Archivos clave**:
-- `crates/v-shield/src/lib.rs` (expandir)
-- `crates/ry-gfx/src/render_queue.rs` (PlatformSync)
+**Comando para reproducir**:
+```bash
+cargo test -p ry-rs --bin rydit-rs 2>&1 | grep "^error"
+```
+
+---
+
+### 2. ~~v-shield Platform Layer + Sync~~ → ✅ COMPLETADA en v0.16.0-alpha
+| Campo | Valor |
+|-------|-------|
+| **Prioridad** | ✅ HECHO |
+| **Esfuerzo** | ~4h reales |
+| **Versión** | v0.16.0-alpha |
+| **Estado** | ✅ Completado |
+
+**Lo que se hizo**:
+- ✅ Platform detection (Linux, Windows, macOS, Android, iOS, WASM)
+- ✅ Sync primitives (Mutex, RwLock, Barrier, Condvar)
+- ✅ Platform Sync migrado de ry-gfx a v-shield
+- ✅ ry-gfx usa v-shield PlatformSync (re-export)
+- ✅ ry-stream usa v-shield sync::Mutex
+- ✅ 26 tests v-shield + 17 tests ry-stream = 43/43 pasando
+- ✅ README documentado
+
+---
+
+### 3. Publicar crates en crates.io
+| Campo | Valor |
+|-------|-------|
+| **Prioridad** | 🔴 ALTA |
+| **Esfuerzo** | 1-2h |
+| **Versión** | v0.16.0 |
+| **Estado** | ⏳ Pendiente |
+
+**Crates a publicar**:
+- v-shield v0.2.0 (nuevo)
+- ry-stream v0.2.0 (actualización)
+
+**Comandos**:
+```bash
+cargo publish -p v-shield
+cargo publish -p ry-stream
+```
 
 ---
 

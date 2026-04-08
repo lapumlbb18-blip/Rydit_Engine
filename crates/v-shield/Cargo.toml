@@ -1,7 +1,29 @@
 [package]
 name = "v-shield"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
+description = "Platform layer + sync primitives for Ry-Dit game engine"
+license = "MIT"
+repository = "https://github.com/lapumlbb18-blip/Ry-dit"
+documentation = "https://docs.rs/v-shield"
+keywords = ["game-engine", "platform", "sync", "multiplatform", "rydit"]
+categories = ["game-engines", "os"]
 
 [dependencies]
-raylib = { version = "5.5.1", default-features = false, features = ["nobuild"] }
+# Graphics backend (optional - raylib drawing primitives)
+raylib = { version = "5.5.1", default-features = false, features = ["nobuild"], optional = true }
+
+# Async wrappers (optional - only if you need async Mutex/RwLock)
+tokio = { version = "1.0", optional = true, features = ["sync"] }
+
+[features]
+default = ["native", "graphics"]
+native = []              # Linux/Windows/macOS → std::sync
+wasm = []                # WASM → web sync primitives
+rt-linux = []            # Linux RT → real-time scheduling
+graphics = ["raylib"]    # raylib color primitives + window init
+async-tokio = ["tokio"]  # tokio sync wrappers (adds ~80KB)
+
+[lib]
+name = "v_shield"
+path = "src/lib.rs"

@@ -2,9 +2,10 @@
 // 🆕 WebSocket server simple con threads (sin tokio)
 
 use std::net::{TcpListener, TcpStream};
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
 use std::thread;
 use tungstenite::{accept, Error, Message};
+use v_shield::sync::Mutex;  // ✅ v0.2.0: v-shield sync
 
 /// Cliente conectado al servidor
 pub struct Client {

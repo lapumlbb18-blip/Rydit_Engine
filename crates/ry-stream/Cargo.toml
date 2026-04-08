@@ -1,6 +1,6 @@
 [package]
 name = "ry-stream"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 description = "LAN streaming server with WebSocket + embedded web portal for the Ry-Dit game engine"
 license = "MIT"
@@ -10,10 +10,10 @@ keywords = ["streaming", "websocket", "lan", "json-rpc", "game-engine"]
 categories = ["game-engines", "network-programming", "web-programming::websocket"]
 
 [dependencies]
-# ✅ EXISTENTES (ya están en workspace - 0KB extra)
 tungstenite = "0.21"        # WebSocket client
 serde_json = "1.0"          # JSON
 serde = { version = "1.0", features = ["derive"] }
+v-shield = { path = "../v-shield", default-features = false, features = ["native"] }  # ✅ v0.2.0: Sync primitives
 
 # 🆕 FUTURO (mDNS - opcional para v0.2.0)
 # libmdns = "0.9"
