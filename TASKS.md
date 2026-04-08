@@ -11,9 +11,9 @@
 | Métrica | Valor |
 |---------|-------|
 | **Crates** | 25 |
-| **Errores** | 0 (libs) |
-| **Tests** | 39/39 pasando (v-shield + ry-stream) |
-| **Crates publicados** | 2 (ry-god + ry-stream) → 3 pronto (v-shield) |
+| **Errores** | 0 |
+| **Tests** | 70/70+ pasando (workspace completo) |
+| **Crates publicados** | 4 (ry-god + ry-stream v0.2.0 + v-shield v0.2.0) |
 | **Demos funcionales** | 10+ (Termux-X11) |
 | **GPU Instancing** | 50K partículas, 48 FPS, Adreno 610 |
 | **FSR 1.0** | 960x540 → 1280x720, 48 FPS |
@@ -63,31 +63,27 @@
 | 4 | Tests | ✅ | 39/39 pasando (26 v-shield + 17 ry-stream) |
 | 5 | README v-shield | ✅ | Documentación completa con features |
 | 6 | Cargo.toml features | ✅ | native, wasm, graphics, async-tokio |
-| 7 | ry-rs tests fix | ⏳ | 65 errores pre-existentes en ry-rs/src/main.rs (physics tests) |
+| 7 | ry-rs tests fix | ✅ | 65 errores fixeados → 31 tests pasando |
 
 ---
 
 ## 🔴 TAREAS PRINCIPALES (v0.16.0)
 
-### 1. Corregir tests de ry-rs (65 errores pre-existentes)
+### 1. ~~Corregir tests de ry-rs~~ → ✅ COMPLETADO
 | Campo | Valor |
 |-------|-------|
-| **Prioridad** | 🔴 ALTA |
-| **Esfuerzo** | 2-4h |
-| **Versión** | v0.16.0 |
-| **Estado** | ⏳ Pendiente |
+| **Prioridad** | ✅ HECHO |
+| **Esfuerzo** | ~1h real |
+| **Versión** | v0.16.0-alpha |
+| **Estado** | ✅ Completado |
 
-**Detalle**:
-- 65 errores de compilación en `ry-rs/src/main.rs` tests
-- Errores de tipo: `expected &PhysicsBody, found PhysicsBody`
-- Lifetime errors en physics module tests
-- Solución: agregar `&` donde falta, corregir lifetimes en tests
-- No bloquea publicación de crates (libs compilan limpio)
-
-**Comando para reproducir**:
-```bash
-cargo test -p ry-rs --bin rydit-rs 2>&1 | grep "^error"
-```
+**Lo que se hizo**:
+- ✅ `Vec<Stmt>` → `Vec<Stmt<'static>>` en 3 setup_test()
+- ✅ `Expr::Texto("x".to_string())` → `Expr::Texto("x")` en 54 ocurrencias
+- ✅ `Expr::Texto(id.clone())` → `Expr::Texto(&id)` en 6 ocurrencias
+- ✅ `collides_with(body)` → `collides_with(&body)` en 2 líneas
+- ✅ 31 tests pasando en ry-rs --bin rydit-rs (antes 65 errores)
+- ✅ Causa raíz documentada: lifetimes en AST de ry-parser
 
 ---
 
