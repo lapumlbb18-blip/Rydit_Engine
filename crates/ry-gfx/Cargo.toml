@@ -10,7 +10,7 @@ raylib = { version = "5.5.1", default-features = false, features = ["nobuild"] }
 migui = { path = "../migui" }
 gl = "0.14.0"  # ✅ v0.10.1: FFI OpenGL para GPU Instancing
 sdl2 = { version = "0.37", features = ["image", "ttf", "mixer"] }  # ✅ v0.10.7: Backend SDL2 completo
-v-shield = { path = "../v-shield", default-features = false, features = ["native"] }  # ✅ v0.10.8: Platform Sync
+v-shield = { version = "0.2", path = "../v-shield", default-features = false, features = ["native"] }  # ✅ v0.10.8: Platform Sync
 
 [build-dependencies]
 pkg-config = "0.3"
