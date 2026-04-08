@@ -2,15 +2,24 @@
 name = "ry-gfx"
 version = "0.10.8"
 edition = "2021"
-description = "Ry Graphics Layer - SDL2 Backend + ECS + GPU Instancing"
-links = "raylib"
+description = "Ry Graphics Layer - SDL2 Backend + GPU Instancing + FSR 1.0 for Termux and low-end devices"
+license = "MIT"
+repository = "https://github.com/lapumlbb18-blip/Ry-dit"
+documentation = "https://docs.rs/ry-gfx"
+readme = "README.md"
+keywords = ["game-engine", "graphics", "sdl2", "gpu-instancing", "fsr", "termux"]
+categories = ["game-engines", "rendering::engine"]
 
 [dependencies]
 raylib = { version = "5.5.1", default-features = false, features = ["nobuild"] }
-migui = { path = "../migui" }
-gl = "0.14.0"  # ✅ v0.10.1: FFI OpenGL para GPU Instancing
-sdl2 = { version = "0.37", features = ["image", "ttf", "mixer"] }  # ✅ v0.10.7: Backend SDL2 completo
-v-shield = { version = "0.2", path = "../v-shield", default-features = false, features = ["native"] }  # ✅ v0.10.8: Platform Sync
+gl = "0.14.0"
+sdl2 = { version = "0.37", features = ["image", "ttf", "mixer"] }
+v-shield = { version = "0.2", default-features = false, features = ["native"] }
+migui = { version = "0.4", path = "../migui", optional = true }
 
 [build-dependencies]
 pkg-config = "0.3"
+
+[features]
+default = []
+migui = ["dep:migui"]

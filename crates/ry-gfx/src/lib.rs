@@ -80,6 +80,7 @@ use raylib::consts::KeyboardKey;
 use raylib::prelude::*;
 
 // Importar migui para implementar el backend
+#[cfg(feature = "migui")]
 use migui::{Color as MiguiColor, MiguiBackend, Rect as MiguiRect};
 
 // SDL2 para carga de texturas
@@ -563,7 +564,8 @@ impl ColorRydit {
         }
     }
 
-    /// Crear desde Color de migui
+    /// Crear desde Color de migui (solo con feature migui)
+    #[cfg(feature = "migui")]
     pub fn from_migui(color: MiguiColor) -> Self {
         // Convertir componentes RGB directamente
         // migui::Color tiene campos públicos: r, g, b, a
@@ -1538,12 +1540,13 @@ impl Default for Assets {
 // MIGUI BACKEND IMPLEMENTATION
 // ============================================================================
 
-/// Implementación de MiguiBackend para RyditGfx
+/// Implementación de MiguiBackend para RyditGfx (solo con feature migui)
 ///
 /// Conecta los DrawCommand de migui con las funciones de dibujo de raylib
 ///
 /// Nota: Las funciones asumen que begin_draw() ya fue llamado.
 /// Usar con render_commands_frame() que maneja el begin/end draw.
+#[cfg(feature = "migui")]
 impl MiguiBackend for RyditGfx {
     fn clear(&mut self, color: MiguiColor) {
         let color_rydit = ColorRydit::from_migui(color);
@@ -1582,9 +1585,10 @@ impl MiguiBackend for RyditGfx {
 }
 
 // ============================================================================
-// FUNCIONES DE RENDERIZADO MIGUI OPTIMIZADAS
+// FUNCIONES DE RENDERIZADO MIGUI OPTIMIZADAS (solo con feature migui)
 // ============================================================================
 
+#[cfg(feature = "migui")]
 impl RyditGfx {
     /// Renderizar comandos migui en un frame (con begin/end draw único)
     pub fn render_migui_frame(&mut self, commands: &[migui::DrawCommand]) {
@@ -1750,6 +1754,7 @@ mod tests {
     // TESTS V0.4.1 - MIGUI BACKEND
     // ========================================================================
 
+    #[cfg(feature = "migui")]
     #[test]
     fn test_migui_backend_exists() {
         // Verificar que RyditGfx implementa MiguiBackend
