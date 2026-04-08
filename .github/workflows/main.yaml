@@ -1,4 +1,4 @@
-name: Ry-Dit CI/CD
+name: CI/CD
 
 on:
   push:
@@ -13,17 +13,22 @@ env:
 
 jobs:
   # ============================================================================
-  # BUILD + TEST en Linux
+  # BUILD + TEST en Linux (Ubuntu)
   # ============================================================================
   build-linux:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install dependencies
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install system dependencies (SDL2 + X11)
         run: |
           sudo apt-get update
-          sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev
+          sudo apt-get install -y \
+            libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev \
+            libasound2-dev libx11-dev libxi-dev libxrandr-dev libgl1-mesa-dev
 
       - name: Cache cargo registry
         uses: actions/cache@v4
@@ -33,73 +38,128 @@ jobs:
             ~/.cargo/git
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
 
-      - name: Build workspace
+      - name: Check workspace
+        run: cargo check --workspace --verbose
+
+      - name: Build workspace (debug)
         run: cargo build --workspace --verbose
 
-      - name: Run tests
-        run: cargo test --workspace --verbose
+      - name: Run tests (lib crates — no X11 required)
+        run: cargo test --workspace --lib --verbose
 
-      - name: Check ry-god
-        run: cargo check -p ry-god
+      - name: Run tests (ry-rs binary)
+        run: cargo test -p ry-rs --bin rydit-rs --verbose
+
+      - name: Build release
+        run: cargo build --release -p ry-rs --verbose
+
+      - name: Upload release binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: rydit-rs-linux
+          path: target/release/rydit-rs
+          retention-days: 7
 
   # ============================================================================
-  # BUILD en Windows (MSVC)
+  # BUILD en Windows (MSVC) — sin tests (requiere SDL2 dll manual)
   # ============================================================================
   build-windows:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
       - name: Install SDL2 (vcpkg)
         run: |
-          vcpkg install sdl2 sdl2-image sdl2-ttf sdl2-mixer
+          vcpkg install sdl2:x64-windows sdl2-image:x64-windows sdl2-ttf:x64-windows sdl2-mixer:x64-windows
+
+      - name: Cache cargo registry
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
 
       - name: Build workspace
         run: cargo build --workspace --verbose
 
   # ============================================================================
-  # RELEASE: Crear artifacts
+  # BUILD en macOS
+  # ============================================================================
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install SDL2 (brew)
+        run: brew install sdl2 sdl2_image sdl2_ttf sdl2_mixer
+
+      - name: Cache cargo registry
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Build workspace
+        run: cargo build --workspace --verbose
+
+  # ============================================================================
+  # RELEASE: Crear artifacts (solo en tag/release)
   # ============================================================================
   release:
-    needs: [build-linux, build-windows]
+    needs: [build-linux]
     runs-on: ubuntu-latest
     if: github.event_name == 'release'
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install dependencies
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev
+          sudo apt-get install -y \
+            libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev
 
       - name: Build release binaries
         run: |
           cargo build --release -p ry-rs
-          cargo build --release -p ry-god
 
       - name: Create release archive
         run: |
           mkdir -p ry-dit-${{ github.event.release.tag_name }}
           cp target/release/rydit-rs ry-dit-${{ github.event.release.tag_name }}/
-          cp target/release/test_revelacion ry-dit-${{ github.event.release.tag_name }}/ 2>/dev/null || true
-          cp target/release/verify_crates ry-dit-${{ github.event.release.tag_name }}/ 2>/dev/null || true
-          cp -r demos ry-dit-${{ github.event.release.tag_name }}/
-          cp README.md ry-dit-${{ github.event.release.tag_name }}/
+          cp README.md ry-dit-${{ github.event.release.tag_name }}/ 2>/dev/null || true
+          cp LICENSE ry-dit-${{ github.event.release.tag_name }}/ 2>/dev/null || true
           tar czf ry-dit-${{ github.event.release.tag_name }}-linux-x86_64.tar.gz ry-dit-${{ github.event.release.tag_name }}/
 
       - name: Upload release asset
-        uses: actions/upload-release-asset@v1
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ry-dit-${{ github.event.release.tag_name }}-linux-x86_64.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./ry-dit-${{ github.event.release.tag_name }}-linux-x86_64.tar.gz
-          asset_name: ry-dit-${{ github.event.release.tag_name }}-linux-x86_64.tar.gz
-          asset_content_type: application/gzip
 
   # ============================================================================
-  # CRATES.IO: Publicar crates automáticamente
+  # CRATES.IO: Publicar crates automáticamente (solo en release)
   # ============================================================================
   publish-crates:
     needs: [build-linux]
@@ -108,23 +168,26 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install dependencies
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev
+          sudo apt-get install -y \
+            libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev
 
-      - name: Publish ry-god
-        run: cargo publish -p ry-god --token ${{ secrets.CRATES_TOKEN }}
-        continue-on-error: true
+      - name: Publish v-shield
+        run: cargo publish -p v-shield --token ${{ secrets.CRATES_TOKEN }} || true
 
-      - name: Publish ry-core
-        run: cargo publish -p ry-core --token ${{ secrets.CRATES_TOKEN }}
-        continue-on-error: true
+      - name: Publish ry-stream
+        run: cargo publish -p ry-stream --token ${{ secrets.CRATES_TOKEN }} || true
 
-      - name: Publish ry-lexer
-        run: cargo publish -p ry-lexer --token ${{ secrets.CRATES_TOKEN }}
-        continue-on-error: true
+      - name: Publish ry-backend
+        run: cargo publish -p ry-backend --token ${{ secrets.CRATES_TOKEN }} || true
 
-      - name: Publish ry-parser
-        run: cargo publish -p ry-parser --token ${{ secrets.CRATES_TOKEN }}
-        continue-on-error: true
+      - name: Publish migui
+        run: cargo publish -p migui --token ${{ secrets.CRATES_TOKEN }} || true
+
+      - name: Publish ry-gfx
+        run: cargo publish -p ry-gfx --token ${{ secrets.CRATES_TOKEN }} || true
