@@ -2,12 +2,15 @@
 name = "migui"
 version = "0.4.1"
 edition = "2021"
-description = "Immediate Mode GUI puro en Rust para Ry-Dit"
+description = "Immediate Mode GUI in pure Rust for game engines"
+license = "MIT"
+repository = "https://github.com/lapumlbb18-blip/Ry-dit"
+documentation = "https://docs.rs/migui"
 authors = ["Shield Project"]
 
 [dependencies]
 # Sin dependencias por defecto - migui es puro Rust!
-ry-backend = { path = "../ry-backend", features = ["sdl2-only"], optional = true }  # Backend SDL2 opcional
+ry-backend = { version = "0.1", path = "../ry-backend", features = ["sdl2-only"], optional = true }  # Backend SDL2 opcional
 ab_glyph = "0.2"  # ✅ v0.10.10: Fuentes nativas Rust (sin FFI)
 image = "0.25"  # ✅ v0.10.10: Render de texto a imagen
 

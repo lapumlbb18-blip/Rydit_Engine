@@ -2,10 +2,12 @@
 name = "ry-backend"
 version = "0.1.0"
 edition = "2021"
-description = "Dual backend (raylib + SDL2) para ry-dit - Multiplataforma con texto TTF profesional"
+description = "Dual backend (raylib + SDL2) for game engines - Multiplatform with TTF, input, audio"
 license = "MIT"
+repository = "https://github.com/lapumlbb18-blip/Ry-dit"
+documentation = "https://docs.rs/ry-backend"
 keywords = ["game-engine", "backend", "raylib", "sdl2", "multiplatform"]
-categories = ["game-development", "graphics"]
+categories = ["game-engines", "api-bindings"]
 
 [dependencies]
 # Backend Raylib - Drawing 2D/3D + Shapes (opcional)
