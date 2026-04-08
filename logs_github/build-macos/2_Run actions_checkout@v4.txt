@@ -1,0 +1,75 @@
+﻿2026-04-08T08:51:16.7442950Z ##[group]Run actions/checkout@v4
+2026-04-08T08:51:16.7443630Z with:
+2026-04-08T08:51:16.7444020Z   repository: lapumlbb18-blip/Ry-dit
+2026-04-08T08:51:16.7444710Z   token: ***
+2026-04-08T08:51:16.7445070Z   ssh-strict: true
+2026-04-08T08:51:16.7445430Z   ssh-user: git
+2026-04-08T08:51:16.7445790Z   persist-credentials: true
+2026-04-08T08:51:16.7446200Z   clean: true
+2026-04-08T08:51:16.7446570Z   sparse-checkout-cone-mode: true
+2026-04-08T08:51:16.7447000Z   fetch-depth: 1
+2026-04-08T08:51:16.7447360Z   fetch-tags: false
+2026-04-08T08:51:16.7447740Z   show-progress: true
+2026-04-08T08:51:16.7448110Z   lfs: false
+2026-04-08T08:51:16.7449220Z   submodules: false
+2026-04-08T08:51:16.7449940Z   set-safe-directory: true
+2026-04-08T08:51:16.7450510Z env:
+2026-04-08T08:51:16.7450880Z   CARGO_TERM_COLOR: always
+2026-04-08T08:51:16.7451270Z ##[endgroup]
+2026-04-08T08:51:17.1500350Z Syncing repository: lapumlbb18-blip/Ry-dit
+2026-04-08T08:51:17.1505930Z ##[group]Getting Git version info
+2026-04-08T08:51:17.1508880Z Working directory is '/Users/runner/work/Ry-dit/Ry-dit'
+2026-04-08T08:51:17.1512110Z [command]/opt/homebrew/bin/git version
+2026-04-08T08:51:17.1936760Z git version 2.53.0
+2026-04-08T08:51:17.2086800Z ##[endgroup]
+2026-04-08T08:51:17.2093430Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/d4511de8-83fe-42fb-80cf-88bd4d7d454a/.gitconfig'
+2026-04-08T08:51:17.2094880Z Temporarily overriding HOME='/Users/runner/work/_temp/d4511de8-83fe-42fb-80cf-88bd4d7d454a' before making global git config changes
+2026-04-08T08:51:17.2098530Z Adding repository directory to the temporary git global config as a safe directory
+2026-04-08T08:51:17.2101040Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/Ry-dit/Ry-dit
+2026-04-08T08:51:17.2189170Z Deleting the contents of '/Users/runner/work/Ry-dit/Ry-dit'
+2026-04-08T08:51:17.2190620Z ##[group]Initializing the repository
+2026-04-08T08:51:17.2192170Z [command]/opt/homebrew/bin/git init /Users/runner/work/Ry-dit/Ry-dit
+2026-04-08T08:51:17.2524830Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-04-08T08:51:17.2559490Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-04-08T08:51:17.2562350Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-04-08T08:51:17.2563170Z hint: call:
+2026-04-08T08:51:17.2563910Z hint:
+2026-04-08T08:51:17.2564440Z hint: 	git config --global init.defaultBranch <name>
+2026-04-08T08:51:17.2564980Z hint:
+2026-04-08T08:51:17.2565460Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-04-08T08:51:17.2566190Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-04-08T08:51:17.2566780Z hint:
+2026-04-08T08:51:17.2567130Z hint: 	git branch -m <name>
+2026-04-08T08:51:17.2567520Z hint:
+2026-04-08T08:51:17.2568030Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-04-08T08:51:17.2568850Z Initialized empty Git repository in /Users/runner/work/Ry-dit/Ry-dit/.git/
+2026-04-08T08:51:17.2570390Z [command]/opt/homebrew/bin/git remote add origin https://github.com/lapumlbb18-blip/Ry-dit
+2026-04-08T08:51:17.2638770Z ##[endgroup]
+2026-04-08T08:51:17.2639570Z ##[group]Disabling automatic garbage collection
+2026-04-08T08:51:17.2640590Z [command]/opt/homebrew/bin/git config --local gc.auto 0
+2026-04-08T08:51:17.2745700Z ##[endgroup]
+2026-04-08T08:51:17.2746500Z ##[group]Setting up auth
+2026-04-08T08:51:17.2748910Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-04-08T08:51:17.2861660Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-04-08T08:51:17.4272790Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-04-08T08:51:17.4368490Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-04-08T08:51:17.5574800Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-04-08T08:51:17.5751260Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-04-08T08:51:17.7370640Z [command]/opt/homebrew/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-04-08T08:51:17.7483600Z ##[endgroup]
+2026-04-08T08:51:17.7490610Z ##[group]Fetching the repository
+2026-04-08T08:51:17.7506230Z [command]/opt/homebrew/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +667cfeaedf4c4d6e268fc2762f61a722623586b9:refs/remotes/origin/main
+2026-04-08T08:51:19.2418620Z From https://github.com/lapumlbb18-blip/Ry-dit
+2026-04-08T08:51:19.2422220Z  * [new ref]         667cfeaedf4c4d6e268fc2762f61a722623586b9 -> origin/main
+2026-04-08T08:51:19.2534830Z ##[endgroup]
+2026-04-08T08:51:19.2535960Z ##[group]Determining the checkout info
+2026-04-08T08:51:19.2539010Z ##[endgroup]
+2026-04-08T08:51:19.2540950Z [command]/opt/homebrew/bin/git sparse-checkout disable
+2026-04-08T08:51:19.2630240Z [command]/opt/homebrew/bin/git config --local --unset-all extensions.worktreeConfig
+2026-04-08T08:51:19.2723620Z ##[group]Checking out the ref
+2026-04-08T08:51:19.2725610Z [command]/opt/homebrew/bin/git checkout --progress --force -B main refs/remotes/origin/main
+2026-04-08T08:51:19.7729020Z Switched to a new branch 'main'
+2026-04-08T08:51:19.7742550Z branch 'main' set up to track 'origin/main'.
+2026-04-08T08:51:19.7774270Z ##[endgroup]
+2026-04-08T08:51:19.7968320Z [command]/opt/homebrew/bin/git log -1 --format=%H
+2026-04-08T08:51:19.8018330Z 667cfeaedf4c4d6e268fc2762f61a722623586b9

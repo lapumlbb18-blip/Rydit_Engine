@@ -1,0 +1,151 @@
+﻿2026-04-08T08:51:21.4126210Z ##[group]Run brew install sdl2 sdl2_image sdl2_ttf sdl2_mixer
+2026-04-08T08:51:21.4126570Z [36;1mbrew install sdl2 sdl2_image sdl2_ttf sdl2_mixer[0m
+2026-04-08T08:51:21.4177190Z shell: /bin/bash -e {0}
+2026-04-08T08:51:21.4177920Z env:
+2026-04-08T08:51:21.4178140Z   CARGO_TERM_COLOR: always
+2026-04-08T08:51:21.4178350Z   CARGO_HOME: /Users/runner/.cargo
+2026-04-08T08:51:21.4178540Z   CARGO_INCREMENTAL: 0
+2026-04-08T08:51:21.4178700Z ##[endgroup]
+2026-04-08T08:51:26.4024220Z ✔︎ JSON API formula_tap_migrations.jws.json
+2026-04-08T08:51:26.4025080Z ✔︎ JSON API cask_tap_migrations.jws.json
+2026-04-08T08:51:28.5920730Z [32m==>[0m [1mFetching downloads for: [32msdl2[39m, [32msdl2_image[39m, [32msdl2_ttf[39m and [32msdl2_mixer[39m[0m
+2026-04-08T08:51:29.1147960Z ✔︎ Bottle Manifest sdl2_image (2.8.8)
+2026-04-08T08:51:29.1148650Z ✔︎ Bottle Manifest sdl2_ttf (2.24.0)
+2026-04-08T08:51:29.1149920Z ✔︎ Bottle Manifest sdl2_mixer (2.8.1_1)
+2026-04-08T08:51:29.2405970Z ✔︎ Bottle Manifest sdl2 (2.32.10)
+2026-04-08T08:51:31.3668150Z ✔︎ Bottle sdl2 (2.32.10)
+2026-04-08T08:51:31.3771230Z ✔︎ Bottle highway (1.3.0)
+2026-04-08T08:51:31.3873010Z ✔︎ Bottle imath (3.2.2)
+2026-04-08T08:51:31.3943920Z ✔︎ Bottle Manifest libdeflate (1.25)
+2026-04-08T08:51:31.3949220Z ✔︎ Bottle libdeflate (1.25)
+2026-04-08T08:51:31.3950960Z ✔︎ Bottle openjph (0.26.3)
+2026-04-08T08:51:31.3952560Z ✔︎ Bottle Manifest openexr (3.4.8)
+2026-04-08T08:51:31.3953100Z ✔︎ Bottle Manifest jpeg-xl (0.11.2)
+2026-04-08T08:51:31.7592810Z ✔︎ Bottle openexr (3.4.8)
+2026-04-08T08:51:32.0754310Z ✔︎ Bottle jpeg-xl (0.11.2)
+2026-04-08T08:51:32.3672910Z ✔︎ Bottle libvmaf (3.0.0)
+2026-04-08T08:51:32.3691350Z ✔︎ Bottle Manifest aom (3.13.2)
+2026-04-08T08:51:32.7003230Z ✔︎ Bottle Manifest dav1d (1.5.3)
+2026-04-08T08:51:32.9273980Z ✔︎ Bottle dav1d (1.5.3)
+2026-04-08T08:51:33.2234460Z ✔︎ Bottle Manifest libavif (1.4.1)
+2026-04-08T08:51:33.6533860Z ✔︎ Bottle libavif (1.4.1)
+2026-04-08T08:51:33.9162950Z ✔︎ Bottle Manifest webp (1.6.0)
+2026-04-08T08:51:34.3128420Z ✔︎ Bottle webp (1.6.0)
+2026-04-08T08:51:34.6637070Z ✔︎ Bottle sdl2_image (2.8.8)
+2026-04-08T08:51:35.0507150Z ✔︎ Bottle sdl2_ttf (2.24.0)
+2026-04-08T08:51:35.5704280Z ✔︎ Bottle Manifest libogg (1.3.6)
+2026-04-08T08:51:36.3121010Z ✔︎ Bottle libogg (1.3.6)
+2026-04-08T08:51:36.5305110Z ✔︎ Bottle Manifest libvmaf (3.0.0)
+2026-04-08T08:51:36.6549910Z ✔︎ Bottle Manifest highway (1.3.0)
+2026-04-08T08:51:36.8703160Z ✔︎ Bottle Manifest imath (3.2.2)
+2026-04-08T08:51:36.9508980Z ✔︎ Bottle flac (1.5.0)
+2026-04-08T08:51:37.2443930Z ✔︎ Bottle lame (3.100)
+2026-04-08T08:51:37.3145270Z ✔︎ Bottle Manifest libvorbis (1.3.7)
+2026-04-08T08:51:37.5741680Z ✔︎ Bottle Manifest mpg123 (1.33.4)
+2026-04-08T08:51:37.6664330Z ✔︎ Bottle libvorbis (1.3.7)
+2026-04-08T08:51:38.0320890Z ✔︎ Bottle mpg123 (1.33.4)
+2026-04-08T08:51:38.0322270Z ✔︎ Bottle Manifest opus (1.6.1)
+2026-04-08T08:51:38.3240610Z ✔︎ Bottle Manifest libsndfile (1.2.2_1)
+2026-04-08T08:51:38.4023720Z ✔︎ Bottle opus (1.6.1)
+2026-04-08T08:51:38.8132550Z ✔︎ Bottle libsndfile (1.2.2_1)
+2026-04-08T08:51:38.8946040Z ✔︎ Bottle Manifest portaudio (19.7.0)
+2026-04-08T08:51:39.1582460Z ✔︎ Bottle portaudio (19.7.0)
+2026-04-08T08:51:39.5729100Z ✔︎ Bottle Manifest fluid-synth (2.5.3)
+2026-04-08T08:51:39.8288800Z ✔︎ Bottle fluid-synth (2.5.3)
+2026-04-08T08:51:39.9154850Z ✔︎ Bottle Manifest openjph (0.26.3)
+2026-04-08T08:51:40.0871140Z ✔︎ Bottle Manifest flac (1.5.0)
+2026-04-08T08:51:40.0895050Z ✔︎ Bottle Manifest game-music-emu (0.6.4_1)
+2026-04-08T08:51:40.3167790Z ✔︎ Bottle game-music-emu (0.6.4_1)
+2026-04-08T08:51:40.3855450Z ✔︎ Bottle Manifest opusfile (0.12_1)
+2026-04-08T08:51:40.5073910Z ✔︎ Bottle libxmp (4.7.0)
+2026-04-08T08:51:40.8023580Z ✔︎ Bottle opusfile (0.12_1)
+2026-04-08T08:51:40.9794690Z ✔︎ Bottle wavpack (5.9.0)
+2026-04-08T08:51:41.1262860Z ✔︎ Bottle aom (3.13.2)
+2026-04-08T08:51:41.1774290Z ✔︎ Bottle sdl2_mixer (2.8.1_1)
+2026-04-08T08:51:41.9102110Z ✔︎ Bottle Manifest wavpack (5.9.0)
+2026-04-08T08:51:43.3405120Z ✔︎ Bottle Manifest lame (3.100)
+2026-04-08T08:51:46.6468080Z ✔︎ Bottle Manifest libxmp (4.7.0)
+2026-04-08T08:51:46.7554600Z [34m==>[0m [1mPouring sdl2--2.32.10.arm64_sequoia.bottle.tar.gz[0m
+2026-04-08T08:51:49.3783540Z 🍺  /opt/homebrew/Cellar/sdl2/2.32.10: 94 files, 6.7MB
+2026-04-08T08:51:49.5899110Z [32m==>[0m [1mInstalling dependencies for sdl2_image: [32mhighway[39m, [32mimath[39m, [32mlibdeflate[39m, [32mopenjph[39m, [32mopenexr[39m, [32mjpeg-xl[39m, [32mlibvmaf[39m, [32maom[39m, [32mdav1d[39m, [32mlibavif[39m and [32mwebp[39m[0m
+2026-04-08T08:51:49.5910500Z [32m==>[0m [1mInstalling sdl2_image dependency: [32mhighway[39m[0m
+2026-04-08T08:51:49.6011340Z [34m==>[0m [1mPouring highway--1.3.0.arm64_sequoia.bottle.tar.gz[0m
+2026-04-08T08:51:51.3590020Z 🍺  /opt/homebrew/Cellar/highway/1.3.0: 81 files, 5.6MB
+2026-04-08T08:51:51.3598370Z [32m==>[0m [1mInstalling sdl2_image dependency: [32mimath[39m[0m
+2026-04-08T08:51:51.3673100Z [34m==>[0m [1mPouring imath--3.2.2.arm64_sequoia.bottle.tar.gz[0m
+2026-04-08T08:51:53.1981310Z 🍺  /opt/homebrew/Cellar/imath/3.2.2: 50 files, 990.1KB
+2026-04-08T08:51:53.2085410Z [32m==>[0m [1mInstalling sdl2_image dependency: [32mlibdeflate[39m[0m
+2026-04-08T08:51:53.2188490Z [34m==>[0m [1mPouring libdeflate--1.25.arm64_sequoia.bottle.tar.gz[0m
+2026-04-08T08:51:54.8206320Z 🍺  /opt/homebrew/Cellar/libdeflate/1.25: 17 files, 336.4KB
+2026-04-08T08:51:54.8217820Z [32m==>[0m [1mInstalling sdl2_image dependency: [32mopenjph[39m[0m
+2026-04-08T08:51:54.8681580Z [34m==>[0m [1mPouring openjph--0.26.3.arm64_sequoia.bottle.tar.gz[0m
+2026-04-08T08:51:56.6084510Z 🍺  /opt/homebrew/Cellar/openjph/0.26.3: 25 files, 637.5KB
+2026-04-08T08:51:56.6089330Z [32m==>[0m [1mInstalling sdl2_image dependency: [32mopenexr[39m[0m
+2026-04-08T08:51:56.6848660Z [34m==>[0m [1mPouring openexr--3.4.8.arm64_sequoia.bottle.tar.gz[0m
+2026-04-08T08:51:59.6638960Z 🍺  /opt/homebrew/Cellar/openexr/3.4.8: 212 files, 4.6MB
+2026-04-08T08:51:59.6653080Z [32m==>[0m [1mInstalling sdl2_image dependency: [32mjpeg-xl[39m[0m
+2026-04-08T08:51:59.8643680Z [34m==>[0m [1mPouring jpeg-xl--0.11.2.arm64_sequoia.bottle.tar.gz[0m
+2026-04-08T08:52:05.0710870Z 🍺  /opt/homebrew/Cellar/jpeg-xl/0.11.2: 64 files, 36.0MB
+2026-04-08T08:52:05.0714010Z [32m==>[0m [1mInstalling sdl2_image dependency: [32mlibvmaf[39m[0m
+2026-04-08T08:52:05.0952760Z [34m==>[0m [1mPouring libvmaf--3.0.0.arm64_sequoia.bottle.1.tar.gz[0m
+2026-04-08T08:52:06.9870930Z 🍺  /opt/homebrew/Cellar/libvmaf/3.0.0: 235 files, 7.5MB
+2026-04-08T08:52:06.9974790Z [32m==>[0m [1mInstalling sdl2_image dependency: [32maom[39m[0m
+2026-04-08T08:52:07.3054490Z [34m==>[0m [1mPouring aom--3.13.2.arm64_sequoia.bottle.tar.gz[0m
+2026-04-08T08:52:08.9953170Z 🍺  /opt/homebrew/Cellar/aom/3.13.2: 28 files, 10.6MB
+2026-04-08T08:52:08.9958050Z [32m==>[0m [1mInstalling sdl2_image dependency: [32mdav1d[39m[0m
+2026-04-08T08:52:09.0213790Z [34m==>[0m [1mPouring dav1d--1.5.3.arm64_sequoia.bottle.tar.gz[0m
+2026-04-08T08:52:10.6332630Z 🍺  /opt/homebrew/Cellar/dav1d/1.5.3: 16 files, 945.0KB
+2026-04-08T08:52:10.6432710Z [32m==>[0m [1mInstalling sdl2_image dependency: [32mlibavif[39m[0m
+2026-04-08T08:52:10.8737590Z [34m==>[0m [1mPouring libavif--1.4.1.arm64_sequoia.bottle.tar.gz[0m
+2026-04-08T08:52:12.6907170Z 🍺  /opt/homebrew/Cellar/libavif/1.4.1: 22 files, 1.1MB
+2026-04-08T08:52:12.6936660Z [32m==>[0m [1mInstalling sdl2_image dependency: [32mwebp[39m[0m
+2026-04-08T08:52:12.7674480Z [34m==>[0m [1mPouring webp--1.6.0.arm64_sequoia.bottle.tar.gz[0m
+2026-04-08T08:52:15.0155160Z 🍺  /opt/homebrew/Cellar/webp/1.6.0: 64 files, 2.6MB
+2026-04-08T08:52:15.0158260Z [32m==>[0m [1mInstalling [32msdl2_image[39m[0m
+2026-04-08T08:52:15.0161460Z [34m==>[0m [1mPouring sdl2_image--2.8.8.arm64_sequoia.bottle.tar.gz[0m
+2026-04-08T08:52:16.5647200Z 🍺  /opt/homebrew/Cellar/sdl2_image/2.8.8: 15 files, 423.3KB
+2026-04-08T08:52:16.7163300Z [34m==>[0m [1mPouring sdl2_ttf--2.24.0.arm64_sequoia.bottle.tar.gz[0m
+2026-04-08T08:52:18.3612610Z 🍺  /opt/homebrew/Cellar/sdl2_ttf/2.24.0: 13 files, 288.3KB
+2026-04-08T08:52:18.4474420Z [32m==>[0m [1mInstalling dependencies for sdl2_mixer: [32mlibogg[39m, [32mflac[39m, [32mlame[39m, [32mlibvorbis[39m, [32mmpg123[39m, [32mopus[39m, [32mlibsndfile[39m, [32mportaudio[39m, [32mfluid-synth[39m, [32mgame-music-emu[39m, [32mlibxmp[39m, [32mopusfile[39m and [32mwavpack[39m[0m
+2026-04-08T08:52:18.4488580Z [32m==>[0m [1mInstalling sdl2_mixer dependency: [32mlibogg[39m[0m
+2026-04-08T08:52:18.4552910Z [34m==>[0m [1mPouring libogg--1.3.6.arm64_sequoia.bottle.tar.gz[0m
+2026-04-08T08:52:19.9923630Z 🍺  /opt/homebrew/Cellar/libogg/1.3.6: 103 files, 551.2KB
+2026-04-08T08:52:19.9995420Z [32m==>[0m [1mInstalling sdl2_mixer dependency: [32mflac[39m[0m
+2026-04-08T08:52:20.0289470Z [34m==>[0m [1mPouring flac--1.5.0.arm64_sequoia.bottle.tar.gz[0m
+2026-04-08T08:52:21.9371590Z 🍺  /opt/homebrew/Cellar/flac/1.5.0: 40 files, 2.0MB
+2026-04-08T08:52:21.9382440Z [32m==>[0m [1mInstalling sdl2_mixer dependency: [32mlame[39m[0m
+2026-04-08T08:52:21.9419040Z [34m==>[0m [1mPouring lame--3.100.arm64_sequoia.bottle.tar.gz[0m
+2026-04-08T08:52:23.4669050Z 🍺  /opt/homebrew/Cellar/lame/3.100: 28 files, 2.3MB
+2026-04-08T08:52:23.4675760Z [32m==>[0m [1mInstalling sdl2_mixer dependency: [32mlibvorbis[39m[0m
+2026-04-08T08:52:23.4877490Z [34m==>[0m [1mPouring libvorbis--1.3.7.arm64_sequoia.bottle.1.tar.gz[0m
+2026-04-08T08:52:25.2635820Z 🍺  /opt/homebrew/Cellar/libvorbis/1.3.7: 158 files, 2.5MB
+2026-04-08T08:52:25.2644530Z [32m==>[0m [1mInstalling sdl2_mixer dependency: [32mmpg123[39m[0m
+2026-04-08T08:52:25.2710790Z [34m==>[0m [1mPouring mpg123--1.33.4.arm64_sequoia.bottle.tar.gz[0m
+2026-04-08T08:52:27.1858640Z 🍺  /opt/homebrew/Cellar/mpg123/1.33.4: 34 files, 2MB
+2026-04-08T08:52:27.1866930Z [32m==>[0m [1mInstalling sdl2_mixer dependency: [32mopus[39m[0m
+2026-04-08T08:52:27.1905080Z [34m==>[0m [1mPouring opus--1.6.1.arm64_sequoia.bottle.tar.gz[0m
+2026-04-08T08:52:28.6635600Z 🍺  /opt/homebrew/Cellar/opus/1.6.1: 16 files, 1.1MB
+2026-04-08T08:52:28.6637230Z [32m==>[0m [1mInstalling sdl2_mixer dependency: [32mlibsndfile[39m[0m
+2026-04-08T08:52:28.7300520Z [34m==>[0m [1mPouring libsndfile--1.2.2_1.arm64_sequoia.bottle.tar.gz[0m
+2026-04-08T08:52:30.2402430Z 🍺  /opt/homebrew/Cellar/libsndfile/1.2.2_1: 55 files, 1.8MB
+2026-04-08T08:52:30.2410720Z [32m==>[0m [1mInstalling sdl2_mixer dependency: [32mportaudio[39m[0m
+2026-04-08T08:52:30.2467540Z [34m==>[0m [1mPouring portaudio--19.7.0.arm64_sequoia.bottle.1.tar.gz[0m
+2026-04-08T08:52:31.9377840Z 🍺  /opt/homebrew/Cellar/portaudio/19.7.0: 34 files, 559.1KB
+2026-04-08T08:52:31.9386240Z [32m==>[0m [1mInstalling sdl2_mixer dependency: [32mfluid-synth[39m[0m
+2026-04-08T08:52:32.1124150Z [34m==>[0m [1mPouring fluid-synth--2.5.3.arm64_sequoia.bottle.tar.gz[0m
+2026-04-08T08:52:33.8110830Z 🍺  /opt/homebrew/Cellar/fluid-synth/2.5.3: 44 files, 4MB
+2026-04-08T08:52:33.8116420Z [32m==>[0m [1mInstalling sdl2_mixer dependency: [32mgame-music-emu[39m[0m
+2026-04-08T08:52:33.8200850Z [34m==>[0m [1mPouring game-music-emu--0.6.4_1.arm64_sequoia.bottle.tar.gz[0m
+2026-04-08T08:52:35.2847840Z 🍺  /opt/homebrew/Cellar/game-music-emu/0.6.4_1: 13 files, 778.7KB
+2026-04-08T08:52:35.2874300Z [32m==>[0m [1mInstalling sdl2_mixer dependency: [32mlibxmp[39m[0m
+2026-04-08T08:52:35.2911730Z [34m==>[0m [1mPouring libxmp--4.7.0.arm64_sequoia.bottle.tar.gz[0m
+2026-04-08T08:52:36.9192660Z 🍺  /opt/homebrew/Cellar/libxmp/4.7.0: 15 files, 1.2MB
+2026-04-08T08:52:36.9204420Z [32m==>[0m [1mInstalling sdl2_mixer dependency: [32mopusfile[39m[0m
+2026-04-08T08:52:36.9688000Z [34m==>[0m [1mPouring opusfile--0.12_1.arm64_sequoia.bottle.tar.gz[0m
+2026-04-08T08:52:38.5603450Z 🍺  /opt/homebrew/Cellar/opusfile/0.12_1: 18 files, 358.2KB
+2026-04-08T08:52:38.5613940Z [32m==>[0m [1mInstalling sdl2_mixer dependency: [32mwavpack[39m[0m
+2026-04-08T08:52:38.5657160Z [34m==>[0m [1mPouring wavpack--5.9.0.arm64_sequoia.bottle.tar.gz[0m
+2026-04-08T08:52:40.3927560Z 🍺  /opt/homebrew/Cellar/wavpack/5.9.0: 26 files, 1.2MB
+2026-04-08T08:52:40.3933920Z [32m==>[0m [1mInstalling [32msdl2_mixer[39m[0m
+2026-04-08T08:52:40.3938590Z [34m==>[0m [1mPouring sdl2_mixer--2.8.1_1.arm64_sequoia.bottle.tar.gz[0m
+2026-04-08T08:52:42.0298400Z 🍺  /opt/homebrew/Cellar/sdl2_mixer/2.8.1_1: 25 files, 567.8KB

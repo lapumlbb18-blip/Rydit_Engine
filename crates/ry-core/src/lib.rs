@@ -163,6 +163,33 @@ pub trait RyditModule: Send + Sync {
     fn on_unload(&mut self) {}
 }
 
+/// Permite registrar `Box<dyn RyditModule>` directamente
+/// Necesario para carga dinámica (libloading) donde el módulo
+/// ya viene como `Box<dyn RyditModule>`
+impl RyditModule for Box<dyn RyditModule> {
+    fn name(&self) -> &'static str {
+        self.as_ref().name()
+    }
+    fn version(&self) -> &'static str {
+        self.as_ref().version()
+    }
+    fn register(&self) -> HashMap<&'static str, &'static str> {
+        self.as_ref().register()
+    }
+    fn execute(&self, command: &str, params: Value) -> ModuleResult {
+        self.as_ref().execute(command, params)
+    }
+    fn metadata(&self) -> ModuleMetadata {
+        self.as_ref().metadata()
+    }
+    fn on_reload(&mut self) {
+        self.as_mut().on_reload()
+    }
+    fn on_unload(&mut self) {
+        self.as_mut().on_unload()
+    }
+}
+
 /// Registro de módulos disponibles (v0.8.2+)
 ///
 /// Soporta carga dinámica, hot reload y metadata de módulos

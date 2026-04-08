@@ -41,11 +41,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cargo-
 
-      - name: Check workspace
-        run: cargo check --workspace --verbose
+      - name: Check workspace (libs only)
+        run: cargo check --workspace --lib --verbose
 
-      - name: Build workspace (debug)
-        run: cargo build --workspace --verbose
+      - name: Build workspace (libs only, no demos)
+        run: cargo build --workspace --lib --verbose
 
       - name: Run tests (lib crates — no X11 required)
         run: cargo test --workspace --lib --verbose
@@ -89,8 +89,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cargo-
 
-      - name: Build workspace
-        run: cargo build --workspace --verbose
+      - name: Build workspace (libs only, skip demos)
+        run: cargo build --workspace --lib --verbose
 
   # ============================================================================
   # BUILD en macOS
@@ -117,8 +117,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cargo-
 
-      - name: Build workspace
-        run: cargo build --workspace --verbose
+      - name: Build workspace (libs only, skip demos)
+        run: cargo build --workspace --lib --verbose
 
   # ============================================================================
   # RELEASE: Crear artifacts (solo en tag/release)

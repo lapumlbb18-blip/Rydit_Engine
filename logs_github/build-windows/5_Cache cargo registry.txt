@@ -1,0 +1,19 @@
+﻿2026-04-08T08:55:41.8808407Z ##[group]Run actions/cache@v4
+2026-04-08T08:55:41.8809026Z with:
+2026-04-08T08:55:41.8809406Z   path: ~/.cargo/registry
+~/.cargo/git
+target
+
+2026-04-08T08:55:41.8809755Z   key: Windows-cargo-
+2026-04-08T08:55:41.8809989Z   restore-keys: Windows-cargo-
+
+2026-04-08T08:55:41.8810282Z   enableCrossOsArchive: false
+2026-04-08T08:55:41.8810534Z   fail-on-cache-miss: false
+2026-04-08T08:55:41.8810814Z   lookup-only: false
+2026-04-08T08:55:41.8811067Z   save-always: false
+2026-04-08T08:55:41.8811272Z env:
+2026-04-08T08:55:41.8811484Z   CARGO_TERM_COLOR: always
+2026-04-08T08:55:41.8811748Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+2026-04-08T08:55:41.8812030Z   CARGO_INCREMENTAL: 0
+2026-04-08T08:55:41.8812239Z ##[endgroup]
+2026-04-08T08:55:42.4036705Z Cache not found for input keys: Windows-cargo-, Windows-cargo-

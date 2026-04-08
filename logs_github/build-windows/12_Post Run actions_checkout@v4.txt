@@ -1,0 +1,14 @@
+﻿2026-04-08T08:59:27.0247277Z Post job cleanup.
+2026-04-08T08:59:27.2610381Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-04-08T08:59:27.2907828Z git version 2.53.0.windows.2
+2026-04-08T08:59:27.2989570Z Temporarily overriding HOME='D:\a\_temp\48a12603-b9c2-44dd-b210-6cb2fab896ca' before making global git config changes
+2026-04-08T08:59:27.2990342Z Adding repository directory to the temporary git global config as a safe directory
+2026-04-08T08:59:27.3001512Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\Ry-dit\Ry-dit
+2026-04-08T08:59:27.3319288Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-04-08T08:59:27.3624644Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-04-08T08:59:27.9679621Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-04-08T08:59:28.0024725Z http.https://github.com/.extraheader
+2026-04-08T08:59:28.0069336Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all http.https://github.com/.extraheader
+2026-04-08T08:59:28.0436282Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-04-08T08:59:28.6578217Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-04-08T08:59:28.7031016Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
