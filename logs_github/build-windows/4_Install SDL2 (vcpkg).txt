@@ -1,0 +1,375 @@
+﻿2026-04-08T08:35:09.2783875Z ##[group]Run vcpkg install sdl2:x64-windows sdl2-image:x64-windows sdl2-ttf:x64-windows sdl2-mixer:x64-windows
+2026-04-08T08:35:09.2785111Z [36;1mvcpkg install sdl2:x64-windows sdl2-image:x64-windows sdl2-ttf:x64-windows sdl2-mixer:x64-windows[0m
+2026-04-08T08:35:09.3542251Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-04-08T08:35:09.3542607Z env:
+2026-04-08T08:35:09.3542797Z   CARGO_TERM_COLOR: always
+2026-04-08T08:35:09.3543020Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+2026-04-08T08:35:09.3543256Z   CARGO_INCREMENTAL: 0
+2026-04-08T08:35:09.3543442Z ##[endgroup]
+2026-04-08T08:35:14.9556197Z Computing installation plan...
+2026-04-08T08:35:18.2747216Z A suitable version of cmake was not found (required v3.31.10).
+2026-04-08T08:35:18.2748201Z Downloading https://github.com/Kitware/CMake/releases/download/v3.31.10/cmake-3.31.10-windows-x86_64.zip -> cmake-3.31.10-windows-x86_64.zip
+2026-04-08T08:35:18.8069022Z Successfully downloaded cmake-3.31.10-windows-x86_64.zip
+2026-04-08T08:35:18.8069729Z Extracting cmake...
+2026-04-08T08:35:32.9606568Z The following packages will be built and installed:
+2026-04-08T08:35:32.9607067Z   * brotli:x64-windows@1.2.0
+2026-04-08T08:35:32.9607355Z   * bzip2[core,tool]:x64-windows@1.0.8#6
+2026-04-08T08:35:32.9607836Z   * freetype[brotli,bzip2,core,png,zlib]:x64-windows@2.13.3
+2026-04-08T08:35:32.9608237Z   * libogg:x64-windows@1.3.6#1
+2026-04-08T08:35:32.9608522Z   * libpng:x64-windows@1.6.56
+2026-04-08T08:35:32.9608803Z   * libvorbis:x64-windows@1.3.7#4
+2026-04-08T08:35:32.9609100Z     sdl2:x64-windows@2.32.10
+2026-04-08T08:35:32.9609373Z     sdl2-image:x64-windows@2.8.8#2
+2026-04-08T08:35:32.9609762Z     sdl2-mixer[core,wavpack]:x64-windows@2.8.1#2
+2026-04-08T08:35:32.9610126Z     sdl2-ttf:x64-windows@2.24.0
+2026-04-08T08:35:32.9610427Z   * vcpkg-cmake:x64-windows@2024-04-23
+2026-04-08T08:35:32.9610815Z   * vcpkg-cmake-config:x64-windows@2024-05-23
+2026-04-08T08:35:32.9611171Z   * wavpack:x64-windows@5.9.0
+2026-04-08T08:35:32.9611522Z   * zlib:x64-windows@1.3.1
+2026-04-08T08:35:32.9611973Z Additional packages (*) will be modified to complete this operation.
+2026-04-08T08:35:33.2736024Z Detecting compiler hash for triplet x64-windows...
+2026-04-08T08:35:33.4473009Z A suitable version of powershell-core was not found (required v7.5.4).
+2026-04-08T08:35:33.4474332Z Downloading https://github.com/PowerShell/PowerShell/releases/download/v7.5.4/PowerShell-7.5.4-win-x64.zip -> PowerShell-7.5.4-win-x64.zip
+2026-04-08T08:35:34.1509408Z Successfully downloaded PowerShell-7.5.4-win-x64.zip
+2026-04-08T08:35:34.1509887Z Extracting powershell-core...
+2026-04-08T08:35:47.0656738Z Compiler found: C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/cl.exe
+2026-04-08T08:35:47.1734217Z Restored 0 package(s) from C:\Users\runneradmin\AppData\Local\vcpkg\archives in 214 us. Use --debug to see more details.
+2026-04-08T08:35:47.1735178Z Installing 1/14 vcpkg-cmake:x64-windows@2024-04-23...
+2026-04-08T08:35:47.1736046Z vcpkg-cmake:x64-windows@2024-04-23 package ABI: 345a12b4ffe46f6f3d065a3630a27f7596b2fda559979cd52a76e015d6c55769
+2026-04-08T08:35:47.1736871Z Building vcpkg-cmake:x64-windows@2024-04-23...
+2026-04-08T08:35:47.2124143Z -- Installing: C:/vcpkg/packages/vcpkg-cmake_x64-windows/share/vcpkg-cmake/vcpkg_cmake_configure.cmake
+2026-04-08T08:35:47.2134068Z -- Installing: C:/vcpkg/packages/vcpkg-cmake_x64-windows/share/vcpkg-cmake/vcpkg_cmake_build.cmake
+2026-04-08T08:35:47.2143295Z -- Installing: C:/vcpkg/packages/vcpkg-cmake_x64-windows/share/vcpkg-cmake/vcpkg_cmake_install.cmake
+2026-04-08T08:35:47.2174046Z -- Installing: C:/vcpkg/packages/vcpkg-cmake_x64-windows/share/vcpkg-cmake/vcpkg-port-config.cmake
+2026-04-08T08:35:47.2186355Z -- Installing: C:/vcpkg/packages/vcpkg-cmake_x64-windows/share/vcpkg-cmake/copyright
+2026-04-08T08:35:47.2352517Z -- Performing post-build validation
+2026-04-08T08:35:47.2652626Z Starting submission of vcpkg-cmake:x64-windows@2024-04-23 to 1 binary cache(s) in the background
+2026-04-08T08:35:47.2655444Z Elapsed time to handle vcpkg-cmake:x64-windows: 91.9 ms
+2026-04-08T08:35:47.2655829Z Installing 2/14 vcpkg-cmake-config:x64-windows@2024-05-23...
+2026-04-08T08:35:47.2656569Z vcpkg-cmake-config:x64-windows@2024-05-23 package ABI: 30cd99b9f5ca8620950766796f3c59a3b792e4f6f411746b8a8ffb4b37d11763
+2026-04-08T08:35:47.2657130Z Building vcpkg-cmake-config:x64-windows@2024-05-23...
+2026-04-08T08:35:47.3087765Z -- Installing: C:/vcpkg/packages/vcpkg-cmake-config_x64-windows/share/vcpkg-cmake-config/vcpkg_cmake_config_fixup.cmake
+2026-04-08T08:35:47.3097643Z -- Installing: C:/vcpkg/packages/vcpkg-cmake-config_x64-windows/share/vcpkg-cmake-config/vcpkg-port-config.cmake
+2026-04-08T08:35:47.3106044Z -- Installing: C:/vcpkg/packages/vcpkg-cmake-config_x64-windows/share/vcpkg-cmake-config/copyright
+2026-04-08T08:35:47.3205977Z -- Skipping post-build validation due to VCPKG_POLICY_EMPTY_PACKAGE
+2026-04-08T08:35:47.3527577Z Starting submission of vcpkg-cmake-config:x64-windows@2024-05-23 to 1 binary cache(s) in the background
+2026-04-08T08:35:47.3528726Z Elapsed time to handle vcpkg-cmake-config:x64-windows: 87.4 ms
+2026-04-08T08:35:47.3529198Z Completed submission of vcpkg-cmake:x64-windows@2024-04-23 to 1 binary cache(s) in 68.3 ms
+2026-04-08T08:35:47.3529598Z Installing 3/14 brotli:x64-windows@1.2.0...
+2026-04-08T08:35:47.3530255Z brotli:x64-windows@1.2.0 package ABI: 4912c1749327d87d06fba52f96a7b21b302d203bb32a1d6b062147a44c4ea40f
+2026-04-08T08:35:47.3530716Z Building brotli:x64-windows@1.2.0...
+2026-04-08T08:35:47.4168403Z Downloading https://github.com/google/brotli/archive/v1.2.0.tar.gz -> google-brotli-v1.2.0.tar.gz
+2026-04-08T08:35:47.7828919Z Successfully downloaded google-brotli-v1.2.0.tar.gz
+2026-04-08T08:35:47.7883387Z -- Extracting source C:/vcpkg/downloads/google-brotli-v1.2.0.tar.gz
+2026-04-08T08:35:48.0211524Z -- Applying patch install.patch
+2026-04-08T08:35:48.0508537Z -- Applying patch pkgconfig.patch
+2026-04-08T08:35:48.0801843Z -- Using source at C:/vcpkg/buildtrees/brotli/src/v1.2.0-7af7ca71ad.clean
+2026-04-08T08:35:48.1079726Z -- Configuring x64-windows
+2026-04-08T08:35:50.4357304Z -- Building x64-windows-dbg
+2026-04-08T08:35:53.0377330Z -- Building x64-windows-rel
+2026-04-08T08:36:00.5442056Z -- Fixing pkgconfig file: C:/vcpkg/packages/brotli_x64-windows/lib/pkgconfig/libbrotlicommon.pc
+2026-04-08T08:36:00.5449177Z -- Fixing pkgconfig file: C:/vcpkg/packages/brotli_x64-windows/lib/pkgconfig/libbrotlidec.pc
+2026-04-08T08:36:00.5471577Z -- Fixing pkgconfig file: C:/vcpkg/packages/brotli_x64-windows/lib/pkgconfig/libbrotlienc.pc
+2026-04-08T08:36:00.5697711Z Downloading msys2-mingw-w64-x86_64-pkgconf-1~2.5.1-1-any.pkg.tar.zst, trying https://mirror.msys2.org/mingw/mingw64/mingw-w64-x86_64-pkgconf-1~2.5.1-1-any.pkg.tar.zst
+2026-04-08T08:36:01.2817803Z Successfully downloaded msys2-mingw-w64-x86_64-pkgconf-1~2.5.1-1-any.pkg.tar.zst
+2026-04-08T08:36:01.2986508Z Downloading msys2-msys2-runtime-3.6.5-1-x86_64.pkg.tar.zst, trying https://mirror.msys2.org/msys/x86_64/msys2-runtime-3.6.5-1-x86_64.pkg.tar.zst
+2026-04-08T08:36:01.7688393Z Successfully downloaded msys2-msys2-runtime-3.6.5-1-x86_64.pkg.tar.zst
+2026-04-08T08:36:01.8974960Z -- Using msys root at C:/vcpkg/downloads/tools/msys2/3e71d1f8e22ab23f
+2026-04-08T08:36:01.9389590Z -- Fixing pkgconfig file: C:/vcpkg/packages/brotli_x64-windows/debug/lib/pkgconfig/libbrotlicommon.pc
+2026-04-08T08:36:01.9396761Z -- Fixing pkgconfig file: C:/vcpkg/packages/brotli_x64-windows/debug/lib/pkgconfig/libbrotlidec.pc
+2026-04-08T08:36:01.9404508Z -- Fixing pkgconfig file: C:/vcpkg/packages/brotli_x64-windows/debug/lib/pkgconfig/libbrotlienc.pc
+2026-04-08T08:36:05.2963389Z -- Installing: C:/vcpkg/packages/brotli_x64-windows/share/brotli/usage
+2026-04-08T08:36:05.2973159Z -- Installing: C:/vcpkg/packages/brotli_x64-windows/share/brotli/copyright
+2026-04-08T08:36:05.3052270Z -- Performing post-build validation
+2026-04-08T08:36:05.3597134Z Starting submission of brotli:x64-windows@1.2.0 to 1 binary cache(s) in the background
+2026-04-08T08:36:05.3598935Z Elapsed time to handle brotli:x64-windows: 18 s
+2026-04-08T08:36:05.3599880Z Completed submission of vcpkg-cmake-config:x64-windows@2024-05-23 to 1 binary cache(s) in 66.4 ms
+2026-04-08T08:36:05.3600637Z Installing 4/14 bzip2[core,tool]:x64-windows@1.0.8#6...
+2026-04-08T08:36:05.3601347Z bzip2[core,tool]:x64-windows@1.0.8#6 package ABI: 84b514077abe531711f1ce504b8ab2680882d5f66f231b902f97b70725530965
+2026-04-08T08:36:05.3601839Z Building bzip2[core,tool]:x64-windows@1.0.8#6...
+2026-04-08T08:36:05.4308156Z Downloading bzip2-1.0.8.tar.gz, trying https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz
+2026-04-08T08:36:05.7735261Z Successfully downloaded bzip2-1.0.8.tar.gz
+2026-04-08T08:36:05.7796421Z -- Extracting source C:/vcpkg/downloads/bzip2-1.0.8.tar.gz
+2026-04-08T08:36:05.9558510Z -- Applying patch fix-import-export-macros.patch
+2026-04-08T08:36:05.9908555Z -- Using source at C:/vcpkg/buildtrees/bzip2/src/bzip2-1-336d4794a3.clean
+2026-04-08T08:36:06.0224297Z -- Configuring x64-windows
+2026-04-08T08:36:06.9542269Z -- Building x64-windows-dbg
+2026-04-08T08:36:07.5446848Z -- Building x64-windows-rel
+2026-04-08T08:36:11.9403437Z -- Fixing pkgconfig file: C:/vcpkg/packages/bzip2_x64-windows/lib/pkgconfig/bzip2.pc
+2026-04-08T08:36:11.9511635Z -- Using cached msys2-mingw-w64-x86_64-pkgconf-1~2.5.1-1-any.pkg.tar.zst
+2026-04-08T08:36:11.9596197Z -- Using cached msys2-msys2-runtime-3.6.5-1-x86_64.pkg.tar.zst
+2026-04-08T08:36:11.9619054Z -- Using msys root at C:/vcpkg/downloads/tools/msys2/3e71d1f8e22ab23f
+2026-04-08T08:36:11.9702728Z -- Fixing pkgconfig file: C:/vcpkg/packages/bzip2_x64-windows/debug/lib/pkgconfig/bzip2.pc
+2026-04-08T08:36:11.9835143Z -- Installing: C:/vcpkg/packages/bzip2_x64-windows/share/bzip2/copyright
+2026-04-08T08:36:11.9914345Z -- Performing post-build validation
+2026-04-08T08:36:12.0267785Z Starting submission of bzip2[core,tool]:x64-windows@1.0.8#6 to 1 binary cache(s) in the background
+2026-04-08T08:36:12.0268602Z Elapsed time to handle bzip2:x64-windows: 6.7 s
+2026-04-08T08:36:12.0269051Z Completed submission of brotli:x64-windows@1.2.0 to 1 binary cache(s) in 367 ms
+2026-04-08T08:36:12.0269435Z Installing 5/14 zlib:x64-windows@1.3.1...
+2026-04-08T08:36:12.0269888Z zlib:x64-windows@1.3.1 package ABI: f38b95294b575ff1119addfcf3ee6d28d1c16fef83873324278e34200dd9bce8
+2026-04-08T08:36:12.0270316Z Building zlib:x64-windows@1.3.1...
+2026-04-08T08:36:12.0898161Z Downloading https://github.com/madler/zlib/archive/v1.3.1.tar.gz -> madler-zlib-v1.3.1.tar.gz
+2026-04-08T08:36:12.3239988Z Successfully downloaded madler-zlib-v1.3.1.tar.gz
+2026-04-08T08:36:12.3333844Z -- Extracting source C:/vcpkg/downloads/madler-zlib-v1.3.1.tar.gz
+2026-04-08T08:36:12.6158414Z -- Applying patch 0001-Prevent-invalid-inclusions-when-HAVE_-is-set-to-0.patch
+2026-04-08T08:36:12.6488104Z -- Applying patch 0002-build-static-or-shared-not-both.patch
+2026-04-08T08:36:12.6822295Z -- Applying patch 0003-android-and-mingw-fixes.patch
+2026-04-08T08:36:12.7129372Z -- Using source at C:/vcpkg/buildtrees/zlib/src/v1.3.1-2e5db616bf.clean
+2026-04-08T08:36:12.7424678Z -- Configuring x64-windows
+2026-04-08T08:36:16.0565248Z -- Building x64-windows-dbg
+2026-04-08T08:36:16.8245669Z -- Building x64-windows-rel
+2026-04-08T08:36:17.9468687Z -- Installing: C:/vcpkg/packages/zlib_x64-windows/share/zlib/vcpkg-cmake-wrapper.cmake
+2026-04-08T08:36:17.9522184Z -- Fixing pkgconfig file: C:/vcpkg/packages/zlib_x64-windows/lib/pkgconfig/zlib.pc
+2026-04-08T08:36:17.9630465Z -- Using cached msys2-mingw-w64-x86_64-pkgconf-1~2.5.1-1-any.pkg.tar.zst
+2026-04-08T08:36:17.9715390Z -- Using cached msys2-msys2-runtime-3.6.5-1-x86_64.pkg.tar.zst
+2026-04-08T08:36:17.9719905Z -- Using msys root at C:/vcpkg/downloads/tools/msys2/3e71d1f8e22ab23f
+2026-04-08T08:36:17.9812465Z -- Fixing pkgconfig file: C:/vcpkg/packages/zlib_x64-windows/debug/lib/pkgconfig/zlib.pc
+2026-04-08T08:36:18.0376670Z -- Installing: C:/vcpkg/packages/zlib_x64-windows/share/zlib/copyright
+2026-04-08T08:36:18.0478618Z -- Performing post-build validation
+2026-04-08T08:36:18.0755802Z Starting submission of zlib:x64-windows@1.3.1 to 1 binary cache(s) in the background
+2026-04-08T08:36:18.0756331Z Elapsed time to handle zlib:x64-windows: 6 s
+2026-04-08T08:36:18.0756756Z Completed submission of bzip2[core,tool]:x64-windows@1.0.8#6 to 1 binary cache(s) in 149 ms
+2026-04-08T08:36:18.0757181Z Installing 6/14 libpng:x64-windows@1.6.56...
+2026-04-08T08:36:18.0757685Z libpng:x64-windows@1.6.56 package ABI: 3828516a955c4397f73e9dedf8f54a369fb45bc2368874d616e4939726fc7e76
+2026-04-08T08:36:18.0758130Z Building libpng:x64-windows@1.6.56...
+2026-04-08T08:36:18.1474456Z Downloading https://github.com/pnggroup/libpng/archive/v1.6.56.tar.gz -> pnggroup-libpng-v1.6.56.tar.gz
+2026-04-08T08:36:18.6514044Z Successfully downloaded pnggroup-libpng-v1.6.56.tar.gz
+2026-04-08T08:36:18.6605504Z -- Extracting source C:/vcpkg/downloads/pnggroup-libpng-v1.6.56.tar.gz
+2026-04-08T08:36:19.2559362Z -- Applying patch cmake.patch
+2026-04-08T08:36:19.2864829Z -- Using source at C:/vcpkg/buildtrees/libpng/src/v1.6.56-aacd911510.clean
+2026-04-08T08:36:19.3160445Z -- Configuring x64-windows
+2026-04-08T08:36:20.7366014Z -- Building x64-windows-dbg
+2026-04-08T08:36:24.5606362Z -- Building x64-windows-rel
+2026-04-08T08:36:27.6541195Z -- Installing: C:/vcpkg/packages/libpng_x64-windows/share/png/vcpkg-cmake-wrapper.cmake
+2026-04-08T08:36:27.6557469Z -- Installing: C:/vcpkg/packages/libpng_x64-windows/share/libpng/libpng-config.cmake
+2026-04-08T08:36:27.6581227Z -- Fixing pkgconfig file: C:/vcpkg/packages/libpng_x64-windows/lib/pkgconfig/libpng16.pc
+2026-04-08T08:36:27.6688040Z -- Using cached msys2-mingw-w64-x86_64-pkgconf-1~2.5.1-1-any.pkg.tar.zst
+2026-04-08T08:36:27.6771963Z -- Using cached msys2-msys2-runtime-3.6.5-1-x86_64.pkg.tar.zst
+2026-04-08T08:36:27.6776753Z -- Using msys root at C:/vcpkg/downloads/tools/msys2/3e71d1f8e22ab23f
+2026-04-08T08:36:27.6871733Z -- Fixing pkgconfig file: C:/vcpkg/packages/libpng_x64-windows/debug/lib/pkgconfig/libpng16.pc
+2026-04-08T08:36:27.6984809Z -- Installing: C:/vcpkg/packages/libpng_x64-windows/debug/lib/pkgconfig/libpng.pc
+2026-04-08T08:36:27.6997980Z -- Installing: C:/vcpkg/packages/libpng_x64-windows/lib/pkgconfig/libpng.pc
+2026-04-08T08:36:27.7516991Z -- Installing: C:/vcpkg/packages/libpng_x64-windows/share/libpng/usage
+2026-04-08T08:36:27.7527377Z -- Installing: C:/vcpkg/packages/libpng_x64-windows/share/libpng/copyright
+2026-04-08T08:36:27.7632887Z -- Performing post-build validation
+2026-04-08T08:36:27.7926636Z Starting submission of libpng:x64-windows@1.6.56 to 1 binary cache(s) in the background
+2026-04-08T08:36:27.7927415Z Elapsed time to handle libpng:x64-windows: 9.7 s
+2026-04-08T08:36:27.7927815Z Completed submission of zlib:x64-windows@1.3.1 to 1 binary cache(s) in 166 ms
+2026-04-08T08:36:27.7928288Z Installing 7/14 freetype[brotli,bzip2,core,png,zlib]:x64-windows@2.13.3...
+2026-04-08T08:36:27.7928962Z freetype[brotli,bzip2,core,png,zlib]:x64-windows@2.13.3 package ABI: 42af70f6ce87bc011a86fbcd8bad0ecfa01273c4ca720ca15d626c15d572ccd7
+2026-04-08T08:36:27.7929658Z Building freetype[brotli,bzip2,core,png,zlib]:x64-windows@2.13.3...
+2026-04-08T08:36:27.8614006Z Downloading https://gitlab.freedesktop.org//freetype/freetype/-/archive/VER-2-13-3/freetype-VER-2-13-3.tar.gz -> freetype-freetype-VER-2-13-3.tar.gz
+2026-04-08T08:36:29.8452461Z Successfully downloaded freetype-freetype-VER-2-13-3.tar.gz
+2026-04-08T08:36:29.8581367Z -- Extracting source C:/vcpkg/downloads/freetype-freetype-VER-2-13-3.tar.gz
+2026-04-08T08:36:30.3701176Z -- Applying patch 0003-Fix-UWP.patch
+2026-04-08T08:36:30.4016708Z -- Applying patch brotli-static.patch
+2026-04-08T08:36:30.4289430Z -- Applying patch bzip2.patch
+2026-04-08T08:36:30.4560390Z -- Applying patch fix-exports.patch
+2026-04-08T08:36:30.4886215Z -- Using source at C:/vcpkg/buildtrees/freetype/src/VER-2-13-3-8b423a038b.clean
+2026-04-08T08:36:30.5193180Z -- Configuring x64-windows
+2026-04-08T08:36:32.5345188Z -- Building x64-windows-dbg
+2026-04-08T08:36:34.9558480Z -- Building x64-windows-rel
+2026-04-08T08:36:42.6724792Z -- Fixing pkgconfig file: C:/vcpkg/packages/freetype_x64-windows/lib/pkgconfig/freetype2.pc
+2026-04-08T08:36:42.6830924Z -- Using cached msys2-mingw-w64-x86_64-pkgconf-1~2.5.1-1-any.pkg.tar.zst
+2026-04-08T08:36:42.6913921Z -- Using cached msys2-msys2-runtime-3.6.5-1-x86_64.pkg.tar.zst
+2026-04-08T08:36:42.6918542Z -- Using msys root at C:/vcpkg/downloads/tools/msys2/3e71d1f8e22ab23f
+2026-04-08T08:36:42.7019729Z -- Fixing pkgconfig file: C:/vcpkg/packages/freetype_x64-windows/debug/lib/pkgconfig/freetype2.pc
+2026-04-08T08:36:42.7139584Z -- Installing: C:/vcpkg/packages/freetype_x64-windows/share/freetype/usage
+2026-04-08T08:36:42.7248531Z -- Performing post-build validation
+2026-04-08T08:36:42.8089439Z Starting submission of freetype[brotli,bzip2,core,png,zlib]:x64-windows@2.13.3 to 1 binary cache(s) in the background
+2026-04-08T08:36:42.8090349Z Elapsed time to handle freetype:x64-windows: 15 s
+2026-04-08T08:36:42.8090937Z Completed submission of libpng:x64-windows@1.6.56 to 1 binary cache(s) in 219 ms
+2026-04-08T08:36:42.8092568Z Installing 8/14 libogg:x64-windows@1.3.6#1...
+2026-04-08T08:36:42.8093334Z libogg:x64-windows@1.3.6#1 package ABI: 35a035c4dfbb3de7830c068cc8d29dedaceeab317f3fb2d41c7dc192d0cb186a
+2026-04-08T08:36:42.8094117Z Building libogg:x64-windows@1.3.6#1...
+2026-04-08T08:36:42.8841071Z Downloading https://github.com/xiph/ogg/archive/v1.3.6.tar.gz -> xiph-ogg-v1.3.6.tar.gz
+2026-04-08T08:36:43.2746961Z Successfully downloaded xiph-ogg-v1.3.6.tar.gz
+2026-04-08T08:36:43.2787302Z -- Extracting source C:/vcpkg/downloads/xiph-ogg-v1.3.6.tar.gz
+2026-04-08T08:36:43.5130782Z -- Using source at C:/vcpkg/buildtrees/libogg/src/v1.3.6-4ad11a7327.clean
+2026-04-08T08:36:43.5454327Z -- Configuring x64-windows
+2026-04-08T08:36:53.1484970Z -- Building x64-windows-dbg
+2026-04-08T08:36:53.5910363Z -- Building x64-windows-rel
+2026-04-08T08:36:54.0136004Z -- Fixing pkgconfig file: C:/vcpkg/packages/libogg_x64-windows/lib/pkgconfig/ogg.pc
+2026-04-08T08:36:54.0242342Z -- Using cached msys2-mingw-w64-x86_64-pkgconf-1~2.5.1-1-any.pkg.tar.zst
+2026-04-08T08:36:54.0326173Z -- Using cached msys2-msys2-runtime-3.6.5-1-x86_64.pkg.tar.zst
+2026-04-08T08:36:54.0330966Z -- Using msys root at C:/vcpkg/downloads/tools/msys2/3e71d1f8e22ab23f
+2026-04-08T08:36:54.0419705Z -- Fixing pkgconfig file: C:/vcpkg/packages/libogg_x64-windows/debug/lib/pkgconfig/ogg.pc
+2026-04-08T08:36:54.0510567Z -- Installing: C:/vcpkg/packages/libogg_x64-windows/share/libogg/copyright
+2026-04-08T08:36:54.0605909Z -- Performing post-build validation
+2026-04-08T08:36:54.0866435Z Starting submission of libogg:x64-windows@1.3.6#1 to 1 binary cache(s) in the background
+2026-04-08T08:36:54.0867209Z Elapsed time to handle libogg:x64-windows: 11 s
+2026-04-08T08:36:54.0867810Z Completed submission of freetype[brotli,bzip2,core,png,zlib]:x64-windows@2.13.3 to 1 binary cache(s) in 428 ms
+2026-04-08T08:36:54.0868480Z Installing 9/14 libvorbis:x64-windows@1.3.7#4...
+2026-04-08T08:36:54.0869183Z libvorbis:x64-windows@1.3.7#4 package ABI: b1e0de3483f11b44be24d4632a816047eefef9fe67c7af0f04c260118bd2d814
+2026-04-08T08:36:54.0869679Z Building libvorbis:x64-windows@1.3.7#4...
+2026-04-08T08:36:54.1531440Z Downloading https://github.com/xiph/vorbis/archive/v1.3.7.tar.gz -> xiph-vorbis-v1.3.7.tar.gz
+2026-04-08T08:36:54.5743939Z Successfully downloaded xiph-vorbis-v1.3.7.tar.gz
+2026-04-08T08:36:54.5823598Z -- Extracting source C:/vcpkg/downloads/xiph-vorbis-v1.3.7.tar.gz
+2026-04-08T08:36:54.9413341Z -- Applying patch 0001-Dont-export-vorbisenc-functions.patch
+2026-04-08T08:36:54.9697059Z -- Applying patch 0002-Fixup-pkgconfig-libs.patch
+2026-04-08T08:36:54.9975454Z -- Applying patch 0003-def-mingw-compat.patch
+2026-04-08T08:36:55.0259926Z -- Applying patch 0004-ogg-find-dependency.patch
+2026-04-08T08:36:55.0549152Z -- Using source at C:/vcpkg/buildtrees/libvorbis/src/v1.3.7-c32164610e.clean
+2026-04-08T08:36:55.0831069Z -- Configuring x64-windows
+2026-04-08T08:36:57.1805619Z -- Building x64-windows-dbg
+2026-04-08T08:36:58.7017706Z -- Building x64-windows-rel
+2026-04-08T08:37:01.4466292Z -- Fixing pkgconfig file: C:/vcpkg/packages/libvorbis_x64-windows/lib/pkgconfig/vorbis.pc
+2026-04-08T08:37:01.4489363Z -- Fixing pkgconfig file: C:/vcpkg/packages/libvorbis_x64-windows/lib/pkgconfig/vorbisenc.pc
+2026-04-08T08:37:01.4490117Z -- Fixing pkgconfig file: C:/vcpkg/packages/libvorbis_x64-windows/lib/pkgconfig/vorbisfile.pc
+2026-04-08T08:37:01.4585993Z -- Using cached msys2-mingw-w64-x86_64-pkgconf-1~2.5.1-1-any.pkg.tar.zst
+2026-04-08T08:37:01.4668650Z -- Using cached msys2-msys2-runtime-3.6.5-1-x86_64.pkg.tar.zst
+2026-04-08T08:37:01.4673614Z -- Using msys root at C:/vcpkg/downloads/tools/msys2/3e71d1f8e22ab23f
+2026-04-08T08:37:01.4922068Z -- Fixing pkgconfig file: C:/vcpkg/packages/libvorbis_x64-windows/debug/lib/pkgconfig/vorbis.pc
+2026-04-08T08:37:01.4929556Z -- Fixing pkgconfig file: C:/vcpkg/packages/libvorbis_x64-windows/debug/lib/pkgconfig/vorbisenc.pc
+2026-04-08T08:37:01.4936840Z -- Fixing pkgconfig file: C:/vcpkg/packages/libvorbis_x64-windows/debug/lib/pkgconfig/vorbisfile.pc
+2026-04-08T08:37:01.6605975Z -- Installing: C:/vcpkg/packages/libvorbis_x64-windows/share/libvorbis/usage
+2026-04-08T08:37:01.6614207Z -- Installing: C:/vcpkg/packages/libvorbis_x64-windows/share/libvorbis/copyright
+2026-04-08T08:37:01.6710392Z -- Performing post-build validation
+2026-04-08T08:37:01.7115137Z Starting submission of libvorbis:x64-windows@1.3.7#4 to 1 binary cache(s) in the background
+2026-04-08T08:37:01.7116972Z Elapsed time to handle libvorbis:x64-windows: 7.6 s
+2026-04-08T08:37:01.7117673Z Completed submission of libogg:x64-windows@1.3.6#1 to 1 binary cache(s) in 134 ms
+2026-04-08T08:37:01.7118304Z Installing 10/14 sdl2:x64-windows@2.32.10...
+2026-04-08T08:37:01.7119051Z sdl2:x64-windows@2.32.10 package ABI: 7cbe0a23b496246436c423f93c6c8c845e76e3bca16c99e46a6867b6688dc534
+2026-04-08T08:37:01.7119776Z Building sdl2:x64-windows@2.32.10...
+2026-04-08T08:37:01.7774342Z Downloading https://github.com/libsdl-org/SDL/archive/release-2.32.10.tar.gz -> libsdl-org-SDL-release-2.32.10.tar.gz
+2026-04-08T08:37:03.4856779Z Successfully downloaded libsdl-org-SDL-release-2.32.10.tar.gz
+2026-04-08T08:37:03.5201154Z -- Extracting source C:/vcpkg/downloads/libsdl-org-SDL-release-2.32.10.tar.gz
+2026-04-08T08:37:06.1451966Z -- Applying patch deps.patch
+2026-04-08T08:37:06.1763302Z -- Applying patch alsa-dep-fix.patch
+2026-04-08T08:37:06.2081474Z -- Applying patch cxx-linkage-pkgconfig.diff
+2026-04-08T08:37:06.2437650Z -- Using source at C:/vcpkg/buildtrees/sdl2/src/se-2.32.10-3b143ac573.clean
+2026-04-08T08:37:06.2797162Z -- Configuring x64-windows
+2026-04-08T08:37:26.9303753Z -- Building x64-windows-dbg
+2026-04-08T08:37:41.5757096Z -- Building x64-windows-rel
+2026-04-08T08:38:07.5196642Z -- Fixing pkgconfig file: C:/vcpkg/packages/sdl2_x64-windows/lib/pkgconfig/sdl2.pc
+2026-04-08T08:38:07.5315044Z -- Using cached msys2-mingw-w64-x86_64-pkgconf-1~2.5.1-1-any.pkg.tar.zst
+2026-04-08T08:38:07.5398416Z -- Using cached msys2-msys2-runtime-3.6.5-1-x86_64.pkg.tar.zst
+2026-04-08T08:38:07.5402728Z -- Using msys root at C:/vcpkg/downloads/tools/msys2/3e71d1f8e22ab23f
+2026-04-08T08:38:07.5496908Z -- Fixing pkgconfig file: C:/vcpkg/packages/sdl2_x64-windows/debug/lib/pkgconfig/sdl2.pc
+2026-04-08T08:38:07.5609585Z -- Installing: C:/vcpkg/packages/sdl2_x64-windows/share/sdl2/usage
+2026-04-08T08:38:07.5628662Z -- Installing: C:/vcpkg/packages/sdl2_x64-windows/share/sdl2/copyright
+2026-04-08T08:38:07.5726780Z -- Performing post-build validation
+2026-04-08T08:38:07.6990172Z Starting submission of sdl2:x64-windows@2.32.10 to 1 binary cache(s) in the background
+2026-04-08T08:38:07.6990950Z Elapsed time to handle sdl2:x64-windows: 1.1 min
+2026-04-08T08:38:07.6991554Z Completed submission of libvorbis:x64-windows@1.3.7#4 to 1 binary cache(s) in 349 ms
+2026-04-08T08:38:07.6992161Z Installing 11/14 sdl2-image:x64-windows@2.8.8#2...
+2026-04-08T08:38:07.6992933Z sdl2-image:x64-windows@2.8.8#2 package ABI: 51e9fcac6e8d4f25a4bd9c8a3f44f61991e274a6ad4a2b810fd062b0bebc05c3
+2026-04-08T08:38:07.6994066Z Building sdl2-image:x64-windows@2.8.8#2...
+2026-04-08T08:38:07.7823123Z Downloading https://github.com/libsdl-org/SDL_image/archive/release-2.8.8.tar.gz -> libsdl-org-SDL_image-release-2.8.8.tar.gz
+2026-04-08T08:38:09.0363739Z Successfully downloaded libsdl-org-SDL_image-release-2.8.8.tar.gz
+2026-04-08T08:38:09.0671739Z -- Extracting source C:/vcpkg/downloads/libsdl-org-SDL_image-release-2.8.8.tar.gz
+2026-04-08T08:38:09.6829025Z -- Applying patch fix-findwebp.patch
+2026-04-08T08:38:09.7184334Z -- Using source at C:/vcpkg/buildtrees/sdl2-image/src/ease-2.8.8-a451848362.clean
+2026-04-08T08:38:09.7501577Z -- Configuring x64-windows
+2026-04-08T08:38:11.3087451Z -- Building x64-windows-dbg
+2026-04-08T08:38:13.2949651Z -- Building x64-windows-rel
+2026-04-08T08:38:15.4442418Z -- Fixing pkgconfig file: C:/vcpkg/packages/sdl2-image_x64-windows/lib/pkgconfig/SDL2_image.pc
+2026-04-08T08:38:15.4552067Z -- Using cached msys2-mingw-w64-x86_64-pkgconf-1~2.5.1-1-any.pkg.tar.zst
+2026-04-08T08:38:15.4636895Z -- Using cached msys2-msys2-runtime-3.6.5-1-x86_64.pkg.tar.zst
+2026-04-08T08:38:15.4642106Z -- Using msys root at C:/vcpkg/downloads/tools/msys2/3e71d1f8e22ab23f
+2026-04-08T08:38:15.4752263Z -- Fixing pkgconfig file: C:/vcpkg/packages/sdl2-image_x64-windows/debug/lib/pkgconfig/SDL2_image.pc
+2026-04-08T08:38:15.4890318Z -- Installing: C:/vcpkg/packages/sdl2-image_x64-windows/share/sdl2-image/usage
+2026-04-08T08:38:15.4900037Z -- Installing: C:/vcpkg/packages/sdl2-image_x64-windows/share/sdl2-image/copyright
+2026-04-08T08:38:15.4983876Z -- Performing post-build validation
+2026-04-08T08:38:15.5502965Z Starting submission of sdl2-image:x64-windows@2.8.8#2 to 1 binary cache(s) in the background
+2026-04-08T08:38:15.5503793Z Elapsed time to handle sdl2-image:x64-windows: 7.9 s
+2026-04-08T08:38:15.5504368Z Completed submission of sdl2:x64-windows@2.32.10 to 1 binary cache(s) in 1.2 s
+2026-04-08T08:38:15.5504877Z Installing 12/14 wavpack:x64-windows@5.9.0...
+2026-04-08T08:38:15.5505893Z wavpack:x64-windows@5.9.0 package ABI: 7b7b3b8fc391d6128ad60c4deb1458367f73898e7a01215854441f6f6af47330
+2026-04-08T08:38:15.5506539Z Building wavpack:x64-windows@5.9.0...
+2026-04-08T08:38:15.6263269Z Downloading https://github.com/dbry/WavPack/archive/5.9.0.tar.gz -> dbry-WavPack-5.9.0.tar.gz
+2026-04-08T08:38:16.0170436Z Successfully downloaded dbry-WavPack-5.9.0.tar.gz
+2026-04-08T08:38:16.0284206Z -- Extracting source C:/vcpkg/downloads/dbry-WavPack-5.9.0.tar.gz
+2026-04-08T08:38:16.2894612Z -- Using source at C:/vcpkg/buildtrees/wavpack/src/5.9.0-5cef8290a6.clean
+2026-04-08T08:38:16.3187384Z -- Configuring x64-windows
+2026-04-08T08:38:23.2851338Z -- Building x64-windows-dbg
+2026-04-08T08:38:25.2940736Z -- Building x64-windows-rel
+2026-04-08T08:38:28.3729197Z -- Installing: C:/vcpkg/packages/wavpack_x64-windows/share/wavpack/copyright
+2026-04-08T08:38:28.3756097Z -- Fixing pkgconfig file: C:/vcpkg/packages/wavpack_x64-windows/lib/pkgconfig/wavpack.pc
+2026-04-08T08:38:28.3863145Z -- Using cached msys2-mingw-w64-x86_64-pkgconf-1~2.5.1-1-any.pkg.tar.zst
+2026-04-08T08:38:28.3946199Z -- Using cached msys2-msys2-runtime-3.6.5-1-x86_64.pkg.tar.zst
+2026-04-08T08:38:28.3950505Z -- Using msys root at C:/vcpkg/downloads/tools/msys2/3e71d1f8e22ab23f
+2026-04-08T08:38:28.4041320Z -- Fixing pkgconfig file: C:/vcpkg/packages/wavpack_x64-windows/debug/lib/pkgconfig/wavpack.pc
+2026-04-08T08:38:28.4194766Z -- Performing post-build validation
+2026-04-08T08:38:28.4485873Z Starting submission of wavpack:x64-windows@5.9.0 to 1 binary cache(s) in the background
+2026-04-08T08:38:28.4486450Z Elapsed time to handle wavpack:x64-windows: 13 s
+2026-04-08T08:38:28.4486942Z Completed submission of sdl2-image:x64-windows@2.8.8#2 to 1 binary cache(s) in 183 ms
+2026-04-08T08:38:28.4487569Z Installing 13/14 sdl2-mixer[core,wavpack]:x64-windows@2.8.1#2...
+2026-04-08T08:38:28.4488166Z sdl2-mixer[core,wavpack]:x64-windows@2.8.1#2 package ABI: 5d619f2d843c286461e42f106e4a4643a73bef9424881c1c32dbfcfdbec2237b
+2026-04-08T08:38:28.4489006Z Building sdl2-mixer[core,wavpack]:x64-windows@2.8.1#2...
+2026-04-08T08:38:28.5145481Z Downloading https://github.com/libsdl-org/SDL_mixer/archive/release-2.8.1.tar.gz -> libsdl-org-SDL_mixer-release-2.8.1.tar.gz
+2026-04-08T08:38:29.6948388Z Successfully downloaded libsdl-org-SDL_mixer-release-2.8.1.tar.gz
+2026-04-08T08:38:29.7218091Z -- Extracting source C:/vcpkg/downloads/libsdl-org-SDL_mixer-release-2.8.1.tar.gz
+2026-04-08T08:38:30.2704751Z -- Applying patch fix-pkg-prefix.patch
+2026-04-08T08:38:30.3024905Z -- Using source at C:/vcpkg/buildtrees/sdl2-mixer/src/ease-2.8.1-d13c2e6469.clean
+2026-04-08T08:38:30.3370544Z -- Configuring x64-windows
+2026-04-08T08:38:31.5932047Z -- Building x64-windows-dbg
+2026-04-08T08:38:32.9474743Z -- Building x64-windows-rel
+2026-04-08T08:38:34.4260487Z -- Fixing pkgconfig file: C:/vcpkg/packages/sdl2-mixer_x64-windows/lib/pkgconfig/SDL2_mixer.pc
+2026-04-08T08:38:34.4367336Z -- Using cached msys2-mingw-w64-x86_64-pkgconf-1~2.5.1-1-any.pkg.tar.zst
+2026-04-08T08:38:34.4451049Z -- Using cached msys2-msys2-runtime-3.6.5-1-x86_64.pkg.tar.zst
+2026-04-08T08:38:34.4455534Z -- Using msys root at C:/vcpkg/downloads/tools/msys2/3e71d1f8e22ab23f
+2026-04-08T08:38:34.4557813Z -- Fixing pkgconfig file: C:/vcpkg/packages/sdl2-mixer_x64-windows/debug/lib/pkgconfig/SDL2_mixer.pc
+2026-04-08T08:38:34.4681081Z -- Installing: C:/vcpkg/packages/sdl2-mixer_x64-windows/share/sdl2-mixer/usage
+2026-04-08T08:38:34.4691140Z -- Installing: C:/vcpkg/packages/sdl2-mixer_x64-windows/share/sdl2-mixer/copyright
+2026-04-08T08:38:34.4792606Z -- Performing post-build validation
+2026-04-08T08:38:34.5210757Z Starting submission of sdl2-mixer[core,wavpack]:x64-windows@2.8.1#2 to 1 binary cache(s) in the background
+2026-04-08T08:38:34.5211645Z Elapsed time to handle sdl2-mixer:x64-windows: 6.1 s
+2026-04-08T08:38:34.5212085Z Completed submission of wavpack:x64-windows@5.9.0 to 1 binary cache(s) in 188 ms
+2026-04-08T08:38:34.5212476Z Installing 14/14 sdl2-ttf:x64-windows@2.24.0...
+2026-04-08T08:38:34.5212991Z sdl2-ttf:x64-windows@2.24.0 package ABI: 870635a69550a19a809985f7e278235c405d7d5def1981a826860dde7a1655fc
+2026-04-08T08:38:34.5213439Z Building sdl2-ttf:x64-windows@2.24.0...
+2026-04-08T08:38:34.5985017Z Downloading https://github.com/libsdl-org/SDL_ttf/archive/release-2.24.0.tar.gz -> libsdl-org-SDL_ttf-release-2.24.0.tar.gz
+2026-04-08T08:38:35.8002698Z Successfully downloaded libsdl-org-SDL_ttf-release-2.24.0.tar.gz
+2026-04-08T08:38:35.8383126Z -- Extracting source C:/vcpkg/downloads/libsdl-org-SDL_ttf-release-2.24.0.tar.gz
+2026-04-08T08:38:36.2807234Z -- Using source at C:/vcpkg/buildtrees/sdl2-ttf/src/ase-2.24.0-bdb8d0cb53.clean
+2026-04-08T08:38:36.3092463Z -- Configuring x64-windows
+2026-04-08T08:38:37.5552232Z -- Building x64-windows-dbg
+2026-04-08T08:38:38.1601849Z -- Building x64-windows-rel
+2026-04-08T08:38:39.0752613Z -- Fixing pkgconfig file: C:/vcpkg/packages/sdl2-ttf_x64-windows/lib/pkgconfig/SDL2_ttf.pc
+2026-04-08T08:38:39.0858133Z -- Using cached msys2-mingw-w64-x86_64-pkgconf-1~2.5.1-1-any.pkg.tar.zst
+2026-04-08T08:38:39.0941419Z -- Using cached msys2-msys2-runtime-3.6.5-1-x86_64.pkg.tar.zst
+2026-04-08T08:38:39.0946543Z -- Using msys root at C:/vcpkg/downloads/tools/msys2/3e71d1f8e22ab23f
+2026-04-08T08:38:39.1052360Z -- Fixing pkgconfig file: C:/vcpkg/packages/sdl2-ttf_x64-windows/debug/lib/pkgconfig/SDL2_ttf.pc
+2026-04-08T08:38:39.1181169Z -- Installing: C:/vcpkg/packages/sdl2-ttf_x64-windows/share/sdl2-ttf/usage
+2026-04-08T08:38:39.1190669Z -- Installing: C:/vcpkg/packages/sdl2-ttf_x64-windows/share/sdl2-ttf/copyright
+2026-04-08T08:38:39.1261398Z -- Performing post-build validation
+2026-04-08T08:38:39.1669220Z Starting submission of sdl2-ttf:x64-windows@2.24.0 to 1 binary cache(s) in the background
+2026-04-08T08:38:39.1669995Z Elapsed time to handle sdl2-ttf:x64-windows: 4.6 s
+2026-04-08T08:38:39.1759019Z Total install time: 2.9 min
+2026-04-08T08:38:39.1759951Z Installed contents are licensed to you by owners. Microsoft is not responsible for, nor does it grant any licenses to, third-party packages.
+2026-04-08T08:38:39.1761417Z Packages installed in this vcpkg installation declare the following licenses:
+2026-04-08T08:38:39.1762010Z (FTL OR GPL-2.0-or-later)
+2026-04-08T08:38:39.1762321Z BSD-3-Clause
+2026-04-08T08:38:39.1762536Z MIT
+2026-04-08T08:38:39.1762732Z Zlib
+2026-04-08T08:38:39.1762949Z bzip2-1.0.6
+2026-04-08T08:38:39.1763182Z libpng-2.0
+2026-04-08T08:38:39.1763448Z sdl2 provides CMake targets:
+2026-04-08T08:38:39.1763686Z 
+2026-04-08T08:38:39.1763825Z     find_package(SDL2 CONFIG REQUIRED)
+2026-04-08T08:38:39.1764186Z     target_link_libraries(main
+2026-04-08T08:38:39.1764488Z         PRIVATE
+2026-04-08T08:38:39.1770465Z         $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main>
+2026-04-08T08:38:39.1770870Z         $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>
+2026-04-08T08:38:39.1771171Z     )
+2026-04-08T08:38:39.1771258Z 
+2026-04-08T08:38:39.1771345Z sdl2-image provides CMake targets:
+2026-04-08T08:38:39.1771519Z 
+2026-04-08T08:38:39.1771858Z     find_package(SDL2_image CONFIG REQUIRED)
+2026-04-08T08:38:39.1772403Z     target_link_libraries(main PRIVATE $<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,SDL2_image::SDL2_image,SDL2_image::SDL2_image-static>)
+2026-04-08T08:38:39.1772849Z 
+2026-04-08T08:38:39.1772933Z sdl2-mixer provides CMake targets:
+2026-04-08T08:38:39.1773082Z 
+2026-04-08T08:38:39.1773182Z     find_package(SDL2_mixer CONFIG REQUIRED)
+2026-04-08T08:38:39.1773684Z     target_link_libraries(main PRIVATE $<IF:$<TARGET_EXISTS:SDL2_mixer::SDL2_mixer>,SDL2_mixer::SDL2_mixer,SDL2_mixer::SDL2_mixer-static>)
+2026-04-08T08:38:39.1774113Z 
+2026-04-08T08:38:39.1774195Z sdl2-ttf provides CMake targets:
+2026-04-08T08:38:39.1774340Z 
+2026-04-08T08:38:39.1774423Z     find_package(SDL2_ttf CONFIG REQUIRED)
+2026-04-08T08:38:39.1774938Z     target_link_libraries(main PRIVATE $<IF:$<TARGET_EXISTS:SDL2_ttf::SDL2_ttf>,SDL2_ttf::SDL2_ttf,SDL2_ttf::SDL2_ttf-static>)
+2026-04-08T08:38:39.1775335Z 
+2026-04-08T08:38:39.1775604Z Completed submission of sdl2-mixer[core,wavpack]:x64-windows@2.8.1#2 to 1 binary cache(s) in 174 ms
+2026-04-08T08:38:39.1776068Z Waiting for 1 remaining binary cache submissions...
+2026-04-08T08:38:39.2392924Z Completed submission of sdl2-ttf:x64-windows@2.24.0 to 1 binary cache(s) in 72.3 ms (1/1)
+2026-04-08T08:38:39.2393725Z All requested installations completed successfully in: 2.9 min

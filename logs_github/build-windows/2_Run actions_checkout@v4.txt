@@ -1,0 +1,61 @@
+﻿2026-04-08T08:34:57.1641081Z ##[group]Run actions/checkout@v4
+2026-04-08T08:34:57.1642122Z with:
+2026-04-08T08:34:57.1642495Z   repository: lapumlbb18-blip/Ry-dit
+2026-04-08T08:34:57.1643248Z   token: ***
+2026-04-08T08:34:57.1643588Z   ssh-strict: true
+2026-04-08T08:34:57.1643939Z   ssh-user: git
+2026-04-08T08:34:57.1644290Z   persist-credentials: true
+2026-04-08T08:34:57.1644704Z   clean: true
+2026-04-08T08:34:57.1645051Z   sparse-checkout-cone-mode: true
+2026-04-08T08:34:57.1645476Z   fetch-depth: 1
+2026-04-08T08:34:57.1645801Z   fetch-tags: false
+2026-04-08T08:34:57.1646162Z   show-progress: true
+2026-04-08T08:34:57.1646519Z   lfs: false
+2026-04-08T08:34:57.1646825Z   submodules: false
+2026-04-08T08:34:57.1647183Z   set-safe-directory: true
+2026-04-08T08:34:57.1647865Z env:
+2026-04-08T08:34:57.1648184Z   CARGO_TERM_COLOR: always
+2026-04-08T08:34:57.1648555Z ##[endgroup]
+2026-04-08T08:34:57.3323772Z Syncing repository: lapumlbb18-blip/Ry-dit
+2026-04-08T08:34:57.3325779Z ##[group]Getting Git version info
+2026-04-08T08:34:57.3326556Z Working directory is 'D:\a\Ry-dit\Ry-dit'
+2026-04-08T08:34:57.4059396Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-04-08T08:34:57.8148099Z git version 2.53.0.windows.2
+2026-04-08T08:34:57.8201444Z ##[endgroup]
+2026-04-08T08:34:57.8221097Z Temporarily overriding HOME='D:\a\_temp\1d06725b-31fe-46db-971a-55d3bfd645a3' before making global git config changes
+2026-04-08T08:34:57.8222769Z Adding repository directory to the temporary git global config as a safe directory
+2026-04-08T08:34:57.8232638Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\Ry-dit\Ry-dit
+2026-04-08T08:34:57.8850250Z Deleting the contents of 'D:\a\Ry-dit\Ry-dit'
+2026-04-08T08:34:57.8857143Z ##[group]Initializing the repository
+2026-04-08T08:34:57.8867036Z [command]"C:\Program Files\Git\bin\git.exe" init D:\a\Ry-dit\Ry-dit
+2026-04-08T08:34:57.9766295Z Initialized empty Git repository in D:/a/Ry-dit/Ry-dit/.git/
+2026-04-08T08:34:57.9814988Z [command]"C:\Program Files\Git\bin\git.exe" remote add origin https://github.com/lapumlbb18-blip/Ry-dit
+2026-04-08T08:34:58.0406666Z ##[endgroup]
+2026-04-08T08:34:58.0408071Z ##[group]Disabling automatic garbage collection
+2026-04-08T08:34:58.0416848Z [command]"C:\Program Files\Git\bin\git.exe" config --local gc.auto 0
+2026-04-08T08:34:58.0770191Z ##[endgroup]
+2026-04-08T08:34:58.0772888Z ##[group]Setting up auth
+2026-04-08T08:34:58.0778914Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-04-08T08:34:58.1105169Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-04-08T08:34:59.5510445Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-04-08T08:34:59.5800047Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-04-08T08:35:00.0956238Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-04-08T08:35:00.1260706Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-04-08T08:35:00.6484916Z [command]"C:\Program Files\Git\bin\git.exe" config --local http.https://github.com/.extraheader "AUTHORIZATION: basic ***"
+2026-04-08T08:35:00.6798821Z ##[endgroup]
+2026-04-08T08:35:00.6800018Z ##[group]Fetching the repository
+2026-04-08T08:35:00.6812764Z [command]"C:\Program Files\Git\bin\git.exe" -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +a3fd129f160e657290a0705b216be453709c3799:refs/remotes/origin/main
+2026-04-08T08:35:02.3723282Z From https://github.com/lapumlbb18-blip/Ry-dit
+2026-04-08T08:35:02.3726311Z  * [new ref]         a3fd129f160e657290a0705b216be453709c3799 -> origin/main
+2026-04-08T08:35:02.4100403Z ##[endgroup]
+2026-04-08T08:35:02.4100935Z ##[group]Determining the checkout info
+2026-04-08T08:35:02.4103341Z ##[endgroup]
+2026-04-08T08:35:02.4114409Z [command]"C:\Program Files\Git\bin\git.exe" sparse-checkout disable
+2026-04-08T08:35:02.4578211Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all extensions.worktreeConfig
+2026-04-08T08:35:02.4873693Z ##[group]Checking out the ref
+2026-04-08T08:35:02.4885017Z [command]"C:\Program Files\Git\bin\git.exe" checkout --progress --force -B main refs/remotes/origin/main
+2026-04-08T08:35:03.2335415Z Switched to a new branch 'main'
+2026-04-08T08:35:03.2414645Z branch 'main' set up to track 'origin/main'.
+2026-04-08T08:35:03.2518541Z ##[endgroup]
+2026-04-08T08:35:03.2945129Z [command]"C:\Program Files\Git\bin\git.exe" log -1 --format=%H
+2026-04-08T08:35:03.3218892Z a3fd129f160e657290a0705b216be453709c3799

@@ -1,0 +1,74 @@
+﻿2026-04-08T08:34:56.8162142Z ##[group]Run actions/checkout@v4
+2026-04-08T08:34:56.8163324Z with:
+2026-04-08T08:34:56.8163770Z   repository: lapumlbb18-blip/Ry-dit
+2026-04-08T08:34:56.8164599Z   token: ***
+2026-04-08T08:34:56.8164980Z   ssh-strict: true
+2026-04-08T08:34:56.8165382Z   ssh-user: git
+2026-04-08T08:34:56.8165789Z   persist-credentials: true
+2026-04-08T08:34:56.8166230Z   clean: true
+2026-04-08T08:34:56.8166628Z   sparse-checkout-cone-mode: true
+2026-04-08T08:34:56.8167096Z   fetch-depth: 1
+2026-04-08T08:34:56.8167519Z   fetch-tags: false
+2026-04-08T08:34:56.8167910Z   show-progress: true
+2026-04-08T08:34:56.8168307Z   lfs: false
+2026-04-08T08:34:56.8168661Z   submodules: false
+2026-04-08T08:34:56.8169069Z   set-safe-directory: true
+2026-04-08T08:34:56.8169667Z env:
+2026-04-08T08:34:56.8170030Z   CARGO_TERM_COLOR: always
+2026-04-08T08:34:56.8170485Z ##[endgroup]
+2026-04-08T08:34:56.9344383Z Syncing repository: lapumlbb18-blip/Ry-dit
+2026-04-08T08:34:56.9347599Z ##[group]Getting Git version info
+2026-04-08T08:34:56.9348561Z Working directory is '/home/runner/work/Ry-dit/Ry-dit'
+2026-04-08T08:34:56.9350246Z [command]/usr/bin/git version
+2026-04-08T08:34:56.9373678Z git version 2.53.0
+2026-04-08T08:34:56.9400616Z ##[endgroup]
+2026-04-08T08:34:56.9425650Z Temporarily overriding HOME='/home/runner/work/_temp/ae32634b-9244-45cd-8670-0ea2dd6a6796' before making global git config changes
+2026-04-08T08:34:56.9427902Z Adding repository directory to the temporary git global config as a safe directory
+2026-04-08T08:34:56.9432584Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Ry-dit/Ry-dit
+2026-04-08T08:34:56.9470483Z Deleting the contents of '/home/runner/work/Ry-dit/Ry-dit'
+2026-04-08T08:34:56.9474528Z ##[group]Initializing the repository
+2026-04-08T08:34:56.9478878Z [command]/usr/bin/git init /home/runner/work/Ry-dit/Ry-dit
+2026-04-08T08:34:56.9567827Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-04-08T08:34:56.9569057Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-04-08T08:34:56.9570012Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-04-08T08:34:56.9571094Z hint: call:
+2026-04-08T08:34:56.9571622Z hint:
+2026-04-08T08:34:56.9572471Z hint: 	git config --global init.defaultBranch <name>
+2026-04-08T08:34:56.9573304Z hint:
+2026-04-08T08:34:56.9574104Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-04-08T08:34:56.9575413Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-04-08T08:34:56.9576444Z hint:
+2026-04-08T08:34:56.9576975Z hint: 	git branch -m <name>
+2026-04-08T08:34:56.9577614Z hint:
+2026-04-08T08:34:56.9578183Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-04-08T08:34:56.9579153Z Initialized empty Git repository in /home/runner/work/Ry-dit/Ry-dit/.git/
+2026-04-08T08:34:56.9581653Z [command]/usr/bin/git remote add origin https://github.com/lapumlbb18-blip/Ry-dit
+2026-04-08T08:34:56.9618064Z ##[endgroup]
+2026-04-08T08:34:56.9618949Z ##[group]Disabling automatic garbage collection
+2026-04-08T08:34:56.9621840Z [command]/usr/bin/git config --local gc.auto 0
+2026-04-08T08:34:56.9655651Z ##[endgroup]
+2026-04-08T08:34:56.9656676Z ##[group]Setting up auth
+2026-04-08T08:34:56.9662696Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-04-08T08:34:56.9697655Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-04-08T08:34:57.0005320Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-04-08T08:34:57.0039737Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-04-08T08:34:57.0278012Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-04-08T08:34:57.0314312Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-04-08T08:34:57.0561193Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-04-08T08:34:57.0600663Z ##[endgroup]
+2026-04-08T08:34:57.0601480Z ##[group]Fetching the repository
+2026-04-08T08:34:57.0610848Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +a3fd129f160e657290a0705b216be453709c3799:refs/remotes/origin/main
+2026-04-08T08:34:58.1516255Z From https://github.com/lapumlbb18-blip/Ry-dit
+2026-04-08T08:34:58.1518279Z  * [new ref]         a3fd129f160e657290a0705b216be453709c3799 -> origin/main
+2026-04-08T08:34:58.1549005Z ##[endgroup]
+2026-04-08T08:34:58.1550401Z ##[group]Determining the checkout info
+2026-04-08T08:34:58.1551791Z ##[endgroup]
+2026-04-08T08:34:58.1556142Z [command]/usr/bin/git sparse-checkout disable
+2026-04-08T08:34:58.1599224Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-04-08T08:34:58.1629821Z ##[group]Checking out the ref
+2026-04-08T08:34:58.1634512Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+2026-04-08T08:34:58.4021093Z Switched to a new branch 'main'
+2026-04-08T08:34:58.4022794Z branch 'main' set up to track 'origin/main'.
+2026-04-08T08:34:58.4048494Z ##[endgroup]
+2026-04-08T08:34:58.4091051Z [command]/usr/bin/git log -1 --format=%H
+2026-04-08T08:34:58.4115912Z a3fd129f160e657290a0705b216be453709c3799

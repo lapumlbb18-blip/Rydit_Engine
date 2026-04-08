@@ -1,0 +1,19 @@
+﻿2026-04-08T08:35:36.4071620Z ##[group]Run actions/cache@v4
+2026-04-08T08:35:36.4071883Z with:
+2026-04-08T08:35:36.4072103Z   path: ~/.cargo/registry
+~/.cargo/git
+target
+
+2026-04-08T08:35:36.4072662Z   key: Linux-cargo-
+2026-04-08T08:35:36.4072876Z   restore-keys: Linux-cargo-
+
+2026-04-08T08:35:36.4073110Z   enableCrossOsArchive: false
+2026-04-08T08:35:36.4073343Z   fail-on-cache-miss: false
+2026-04-08T08:35:36.4073562Z   lookup-only: false
+2026-04-08T08:35:36.4073772Z   save-always: false
+2026-04-08T08:35:36.4073965Z env:
+2026-04-08T08:35:36.4074147Z   CARGO_TERM_COLOR: always
+2026-04-08T08:35:36.4074384Z   CARGO_HOME: /home/runner/.cargo
+2026-04-08T08:35:36.4074614Z   CARGO_INCREMENTAL: 0
+2026-04-08T08:35:36.4074817Z ##[endgroup]
+2026-04-08T08:35:36.6339105Z Cache not found for input keys: Linux-cargo-, Linux-cargo-

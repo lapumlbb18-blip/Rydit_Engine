@@ -132,9 +132,10 @@ impl DynamicModuleLoader {
     /// La biblioteca debe exportar una función `create_module` que retorne
     /// un puntero a un objeto que implemente `RyditModule`.
     #[cfg(not(target_os = "android"))]
+    #[cfg(unix)]
     pub fn load_library<P: AsRef<OsStr>>(&mut self, path: P) -> Result<&str, LoaderError> {
         use libloading::Library;
-        use std::os::unix::ffi::OsStrExt;
+        use ry_core::RyditModule;
 
         self.timestamp += 1;
 
