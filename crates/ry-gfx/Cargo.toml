@@ -7,7 +7,7 @@ license = "MIT"
 repository = "https://github.com/lapumlbb18-blip/Ry-dit"
 documentation = "https://docs.rs/ry-gfx"
 readme = "README.md"
-keywords = ["game-engine", "graphics", "sdl2", "gpu-instancing", "fsr", "termux"]
+keywords = ["game-engine", "graphics", "sdl2", "gpu-instancing", "termux"]
 categories = ["game-engines", "rendering::engine"]
 
 [dependencies]
