@@ -801,7 +801,7 @@ mod tests {
     use blast_core::Executor;
     use ry_parser::{Expr, Stmt};
 
-    fn setup_test() -> (Executor, HashMap<String, (Vec<String>, Vec<Stmt>)>) {
+    fn setup_test() -> (Executor, HashMap<String, (Vec<String>, Vec<Stmt<'static>>)>) {
         (Executor::nuevo(), HashMap::new())
     }
 
@@ -812,12 +812,12 @@ mod tests {
         let result = csv_columns(
             &[Expr::Array(vec![
                 Expr::Array(vec![
-                    Expr::Texto("nombre".to_string()),
-                    Expr::Texto("edad".to_string()),
+                    Expr::Texto("nombre"),
+                    Expr::Texto("edad"),
                 ]),
                 Expr::Array(vec![
-                    Expr::Texto("Juan".to_string()),
-                    Expr::Texto("25".to_string()),
+                    Expr::Texto("Juan"),
+                    Expr::Texto("25"),
                 ]),
             ])],
             &mut executor,
@@ -838,16 +838,16 @@ mod tests {
         let result = csv_row_count(
             &[Expr::Array(vec![
                 Expr::Array(vec![
-                    Expr::Texto("a".to_string()),
-                    Expr::Texto("b".to_string()),
+                    Expr::Texto("a"),
+                    Expr::Texto("b"),
                 ]),
                 Expr::Array(vec![
-                    Expr::Texto("1".to_string()),
-                    Expr::Texto("2".to_string()),
+                    Expr::Texto("1"),
+                    Expr::Texto("2"),
                 ]),
                 Expr::Array(vec![
-                    Expr::Texto("3".to_string()),
-                    Expr::Texto("4".to_string()),
+                    Expr::Texto("3"),
+                    Expr::Texto("4"),
                 ]),
             ])],
             &mut executor,
@@ -868,14 +868,14 @@ mod tests {
         let result = csv_col_count(
             &[Expr::Array(vec![
                 Expr::Array(vec![
-                    Expr::Texto("a".to_string()),
-                    Expr::Texto("b".to_string()),
-                    Expr::Texto("c".to_string()),
+                    Expr::Texto("a"),
+                    Expr::Texto("b"),
+                    Expr::Texto("c"),
                 ]),
                 Expr::Array(vec![
-                    Expr::Texto("1".to_string()),
-                    Expr::Texto("2".to_string()),
-                    Expr::Texto("3".to_string()),
+                    Expr::Texto("1"),
+                    Expr::Texto("2"),
+                    Expr::Texto("3"),
                 ]),
             ])],
             &mut executor,
@@ -897,24 +897,24 @@ mod tests {
             &[
                 Expr::Array(vec![
                     Expr::Array(vec![
-                        Expr::Texto("nombre".to_string()),
-                        Expr::Texto("edad".to_string()),
+                        Expr::Texto("nombre"),
+                        Expr::Texto("edad"),
                     ]),
                     Expr::Array(vec![
-                        Expr::Texto("Juan".to_string()),
-                        Expr::Texto("25".to_string()),
+                        Expr::Texto("Juan"),
+                        Expr::Texto("25"),
                     ]),
                     Expr::Array(vec![
-                        Expr::Texto("Maria".to_string()),
-                        Expr::Texto("30".to_string()),
+                        Expr::Texto("Maria"),
+                        Expr::Texto("30"),
                     ]),
                     Expr::Array(vec![
-                        Expr::Texto("Pedro".to_string()),
-                        Expr::Texto("25".to_string()),
+                        Expr::Texto("Pedro"),
+                        Expr::Texto("25"),
                     ]),
                 ]),
-                Expr::Texto("edad".to_string()),
-                Expr::Texto("25".to_string()),
+                Expr::Texto("edad"),
+                Expr::Texto("25"),
             ],
             &mut executor,
             &mut funcs,
@@ -935,24 +935,24 @@ mod tests {
             &[
                 Expr::Array(vec![
                     Expr::Array(vec![
-                        Expr::Texto("item".to_string()),
-                        Expr::Texto("valor".to_string()),
+                        Expr::Texto("item"),
+                        Expr::Texto("valor"),
                     ]),
                     Expr::Array(vec![
-                        Expr::Texto("a".to_string()),
-                        Expr::Texto("10".to_string()),
+                        Expr::Texto("a"),
+                        Expr::Texto("10"),
                     ]),
                     Expr::Array(vec![
-                        Expr::Texto("b".to_string()),
-                        Expr::Texto("20".to_string()),
+                        Expr::Texto("b"),
+                        Expr::Texto("20"),
                     ]),
                     Expr::Array(vec![
-                        Expr::Texto("c".to_string()),
-                        Expr::Texto("30".to_string()),
+                        Expr::Texto("c"),
+                        Expr::Texto("30"),
                     ]),
                 ]),
-                Expr::Texto("valor".to_string()),
-                Expr::Texto("sum".to_string()),
+                Expr::Texto("valor"),
+                Expr::Texto("sum"),
             ],
             &mut executor,
             &mut funcs,
@@ -973,24 +973,24 @@ mod tests {
             &[
                 Expr::Array(vec![
                     Expr::Array(vec![
-                        Expr::Texto("item".to_string()),
-                        Expr::Texto("valor".to_string()),
+                        Expr::Texto("item"),
+                        Expr::Texto("valor"),
                     ]),
                     Expr::Array(vec![
-                        Expr::Texto("a".to_string()),
-                        Expr::Texto("10".to_string()),
+                        Expr::Texto("a"),
+                        Expr::Texto("10"),
                     ]),
                     Expr::Array(vec![
-                        Expr::Texto("b".to_string()),
-                        Expr::Texto("20".to_string()),
+                        Expr::Texto("b"),
+                        Expr::Texto("20"),
                     ]),
                     Expr::Array(vec![
-                        Expr::Texto("c".to_string()),
-                        Expr::Texto("30".to_string()),
+                        Expr::Texto("c"),
+                        Expr::Texto("30"),
                     ]),
                 ]),
-                Expr::Texto("valor".to_string()),
-                Expr::Texto("avg".to_string()),
+                Expr::Texto("valor"),
+                Expr::Texto("avg"),
             ],
             &mut executor,
             &mut funcs,

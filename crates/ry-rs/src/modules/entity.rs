@@ -2654,7 +2654,7 @@ pub fn coin_is_collected<'a>(
 mod tests {
     use super::*;
 
-    fn setup_test() -> (Executor, HashMap<String, (Vec<String>, Vec<Stmt>)>) {
+    fn setup_test() -> (Executor, HashMap<String, (Vec<String>, Vec<Stmt<'static>>)>) {
         (Executor::nuevo(), HashMap::new())
     }
 
@@ -2663,7 +2663,7 @@ mod tests {
         let (mut executor, mut funcs) = setup_test();
 
         let args = vec![
-            Expr::Texto("player".to_string()),
+            Expr::Texto("player"),
             Expr::Num(400.0),
             Expr::Num(300.0),
         ];
@@ -2682,7 +2682,7 @@ mod tests {
 
         // Crear
         let create_args = vec![
-            Expr::Texto("enemy".to_string()),
+            Expr::Texto("enemy"),
             Expr::Num(100.0),
             Expr::Num(100.0),
         ];
@@ -2693,7 +2693,7 @@ mod tests {
         };
 
         // Destruir
-        let destroy_args = vec![Expr::Texto(id.clone())];
+        let destroy_args = vec![Expr::Texto(&id)];
         let result = entity_destroy(&destroy_args, &mut executor, &mut funcs);
 
         if let Valor::Texto(msg) = result {
@@ -2710,7 +2710,7 @@ mod tests {
         // Crear varios enemies
         for i in 0..3 {
             let args = vec![
-                Expr::Texto("enemy".to_string()),
+                Expr::Texto("enemy"),
                 Expr::Num(100.0 + i as f64 * 50.0),
                 Expr::Num(100.0),
             ];
@@ -2718,7 +2718,7 @@ mod tests {
         }
 
         // Obtener por tipo
-        let args = vec![Expr::Texto("enemy".to_string())];
+        let args = vec![Expr::Texto("enemy")];
         let result = entity_get_by_type(&args, &mut executor, &mut funcs);
 
         if let Valor::Array(ids) = result {
@@ -2734,7 +2734,7 @@ mod tests {
 
         // Crear player
         let create_args = vec![
-            Expr::Texto("player".to_string()),
+            Expr::Texto("player"),
             Expr::Num(400.0),
             Expr::Num(300.0),
         ];
@@ -2745,7 +2745,7 @@ mod tests {
         };
 
         // Mover
-        let args = vec![Expr::Texto(id.clone()), Expr::Num(500.0), Expr::Num(400.0)];
+        let args = vec![Expr::Texto(&id), Expr::Num(500.0), Expr::Num(400.0)];
         let result = entity_set_position(&args, &mut executor, &mut funcs);
 
         if let Valor::Texto(msg) = result {
@@ -2762,7 +2762,7 @@ mod tests {
 
         // Crear player
         let create_args = vec![
-            Expr::Texto("player".to_string()),
+            Expr::Texto("player"),
             Expr::Num(400.0),
             Expr::Num(300.0),
         ];
@@ -2773,7 +2773,7 @@ mod tests {
         };
 
         // Mover derecha
-        let args = vec![Expr::Texto(id.clone())];
+        let args = vec![Expr::Texto(&id)];
         let result = player_move_right(&args, &mut executor, &mut funcs);
 
         if let Valor::Texto(msg) = result {
@@ -2788,7 +2788,7 @@ mod tests {
         let (mut executor, mut funcs) = setup_test();
 
         let create_args = vec![
-            Expr::Texto("player".to_string()),
+            Expr::Texto("player"),
             Expr::Num(400.0),
             Expr::Num(300.0),
         ];
@@ -2798,7 +2798,7 @@ mod tests {
             _ => panic!("entity_create falló"),
         };
 
-        let args = vec![Expr::Texto(id.clone())];
+        let args = vec![Expr::Texto(&id)];
         let result = player_jump(&args, &mut executor, &mut funcs);
 
         if let Valor::Texto(msg) = result {
@@ -2813,7 +2813,7 @@ mod tests {
         let (mut executor, mut funcs) = setup_test();
 
         let create_args = vec![
-            Expr::Texto("player".to_string()),
+            Expr::Texto("player"),
             Expr::Num(400.0),
             Expr::Num(300.0),
         ];
@@ -2824,11 +2824,11 @@ mod tests {
         };
 
         // Set health
-        let args = vec![Expr::Texto(id.clone()), Expr::Num(80.0)];
+        let args = vec![Expr::Texto(&id), Expr::Num(80.0)];
         let _ = player_set_health(&args, &mut executor, &mut funcs);
 
         // Get health
-        let args = vec![Expr::Texto(id.clone())];
+        let args = vec![Expr::Texto(&id)];
         let result = player_get_health(&args, &mut executor, &mut funcs);
 
         if let Valor::Num(health) = result {

@@ -702,9 +702,9 @@ mod tests {
     fn test_collision_detection() {
         let body_a = PhysicsBody::new(0.0, 0.0, 50.0, 50.0);
         let body_b = PhysicsBody::new(25.0, 25.0, 50.0, 50.0);
-        assert!(body_a.collides_with(body_b));
+        assert!(body_a.collides_with(&body_b));
 
         let body_c = PhysicsBody::new(100.0, 100.0, 50.0, 50.0);
-        assert!(!body_a.collides_with(body_c));
+        assert!(!body_a.collides_with(&body_c));
     }
 }

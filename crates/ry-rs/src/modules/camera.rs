@@ -531,7 +531,7 @@ pub fn camera_apply_sdl2<'a>(
 mod tests {
     use super::*;
 
-    fn setup_test() -> (Executor, HashMap<String, (Vec<String>, Vec<Stmt>)>) {
+    fn setup_test() -> (Executor, HashMap<String, (Vec<String>, Vec<Stmt<'static>>)>) {
         (Executor::nuevo(), HashMap::new())
     }
 
