@@ -1,15 +1,15 @@
 [package]
 name = "ry-anim"
-version = "0.7.34"
+version = "0.12.0"
 edition = "2021"
-description = "Animation module for Ry - Easing functions, Squash & Stretch, Disney principles"
+description = "Animation library implementing 12 Disney principles, visual effects, optical illusions, and science animations"
 license = "MIT"
-repository = "https://github.com/lapumlbb18-blip/Rydit"
-homepage = "https://github.com/lapumlbb18-blip/Rydit"
+repository = "https://github.com/lapumlbb18-blip/Ry-dit"
+homepage = "https://github.com/lapumlbb18-blip/Ry-dit"
 documentation = "https://docs.rs/ry-anim"
-readme = "../../README.md"
-keywords = ["animation", "easing", "game-engine", "disney", "interpolation"]
-categories = ["game-development", "graphics"]
+readme = "README.md"
+keywords = ["animation", "easing", "game-engine", "disney", "sprite"]
+categories = ["game-development", "graphics", "multimedia"]
 
 [dependencies]
 ry-core = { version = "0.8.2", path = "../ry-core" }

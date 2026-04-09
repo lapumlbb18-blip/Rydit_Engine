@@ -2,10 +2,16 @@
 name = "toolkit-ry"
 version = "0.1.0"
 edition = "2021"
-description = "UI Toolkit para Ry-Dit"
-authors = ["Shield Project"]
+description = "Game UI toolkit with HUD widgets, menus, dialogs, inventory system, and 5 pre-built themes"
+license = "MIT"
+repository = "https://github.com/lapumlbb18-blip/Ry-dit"
+homepage = "https://github.com/lapumlbb18-blip/Ry-dit"
+documentation = "https://docs.rs/toolkit-ry"
+readme = "README.md"
+keywords = ["gui", "game-ui", "hud", "widgets", "immediate-mode"]
+categories = ["game-development", "gui"]
 
 [dependencies]
 sdl2 = "0.37"
-ry-gfx = { path = "../ry-gfx" }
-migui = { path = "../migui" }
+ry-gfx = { version = "0.10.8", path = "../ry-gfx" }
+migui = { version = "0.4.1", path = "../migui" }
