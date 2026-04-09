@@ -6,7 +6,7 @@
 //! 3. Platform Sync (X11)
 
 use ry_gfx::render_queue::{DoubleBuffer, DrawCommand, PlatformSync, RenderQueue};
-use ry_gfx::{ColorRydit, Key, RyditGfx};
+use ry_gfx::{Assets, ColorRydit, Key, RyditGfx};
 
 fn main() {
     println!("🛡️ RyDit v0.9.0 - Demo Render Queue");
@@ -171,7 +171,8 @@ fn main() {
         lineas_dibujadas = 0;
 
         // === FASE 2: Swap + Execute (Back Buffer) ===
-        double_buffer.swap_and_execute(&mut gfx);
+        let assets = Assets::new();
+        double_buffer.swap_and_execute(&mut gfx, &assets);
 
         // === FASE 3: Platform Sync (X11) ===
         platform_sync.sync();

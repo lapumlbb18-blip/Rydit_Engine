@@ -22,7 +22,7 @@ ry-lexer = { path = "../ry-lexer" }  # 🆕 v0.11.2
 ry-parser = { path = "../ry-parser" }  # 🆕 v0.11.2
 v-shield = { path = "../v-shield" }
 blast-core = { path = "../blast-core" }
-ry-gfx = { path = "../ry-gfx" }
+ry-gfx = { path = "../ry-gfx", features = ["migui"] }
 migui = { path = "../migui", features = ["sdl2"] }
 ry-stream = { path = "../ry-stream" }  # 🆕 v0.11.2: LAN streaming
 raylib = { version = "5.5.1", default-features = false, features = ["nobuild"] }
