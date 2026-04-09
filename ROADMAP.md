@@ -1,7 +1,7 @@
-# Ry-Dit - ROADMAP v0.15.0 -> v1.0.0
+# Ry-Dit - ROADMAP v0.16.0 -> v1.0.0
 
-**Última actualización**: 2026-04-08
-**Versión actual**: v0.16.0-alpha ✅ CI 3 plataformas + 6 crates publicados
+**Última actualización**: 2026-04-09
+**Versión actual**: v0.16.0 ✅ Health Bars + HUD + Cámara 2D + ry3d-gfx + 12 crates publicados
 
 ---
 
@@ -9,16 +9,18 @@
 
 | Métrica | Valor |
 |---------|-------|
-| **Crates** | 25 |
+| **Crates** | 23 |
 | **Líneas Rust** | ~30K+ |
 | **Compilación** | 0 errores |
-| **Tests** | 70+ pasando |
-| **Crates publicados** | 6 (ry-god, ry-stream, v-shield, ry-backend, migui, ry-gfx) |
+| **Tests** | 95+ pasando |
+| **Crates publicados** | 12 (ry-god, ry-stream, v-shield, ry-backend, migui, ry-gfx, ry-core, ry-anim, toolkit-ry, ry-config, ry-physics, ry-science) |
 | **CI/CD** | ✅ Linux + Windows + macOS |
 | **GPU Instancing** | 50K partículas a 48 FPS (Adreno 610 vía Zink) |
 | **FSR 1.0** | 960x540 → 1280x720 a 48 FPS (FBO render-to-texture) |
-| **Demos Termux-X11** | 8 funcionales |
-| **ELFs compilados** | demo_gpu_instancing, demo_fsr, demo_torreta_vs_sprites 434K, demo_rigidbody 446K, demo_ttf_sprites 436K, demo_panel_visual 339K, demo_menu_bar 330K, demo_anime_ry 341K, demo_50k_particulas 313K, demo_colisiones 309K |
+| **Health Bars** | ✅ world-space, color dinámico |
+| **Cámara 2D** | ✅ Zoom + rotación + follow suave + límites |
+| **Demos Termux-X11** | 11+ funcionales |
+| **ELFs compilados** | demo_hud_camera, demo_gpu_instancing, demo_fsr, demo_torreta_vs_sprites 434K, demo_rigidbody 446K, demo_ttf_sprites 436K, demo_panel_visual 339K, demo_menu_bar 330K, demo_anime_ry 341K, demo_50k_particulas 313K, demo_colisiones 309K |
 | **Bins en src/bin/** | ~35+ |
 | **Repositorio** | `github.com/lapumlbb18-blip/Ry-dit` |
 
@@ -101,7 +103,32 @@ Progreso: ████████████████████ 100%
 Progreso: ████████████████████ 100%
 ```
 
-### v0.16.0 - Bordes Suaves, Opacidad, Shaders Avanzados (EN PROGRESO)
+### v0.16.0 - Health Bars + HUD + Cámara 2D + ry3d-gfx + 12 crates publicados (COMPLETADA ✅)
+
+**Fecha**: 2026-04-09
+**Commits**: `42fef11`
+
+| Feature | Estado |
+|---------|--------|
+| Health Bars: EntityHUD world-space, color dinámico (verde→amarillo→rojo) | ✅ |
+| HUD Debug Overlay: FPS, cámara, entidades, tiempo, memoria | ✅ |
+| Stats HUD: Score, tiempo MM:SS, nivel, TTF cacheado | ✅ |
+| Cámara 2D: Zoom 0.2-5x, rotación 0-360°, follow_smooth, set_bounds | ✅ |
+| Minimap avanzado: entidades coloreadas, viewport, jugador | ✅ |
+| demo_hud_camera: Demo funcional con todos los HUD + cámara | ✅ |
+| ry3d-gfx mejorado: Modelo3D load (GLTF/OBJ/IQM/VOX), draw_text_3d, draw_model | ✅ |
+| Launchers Zink: launcher_hud_camera.sh auto-detección DISPLAY | ✅ |
+| ry-config publicado: v0.1.0 en crates.io | ✅ |
+| ry-physics publicado: v0.7.34 en crates.io | ✅ |
+| ry-science publicado: v0.7.34 en crates.io | ✅ |
+| ry-test eliminado: código muerto removido | ✅ |
+| 23 crates compilando, 0 errores, 95+ tests | ✅ |
+
+```
+Progreso: ████████████████████ 100%
+```
+
+### v0.17.0 - 3D en PC, Iluminación, Materiales (PLANIFICADA)
 
 **Prioridad**: ALTA
 
@@ -110,72 +137,6 @@ Progreso: ████████████████████ 100%
 | Bordes suaves (antialiasing) | ⏳ | 8-12h |
 | Opacidad/transparencia | ⏳ | 6-8h |
 | Shaders avanzados | ⏳ | 10-15h |
-
-```
-Progreso: ░░░░░░░░░░░░░░░░░░░░ 0%
-```
-
-### v0.17.0 - 3D en PC (PLANIFICADA)
-
-**Prioridad**: MEDIA
-
-| Feature | Estado | Tiempo est. |
-|---------|--------|-------------|
-| 3D en PC | ⏳ | 12-16h |
-
-```
-Progreso: ░░░░░░░░░░░░░░░░░░░░ 0%
-```
-
-### v0.18.0 - v-shield + GitHub Actions (PLANIFICADA)
-
-**Prioridad**: MEDIA
-
-| Feature | Estado | Tiempo est. |
-|---------|--------|-------------|
-| v-shield platform layer | ⏳ | 15-20h |
-| GitHub Actions CI | ⏳ | 6-8h |
-
-```
-Progreso: ░░░░░░░░░░░░░░░░░░░░ 0%
-```
-
-### v0.19.0 - Texturas + Sprite Animation System (PLANIFICADA)
-
-**Prioridad**: MEDIA
-
-| Feature | Estado | Tiempo est. |
-|---------|--------|-------------|
-| Texturas | ⏳ | 10-15h |
-| Sprite animation system | ⏳ | 12-16h |
-
-```
-Progreso: ░░░░░░░░░░░░░░░░░░░░ 0%
-```
-
-### v0.20.0 - Motor Multiplataforma Completo (PLANIFICADA)
-
-**Prioridad**: MEDIA
-
-| Feature | Estado | Tiempo est. |
-|---------|--------|-------------|
-| Motor multiplataforma completo | ⏳ | 20-30h |
-
-```
-Progreso: ░░░░░░░░░░░░░░░░░░░░ 0%
-```
-
-### v0.16.0 - Features Avanzadas (PLANIFICADA)
-
-**Prioridad**: MEDIA
-
-| Feature | Estado | Tiempo est. |
-|---------|--------|-------------|
-| Platform crate (abstracción multiplataforma) | ⏳ | 15-20h |
-| Soporte de emojis en TTF | ⏳ | 4-6h |
-| GIF animation | ⏳ | 8-12h |
-| GPU instancing (revisar gpu_instancing.rs de ry-gfx) | ⏳ | 10-15h |
-| Features 3D paso a paso | ⏳ | 12-16h |
 
 ```
 Progreso: ░░░░░░░░░░░░░░░░░░░░ 0%
@@ -208,7 +169,8 @@ v0.13.0 ████████████████████ 100%
 v0.14.0 ████████████████████ 100%
 v0.15.0 ████████████████████ 100%
 v0.16.0-alpha ████████████████████ 100%
-v0.16.0   ██████████░░░░░░░░░░░░ 50%
+v0.16.0   ████████████████████ 100%
+v0.17.0   ░░░░░░░░░░░░░░░░░░░░ 0%
 v1.0.0  ████████░░░░░░░░░░░░░░  40%
 ```
 
@@ -225,12 +187,12 @@ v1.0.0  ████████░░░░░░░░░░░░░░  40%
 | **v0.14.0** | **2026-04-06** | **df4ec17** | **25** | **0** | **95+** | **ry-backend dual + juego completo + 25 crates** |
 | **v0.15.0** | **2026-04-07** | **—** | **25** | **0** | **95+** | **GPU Instancing 50K@48FPS + FSR 1.0 + 8 demos Termux-X11** |
 | **v0.16.0-alpha** | **2026-04-08** | **8276241** | **25** | **0** | **70+** | **CI 3 plataformas + 6 crates publicados + 65 tests fixeados** |
-| v0.16.0 | 2026-04-xx | — | 25+ | — | — | Bordes suaves, opacidad, shaders avanzados |
-| v0.17.0 | 2026-04-xx | — | 25+ | — | — | 3D en PC |
-| v0.18.0 | 2026-04-xx | — | 25+ | — | — | v-shield platform layer + GitHub Actions |
-| v0.19.0 | 2026-04-xx | — | 25+ | — | — | Texturas + sprite animation system |
-| v0.20.0 | 2026-04-xx | — | 25+ | — | — | Motor multiplataforma completo |
-| v1.0.0 | Futuro | — | 25+ | — | — | Motor completo + Editor Visual + Comunidad |
+| **v0.16.0** | **2026-04-09** | **42fef11** | **23** | **0** | **95+** | **Health Bars + HUD + Cámara 2D + ry3d-gfx + 12 crates publicados** |
+| v0.17.0 | 2026-04-xx | — | 23+ | — | — | 3D en PC, iluminación, materiales |
+| v0.18.0 | 2026-04-xx | — | 23+ | — | — | GitHub Actions CI mejorado + shaders avanzados |
+| v0.19.0 | 2026-04-xx | — | 23+ | — | — | Texturas + sprite animation system |
+| v0.20.0 | 2026-04-xx | — | 23+ | — | — | Motor multiplataforma completo |
+| v1.0.0 | Futuro | — | 23+ | — | — | Motor completo + Editor Visual + Comunidad |
 
 ---
 
@@ -243,15 +205,16 @@ v1.0.0  ████████░░░░░░░░░░░░░░  40%
 5. **Editor visual** integrado
 6. **GPU instancing** para rendimiento masivo
 7. **LAZOS Python bridge** para IA/ML
+8. **12+ crates publicados** en crates.io
 
 ---
 
 <div align="center">
 
-**Ry-Dit v0.16.0-alpha - ROADMAP**
+**Ry-Dit v0.16.0 - ROADMAP**
 
-*CI 3 plataformas ✅ | 6 crates publicados | 65 tests fixeados | 0 errores*
+*Health Bars + HUD + Cámara 2D + ry3d-gfx ✅ | 12 crates publicados | 23 crates | 0 errores*
 
-*Próxima versión: v0.16.0 - Bordes suaves, opacidad, shaders avanzados*
+*Próxima versión: v0.17.0 - 3D en PC, iluminación, materiales*
 
 </div>

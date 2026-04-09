@@ -1,8 +1,8 @@
-# Ry-Dit - ESTRUCTURA DEL PROYECTO v0.15.0
+# Ry-Dit - ESTRUCTURA DEL PROYECTO v0.16.0
 
-**Última actualización**: 2026-04-08
-**Versión**: v0.16.0-alpha CI 3 plataformas + 6 crates publicados
-**Estado**: `cargo check --workspace`: 0 errores | 25 crates compilando | 70+ tests pasando
+**Última actualización**: 2026-04-09
+**Versión**: v0.16.0 Health Bars + HUD + Cámara 2D + ry3d-gfx + 12 crates publicados
+**Estado**: `cargo check --workspace`: 0 errores | 23 crates compilando | 95+ tests pasando
 
 ---
 
@@ -10,12 +10,12 @@
 
 ```
 shield-project/
-├── Cargo.toml                  # Workspace (25 crates)
-├── README.md                   # Documentación principal (v0.15.0)
-├── ROADMAP.md                  # Planificación v0.15→v1.0
+├── Cargo.toml                  # Workspace (23 crates)
+├── README.md                   # Documentación principal (v0.16.0)
+├── ROADMAP.md                  # Planificación v0.16→v1.0
 ├── QWEN.md                     # Bitácora técnica
 ├── ESTRUCTURA.md               # Este archivo
-├── patron_gpu_instancing.md    # 🆕 Patrón GPU instancing documentado
+├── patron_gpu_instancing.md    # Patrón GPU instancing documentado
 ├── TASKS.md                    # Tareas principales y paralelas
 ├── CONTRIBUTING.md             # Guía contribuidores
 ├── MANIFIESTO.md               # Filosofía del proyecto
@@ -23,31 +23,31 @@ shield-project/
 ├── .gitignore
 │
 ├── crates/
-│   ├── ry-core/                # 0.8.2  Core traits, module system, Valor
+│   ├── ry-core/                # 0.8.2  Core traits, module system ✅ crates.io
 │   ├── ry-lexer/               # 0.1.0  Zero-copy lexer
 │   ├── ry-parser/              # 0.1.0  Parser AST + error recovery
 │   ├── ry-vm/                  #        VM opcodes + compiler
-│   ├── ry-gfx/                 # 0.10.7 Graphics (raylib + SDL2 + OpenGL FFI)
-│   ├── ry-physics/             # 0.7.34 2D projectile + N-body + nbody_simulate
-│   ├── ry-anim/                # 0.12.0  Easing + Disney + ilusiones + ciencia + action
-│   ├── ry-science/             #        Geometry 2D + stats + Bezier
+│   ├── ry-gfx/                 # 0.10.8 Graphics (raylib + SDL2 + OpenGL FFI) ✅ crates.io
+│   ├── ry-physics/             # 0.7.34 2D projectile + N-body + nbody_simulate ✅ crates.io
+│   ├── ry-anim/                # 0.12.0  Easing + Disney + ilusiones + ciencia + action ✅ crates.io
+│   ├── ry-science/             # 0.7.34 Geometry 2D + stats + Bezier ✅ crates.io
 │   ├── ry-script/              # 0.8.2  Script loading
-│   ├── ry-stream/              # 0.2.0  LAN streaming (WebSocket) ✅ crates.io (updated)
+│   ├── ry-stream/              # 0.2.0  LAN streaming (WebSocket) ✅ crates.io
 │   ├── ry-god/                 # 0.1.0  Security & efficiency ✅ crates.io
 │   ├── ry-loader/              #        Module loader
 │   ├── ry-rs/                  #        Main binary + lib + demos + eval
 │   ├── ry-system-ry/           # 0.14.0 Sistema unificado (RySystem: core + gui)
-│   ├── ry-test/                #        Test utilities
-│   ├── ry3d-gfx/               # 0.1.0  Graphics 3D (cube, sphere, cylinder...)
-│   ├── toolkit-ry/             # 0.1.0  UI toolkit (5 temas + 20+ widgets)
-│   ├── migui/                  # 0.4.1  Immediate mode GUI (conectado a ry-backend)
+│   ├── ry3d-gfx/               # mejorado Graphics 3D (Modelo3D load GLTF/OBJ/IQM/VOX, draw_text_3d, draw_model)
+│   ├── toolkit-ry/             # 0.1.0  UI toolkit (5 temas + 20+ widgets + world_hud) ✅ crates.io
+│   ├── migui/                  # 0.4.1  Immediate mode GUI (conectado a ry-backend) ✅ crates.io
 │   ├── blast-core/             # 0.1.0  Minimal value executor
 │   ├── lizer/                  # 0.11.2 Legacy lexer wrapper (con AST cache real FNV-1a)
 │   ├── events-ry/              # 0.1.0  Input unificado 3 capas + Sdl2InputBackend
-│   ├── ry-backend/             # 0.1.0  Dual backend: raylib drawing + SDL2 TTF/input/audio
-│   ├── ry-config/              # 0.1.0  Config parser (entities, levels, checkpoints) - zero deps
+│   ├── ry-backend/             # 0.1.0  Dual backend: raylib drawing + SDL2 TTF/input/audio ✅ crates.io
+│   ├── ry-config/              # 0.1.0  Config parser (entities, levels, checkpoints) ✅ crates.io
 │   └── v-shield/               # 0.2.0  Platform layer + sync ✅ crates.io
 │   └── ~~ry-ecs~~/             #        🗑️ Eliminado (-1,143 líneas)
+│   └── ~~ry-test~~/            #        🗑️ Eliminado (código muerto)
 │
 ├── crates/ry-rs/src/
 │   ├── main.rs                 # Entry point + eval modo gráfico
@@ -74,6 +74,7 @@ shield-project/
 │       └── window.rs           # Creación de ventana SDL2
 │
 ├── crates/ry-rs/src/bin/       # ~35+ bins
+│   ├── demo_hud_camera             # 🆕 Health bars + Cámara 2D + Debug overlay + Minimap
 │   ├── demo_50k_particulas.rs      # 313K release
 │   ├── demo_action_assets.rs
 │   ├── demo_anime_ry               # 341K release
@@ -161,6 +162,7 @@ shield-project/
 │
 ├── crates/toolkit-ry/src/
 │   ├── lib.rs                  # UI Toolkit API pública
+│   ├── world_hud.rs            # 🆕 EntityHUD, health bars world-space, debug overlay, stats HUD, minimap
 │   ├── themes/
 │   │   ├── dark.rs
 │   │   ├── light.rs
@@ -180,7 +182,8 @@ shield-project/
 │       └── notificaciones.rs
 │
 ├── crates/ry3d-gfx/src/
-│   ├── lib.rs                  # 3D Graphics API
+│   ├── lib.rs                  # 3D Graphics API (Modelo3D load, draw_text_3d, draw_model)
+│   ├── model.rs               # 🆕 Modelo3D: GLTF/OBJ/IQM/VOX loaders
 │   ├── primitives/
 │   │   ├── cube.rs
 │   │   ├── sphere.rs
@@ -410,14 +413,13 @@ Código .rydit
 | ry-config | 0.1.0 | Listo | Config parser |
 | ry-system-ry | 0.14.0 | ⚠️ | Falta license |
 
----
-
-## DEMOS BINARIOS
+### DEMOS BINARIOS
 
 | Demo | Descripción | Tamaño Release |
 |------|-------------|----------------|
-| demo_gpu_instancing | 🆕 50K partículas GPU instancing a 48 FPS (Adreno 610) | — |
-| demo_fsr | 🆕 FSR 1.0 upscaling 960x540 → 1280x720 a 48 FPS | — |
+| demo_hud_camera | 🆕 Health bars + Cámara 2D + Debug overlay + Minimap | — |
+| demo_gpu_instancing | 50K partículas GPU instancing a 48 FPS (Adreno 610) | — |
+| demo_fsr | FSR 1.0 upscaling 960x540 → 1280x720 a 48 FPS | — |
 | demo_torreta_vs_sprites | JUEGO COMPLETO: menú + 3 niveles + cámara + AI + audio | 434K |
 | demo_rigidbody | Física + colisiones + audio + TTF | 446K |
 | demo_ttf_sprites | TTF + sprites | 436K |
@@ -437,12 +439,37 @@ Código .rydit
 
 ---
 
+## CRATES PUBLICABLES
+
+| Crate | Versión | Estado | Notas |
+|-------|---------|--------|-------|
+| ry-god | 0.1.0 | ✅ crates.io | Security & efficiency |
+| ry-stream | 0.2.0 | ✅ crates.io | LAN streaming |
+| v-shield | 0.2.0 | ✅ crates.io | Platform layer + sync |
+| ry-backend | 0.1.0 | ✅ crates.io | Dual backend |
+| migui | 0.4.1 | ✅ crates.io | Immediate Mode GUI |
+| ry-core | 0.8.2 | ✅ crates.io | Core traits |
+| ry-anim | 0.12.0 | ✅ crates.io | 41 funciones, 58 tests |
+| toolkit-ry | 0.1.0 | ✅ crates.io | UI toolkit + world_hud |
+| ry-gfx | 0.10.8 | ✅ crates.io | Graphics FFI |
+| ry-config | 0.1.0 | ✅ crates.io | Config parser |
+| ry-physics | 0.7.34 | ✅ crates.io | 2D projectile + N-body |
+| ry-science | 0.7.34 | ✅ crates.io | Geometry 2D + stats |
+| ry-lexer | 0.1.0 | Listo | Zero-copy |
+| ry-parser | 0.1.0 | Listo | Error recovery |
+| ry3d-gfx | mejorado | Listo | Modelo3D load, draw_text_3d |
+| lizer | 0.11.2 | Listo | AST cache real (FNV-1a) |
+| events-ry | 0.1.0 | Listo | Input 3 capas |
+| ry-system-ry | 0.14.0 | ⚠️ | Falta license |
+
+---
+
 <div align="center">
 
-**Ry-Dit v0.16.0-alpha -- ESTRUCTURA ACTUALIZADA**
+**Ry-Dit v0.16.0 -- ESTRUCTURA ACTUALIZADA**
 
-*25 crates | CI 3 plataformas ✅ | 6 crates publicados | 70+ tests | 0 errores*
+*23 crates | 12 crates publicados ✅ | 95+ tests | 0 errores*
 
-*Última actualización: 2026-04-08*
+*Última actualización: 2026-04-09*
 
 </div>

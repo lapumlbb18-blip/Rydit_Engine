@@ -6,16 +6,16 @@
 
 **"Construido sin prisa, madurado con paciencia"**
 
-[![Version](https://img.shields.io/badge/version-v0.15.0-blue.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
+[![Version](https://img.shields.io/badge/version-v0.16.0-blue.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
 [![Errors](https://img.shields.io/badge/errors-0-green.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
 [![Tests](https://img.shields.io/badge/tests-95%2F95-brightgreen.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
-[![Status](https://img.shields.io/badge/estado-v0.15.0--gpu--instancing--fsr-green.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
+[![Status](https://img.shields.io/badge/estado-v0.16.0--hud--camera--ry3d-green.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
 [![SDL2](https://img.shields.io/badge/SDL2-0.37-red.svg)](https://www.libsdl.org/)
 [![Raylib](https://img.shields.io/badge/raylib-5.0-orange.svg)](https://www.raylib.com/)
 [![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/lapumlbb18-blip/Ry-dit/blob/main/LICENSE)
-[![crates.io](https://img.shields.io/badge/crates.io-9%20publicados-purple.svg)](https://crates.io/crates/ry-anim)
+[![crates.io](https://img.shields.io/badge/crates.io-12%20publicados-purple.svg)](https://crates.io/crates/ry-anim)
 
 [📖 Documentación](#-documentación) • [🖼️ Galería](#-galería) • [🆕 Qué hay de nuevo en v0.16.0](#-qué-hay-de-nuevo-en-v0160) • [🆕 Qué hay de nuevo en v0.15.0](#-qué-hay-de-nuevo-en-v0150) • [🆕 Qué hay de nuevo en v0.14.0](#-qué-hay-de-nuevo-en-v0140) • [🔧 Estado Actual](#-estado-actual) • [🆕 events-ry v0.1.0](#-events-ry-v010--input-unificado--text-input--shell) • [🎮 Panel Visual](#-panel-visual-demo_panel_visual) • [🏆 Logros](#-logros) • [🎯 Roadmap](#-roadmap)
 
@@ -193,10 +193,10 @@ git push origin main
 
 ## 🆕 ¿Qué hay de nuevo en v0.16.0?
 
-**Última actualización**: 2026-04-08
-**Versión actual**: v0.16.0 ✅ HEALTH BARS + HUD + CÁMARA 2D CON ROTACIÓN
-**Estado**: 25 crates | 0 errores | 14+ tests toolkit-ry
-**Crates publicados**: 9 (ry-god, ry-stream, v-shield, ry-backend, migui, ry-gfx, **ry-core**, **ry-anim**, **toolkit-ry**)
+**Última actualización**: 2026-04-09
+**Versión actual**: v0.16.0 ✅ HEALTH BARS + HUD + CÁMARA 2D + RY3D-GFX MEJORADO
+**Estado**: 23 crates | 0 errores | 95+ tests pasando
+**Crates publicados**: 12 (ry-god, ry-stream, v-shield, ry-backend, migui, ry-gfx, ry-core, ry-anim, toolkit-ry, **ry-config**, **ry-physics**, **ry-science**)
 
 ### 🎨 Health Bars + Identificadores de Entidades ✅
 | Feature | Detalle |
@@ -205,11 +205,12 @@ git push origin main
 | **draw_entity_health_bar_world()** | Barra anclada a entidad (world-space → screen-space) |
 | **Color dinámico** | Verde (>50%) → Amarillo (25-50%) → Rojo (<25%) |
 | **Nombres/IDs** | TTF cacheado encima de la barra |
+| **Módulo** | toolkit-ry/world_hud.rs |
 
 ### 📊 HUD de Información + Debug Overlay ✅
 | Feature | Detalle |
 |---------|---------|
-| **Debug overlay** | FPS, cámara (x,y,zoom,rot), entidades, tiempo |
+| **Debug overlay** | FPS, cámara (x,y,zoom,rot), entidades, tiempo, memoria |
 | **Stats HUD** | Score, tiempo MM:SS, nivel (esquina superior derecha) |
 | **Texturas TTF cacheadas** | Refresco cada 30 frames para rendimiento |
 
@@ -221,6 +222,7 @@ git push origin main
 | **Follow suave** | `follow_smooth()` con lerp configurable |
 | **Límites de mapa** | `set_bounds()` para clamp automático |
 | **World-to-screen** | Transformación con rotación + zoom incluida |
+| **Demo** | demo_hud_camera con controles interactivos |
 
 ### 🗺️ Minimap Avanzado ✅
 | Feature | Detalle |
@@ -229,12 +231,44 @@ git push origin main
 | **Entidades** | Puntos de color según tipo |
 | **Viewport** | Área visible del mundo |
 
-### 📦 3 Crates Publicados ✅
+### 📦 ry3d-gfx Mejorado ✅
+| Feature | Detalle |
+|---------|---------|
+| **Modelo3D load** | GLTF/OBJ/IQM/VOX support |
+| **draw_text_3d** | Texto en espacio 3D |
+| **draw_model** | Renderizado de modelos 3D con transform |
+
+### 🚀 demo_hud_camera — Demo Funcional ✅
+| Feature | Detalle |
+|---------|---------|
+| **Health bars** | Entidades con barras dinámicas |
+| **Cámara 2D** | Zoom, rotación, follow suave, límites |
+| **Debug overlay** | FPS, cámara, entidades, memoria |
+| **Minimap** | Entidades coloreadas + viewport |
+| **Launcher Zink** | launcher_hud_camera.sh con auto-detección DISPLAY |
+
+### 📦 3 Crates Publicados en esta sesión ✅
 | Crate | Versión | Descripción |
 |-------|---------|-------------|
-| **ry-core** | 0.8.2 | Core trait + module registry |
-| **ry-anim** | 0.12.0 | 12 principios Disney + VFX + science anim |
-| **toolkit-ry** | 0.1.0 | UI toolkit + 5 temas + HUD widgets |
+| **ry-config** | 0.1.0 | Config parser (entities, levels, checkpoints) |
+| **ry-physics** | 0.7.34 | 2D projectile + N-body + nbody_simulate |
+| **ry-science** | 0.7.34 | Geometry 2D + stats + Bezier |
+
+### 📦 Total Crates Publicados: 12 ✅
+| Crate | Versión | Sesión |
+|-------|---------|--------|
+| ry-god | 0.1.0 | Anterior |
+| ry-stream | 0.2.0 | Anterior |
+| ry-core | 0.8.2 | Anterior |
+| ry-anim | 0.12.0 | Anterior |
+| toolkit-ry | 0.1.0 | Anterior |
+| v-shield | 0.2.0 | v0.16.0-alpha |
+| ry-backend | 0.1.0 | v0.16.0-alpha |
+| migui | 0.4.1 | v0.16.0-alpha |
+| ry-gfx | 0.10.8 | v0.16.0-alpha |
+| **ry-config** | **0.1.0** | **v0.16.0** |
+| **ry-physics** | **0.7.34** | **v0.16.0** |
+| **ry-science** | **0.7.34** | **v0.16.0** |
 
 ---
 
@@ -380,29 +414,37 @@ git push origin main
 
 ---
 
-## 🔧 ESTADO ACTUAL - v0.15.0 GPU INSTANCING + FSR + 8 DEMOS TERMUX-X11 + 25 CRATES
+## 🔧 ESTADO ACTUAL - v0.16.0 HUD + CAMERA + RY3D + 12 CRATES PUBLICADOS
 
-### ✅ **ESTADO REAL: v0.15.0 - 25 CRATES COMPILANDO | 0 ERRORES | 95+ TESTS**
+### ✅ **ESTADO REAL: v0.16.0 - 23 CRATES COMPILANDO | 0 ERRORES | 95+ TESTS**
 
-**Última actualización**: 2026-04-07
-**Versión actual**: v0.15.0 ✅ FUNCIONAL
-**Próxima versión**: v0.16.0 - Bordes suaves, opacidad, shaders avanzados
-**Estado**: GPU Instancing ✅ | FSR 1.0 ✅ | 8 demos Termux-X11 ✅ | ry-backend ✅ | ry-system-ry ✅ | events-ry ✅ | ry-config ✅
-**Crates**: 25 en workspace | 0 errores | 95+ tests pasando
-**Crates publicados**: 2 (ry-god + ry-stream)
-**Nuevos ELF**: demo_gpu_instancing, demo_fsr
+**Última actualización**: 2026-04-09
+**Versión actual**: v0.16.0 ✅ FUNCIONAL
+**Próxima versión**: v0.17.0 - 3D en PC, iluminación, materiales
+**Estado**: Health Bars ✅ | HUD Debug ✅ | Stats HUD ✅ | Cámara 2D ✅ | Minimap ✅ | ry3d-gfx mejorado ✅ | 12 crates publicados ✅
+**Crates**: 23 en workspace | 0 errores | 95+ tests pasando
+**Crates publicados**: 12 (ry-god, ry-stream, v-shield, ry-backend, migui, ry-gfx, ry-core, ry-anim, toolkit-ry, ry-config, ry-physics, ry-science)
+**Nuevos ELF**: demo_hud_camera
 
 ---
 
-### ✅ **LO QUE SÍ FUNCIONA (v0.15.0)**
+### ✅ **LO QUE SÍ FUNCIONA (v0.16.0)**
 
 | Sistema | Estado | Notas |
 |---------|--------|-------|
-| **GPU Instancing** | ✅ Nuevo | 50K partículas a 48 FPS, Adreno 610 vía Zink |
-| **FSR 1.0** | ✅ Nuevo | 960x540 → 1280x720 a 48 FPS, FBO render-to-texture |
-| **demo_gpu_instancing** | ✅ Nuevo | Pipeline SDL2 + OpenGL directo (sin Canvas) |
-| **demo_fsr** | ✅ Nuevo | FSR 1.0 upscaling demo |
-| **Termux-X11 demos** | ✅ 8 funcionales | gpu_instancing, fsr, torreta, panel, rigidbody, anime, platformer, 50k |
+| **Health Bars** | ✅ Nuevo | toolkit-ry/world_hud.rs, color dinámico, world-space |
+| **HUD Debug Overlay** | ✅ Nuevo | FPS, cámara, entidades, memoria, tiempo |
+| **Stats HUD** | ✅ Nuevo | Score, tiempo MM:SS, nivel |
+| **Cámara 2D** | ✅ Nuevo | Zoom 0.2-5x, rotación 0-360, follow suave, límites |
+| **Minimap avanzado** | ✅ Nuevo | Entidades coloreadas, viewport, jugador |
+| **demo_hud_camera** | ✅ Nuevo | Demo completo con todos los HUD + cámara |
+| **ry3d-gfx mejorado** | ✅ Nuevo | Modelo3D load (GLTF/OBJ/IQM/VOX), draw_text_3d, draw_model |
+| **Launchers Zink** | ✅ Nuevo | launcher_hud_camera.sh auto-detección DISPLAY |
+| **GPU Instancing** | ✅ | 50K partículas a 48 FPS, Adreno 610 vía Zink |
+| **FSR 1.0** | ✅ | 960x540 → 1280x720 a 48 FPS, FBO render-to-texture |
+| **demo_gpu_instancing** | ✅ | Pipeline SDL2 + OpenGL directo (sin Canvas) |
+| **demo_fsr** | ✅ | FSR 1.0 upscaling demo |
+| **Termux-X11 demos** | ✅ 9+ funcionales | hud_camera, gpu_instancing, fsr, torreta, panel, rigidbody, anime, platformer, 50k |
 | **ry-backend** | ✅ v0.1.0 | Dual backend: raylib + SDL2 TTF/input/audio |
 | **migui** | ✅ ry-backend | Usa ry-backend (no sdl2 directo) |
 | **ry-system-ry** | ✅ v0.14.0 | Sistema unificado: RySystem (core + gui) |
@@ -423,13 +465,13 @@ git push origin main
 | **Touch Android** | ✅ Completo | FingerDown/Motion/Up |
 | **Features** | ✅ 4 modos | raylib-only, sdl2-only, dual-backend, mobile-hybrid |
 | **ry-anim** | ✅ v0.12.0 | 41 funciones, 58 tests |
-| **ry-stream** | ✅ v0.1.0 crates.io | LAN streaming |
+| **ry-stream** | ✅ v0.2.0 crates.io | LAN streaming |
 | **ry-god** | ✅ v0.1.0 crates.io | Security & Efficiency |
 | **Math avanzado** | ✅ 33 funciones | pow, log, exp, PI, derivada, integral |
 | **Arrays** | ✅ 16 funciones | push, pop, slice, contains, join... |
 | **Vec2** | ✅ 22 operaciones | add, sub, normalize, dot, rotate... |
-| **toolkit-ry** | ✅ v0.1.0 | 5 temas + 20+ widgets |
-| **ry3d-gfx** | ✅ v0.1.0 | 15 funciones 3D |
+| **toolkit-ry** | ✅ v0.1.0 | 5 temas + 20+ widgets + world_hud |
+| **ry3d-gfx** | ✅ mejorado | Modelo3D load, draw_text_3d, draw_model |
 | **Quest System** | ✅ 10 funciones | create, objectives, rewards... |
 | **Save/Load** | ✅ 10 funciones | create, set_var, load, list... |
 | **FSR 1.0** | ✅ Integrado | Shaders embebidos |
@@ -439,12 +481,12 @@ git push origin main
 | **Audio SDL2** | ✅ Tonos WAV | SDL2_mixer |
 | **lizer** | ✅ 0.11.2 | AST cache real (FNV-1a, 256 entradas, LRU) |
 | **ry-rs** | ✅ bin + lib | Antes solo bin |
-| **Demos binarios** | ✅ ~35+ | src/bin/ (incluye gpu_instancing, fsr) |
+| **Demos binarios** | ✅ ~35+ | src/bin/ (incluye hud_camera, gpu_instancing, fsr) |
 | **patron_gpu_instancing** | ✅ Documentado | Patrón GPU instancing |
 | **Pipeline SDL2+OpenGL** | ✅ Directo | Sin Canvas, instancing nativo |
 | **Shaders GLSL** | ✅ Embebidos | FBO render-to-texture |
 
-**Total**: Stack completo funcional + GPU Instancing + FSR + 2 crates publicados ✅
+**Total**: Stack completo funcional + HUD + Cámara 2D + ry3d-gfx + 12 crates publicados ✅
 
 ---
 
@@ -475,35 +517,35 @@ demo_50k_particulas, demo_action_assets, demo_anime_ry, demo_carga_sprites, demo
 
 ---
 
-## 📊 Lista de Crates (25)
+## 📊 Lista de Crates (23)
 
 | Crate | Versión | Estado |
 |-------|---------|--------|
-| ry-core | 0.8.2 | ✅ |
+| ry-core | 0.8.2 | ✅ crates.io |
 | ry-lexer | 0.1.0 | ✅ |
 | ry-parser | 0.1.0 | ✅ |
 | ry-vm | — | ⚠️ |
-| ry-gfx | 0.10.7 | ✅ |
-| ry-physics | 0.7.34 | ✅ + nbody_simulate |
-| ry-anim | 0.12.0 | ✅ 41 funciones |
-| ry-science | — | ⚠️ |
+| ry-gfx | 0.10.8 | ✅ crates.io |
+| ry-physics | 0.7.34 | ✅ crates.io + nbody_simulate |
+| ry-anim | 0.12.0 | ✅ crates.io 41 funciones |
+| ry-science | 0.7.34 | ✅ crates.io |
 | ry-script | 0.8.2 | ✅ |
-| ry-stream | 0.1.0 | ✅ crates.io |
+| ry-stream | 0.2.0 | ✅ crates.io |
 | ry-god | 0.1.0 | ✅ crates.io |
 | ry-loader | — | ⚠️ |
 | ry-rs | — | Main binary + lib |
 | ry-system-ry | 0.14.0 | ✅ RySystem (core + gui) |
-| ry-test | — | ⚠️ |
-| toolkit-ry | 0.1.0 | ✅ |
-| migui | — | ✅ ry-backend |
+| toolkit-ry | 0.1.0 | ✅ crates.io + world_hud |
+| migui | 0.4.1 | ✅ crates.io ry-backend |
 | blast-core | 0.1.0 | ✅ |
 | lizer | 0.11.2 | ✅ AST cache real |
-| v-shield | — | ⚠️ |
-| ry3d-gfx | 0.1.0 | ✅ |
+| v-shield | 0.2.0 | ✅ crates.io |
+| ry3d-gfx | mejorado | ✅ Modelo3D load, draw_text_3d, draw_model |
 | events-ry | 0.1.0 | ✅ Input 3 capas |
-| ry-backend | 0.1.0 | ✅ Dual backend |
-| ry-config | 0.1.0 | ✅ Config parser |
+| ry-backend | 0.1.0 | ✅ crates.io Dual backend |
+| ry-config | 0.1.0 | ✅ crates.io Config parser |
 | ~~ry-ecs~~ | — | 🗑️ Eliminado |
+| ~~ry-test~~ | — | 🗑️ Eliminado (código muerto) |
 
 ---
 
@@ -518,25 +560,26 @@ demo_50k_particulas, demo_action_assets, demo_anime_ry, demo_carga_sprites, demo
 | **v0.13.0** | ✅ | events-ry + Panel Visual + Demo Panel + Warnings fix | 2026-04-05 |
 | **v0.14.0** | ✅ | ry-backend dual + migui ry-backend + ry-system-ry + ry-config + demo_torreta_vs_sprites | 2026-04-06 |
 | **v0.15.0** | ✅ | GPU Instancing 50K@48FPS + FSR 1.0 + 8 demos Termux-X11 + patron_gpu_instancing | 2026-04-07 |
-| **v0.16.0** | ⏳ | Bordes suaves, opacidad, shaders avanzados | Próxima versión |
-| **v0.17.0** | ⏳ | 3D en PC | Futuro |
-| **v0.18.0** | ⏳ | v-shield platform layer + GitHub Actions | Futuro |
+| **v0.16.0-alpha** | ✅ | CI 3 plataformas + 6 crates publicados + 65 tests fixeados | 2026-04-08 |
+| **v0.16.0** | ✅ | Health Bars + HUD + Cámara 2D + ry3d-gfx + 3 crates publicados (12 total) | 2026-04-09 |
+| **v0.17.0** | ⏳ | 3D en PC, iluminación, materiales | Próxima versión |
+| **v0.18.0** | ⏳ | GitHub Actions CI mejorado + v-shield completo | Futuro |
 | **v0.19.0** | ⏳ | Texturas + sprite animation system | Futuro |
 | **v0.20.0** | ⏳ | Motor multiplataforma completo | Futuro |
 | **v1.0.0** | ⏳ | Motor Completo + Editor Visual | Futuro |
 
 </div>
 
-### Features pendientes (v0.16.0+)
+### Features pendientes (v0.17.0+)
 
 | Feature | Prioridad | Notas |
 |---------|-----------|-------|
-| Bordes suaves (antialiasing) | 🔴 Alta | v0.16.0 |
-| Opacidad/transparencia | 🔴 Alta | v0.16.0 |
-| Shaders avanzados | 🟡 Media | v0.16.0 |
-| 3D en PC | 🟡 Media | v0.17.0 |
-| v-shield platform layer | 🟡 Media | v0.18.0 |
-| GitHub Actions CI | 🟡 Media | v0.18.0 |
+| 3D en PC con iluminación | 🔴 Alta | v0.17.0 |
+| Materiales y texturas 3D | 🟡 Media | v0.17.0 |
+| Bordes suaves (antialiasing) | 🟡 Media | v0.17.0 |
+| Opacidad/transparencia | 🟡 Media | v0.17.0 |
+| Shaders avanzados (bloom, glow) | 🟡 Media | v0.17.0-v0.18.0 |
+| GitHub Actions CI mejorado | 🟡 Media | v0.18.0 |
 | Texturas + sprite animation system | 🔮 Futuro | v0.19.0 |
 | Motor multiplataforma completo | 🔮 Futuro | v0.20.0 |
 | Soporte de emojis en TTF | 🔮 Futuro | |
@@ -550,15 +593,15 @@ demo_50k_particulas, demo_action_assets, demo_anime_ry, demo_carga_sprites, demo
 
 | Tarea | Esfuerzo | Prioridad | Versión |
 |-------|----------|-----------|---------|
-| Bordes suaves (antialiasing) | 8-12h | 🔴 Alta | v0.16.0 |
-| Opacidad/transparencia | 6-8h | 🔴 Alta | v0.16.0 |
-| Shaders avanzados | 10-15h | 🟡 Media | v0.16.0 |
-| 3D en PC | 12-16h | 🟡 Media | v0.17.0 |
-| v-shield platform layer | 15-20h | 🟡 Media | v0.18.0 |
-| GitHub Actions CI | 6-8h | 🟡 Media | v0.18.0 |
+| 3D en PC con iluminación | 12-16h | 🔴 Alta | v0.17.0 |
+| Materiales y texturas 3D | 10-15h | 🟡 Media | v0.17.0 |
+| Bordes suaves (antialiasing) | 8-12h | 🟡 Media | v0.17.0 |
+| Opacidad/transparencia | 6-8h | 🟡 Media | v0.17.0 |
+| Shaders avanzados | 10-15h | 🟡 Media | v0.17.0-v0.18.0 |
+| GitHub Actions CI mejorado | 6-8h | 🟡 Media | v0.18.0 |
 | Texturas + sprite animation system | 10-15h | 🔮 Futuro | v0.19.0 |
 | Motor multiplataforma completo | 20-30h | 🔮 Futuro | v0.20.0 |
-| ry-stream v0.2.0 (mDNS) | 8-12h | 🟡 Media | |
+| ry-stream v0.3.0 (mDNS) | 8-12h | 🟡 Media | |
 | ry-physics N-cuerpos >2 | 10-15h | 🟡 Media | |
 | Soporte de emojis en TTF | 4-6h | 🔮 Futuro | |
 | GIF animation | 8-12h | 🔮 Futuro | |

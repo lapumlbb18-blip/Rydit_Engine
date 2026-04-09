@@ -1,8 +1,8 @@
-# 🛡️ Ry-Dit - Tareas v0.15.0 → v1.0.0
+# 🛡️ Ry-Dit - Tareas v0.16.0 → v1.0.0
 
-**Última actualización**: 2026-04-08
-**Versión actual**: v0.16.0-alpha ✅ CI 3 plataformas + 6 crates publicados
-**Próxima versión**: v0.16.0 — Bordes suaves + Opacidad + Shaders avanzados
+**Última actualización**: 2026-04-09
+**Versión actual**: v0.16.0 ✅ Health Bars + HUD + Cámara 2D + ry3d-gfx + 12 crates publicados
+**Próxima versión**: v0.17.0 — 3D en PC, iluminación, materiales
 
 ---
 
@@ -10,15 +10,17 @@
 
 | Métrica | Valor |
 |---------|-------|
-| **Crates** | 25 |
+| **Crates** | 23 |
 | **Errores** | 0 |
-| **Tests** | 70+ pasando |
-| **Crates publicados** | 6 (ry-god, ry-stream, v-shield, ry-backend, migui, ry-gfx) |
+| **Tests** | 95+ pasando |
+| **Crates publicados** | 12 (ry-god, ry-stream, v-shield, ry-backend, migui, ry-gfx, ry-core, ry-anim, toolkit-ry, ry-config, ry-physics, ry-science) |
 | **CI/CD** | ✅ Linux + Windows + macOS |
-| **Demos funcionales** | 10+ (Termux-X11) |
+| **Demos funcionales** | 11+ (Termux-X11) |
 | **GPU Instancing** | 50K partículas, 48 FPS, Adreno 610 |
 | **FSR 1.0** | 960x540 → 1280x720, 48 FPS |
-| **Commits** | `b82b048` |
+| **Health Bars** | ✅ world-space, color dinámico |
+| **Cámara 2D** | ✅ Zoom + rotación + follow suave |
+| **Commits** | `42fef11` |
 
 ---
 
@@ -195,99 +197,70 @@ cargo publish -p ry-stream
 
 ---
 
-### 5. Health Bars + Identificadores de Entidades
+### 5. ~~Health Bars + Identificadores de Entidades~~ → ✅ COMPLETADA en v0.16.0
 | Campo | Valor |
 |-------|-------|
-| **Prioridad** | 🟡 MEDIA |
-| **Esfuerzo** | 4-6h |
+| **Prioridad** | ✅ HECHO |
+| **Esfuerzo** | ~4h reales |
 | **Versión** | v0.16.0 |
-| **Estado** | ⏳ Pendiente |
+| **Estado** | ✅ Completado |
 
-**Detalle**:
-- Barras de vida que **siguen a las entidades** en pantalla
-- Posición: `entity.x, entity.y - entity.height - 10`
-- Color dinámico: verde (100%) → amarillo (50%) → rojo (25%)
-- Fondo oscuro + barra de color (estilo RPG)
-- Nombre/ID encima de la barra
-- Opcional: nivel, estado (vivo/muerto)
-
-**Referencia**: demo_torreta_vs_sprites tiene barras de vida de enemigos
-(`crates/ry-rs/src/bin/demo_torreta_vs_sprites.rs` líneas ~644)
-
-**Archivos a crear**:
-- `crates/ry-gfx/src/health_bar.rs` (nuevo módulo)
-- Integrar en `ry-gfx/src/lib.rs`
+**Lo que se hizo**:
+- ✅ EntityHUD struct en toolkit-ry/world_hud.rs
+- ✅ draw_entity_health_bar_world() con world-space → screen-space
+- ✅ Color dinámico: verde (>50%) → amarillo (25-50%) → rojo (<25%)
+- ✅ Nombres/IDs con TTF cacheado encima de la barra
+- ✅ Integrado en demo_hud_camera
 
 ---
 
-### 6. HUD de Información + Debug Overlay
+### 6. ~~HUD de Información + Debug Overlay~~ → ✅ COMPLETADA en v0.16.0
 | Campo | Valor |
 |-------|-------|
-| **Prioridad** | 🟡 MEDIA |
-| **Esfuerzo** | 4-6h |
+| **Prioridad** | ✅ HECHO |
+| **Esfuerzo** | ~4h reales |
 | **Versión** | v0.16.0 |
-| **Estado** | ⏳ Pendiente |
+| **Estado** | ✅ Completado |
 
-**Detalle**:
-- **FPS counter** en esquina superior
-- **Partículas activas** (count)
-- **Posición de cámara** / entidad seleccionada
-- **Memoria usada** (heap, GPU)
-- **Estado del motor** (playing, paused, menu)
-- **Debug toggle** (F1): hitboxes, colliders, velocidades, raycasts
-- **Mini-map** opcional
-
-**Referencia**: toolkit-ry tiene 18+ widgets HUD
-(`crates/toolkit-ry/src/`)
+**Lo que se hizo**:
+- ✅ Debug overlay: FPS, cámara (x,y,zoom,rot), entidades, tiempo, memoria
+- ✅ Stats HUD: Score, tiempo MM:SS, nivel (esquina superior derecha)
+- ✅ Texturas TTF cacheadas con refresco cada 30 frames
+- ✅ Minimap avanzado con entidades coloreadas por tipo
+- ✅ Viewport visible en minimap
 
 ---
 
-### 7. 3D Viewport + Objetos Genéricos
+### 7. ~~3D Viewport + Objetos Genéricos~~ → ✅ ry3d-gfx mejorado en v0.16.0
 | Campo | Valor |
 |-------|-------|
-| **Prioridad** | 🟡 MEDIA |
-| **Esfuerzo** | 10-15h |
-| **Versión** | v0.17.0 |
-| **Estado** | ⏳ Pendiente |
+| **Prioridad** | ✅ HECHO |
+| **Esfuerzo** | ~3h reales |
+| **Versión** | v0.16.0 |
+| **Estado** | ✅ Completado (parcial - ry3d-gfx mejorado) |
 
-**Detalle**:
-- Viewport 3D embebible en panel visual
-- **Primitivas**: cube, sphere, cylinder, cone, torus, plane
-- **Cámara 3D**: orbit (mouse drag), zoom (scroll), pan (middle-click)
-- **Iluminación**: directional + ambient
-- **Grid de referencia** en el suelo
-- **Transform gizmo** (ejes XYZ)
-- **Material básico**: color sólido, wireframe, texturado
-
-**Estado actual de 3D**:
-- `crates/ry3d-gfx/` existe con 15 funciones
-- `raylib::DrawHandle` ya tiene funciones 3D básicas
-- ry-backend tiene raylib_draw para 3D
-
-**Archivos a crear**:
-- `crates/ry-rs/src/bin/demo_3d_viewport.rs` (demo viewport)
-- `crates/ry3d-gfx/src/viewport.rs` (viewport module)
+**Lo que se hizo**:
+- ✅ Modelo3D load: GLTF/OBJ/IQM/VOX support
+- ✅ draw_text_3d: Texto en espacio 3D
+- ✅ draw_model: Renderizado de modelos 3D con transform
+- ⏳ Viewport 3D embebible (pendiente para v0.17.0)
 
 ---
 
 ## 🟡 TAREAS PARALELAS
 
-### 8. Publicar 5+ crates en crates.io
+### 8. ~~Publicar 5+ crates en crates.io~~ → ✅ COMPLETADA (12 total)
 | Campo | Valor |
 |-------|-------|
 | **Esfuerzo** | 4-6h |
 | **Versión** | v0.16.0 |
-| **Estado** | ⏳ Pendiente |
+| **Estado** | ✅ Completado |
 
-**Crates listos para publicar**:
-- ry-backend v0.1.0
-- events-ry v0.1.0
-- ry-anim v0.12.0
-- ry-gfx v0.10.7
-- toolkit-ry v0.1.0
-- lizer v0.11.2
-
-**Publicados ya**: ry-god v0.1.0, ry-stream v0.1.0
+**Crates publicados**:
+- ry-config v0.1.0 ✅
+- ry-physics v0.7.34 ✅
+- ry-science v0.7.34 ✅
+- Total: 12 crates publicados
 
 ---
 
@@ -295,16 +268,15 @@ cargo publish -p ry-stream
 
 | Tarea | Puede ir con | Dependencia |
 |-------|-------------|-------------|
-| GitHub Actions CI | v-shield platform | Ninguna |
+| 3D en PC | Iluminación + materiales | ry3d-gfx ✅ |
 | Bordes suaves + opacidad | Shaders avanzados | GPU instancing ✅ |
-| Health bars | HUD info | Demo torreta ✅ |
-| 3D viewport | ry3d-gfx primitives | ry3d-gfx ✅ |
-| Publicar crates | CI/CD | Crates estables ✅ |
+| GitHub Actions CI mejorado | Independiente | CI existente ✅ |
+| Publicar más crates | CI/CD | Crates estables ✅ |
 
-**Combinación recomendada v0.16.0**:
+**Combinación recomendada v0.17.0**:
 ```
-Semana 1: CI/CD + Bordes suaves (paralelo)
-Semana 2: Health bars + HUD info (paralelo)
+Semana 1: 3D en PC + iluminación (paralelo)
+Semana 2: Bordes suaves + opacidad (paralelo)
 Semana 3: Shaders avanzados (bloom, glow)
 Semana 4: Testing + documentación
 ```
@@ -333,9 +305,9 @@ Semana 4: Testing + documentación
 
 | Versión | Feature | Esfuerzo | Target |
 |---------|---------|----------|--------|
-| **v0.16.0** | Bordes suaves + Opacidad + Shaders + Health bars + HUD | 20-30h | 2-3 meses |
-| **v0.17.0** | 3D Viewport + Objetos genéricos + Cámara orbit | 15-20h | 3-4 meses |
-| **v0.18.0** | v-shield completo + GitHub Actions + CI multi-plataforma | 15-20h | 4-5 meses |
+| **v0.16.0** | Health Bars + HUD + Cámara 2D + ry3d-gfx + 12 crates publicados | ✅ HECHO | ✅ |
+| **v0.17.0** | 3D en PC + Iluminación + Materiales + Bordes suaves + Opacidad | 30-40h | 2-3 meses |
+| **v0.18.0** | GitHub Actions CI mejorado + Shaders avanzados | 15-20h | 3-4 meses |
 | **v0.19.0** | Texturas + Sprite animation system + Tilemap editor | 20-25h | 5-6 meses |
 | **v0.20.0** | Motor multiplataforma completo (Linux/Win/Mac/Android/WASM) | 25-30h | 6-8 meses |
 | **v1.0.0** | Motor estable: editor visual, scripting, docs, comunidad | 50-80h | 12-18 meses |
@@ -347,23 +319,21 @@ Semana 4: Testing + documentación
 ```
 v0.15.0 ✅ (GPU Instancing + FSR)
     │
-    ├──→ v0.16.0: Bordes suaves + Opacidad (usa GPU instancer ✅)
+    ├──→ v0.16.0-alpha: CI + 6 crates publicados ✅
+    │       │
+    │       └──→ v0.16.0: Health bars + HUD + Cámara 2D + ry3d-gfx ✅
+    │
+    ├──→ v0.17.0: 3D en PC + iluminación (usa ry3d-gfx ✅)
+    │       │
+    │       ├──→ Bordes suaves + opacidad (usa GPU instancer ✅)
     │       │
     │       └──→ Shaders avanzados (bloom, glow, outline)
     │
-    ├──→ v0.16.0: Health bars + HUD (usa demo_torreta ✅)
-    │       │
-    │       └──→ Debug overlay
+    ├──→ v0.18.0: GitHub Actions CI mejorado + shaders
     │
-    ├──→ v0.16.0: GitHub Actions CI (independiente)
-    │
-    ├──→ v0.17.0: 3D Viewport (usa ry3d-gfx ✅)
-    │       │
-    │       └──→ Iluminación + materiales
-    │
-    └──→ v0.18.0: v-shield platform (base para todo)
+    └──→ v0.19.0: Texturas + sprite animation
             │
-            └──→ Multiplataforma real
+            └──→ v0.20.0: Motor multiplataforma
                     │
                     └──→ v1.0.0: Motor completo
 ```
@@ -419,10 +389,10 @@ DISCORD_SERVER.md         # Config servidor Discord
 
 <div align="center">
 
-**🛡️ Ry-Dit v0.15.0 — GPU Instancing + FSR 1.0 + Manifiesto**
+**🛡️ Ry-Dit v0.16.0 — Health Bars + HUD + Cámara 2D + ry3d-gfx + 12 crates publicados**
 
-*25 crates · 0 errores · 48 FPS Adreno 610 · Low-End First*
+*23 crates · 0 errores · 12 crates.io · 95+ tests · Low-End First*
 
-**Próximo: v0.16.0 — Bordes suaves + Opacidad + Shaders + Health bars + CI/CD**
+**Próximo: v0.17.0 — 3D en PC + Iluminación + Materiales + Bordes suaves**
 
 </div>
