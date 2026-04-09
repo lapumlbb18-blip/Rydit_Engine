@@ -6,17 +6,62 @@
 
 ---
 
-## 🎯 QUÉ ES RY-DIT
+## 🎯 QUÉ ES RY-DIT — Lo que los 30 demos revelan
 
 **Ry-Dit** = **Ray** (raylib) + **Dit** (sencillo)
 
-No es un "motor de juegos" al estilo Godot/Unity. Es un **sistema de desarrollo compacto y ligero** construido en Rust que:
+No es un "motor de juegos". Es **3 capacidades simultáneas** que los demos demuestran:
 
-- Funciona en hardware de gama baja (Adreno 610, 2GB RAM)
-- Tiene funciones claras sin enredos de UI pesada
-- Se compila a cualquier plataforma que Rust soporte
-- Aprende de lo que otros motores hacen bien y mal
-- Prioriza **ligereza + claridad** sobre features infinitas
+### Capa 1 — Motor de Renderizado Visual
+| Qué hace | Demo evidencia |
+|----------|---------------|
+| Juegos 2D completos (3 niveles, AI, game states) | `demo_torreta_vs_sprites` |
+| 250K partículas en 1 draw call GPU | `demo_gpu_instancing` |
+| FSR 1.0 upscale con auto-detect | `demo_fsr` |
+| 8 simulaciones científicas animadas | `demo_science` |
+| 12 principios Disney de animación | `demo_anime_ry` |
+| 6 ilusiones ópticas animadas | `demo_illusions` |
+| Efectos post-proceso (bloom, glow, blur) | `demo_effects` |
+
+### Capa 2 — Framework de Interactividad
+| Qué hace | Demo evidencia |
+|----------|---------------|
+| UI tipo IDE con MenuBar + consola | `demo_menu_bar` + `demo_panel_visual` |
+| Input unificado (teclado + mouse + touch) | `demo_menu_bar` |
+| Cámara 2D con zoom, rotación, follow | `demo_hud_camera` |
+| Health bars + minimap + debug overlay | `demo_hud_camera`, `demo_anime_ry_v2` |
+| 4 paneles toggleables + consola comandos | `demo_panel_visual` |
+
+### Capa 3 — Plataforma de Ejecución
+| Qué hace | Demo evidencia |
+|----------|---------------|
+| Scripting .rydit con lexer+parser+VM | Todo el sistema ry-parser + ry-vm |
+| Streaming LAN de bytecode | `demo_stream` |
+| Sistema de módulos (ry-core) | 16 módulos en ry-rs/modules |
+| Animación sprite con state machine | `demo_action_sprite` |
+
+### Editores especializados que Ry-Dit puede crear
+
+| Editor | Base en demos | Qué haría |
+|--------|--------------|-----------|
+| **Editor de Juegos 2D** | torreta, rigidbody, platformer | Crear niveles, física, AI, game states |
+| **Editor de Animaciones** | anime_ry, action_sprite, effects | Sprite clips, Disney principles, state machines |
+| **Simulador Científico** | science, illusions | Cristalización, ondas, L-System, ilusiones |
+| **Editor de Partículas** | particles, gpu_instancing | Emisores configurables, 50K-250K GPU |
+| **Editor de Niveles/Tilemap** | torreta, hud_camera | Tilemap editor con cámara zoom/rotación |
+| **IDE/Consola** | menu_bar, panel_visual | Menús + consola de comandos + panels |
+| **Streamer LAN** | demo_stream | Servidor WebSocket + portal web |
+
+### Lo que NO es
+- No compite con Godot, Unity, Unreal
+- No pretende reemplazar engines establecidos
+- No es un producto comercial todavía
+
+### Lo que SÍ es
+- Un sistema de desarrollo más ligero que cualquier engine existente
+- Una prueba de que Rust + low-end Android es viable
+- Una base que puede crear múltiples editores especializados
+- Un proyecto de aprendizaje técnico real
 
 ### Lo que NO es
 - No compite con Godot, Unity, Unreal
