@@ -3076,6 +3076,18 @@ pub fn evaluar_expr<'a>(
                 return tilemap::tilemap_set_visible(args, executor, funcs);
             }
 
+            // tilemap::import_csv(ruta) - Importar desde CSV
+            if func_name == "tilemap::import_csv" && args.len() == 1 {
+                use crate::modules::tilemap;
+                return tilemap::tilemap_import_csv(args, executor, funcs);
+            }
+
+            // tilemap::export_csv(ruta) - Exportar a CSV
+            if func_name == "tilemap::export_csv" && args.len() == 1 {
+                use crate::modules::tilemap;
+                return tilemap::tilemap_export_csv(args, executor, funcs);
+            }
+
             // ========================================================================
             // COLLISION SYSTEM (v0.9.4)
             // ========================================================================
