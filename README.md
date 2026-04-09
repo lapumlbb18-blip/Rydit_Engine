@@ -15,9 +15,9 @@
 [![Raylib](https://img.shields.io/badge/raylib-5.0-orange.svg)](https://www.raylib.com/)
 [![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/lapumlbb18-blip/Ry-dit/blob/main/LICENSE)
-[![crates.io](https://img.shields.io/badge/crates.io-2%20publicados-purple.svg)](https://crates.io/crates/ry-god)
+[![crates.io](https://img.shields.io/badge/crates.io-9%20publicados-purple.svg)](https://crates.io/crates/ry-anim)
 
-[📖 Documentación](#-documentación) • [🆕 Qué hay de nuevo en v0.15.0](#-qué-hay-de-nuevo-en-v0150) • [🆕 Qué hay de nuevo en v0.14.0](#-qué-hay-de-nuevo-en-v0140) • [🔧 Estado Actual](#-estado-actual) • [🔌 events-ry v0.1.0](#-events-ry-v010--input-unificado--text-input--shell) • [🎮 Panel Visual](#-panel-visual-demo_panel_visual) • [🏆 Logros](#-logros) • [🎯 Roadmap](#-roadmap)
+[📖 Documentación](#-documentación) • [🖼️ Galería](#-galería) • [🆕 Qué hay de nuevo en v0.16.0](#-qué-hay-de-nuevo-en-v0160) • [🆕 Qué hay de nuevo en v0.15.0](#-qué-hay-de-nuevo-en-v0150) • [🆕 Qué hay de nuevo en v0.14.0](#-qué-hay-de-nuevo-en-v0140) • [🔧 Estado Actual](#-estado-actual) • [🆕 events-ry v0.1.0](#-events-ry-v010--input-unificado--text-input--shell) • [🎮 Panel Visual](#-panel-visual-demo_panel_visual) • [🏆 Logros](#-logros) • [🎯 Roadmap](#-roadmap)
 
 </div>
 
@@ -78,6 +78,163 @@ raylib para círculos/dibujo nativo
 7. ✅ **Pipeline SDL2 + OpenGL directo**: Sin Canvas, instancing nativo
 8. ✅ **Shaders FSR embebidos con FBO**: Zero overhead
 9. ✅ **25 crates compilando**: 0 errores en workspace completo
+
+---
+
+## 🖼️ Galería
+
+### 📸 Capturas de Pantalla
+
+> **Nota**: Las capturas se toman con Termux-X11 en un Redmi Note 8 (Adreno 610) corriendo Zink/DRI3.
+
+| Demo | Descripción | Captura |
+|------|-------------|---------|
+| **demo_hud_camera** | Health bars + Cámara 2D con rotación + Debug overlay + Minimap | 📷 *[pendiente]* |
+| **demo_gpu_instancing** | 50K partículas GPU instancing a 48 FPS | 📷 *[pendiente]* |
+| **demo_fsr** | FSR 1.0 upscaling 960x540 → 1280x720 | 📷 *[pendiente]* |
+| **demo_torreta_vs_sprites** | Juego completo: 3 niveles, cámara, AI, audio | 📷 *[pendiente]* |
+| **demo_rigidbody** | Física + colisiones + sprites PNG | 📷 *[pendiente]* |
+| **demo_panel_visual** | 4 paneles + consola interactiva | 📷 *[pendiente]* |
+| **demo_anime_ry** | Showcase ry-anim v0.12.0 | 📷 *[pendiente]* |
+| **demo_menu_bar** | Menús Dear ImGui + mouse + touch | 📷 *[pendiente]* |
+
+#### Cómo tomar capturas
+1. Ejecuta el demo con Zink: `./launcher_hud_camera.sh` (o el launcher correspondiente)
+2. En Termux-X11: usa **Screenshot** en el menú de notificaciones
+3. Guarda en `screenshots/` con el nombre del demo
+
+#### Estructura de screenshots
+```
+screenshots/
+├── demo_hud_camera.png       # Health bars + Cámara 2D
+├── demo_gpu_instancing.png   # 50K partículas GPU
+├── demo_fsr_before.png       # FSR: resolución interna 960x540
+├── demo_fsr_after.png        # FSR: upscale a 1280x720
+├── demo_torreta_menu.png     # Menú principal
+├── demo_torreta_game.png     # Gameplay nivel 1
+├── demo_rigidbody.png        # Física + colisiones
+├── demo_panel_visual.png     # Paneles + consola
+└── demo_anime_ry.png         # Animaciones Disney
+```
+
+---
+
+### 🎬 Videos de Demos
+
+> **Nota**: Los videos se graban con `scrcpy` o el grabador de pantalla de Android.
+
+| Video | Descripción | Duración | Estado |
+|-------|-------------|----------|--------|
+| **Health Bars + Cámara 2D** | Demo completo: zoom, rotación, debug overlay, minimap | ~1 min | 🎬 *[pendiente]* |
+| **GPU Instancing 50K** | Comparación: llvmpipe (CPU) vs Zink (GPU) | ~1 min | 🎬 *[pendiente]* |
+| **FSR 1.0 Upscaling** | Toggle ON/OFF mostrando calidad vs rendimiento | ~1 min | 🎬 *[pendiente]* |
+| **demo_torreta_vs_sprites** | Gameplay completo: 3 niveles, boss fights | ~3 min | 🎬 *[pendiente]* |
+| **ry-anim Showcase** | 12 principios Disney + efectos visuales | ~2 min | 🎬 *[pendiente]* |
+| **toolkit-ry UI** | 5 temas + HUD widgets + inventario | ~2 min | 🎬 *[pendiente]* |
+| **Ry-Dit en 60 segundos** | Resumen rápido del motor completo | ~1 min | 🎬 *[pendiente]* |
+
+#### Cómo grabar videos
+1. Instala `scrcpy`: `pkg install scrcpy` (o usa grabador de pantalla de Android)
+2. Ejecuta el demo: `./launcher_hud_camera.sh`
+3. Graba con `scrcpy --record=demo.mp4` o usa el grabador del teléfono
+4. Guarda en `videos/` con nombre descriptivo
+
+#### Estructura de videos
+```
+videos/
+├── 01_hud_camera.mp4         # Health bars + Cámara 2D
+├── 02_gpu_instancing.mp4     # 50K partículas GPU
+├── 03_fsr_upscaling.mp4      # FSR 1.0 ON/OFF
+├── 04_torreta_gameplay.mp4   # Juego completo
+├── 05_ry_anim_showcase.mp4   # 12 principios Disney
+├── 06_toolkit_ui.mp4         # 5 temas + widgets
+└── 07_rydit_60s.mp4          # Resumen rápido
+```
+
+#### Guión para video "Ry-Dit en 60 segundos"
+```
+0:00-0:05  → Logo + título "Ry-Dit: Motor de juegos en Rust para Android"
+0:05-0:15  → demo_torreta_vs_sprites (gameplay rápido)
+0:15-0:25  → demo_gpu_instancing (50K partículas)
+0:25-0:35  → demo_fsr (FSR 1.0 toggle)
+0:35-0:45  → demo_hud_camera (health bars + cámara rotación)
+0:45-0:55  → toolkit-ry (5 temas visuales)
+0:55-1:00  → "Construido sin prisa, madurado con paciencia" + GitHub URL
+```
+
+---
+
+### 📷 Actualizar Galería
+
+Cuando tengas capturas y videos listos:
+
+```bash
+# 1. Crear directorios
+mkdir -p screenshots videos
+
+# 2. Copiar capturas
+cp /sdcard/Download/demo_hud_camera.png screenshots/
+cp /sdcard/Download/demo_gpu_instancing.png screenshots/
+# ... etc
+
+# 3. Copiar videos
+cp /sdcard/Download/01_hud_camera.mp4 videos/
+# ... etc
+
+# 4. Commit + push
+git add screenshots/ videos/ README.md
+git commit -m "🖼️ Actualizar galería con capturas y videos"
+git push origin main
+```
+
+---
+
+---
+
+## 🆕 ¿Qué hay de nuevo en v0.16.0?
+
+**Última actualización**: 2026-04-08
+**Versión actual**: v0.16.0 ✅ HEALTH BARS + HUD + CÁMARA 2D CON ROTACIÓN
+**Estado**: 25 crates | 0 errores | 14+ tests toolkit-ry
+**Crates publicados**: 9 (ry-god, ry-stream, v-shield, ry-backend, migui, ry-gfx, **ry-core**, **ry-anim**, **toolkit-ry**)
+
+### 🎨 Health Bars + Identificadores de Entidades ✅
+| Feature | Detalle |
+|---------|---------|
+| **EntityHUD struct** | world_x, world_y, width, height, hp, name, bar_color |
+| **draw_entity_health_bar_world()** | Barra anclada a entidad (world-space → screen-space) |
+| **Color dinámico** | Verde (>50%) → Amarillo (25-50%) → Rojo (<25%) |
+| **Nombres/IDs** | TTF cacheado encima de la barra |
+
+### 📊 HUD de Información + Debug Overlay ✅
+| Feature | Detalle |
+|---------|---------|
+| **Debug overlay** | FPS, cámara (x,y,zoom,rot), entidades, tiempo |
+| **Stats HUD** | Score, tiempo MM:SS, nivel (esquina superior derecha) |
+| **Texturas TTF cacheadas** | Refresco cada 30 frames para rendimiento |
+
+### 🎥 Cámara 2D con Rotación y Zoom ✅
+| Feature | Detalle |
+|---------|---------|
+| **Zoom** | 0.2x - 5.0x (teclas +/-) |
+| **Rotación** | 0° - 360° (teclas Q/E) |
+| **Follow suave** | `follow_smooth()` con lerp configurable |
+| **Límites de mapa** | `set_bounds()` para clamp automático |
+| **World-to-screen** | Transformación con rotación + zoom incluida |
+
+### 🗺️ Minimap Avanzado ✅
+| Feature | Detalle |
+|---------|---------|
+| **Jugador** | Punto verde en centro (= posición cámara) |
+| **Entidades** | Puntos de color según tipo |
+| **Viewport** | Área visible del mundo |
+
+### 📦 3 Crates Publicados ✅
+| Crate | Versión | Descripción |
+|-------|---------|-------------|
+| **ry-core** | 0.8.2 | Core trait + module registry |
+| **ry-anim** | 0.12.0 | 12 principios Disney + VFX + science anim |
+| **toolkit-ry** | 0.1.0 | UI toolkit + 5 temas + HUD widgets |
 
 ---
 
