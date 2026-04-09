@@ -1,25 +1,36 @@
-// Fragment Shader para GPU Instancing - RyDit v0.15.0
-// Renderiza círculos suaves con anti-aliasing
-// FIX v0.15.0: gl_PointCoord solo funciona con gl_POINTS.
-// Para QUADS instanciados, calculamos la distancia desde las coordenadas del vértice.
+// Fragment Shader GPU Instancing - RyDit v0.16.0
+// Renderiza círculos SUAVES con anti-aliasing + alpha blending
+//
+// v0.16.0: smoothstep anti-aliasing + alpha por partícula
+// v0.15.0: FIX gl_PointCoord solo funciona con gl_POINTS
 
 #version 330 core
 
-// Posición interpolada del vértice (viene del vertex shader)
 in vec4 vColor;
-
-// Coordenada local del quad interpolada (-0.5 a 0.5 en X e Y)
-// La reconstruimos desde gl_FragCoord y el centro de la partícula
-// Pero como no tenemos uniform del centro, usamos un truco:
-// el vertex shader puede pasar la coordenada local como varying.
-
-// FIX: agregamos varying para coordenada local del quad
 in vec2 vLocalPos;
 
-// Salida final
 out vec4 fragColor;
 
+// Uniform para controlar suavizado (0.0 = borde duro, 1.0 = borde suave)
+uniform float uSmoothness;
+
 void main() {
-    // CUAD SÓLIDO — igual que SDL2 fill_rect (sin descarte de círculo)
-    fragColor = vColor;
+    // Distancia desde el centro del quad (0 = centro, 0.707 = esquina)
+    float dist = length(vLocalPos);
+
+    // Radio del círculo (0.5 = ocupa todo el quad)
+    float radius = 0.5;
+
+    if (uSmoothness > 0.01) {
+        // CÍRCULO SUAVE con anti-aliasing
+        // smoothstep crea transición gradual entre borde interior y exterior
+        float alpha = smoothstep(radius, radius - uSmoothness, dist);
+        fragColor = vec4(vColor.rgb, vColor.a * alpha);
+
+        // Descartar fragmentos completamente transparentes (optimización)
+        if (fragColor.a < 0.01) discard;
+    } else {
+        // CUAD SÓLIDO — igual que SDL2 fill_rect (sin suavizado)
+        fragColor = vColor;
+    }
 }

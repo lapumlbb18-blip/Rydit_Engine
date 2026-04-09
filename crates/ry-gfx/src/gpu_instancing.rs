@@ -43,6 +43,7 @@ pub struct GPUInstancer {
     camera: [f32; 2],
     resolution: [f32; 2], // FIX v0.15.0: coordenadas directas de pantalla
     use_resolution: bool, // true = modo uResolution, false = modo uProjection
+    smoothness: f32,       // v0.16.0: suavizado de bordes (0.0 = duro, 0.3 = suave)
 }
 
 impl GPUInstancer {
@@ -153,6 +154,7 @@ impl GPUInstancer {
                 camera: [0.0; 2],
                 resolution: [1280.0, 720.0],
                 use_resolution: true, // Por defecto: modo coordenadas directas
+                smoothness: 0.0,       // v0.16.0: sin suavizado por defecto
             }
         }
     }
@@ -279,12 +281,26 @@ impl GPUInstancer {
         self.use_resolution = val;
     }
 
+    /// v0.16.0: Configurar suavizado de bordes (anti-aliasing)
+    ///
+    /// # Valores
+    /// - `0.0` — Borde duro (cuadrados sólidos, default)
+    /// - `0.05` — Suavizado ligero (anti-aliasing sutil)
+    /// - `0.3` — Círculos suaves con anti-aliasing completo
+    pub fn set_smoothness(&mut self, val: f32) {
+        self.smoothness = val.clamp(0.0, 1.0);
+    }
+
     pub fn draw(&self) {
         if self.particle_count == 0 {
             return;
         }
 
         unsafe {
+            // v0.16.0: Activar alpha blending
+            gl::Enable(gl::BLEND);
+            gl::BlendFunc(gl::SRC_ALPHA, gl::ONE_MINUS_SRC_ALPHA);
+
             gl::UseProgram(self.program);
 
             if self.use_resolution {
@@ -302,6 +318,11 @@ impl GPUInstancer {
                 gl::Uniform2f(cam_loc, self.camera[0], self.camera[1]);
             }
 
+            // v0.16.0: Pasar smoothness al shader
+            let smooth_loc =
+                gl::GetUniformLocation(self.program, b"uSmoothness\0".as_ptr() as *const _);
+            gl::Uniform1f(smooth_loc, self.smoothness);
+
             gl::BindVertexArray(self.vao);
             gl::DrawArraysInstanced(gl::TRIANGLES, 0, 6, self.particle_count as GLsizei);
 
@@ -313,6 +334,9 @@ impl GPUInstancer {
 
             gl::BindVertexArray(0);
             gl::UseProgram(0);
+
+            // v0.16.0: Desactivar blending después
+            gl::Disable(gl::BLEND);
         }
     }
 
