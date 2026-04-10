@@ -1,4 +1,8 @@
-# 🛡️ Ry-Dit - Motor de Juegos 2D/3D + Scripting en Rust para Android/Termux
+# 🛡️ Ry-Dit — Sistema de Creación en Rust para Android/Termux
+
+> **Ry-Dit no es solo un motor de juegos.** Es un sistema de creación para desarrolladores, artistas, soñadores y streamers que quieren construir lo que imaginen — sin límites de categoría ni de hardware.
+>
+> *Hecho desde un Redmi Note 8 (4GB RAM, Adreno 610) en Termux. Sin PC de alto gama.*
 
 <div align="center">
 
@@ -17,9 +21,120 @@
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/lapumlbb18-blip/Ry-dit/blob/main/LICENSE)
 [![crates.io](https://img.shields.io/badge/crates.io-12%20publicados-purple.svg)](https://crates.io/crates/ry-anim)
 
-[📖 Documentación](#-documentación) • [🖼️ Galería](#-galería) • [🆕 Qué hay de nuevo en v0.16.1](#-qué-hay-de-nuevo-en-v0161) • [🏆 Logros](#-logros) • [🎮 Demos](#-demos-funcionales) • [📦 Crates Publicados](#-crates-publicados) • [🎯 Roadmap](#-roadmap) • [📚 Archivos del Proyecto](#-archivos-del-proyecto)
+[🚀 Inicio Rápido](#-inicio-rápido) • [🖼️ Galería](#-galería) • [🆕 Qué hay de nuevo](#-qué-hay-de-nuevo-en-v0161) • [🏆 Logros](#-logros) • [🎮 Demos](#-demos-funcionales) • [📦 Crates](#-crates-publicados) • [🎯 Roadmap](#-roadmap) • [📚 Archivos](#-archivos-del-proyecto)
 
 </div>
+
+---
+
+## 🚀 Inicio Rápido
+
+### ¿Qué puedes crear con Ry-Dit?
+
+| Categoría | Ejemplo |
+|-----------|---------|
+| 🎮 Juegos 2D y 3D | Snake, Buscaminas, Torreta, platformers |
+| 🛠️ Editores y herramientas | Tu propio editor visual, IDE, dashboard |
+| 🎓 Software educativo | Simulaciones, visualizaciones interactivas |
+| 🔬 Ciencia | Bezier, ondas, L-System, ilusiones ópticas |
+| 📡 Streaming LAN | Servidor WebSocket + portal web |
+| 🎬 Animaciones | 12 principios Disney, sprite animation |
+
+### Instalar y compilar
+
+```bash
+# Clonar el repositorio
+git clone https://github.com/lapumlbb18-blip/Ry-dit.git
+cd Ry-dit
+
+# Compilar en modo release
+cargo build -p ry-rs --bin rydit-rs --release
+
+# Ejecutar todos los tests
+cargo test --workspace
+```
+
+### Ejecutar demos
+
+```bash
+# 🐍 Snake Anime v2 — Juego completo con cámara follow
+./launcher_anime_v2.sh
+
+# 💣 Buscaminas 16×16 con flood fill y banderas
+./launcher_buscaminas.sh
+
+# 🎮 Torreta vs Sprites — 3 niveles con AI y audio
+./launcher_torreta.sh
+
+# 🎬 Sprite animation con state machine
+cargo run --bin demo_action_sprite --release
+
+# 💥 50K partículas GPU instancing
+./launcher_gpu_instancing.sh
+
+# 🔍 FSR 1.0 upscaling 960→1280
+./launcher_fsr.sh
+
+# 📷 HUD + Cámara 2D con zoom y rotación
+./launcher_hud_camera.sh
+```
+
+### Tu primer juego — Snake mínimo
+
+```rust
+use ry_rs::prelude::*;
+
+fn main() {
+    let mut game = Game::new("Mi Snake", 800, 600);
+    let mut snake = Snake::new(100, 100);
+
+    while game.running() {
+        // Input WASD
+        if game.input().key(KeyCode::W) { snake.move_up(); }
+        if game.input().key(KeyCode::S) { snake.move_down(); }
+        if game.input().key(KeyCode::A) { snake.move_left(); }
+        if game.input().key(KeyCode::D) { snake.move_right(); }
+
+        // Render
+        game.draw_rect(snake.x(), snake.y(), 16, 16, Color::GREEN);
+        game.present();
+    }
+}
+```
+
+### Scripting con .rydit
+
+```rydit
+# mi_nivel.rydit
+tilemap 2400 1800
+  tileset "sprites/tileset.png" 32 32
+  layer 0 "mapa.csv"
+
+camera follow player
+  zoom 1.0
+  rotation 0.0
+
+entity player
+  sprite "player.png"
+  physics dynamic
+  collider rect 32 48
+```
+
+### Stack técnico
+
+| Capa | Tecnología |
+|------|-----------|
+| **Lenguaje** | Rust |
+| **Scripting** | `.rydit` (lenguaje propio) |
+| **2D** | Raylib + rlgl + SDL2 |
+| **3D** | ry3d-gfx + v-shield |
+| **GPU** | FSR 1.0 + GPU Instancing (250K partículas) |
+| **Audio** | SDL2 Mixer + TTF |
+| **Red** | Tokio + Tungstenite + LAZOS JSON/RPC |
+| **GUI** | migui (12+ widgets) |
+| **CI/CD** | GitHub Actions |
+
+**Plataformas**: `Android` · `Linux` · `Windows` · `macOS` *(WASM en roadmap)*
 
 ---
 
@@ -138,13 +253,19 @@
 
 ### 📸 Capturas de Pantalla
 
-| Captura | Descripción |
-|---------|-------------|
-| ![Torreta](ry-galery_contenido/1er_demo_torreta.jpg) | 🎮 Demo Torreta — Nivel 1 |
-| ![Torreta 2](ry-galery_contenido/1er_demo_torreta2.jpg) | 🎮 Demo Torreta — Combate |
-| ![Sprites](ry-galery_contenido/carga_sprite.jpg) | 🎬 Carga de sprites + tilemap |
-| ![Crates](ry-galery_contenido/directorio_crates.jpg) | 📦 Directorio de crates del workspace |
-| ![TTF](ry-galery_contenido/ttf.jpg) | 🔤 Texto TTF + sprites PNG |
+<details>
+<summary><strong>📷 5 capturas de demos funcionales</strong> (click para expandir)</summary>
+
+| | |
+|:---:|:---:|
+| ![Torreta Nivel 1](ry-galery_contenido/1er_demo_torreta.jpg) | ![Torreta Combate](ry-galery_contenido/1er_demo_torreta2.jpg) |
+| 🎮 Demo Torreta — Nivel 1 | 🎮 Demo Torreta — Combate |
+| ![Carga Sprites](ry-galery_contenido/carga_sprite.jpg) | ![Directorio Crates](ry-galery_contenido/directorio_crates.jpg) |
+| 🎬 Carga de sprites + tilemap | 📦 Directorio de crates |
+| ![Texto TTF](ry-galery_contenido/ttf.jpg) | — |
+| 🔤 Texto TTF + sprites PNG | — |
+
+</details>
 
 ---
 
