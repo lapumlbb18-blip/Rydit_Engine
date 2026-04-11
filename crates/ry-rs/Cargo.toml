@@ -51,3 +51,7 @@ path = "src/bin/demo_militar.rs"
 [[bin]]
 name = "demo_emoji_utf8"
 path = "src/bin/demo_emoji_utf8.rs"
+
+[[bin]]
+name = "demo_audio_mixer"
+path = "src/bin/demo_audio_mixer.rs"
