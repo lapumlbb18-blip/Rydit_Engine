@@ -76,6 +76,9 @@ pub mod font_system;
 // Módulo de Emoji Atlas v0.17.0 - Emojis como sprites procedurales
 pub mod emoji_atlas;
 
+// Módulo de Transiciones v0.18.0 - 15+ transiciones tipo editor de video
+pub mod transitions;
+
 // Módulo de FFI Nativo SDL2 v0.10.8 - Texturas, Audio, Fuentes (nativo)
 pub mod sdl2_ffi;
 
