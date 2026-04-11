@@ -59,6 +59,10 @@ extern "C" {
     pub fn Mix_HaltChannel(channel: c_int);
     pub fn Mix_VolumeMusic(volume: c_int) -> c_int;
     pub fn Mix_Volume(channel: c_int, volume: c_int) -> c_int;
+    pub fn Mix_PauseMusic();
+    pub fn Mix_ResumeMusic();
+    pub fn Mix_FadeOutMusic(ms: c_int);
+    pub fn Mix_FadeInMusic(music: *mut Mix_Music, loops: c_int, ms: u32, volume: c_int) -> c_int;
 }
 
 const MIX_INIT_OGG: c_int = 0x00000002;
@@ -248,6 +252,18 @@ impl AudioFFI {
     pub fn stop_music(&self) {
         unsafe {
             Mix_HaltMusic();
+        }
+    }
+
+    /// Fade in música
+    pub unsafe fn fade_in_music(&self, music: *mut Mix_Music, loops: i32, ms: u32, volume: i32) -> Result<(), String> {
+        unsafe {
+            let result = Mix_FadeInMusic(music, loops as c_int, ms, volume as c_int);
+            if result == -1 {
+                Err("Error en fade in música".to_string())
+            } else {
+                Ok(())
+            }
         }
     }
 }

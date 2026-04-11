@@ -47,3 +47,7 @@ path = "src/bin/demo_stream.rs"
 [[bin]]
 name = "demo_militar"
 path = "src/bin/demo_militar.rs"
+
+[[bin]]
+name = "demo_emoji_utf8"
+path = "src/bin/demo_emoji_utf8.rs"

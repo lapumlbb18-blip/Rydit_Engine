@@ -64,8 +64,14 @@ pub mod backend_sdl2;
 // Módulo de Audio SDL2 v0.10.8 - SDL2_mixer (pendiente)
 pub mod audio_sdl2;
 
+// Módulo de Audio Mixer Avanzado v0.17.0 - Buses + Spatial + Fade
+pub mod audio_mixer;
+
 // Módulo de Fuentes SDL2 v0.10.8 - SDL2_ttf (pendiente)
 pub mod font_sdl2;
+
+// Módulo de Sistema de Fuentes v0.17.0 - UTF-8 + Emojis + Fallback
+pub mod font_system;
 
 // Módulo de FFI Nativo SDL2 v0.10.8 - Texturas, Audio, Fuentes (nativo)
 pub mod sdl2_ffi;
