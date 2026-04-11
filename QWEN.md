@@ -1,21 +1,23 @@
 # 🛡️ QWEN.md - Bitácora Técnica Ry-Dit
 
 **Última actualización**: 2026-04-11
-**Versión actual**: v0.17.0 ✅ Demo Militar + Emoji Atlas + Audio Mixer + UTF-8 fix + Organización
-**Versión anterior**: v0.16.1 (Snake + Buscaminas + Action Sprite + Tilemap 2.0)
-**Próxima versión**: v0.18.0 — DLSS/NIS + Bordes Suaves + Opacidad + Iluminación 2D + Sombras
-**Commit**: `v0.17.0`
+**Versión actual**: v0.18.0 ✅ 3D Primitives + Transiciones + Audio Mixer + UTF-8 Fix + Emojis
+**Versión anterior**: v0.17.0 (Demo Militar + Emoji Atlas + Audio Mixer)
+**Próxima versión**: v0.19.0 — Mesh Generation + Materiales + Iluminación 3D
+**Commit**: `v0.18.0`
 **Repositorio**: `https://github.com/lapumlbb18-blip/Ry-dit`
 **Crates publicados**: 12 ✅
 
 ---
 
-## 🎉 SESIÓN v0.17.0 — ÉPICA: DEMO MILITAR + EMOJI ATLAS + AUDIO MIXER
+## 🎉 SESIÓN v0.18.0 — ÉPICA: 3D + TRANSICIONES + AUDIO MIXER
 
-### ✅ ESTADO: 23 CRATES | 0 ERRORES | 144 TESTS | 18+ DEMOS | 12 CRATES.IO
+### ✅ ESTADO: 23 CRATES | 0 ERRORES | 147 TESTS | 20+ DEMOS | 12 CRATES.IO
 
 | Demo | GPU | FPS | Features | Notas |
 |------|-----|-----|----------|-------|
+| **demo_3d_primitives** | raylib (Adreno 610) | ~60 FPS | Cubos, esferas, cilindros, grid, ejes 3D | Cámara orbital |
+| **demo_transitions** | zink (Adreno 610) | ~60 FPS | 19 transiciones: fade, slide, wipe, zoom, spiral | Auto-advance |
 | **demo_militar** | zink (Adreno 610) | ~30 FPS | Soldado procedural + partículas + granadas arco + salto | WASD, física, gravedad |
 | **demo_emoji_utf8** | zink (Adreno 610) | ~28 FPS | 25+ emojis como sprites procedurales PNG | UTF-8 fix, atlas de texturas |
 | **demo_audio_mixer** | zink (Adreno 610) | ~30 FPS | 4 buses + spatial 2D + fade in/out | Master, SFX, Music, Ambient |
@@ -71,29 +73,29 @@
 
 | # | Feature | Detalle |
 |---|---------|---------|
-| 1 | **action_sprite module** | SpriteSheet, AnimationClip, AnimatedSprite, RenderCommand |
-| 2 | **demo_action_sprite** | Sprite sheet procedural + clips + state machine + flip |
-| 3 | **Tilemap v2.0** | Texturas reales + CSV import/export + camera culling (95% menos) |
-| 4 | **demo_buscaminas** | 16×16 grid, 40 minas, flood fill, banderas, game over |
-| 5 | **demo_anime_ry_v2** | Snake controlable, manzanas, bombas, 8 entidades, minimap |
-| 6 | **8 Launchers** | Auto-detección DISPLAY + Zink para todos los demos principales |
-| 7 | **Bordes suaves** | smoothstep anti-aliasing + alpha blending en GPU instancing |
-| 8 | **ry3d-gfx mejorado** | Texto 3D + modelos GLTF/OBJ/IQM/VOX/MDL |
-| 9 | **ry-config publicado** | README + Cargo.toml fix |
-| 10 | **ry-physics publicado** | README + Cargo.toml fix |
-| 11 | **ry-science publicado** | README + Cargo.toml fix |
-| 12 | **ry-test eliminado** | Código muerto removido |
-| 13 | **GUIA_USUARIO.md** | Guía completa creada |
-| 14 | **6 docs actualizados** | README, QWEN, TASKS, ROADMAP, ESTRUCTURA, GUIA_USUARIO |
+| 1 | **ry3d-gfx v0.1.0** | 15 primitivas 3D + draw_model/ex + DrawHandle3D RAII |
+| 2 | **demo_3d_primitives** | Escena 3D interactiva con cámara orbital |
+| 3 | **19 transiciones** | Fade, Slide, Wipe, Zoom, Circle, Blinds, Dissolve, Spiral, etc. |
+| 4 | **TransitionManager** | Cola de transiciones + auto-advance + easing smoothstep |
+| 5 | **Audio Mixer** | 4 buses + spatial 2D + fade in/out + volúmenes independientes |
+| 6 | **UTF-8 Fix** | TTF_RenderUTF8_Blended → acentos (áéíóú ñ ü) correctos |
+| 7 | **Emoji Atlas** | 25+ emojis como sprites procedurales PNG |
+| 8 | **FontSystem** | Múltiples fuentes + fallback automático |
+| 9 | **docs/ + launchers/** | Organización del repo (gitignored) |
+| 10 | **INFORME_RY3D_GFX.md** | Estado completo + roadmap del 3D |
+| 11 | **sync_drive_bg.sh** | Sync a Google Drive con rclone |
+| 12 | **ry3d-gfx como dep** | Agregado a ry-rs/Cargo.toml |
 
 ### Bugs Fixeados
 
 | Bug | Fix |
 |-----|-----|
-| ry-gfx sin feature migui | Agregar `features = ["migui"]` en ry-rs |
-| demo_render_queue assets | Agregar `Assets::new()` |
-| Texture::width unwrap_or | q.width es `u32` directo |
-| f32→i32 type casts | Múltiples fixes en demos nuevos |
+| draw_model/draw_model_ex stubs vacíos | Implementar FFI DrawModel/DrawModelEx real |
+| draw_text_3d no-op | Stub (GetWorldToScreen no en FFI) |
+| TTF_RenderText_Blended = Latin-1 | Cambiar a TTF_RenderUTF8_Blended |
+| SDL2 Keycode nombres | Number1→KEY_ONE, CameraMode→FFI enum |
+| DrawHandle3D sin camera ref | Agregar lifetime `'a` + guardar `&'a Camera3D` |
+| DrawModelEx scale = f32 | Cambiar a Vector3 (x,y,z) |
 
 ---
 
@@ -211,12 +213,12 @@ cargo check --workspace
 
 <div align="center">
 
-**🛡️ RyDit v0.17.0 — Demo Militar + Emoji Atlas + Audio Mixer**
+**🛡️ RyDit v0.18.0 — 3D + Transiciones + Audio Mixer + UTF-8 Fix**
 
-*23 crates · 144 tests · 12 crates.io · 18+ demos · 11 launchers · 0 errores*
+*23 crates · 147 tests · 12 crates.io · 20+ demos · 0 errores*
 
-**Próximo: v0.18.0 — DLSS/NIS + Bordes Suaves + Opacidad + Iluminación 2D + Sombras**
+**Próximo: v0.19.0 — Mesh Generation + Materiales + Iluminación 3D**
 
-**LECCIÓN v0.17.0: TTF_RenderUTF8_Blended para emojis | Atlas procedural | 4 buses de audio**
+**LECCIÓN v0.18.0: DrawText3D no en FFI | GetWorldToScreen pendiente | CameraMode usa FFI enum**
 
 </div>

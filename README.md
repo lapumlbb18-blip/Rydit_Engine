@@ -10,10 +10,10 @@
 
 **"Construido sin prisa, madurado con paciencia"**
 
-[![Version](https://img.shields.io/badge/version-v0.17.0-blue.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
+[![Version](https://img.shields.io/badge/version-v0.18.0-blue.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
 [![Errors](https://img.shields.io/badge/errors-0-green.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
-[![Tests](https://img.shields.io/badge/tests-144%2F144-brightgreen.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
-[![Status](https://img.shields.io/badge/estado-v0.17.0--militar--emoji--audio-green.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
+[![Tests](https://img.shields.io/badge/tests-147%2F147-brightgreen.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
+[![Status](https://img.shields.io/badge/estado-v0.18.0--3d--transiciones--mixer-green.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
 [![SDL2](https://img.shields.io/badge/SDL2-0.37-red.svg)](https://www.libsdl.org/)
 [![Raylib](https://img.shields.io/badge/raylib-5.0-orange.svg)](https://www.raylib.com/)
@@ -21,7 +21,7 @@
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/lapumlbb18-blip/Ry-dit/blob/main/LICENSE)
 [![crates.io](https://img.shields.io/badge/crates.io-12%20publicados-purple.svg)](https://crates.io/crates/ry-anim)
 
-[🚀 Inicio Rápido](#-inicio-rápido) • [🖼️ Galería](#-galería) • [🆕 Qué hay de nuevo](#-qué-hay-de-nuevo-en-v0161) • [🏆 Logros](#-logros) • [🎮 Demos](#-demos-funcionales) • [📦 Crates](#-crates-publicados) • [🎯 Roadmap](#-roadmap) • [📚 Archivos](#-archivos-del-proyecto)
+[🚀 Inicio Rápido](#-inicio-rápido) • [🖼️ Galería](#-galería) • [🆕 Qué hay de nuevo](#-qué-hay-de-nuevo-en-v0180) • [🏆 Logros](#-logros) • [🎮 Demos](#-demos-funcionales) • [📦 Crates](#-crates-publicados) • [🎯 Roadmap](#-roadmap) • [📚 Archivos](#-archivos-del-proyecto)
 
 </div>
 
@@ -144,6 +144,29 @@ entity player
 | **CI/CD** | GitHub Actions |
 
 **Plataformas**: `Android` · `Linux` · `Windows` · `macOS` *(WASM en roadmap)*
+
+---
+
+## 🆕 ¿Qué hay de nuevo en v0.18.0?
+
+### 3D, Transiciones y Audio Mixer
+
+| Feature | Detalle |
+|---------|---------|
+| **ry3d-gfx v0.1.0** | 15 primitivas 3D: cubos, esferas, cilindros, líneas, grid, ejes, bbox |
+| **demo_3d_primitives** | Escena 3D interactiva con cámara orbital |
+| **draw_model / draw_model_ex** | ✅ Stubs arreglados, FFI real |
+| **15+ transiciones** | Fade, Slide, Wipe, Zoom, Circle, Blinds, Dissolve, Spiral, etc. |
+| **Audio Mixer avanzado** | 4 buses + spatial 2D + fade in/out |
+| **UTF-8 Fix** | TTF_RenderUTF8_Blended → acentos (áéíóú ñ ü) correctos |
+| **Emoji Atlas** | 25+ emojis como sprites procedurales PNG |
+
+**Nuevos demos:**
+- `demo_3d_primitives` — Escena 3D con cubos, esferas, cilindros
+- `demo_transitions` — Galería de 19 transiciones tipo editor de video
+- `demo_militar` — Soldado procedural + partículas + granadas en arco
+- `demo_emoji_utf8` — Texto UTF-8 + emojis sprites
+- `demo_audio_mixer` — Mixer interactivo con 4 buses
 
 ---
 
@@ -321,16 +344,18 @@ entity player
 
 | Demo | Descripción | Launcher | Tamaño |
 |------|-------------|----------|--------|
+| **demo_3d_primitives** | 🧊 Escena 3D: cubos, esferas, cilindros, grid, ejes | — | — |
+| **demo_transitions** | 🎬 19 transiciones tipo editor de video | — | — |
 | **demo_militar** | 🎖️ Soldado procedural + partículas + granadas arco + salto | `launcher_militar.sh` | — |
-| **demo_emoji_utf8** | 😀 25+ emojis como sprites procedurales + UTF-8 fix | `launcher_emoji_utf8.sh` | — |
-| **demo_audio_mixer** | 🎵 4 buses + spatial 2D + fade in/out | `launcher_audio_mixer.sh` | — |
+| **demo_emoji_utf8** | 😀 25+ emojis como sprites procedurales + UTF-8 fix | — | — |
+| **demo_audio_mixer** | 🎵 4 buses + spatial 2D + fade in/out | — | — |
 | **demo_anime_ry_v2** | 🐍 Snake + manzanas + bombas + entidades + minimap | `launcher_anime_v2.sh` | — |
 | **demo_buscaminas** | 💣 Buscaminas 16×16 con mouse | `launcher_buscaminas.sh` | — |
 | **demo_hud_camera** | HUD + Cámara 2D rotación/zoom + health bars | `launcher_hud_camera.sh` | — |
 | **demo_action_sprite** | 🎬 Sprite animation con sprite sheet | — | — |
 | **demo_gpu_instancing** | 50K partículas GPU instancing | `launcher_gpu_instancing.sh` | ~500K |
 | **demo_fsr** | FSR 1.0 upscaling 960→1280 | `launcher_fsr.sh` | ~480K |
-| **demo_torreta_vs_sprites** | Juego completo: 3 niveles, cámara, AI, audio | `launcher_torreta.sh` | 434K |
+| **demo_torreta_vs_sprites** | Juego completo: 3 niveles, cámara, AI, audio | `demo_torreta.sh` | 434K |
 | **demo_rigidbody** | Física + colisiones + sprites PNG | — | 446K |
 | **demo_panel_visual** | 4 paneles + consola interactiva | — | 339K |
 | **demo_menu_bar** | Menús Dear ImGui + mouse + touch | — | 330K |

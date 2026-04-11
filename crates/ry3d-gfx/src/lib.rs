@@ -11,6 +11,9 @@
 
 #![allow(clippy::too_many_arguments)]
 
+// Controles táctiles en pantalla (como RayGunz)
+pub mod touch_controls;
+
 // Necesario para tipos raylib internos usados en re-exports
 #[allow(unused_imports)]
 use raylib::prelude::*;
