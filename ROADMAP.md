@@ -1,7 +1,7 @@
-# Ry-Dit - ROADMAP v0.17.0 → v1.0.0
+# Ry-Dit - ROADMAP v0.18.0 → v1.0.0
 
 **Última actualización**: 2026-04-11
-**Versión actual**: v0.17.0 ✅ Demo Militar + Emoji Atlas + Audio Mixer + UTF-8 fix + Organización
+**Versión actual**: v0.18.0 ✅ 3D Primitives + Transiciones + Audio Mixer + UTF-8 Fix + Emojis
 **Análisis estratégico**: Ver `TASKS_2.md` — Análisis comparativo con Unreal, Unity, Godot, Bevy
 
 ---
@@ -11,12 +11,12 @@
 | Métrica | Valor |
 |---------|-------|
 | **Crates** | 23 |
-| **Líneas Rust** | ~35K+ |
+| **Líneas Rust** | ~38K+ |
 | **Compilación** | 0 errores |
-| **Tests** | 144/144 pasando |
+| **Tests** | 147/147 pasando |
 | **Crates publicados** | 12 |
-| **Demos funcionales** | 18+ |
-| **Launchers** | 11 con auto-detección DISPLAY + Zink |
+| **Demos funcionales** | 20+ |
+| **Launchers** | 11+ con auto-detección DISPLAY + Zink |
 | **Repositorio** | `github.com/lapumlbb18-blip/Ry-dit` |
 
 ---
@@ -124,28 +124,33 @@ Progreso: ████████████████████ 100%
 Progreso: ████████████████████ 100%
 ```
 
-### v0.18.0 — Sprite Sheets Reales + Texturas + GIF + DLSS/NIS + Iluminación 2D
+### v0.18.0 — 3D Primitives + Transiciones + Audio Mixer + UTF-8 Fix + Emojis ✅
 
-**Prioridad**: ALTA | **Pilar**: Gaming + Animaciones + Render
+**Fecha**: 2026-04-11
 
-| Feature | Estado | Tiempo est. | Inspiración | Detalle |
-|---------|--------|-------------|-------------|---------|
-| Sprite sheets reales | ⏳ | 6-8h | Todos los engines | Texturas con grid de frames |
-| Texturas en demos | ⏳ | 4-6h | — | Reemplazar rectángulos |
-| Carga/edición GIF | ⏳ | 8-12h | LÖVE2D | Animaciones desde archivo |
-| NIS (NVIDIA Image Scaling) | ⏳ | 6-8h | NVIDIA | Alternativa a FSR |
-| FSR 2.0 (temporal) | ⏳ | 20-30h | AMD FSR 2.0 | Upscaling con temporal |
-| Opacidad/transparencia | ⏳ | 4-6h | — | Alpha en texturas |
-| Fade in/out transiciones | ⏳ | 2-4h | Unity loading | Transiciones entre escenas |
-| Texturas con canal alpha | ⏳ | 4-6h | — | PNG con transparencia |
-| Iluminación 2D dinámica | ⏳ | 10-15h | Godot Light2D | Luces puntuales 2D |
-| Sombras 2D | ⏳ | 8-12h | Godot Light2D shadows | Raycasting shadows |
+| Feature | Estado | Detalle |
+|---------|--------|---------|
+| ry3d-gfx v0.1.0 | ✅ | 15 primitivas 3D: cubos, esferas, cilindros, líneas, grid, ejes, bbox |
+| demo_3d_primitives | ✅ | Escena 3D interactiva con cámara orbital |
+| draw_model / draw_model_ex | ✅ | Stubs arreglados con FFI real |
+| DrawHandle3D con lifetime | ✅ | Guarda referencia `&'a Camera3D`, RAII pattern |
+| TouchControls | ✅ | Joysticks virtuales + botones táctiles (como RayGunz) |
+| 19 transiciones | ✅ | Fade, Slide, Wipe, Zoom, Circle, Blinds, Dissolve, Spiral, etc. |
+| TransitionManager | ✅ | Cola de transiciones + auto-advance + easing smoothstep |
+| Audio Mixer avanzado | ✅ | 4 buses + spatial 2D + fade in/out |
+| UTF-8 Fix | ✅ | TTF_RenderUTF8_Blended → acentos (áéíóú ñ ü) correctos |
+| Emoji Atlas | ✅ | 25+ emojis como sprites procedurales PNG |
+| FontSystem | ✅ | Múltiples fuentes + fallback automático |
+| demo_militar | ✅ | Soldado procedural + partículas + granadas en arco + salto |
+| demo_transitions | ✅ | Galería de 19 transiciones tipo editor de video |
+| demo_emoji_utf8 | ✅ | Texto UTF-8 + emojis sprites |
+| demo_audio_mixer | ✅ | Mixer interactivo con 4 buses |
 
 ```
-Progreso: ░░░░░░░░░░░░░░░░░░░░ 0%
+Progreso: ████████████████████ 100%
 ```
 
-### v0.19.0 — Letras 3D + Panel Visual + Rybot CLI+GUI + Escenas
+### v0.19.0 — Letras 3D + Escenas (.ryscene) + Input map + Rybot CLI+GUI
 
 **Prioridad**: MEDIA | **Pilar**: Gaming + Ciencia
 
@@ -219,7 +224,7 @@ v0.16.0-a ████████████████████ 100%
 v0.16.0   ████████████████████ 100%
 v0.16.1   ████████████████████ 100%
 v0.17.0   ████████████████████ 100%
-v0.18.0   ░░░░░░░░░░░░░░░░░░░░   0%
+v0.18.0   ████████████████████ 100%
 v0.19.0   ░░░░░░░░░░░░░░░░░░░░   0%
 v0.20.0   ░░░░░░░░░░░░░░░░░░░░   0%
 v1.0.0    ░░░░░░░░░░░░░░░░░░░░   0%
@@ -279,14 +284,14 @@ v1.0.0    ░░░░░░░░░░░░░░░░░░░░   0%
 
 <div align="center">
 
-**Ry-Dit v0.17.0 - ROADMAP**
+**Ry-Dit v0.18.0 - ROADMAP**
 
-*12 crates publicados ✅ | 144 tests ✅ | 18+ demos ✅ | 0 errores*
+*12 crates publicados ✅ | 147 tests ✅ | 20+ demos ✅ | 0 errores*
 
 *3 Pilares: 🎮 Gaming · 🎬 Animaciones+Ciencia · 📡 Streaming+Comunidad*
 
-*Próximo: v0.18.0 — Sprite Sheets Reales + Texturas + GIF + DLSS/NIS + Iluminación 2D*
+*Próximo: v0.19.0 — Letras 3D + Escenas (.ryscene) + Input map + Rybot CLI+GUI*
 
-*Ver `TASKS_2.md` para análisis estratégico completo*
+*Ver `TASKS.md` para tareas completadas y pendientes*
 
 </div>

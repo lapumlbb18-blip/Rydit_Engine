@@ -421,13 +421,13 @@ entity player
 
 <div align="center">
 
-**🛡️ Ry-Dit v0.17.0 — Demo Militar + Emoji Atlas + Audio Mixer**
+**🛡️ Ry-Dit v0.18.0 — 3D + Transiciones + Audio Mixer + UTF-8 Fix**
 
-*23 crates · 144 tests · 12 crates.io · 18+ demos · 0 errores · Low-End First*
+*23 crates · 147 tests · 12 crates.io · 20+ demos · 0 errores · Low-End First*
 
 *3 Pilares: 🎮 Gaming · 🎬 Animaciones+Ciencia · 📡 Streaming+Comunidad*
 
-**Próximo: v0.18.0 — DLSS/NIS + Bordes Suaves + Opacidad + Iluminación 2D + Sombras**
+**Próximo: v0.19.0 — Letras 3D + Escenas (.ryscene) + Input map + Rybot CLI+GUI**
 
 > 📋 `ROADMAP.md` · `TASKS.md` · `TASKS_2.md` (análisis estratégico) · `QWEN.md` (bitácora)
 

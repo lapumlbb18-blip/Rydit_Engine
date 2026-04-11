@@ -1,8 +1,8 @@
 # 🛡️ Ry-Dit - Tareas Completadas y Pendientes
 
 **Última actualización**: 2026-04-11
-**Versión actual**: v0.17.0 ✅ Demo Militar + Emoji Atlas + Audio Mixer
-**Próxima versión**: v0.18.0 — Sprite Sheets Reales + Texturas + GIF + DLSS/NIS + Iluminación 2D
+**Versión actual**: v0.18.0 ✅ 3D + Transiciones + Audio Mixer + UTF-8 Fix
+**Próxima versión**: v0.19.0 — Letras 3D + Escenas (.ryscene) + Input map + Rybot CLI+GUI
 **Análisis estratégico**: Ver `TASKS_2.md` — Comparativa con Unreal, Unity, Godot, Bevy
 
 ---
@@ -13,10 +13,10 @@
 |---------|-------|
 | **Crates** | 23 |
 | **Errores** | 0 |
-| **Tests** | 144/144 pasando |
+| **Tests** | 147/147 pasando |
 | **Crates publicados** | 12 |
-| **Demos funcionales** | 18+ |
-| **Launchers** | 11 con auto-detección DISPLAY |
+| **Demos funcionales** | 20+ |
+| **Launchers** | 11+ con auto-detección DISPLAY |
 | **Commits esta sesión** | 15+ |
 
 ---
@@ -31,6 +31,31 @@ Juegos completos, GPU instancing, FSR, sprite animation, tilemap → escenas →
 
 ### 📡 Pilar 3: Streaming + Comunidad en Tiempo Real
 ry-stream LAN + v-shield sync → multiplayer LAN → streaming en vivo
+
+---
+
+## ✅ SESIÓN v0.18.0 — COMPLETADA
+
+### Lo que se hizo en esta sesión:
+
+| # | Tarea | Estado | Detalle |
+|---|-------|--------|---------|
+| 1 | ry3d-gfx v0.1.0 | ✅ | 15 primitivas 3D: cubos, esferas, cilindros, líneas, grid, ejes, bbox |
+| 2 | demo_3d_primitives | ✅ | Escena 3D interactiva con cámara orbital |
+| 3 | draw_model / draw_model_ex FFI | ✅ | Stubs arreglados con FFI real |
+| 4 | DrawHandle3D lifetime | ✅ | Guarda referencia `&'a Camera3D`, RAII pattern |
+| 5 | TouchControls | ✅ | Joysticks virtuales + botones táctiles (como RayGunz) |
+| 6 | 19 transiciones | ✅ | Fade, Slide, Wipe, Zoom, Circle, Blinds, Dissolve, Spiral, etc. |
+| 7 | TransitionManager | ✅ | Cola de transiciones + auto-advance + easing smoothstep |
+| 8 | Audio Mixer avanzado | ✅ | 4 buses + spatial 2D + fade in/out |
+| 9 | UTF-8 Fix | ✅ | TTF_RenderUTF8_Blended → acentos (áéíóú ñ ü) correctos |
+| 10 | Emoji Atlas | ✅ | 25+ emojis como sprites procedurales PNG |
+| 11 | FontSystem | ✅ | Múltiples fuentes + fallback automático |
+| 12 | demo_militar | ✅ | Soldado procedural + partículas + granadas en arco + salto |
+| 13 | demo_transitions | ✅ | Galería de 19 transiciones tipo editor de video |
+| 14 | demo_emoji_utf8 | ✅ | Texto UTF-8 + emojis sprites |
+| 15 | demo_audio_mixer | ✅ | Mixer interactivo con 4 buses |
+| 16 | Informes creados | ✅ | analisis, backend_raylib, fusion_sdl2_raylib, patron_fusional, vision_correcta |
 
 ---
 
@@ -93,38 +118,24 @@ ry-stream LAN + v-shield sync → multiplayer LAN → streaming en vivo
 
 ---
 
-## 🔴 TAREAS PENDIENTES — PRIORIDAD ALTA (v0.18.0)
+## 🔴 TAREAS PENDIENTES — PRIORIDAD ALTA (v0.19.0)
 
-### Gaming + Render
+### Gaming + Render + Escenas
 
 | # | Tarea | Esfuerzo | Dependencia | Inspiración | Detalle |
 |---|-------|----------|-------------|-------------|---------|
-| 1 | **Sprite sheets reales** | 6-8h | Cuando traigas assets | Todos | Texturas con grid de frames |
-| 2 | **Texturas en demos** | 4-6h | #1 Sprite sheets | — | Reemplazar rectángulos por PNG |
-| 3 | **Carga/edición GIF** | 8-12h | Independiente | LÖVE2D | Animaciones desde archivo |
-| 4 | **DLSS/NIS** | 6-8h | Independiente | NVIDIA | Alternativa a FSR |
-| 5 | **FSR 2.0 temporal** | 20-30h | Independiente | AMD FSR 2.0 | Upscaling con temporal |
-| 6 | **Opacidad/transparencia** | 4-6h | Independiente | — | Alpha en texturas |
-| 7 | **Iluminación 2D dinámica** | 10-15h | Independiente | Godot Light2D | Luces puntuales 2D |
-| 8 | **Sombras 2D** | 8-12h | #7 Iluminación | Godot | Raycasting shadows |
+| 1 | **Letras 3D en demos** | 6-8h | ry3d-gfx | — | Texto 3D real en demos |
+| 2 | **Sistema de escenas** | 8-12h | Independiente | Godot PackedScene | `.ryscene` archivos |
+| 3 | **Scene transitions** | 4-6h | #2 Escenas | Unity loading | Fade entre niveles |
+| 4 | **Input map configurable** | 6-8h | Independiente | Godot Input Map | `.rydit-input` rebind |
+| 5 | **Panel visual mejorado** | 8-12h | migui | — | migui + toolkit-ry |
+| 6 | **migui mejoras** | 4-6h | Dear ImGui | Más widgets + temas |
+| 7 | **Rybot CLI completo** | 10-15h | Independiente | — | CLI para crear proyectos |
+| 8 | **Rybot GUI** | 12-16h | #7 Rybot CLI | — | GUI de Rybot CLI |
 
 ---
 
-## 🟡 TAREAS PENDIENTES — PRIORIDAD MEDIA (v0.19.0-v0.20.0)
-
-### UI + Escenas + Ciencia (v0.19.0)
-
-| # | Tarea | Esfuerzo | Inspiración | Detalle |
-|---|-------|----------|-------------|---------|
-| 13 | Letras 3D en demos | 6-8h | ry3d-gfx | Texto 3D real |
-| 14 | Panel visual mejorado | 8-12h | — | migui + toolkit-ry |
-| 15 | migui mejoras | 4-6h | Dear ImGui | Más widgets + temas |
-| 16 | Rybot CLI completo | 10-15h | — | CLI para crear proyectos |
-| 17 | Rybot GUI | 12-16h | — | GUI de Rybot CLI |
-| 18 | **Sistema de escenas** | 8-12h | Godot PackedScene | `.ryscene` archivos |
-| 19 | **Scene transitions** | 4-6h | Unity loading | Fade entre niveles |
-| 20 | **Scene tree visual** | 12-16h | Godot | Editor de escenas |
-| 21 | **Input map configurable** | 6-8h | Godot Input Map | `.rydit-input` rebind |
+## 🟡 TAREAS PENDIENTES — PRIORIDAD MEDIA (v0.20.0)
 
 ---
 
@@ -206,16 +217,11 @@ ry-stream LAN + v-shield sync → multiplayer LAN → streaming en vivo
 
 ## 📋 PRÓXIMA SESIÓN — Lo que traerás
 
-- [ ] **Sprite sheets reales** para mejorar demos
-- [ ] **Texturas PNG** en lugar de rectángulos
-- [ ] **Carga/edición GIF**
-- [ ] **DLSS/NIS** implementación estándar
-- [ ] **Opacidad/transparencia** en texturas
-- [ ] **Iluminación 2D dinámica**
-- [ ] **Sombras 2D** con raycasting
-- [ ] **Videos de los demos** para galería
-- [ ] **Capturas de pantalla** para galería
-- [ ] **Letras en demos** panel visual y migui
+- [ ] **Letras 3D en demos** para ry3d-gfx
+- [ ] **Sistema de escenas** (.ryscene archivos)
+- [ ] **Scene transitions** con fade
+- [ ] **Input map configurable** (.rydit-input)
+- [ ] **Panel visual mejorado** con migui
 - [ ] **Rybot CLI + GUI** interfaz completa
 - [ ] **Editor separado** (por si Termux cierra procesos) o 2-in-1
 - [ ] **LAZOS** no solo Python sino C++ y C
@@ -258,13 +264,13 @@ ry-stream LAN + v-shield sync → multiplayer LAN → streaming en vivo
 
 <div align="center">
 
-**🛡️ Ry-Dit v0.17.0 — Tareas Completadas y Pendientes**
+**🛡️ Ry-Dit v0.18.0 — Tareas Completadas y Pendientes**
 
-*23 crates · 144 tests · 12 crates.io · 18+ demos · 0 errores*
+*23 crates · 147 tests · 12 crates.io · 20+ demos · 0 errores*
 
 *3 Pilares: 🎮 Gaming · 🎬 Animaciones+Ciencia · 📡 Streaming+Comunidad*
 
-**Próximo: v0.18.0 — Sprite Sheets Reales + Texturas + GIF + DLSS/NIS + Iluminación 2D**
+**Próximo: v0.19.0 — Letras 3D + Escenas (.ryscene) + Input map + Rybot CLI+GUI**
 
 *Ver `TASKS_2.md` para análisis estratégico completo*
 

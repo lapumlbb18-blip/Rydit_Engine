@@ -97,6 +97,74 @@
 | DrawHandle3D sin camera ref | Agregar lifetime `'a` + guardar `&'a Camera3D` |
 | DrawModelEx scale = f32 | Cambiar a Vector3 (x,y,z) |
 
+### Patrón Correcto para 3D con ry3d-gfx
+
+**El patrón correcto:**
+```rust
+// imports
+use raylib::prelude::*;
+use ry3d_gfx::DrawHandle3D;
+use ry3d_gfx::touch_controls::TouchControls;
+use ry_gfx::ColorRydit;
+
+fn main() -> Result<(), String> {
+    // 1. Iniciar raylib (ventana + contexto GL)
+    let (mut rl, thread) = raylib::init()
+        .size(900, 600)
+        .title("Mi Demo 3D")
+        .build();
+
+    // 2. Crear cámara con Camera3D::perspective()
+    let camera = Camera3D::perspective(
+        Vector3::new(cam_x, cam_y, cam_z),
+        target,
+        Vector3::new(0.0, 1.0, 0.0),
+        45.0,
+    );
+
+    // 3. Game loop
+    while !rl.window_should_close() {
+        // Input (mouse, touch, teclado)
+        let touching = rl.is_mouse_button_down(MouseButton::MOUSE_BUTTON_LEFT);
+        let touch_pos = rl.get_mouse_position();
+
+        // 4. Render
+        let mut d = rl.begin_drawing(&thread);
+        d.clear_background(Color::BLACK);
+
+        // 5. Modo 3D con DrawHandle3D
+        let mut h3d = DrawHandle3D::new(&camera);
+        h3d.clear_3d(ColorRydit::Negro);
+        h3d.draw_grid_3d(20, 1.0);
+        h3d.draw_cube_3d((0.0, 1.0, 0.0), (2.0, 2.0, 2.0), ColorRydit::Rojo);
+        // ... más primitivas 3D
+        drop(h3d); // Fin modo 3D
+
+        // 6. Touch controls overlay (2D encima de 3D)
+        // touch.draw();
+
+        // 7. HUD 2D
+        d.draw_text("HUD", 10, 10, 20, Color::WHITE);
+    }
+    Ok(())
+}
+```
+
+**Lecciones críticas:**
+- NO usar `gl::Clear()` directamente — usar `h3d.clear_3d()`
+- NO usar `d.begin_mode_3d()` — usar `DrawHandle3D::new(&camera)`
+- NO importar `raylib::prelude::*` en ry3d-gfx (causa conflicto con re-exports)
+- TouchControls se dibuja DESPUÉS de `drop(h3d)` (2D sobre 3D)
+- Mouse button es `MOUSE_BUTTON_LEFT` no `MOUSE_LEFT_BUTTON`
+
+**Errores comunes y soluciones:**
+| Error | Causa | Solución |
+|-------|-------|----------|
+| `gl function was not loaded` | `gl::Clear()` sin contexto | Usar `h3d.clear_3d()` |
+| `no method named end_mode_3d` | API incorrecta | `DrawHandle3D::new()` hace Begin/End automático |
+| `Camera3D reimported` | Wildcard imports en ry3d-gfx | Importar tipos específicos |
+| `MOUSE_LEFT_BUTTON not found` | Nombre incorrecto | Usar `MOUSE_BUTTON_LEFT` |
+
 ---
 
 ## 📦 Lista de Crates (23)
@@ -156,16 +224,14 @@
 
 ---
 
-## 🚀 PRÓXIMOS PASOS (v0.18.0)
+## 🚀 PRÓXIMOS PASOS (v0.19.0)
 
 ### **Lo que traerás en la próxima sesión:**
-- [ ] DLSS/NIS implementación
-- [ ] Bordes suaves + texturas + opacidad final
-- [ ] Iluminación 2D dinámica
-- [ ] Sombras 2D con raycasting
-- [ ] Opacidad/transparencia en texturas
-- [ ] Fade in/out transiciones entre escenas
 - [ ] Letras 3D en demos
+- [ ] Sistema de escenas (.ryscene)
+- [ ] Scene transitions con fade
+- [ ] Input map configurable (.rydit-input)
+- [ ] Panel visual mejorado con migui
 - [ ] Rybot CLI + GUI
 - [ ] Editor separado o 2-in-1
 - [ ] LAZOS: Python + C++ + C
@@ -174,11 +240,11 @@
 - [ ] v1.0 de Ry-Dit
 
 ### **Prioridades técnicas:**
-1. NIS/FSR 2.0 → upscaling calidad
-2. Iluminación 2D → Godot Light2D style
-3. Sombras 2D → raycasting
-4. Opacidad → PNG con canal alpha
-5. Transiciones → fade entre escenas
+1. Letras 3D → texto real en ry3d-gfx
+2. Escenas → .ryscene archivos legibles
+3. Input map → rebind de teclas
+4. migui → más widgets + temas
+5. Rybot CLI → crear proyectos desde terminal
 
 ---
 
@@ -207,6 +273,8 @@ cargo check --workspace
 ./launcher_gpu_instancing.sh # 50K partículas
 ./launcher_fsr.sh            # FSR 1.0
 ./launcher_torreta.sh        # Torreta vs Sprites
+cargo run --bin demo_3d_primitives --release   # 🧊 3D Primitives
+cargo run --bin demo_transitions --release      # 🎬 19 Transiciones
 ```
 
 ---
@@ -217,8 +285,8 @@ cargo check --workspace
 
 *23 crates · 147 tests · 12 crates.io · 20+ demos · 0 errores*
 
-**Próximo: v0.19.0 — Mesh Generation + Materiales + Iluminación 3D**
+**Próximo: v0.19.0 — Letras 3D + Escenas (.ryscene) + Input map + Rybot CLI+GUI**
 
-**LECCIÓN v0.18.0: DrawText3D no en FFI | GetWorldToScreen pendiente | CameraMode usa FFI enum**
+**LECCIÓN v0.18.0: NO usar gl::Clear() directo | DrawHandle3D RAII | TouchControls después de drop(h3d) | MOUSE_BUTTON_LEFT no MOUSE_LEFT_BUTTON**
 
 </div>
