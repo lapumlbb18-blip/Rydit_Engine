@@ -38,6 +38,11 @@ extern "C" {
         text: *const c_char,
         fg: SDL_Color,
     ) -> *mut SDL_Surface;
+    fn TTF_RenderUTF8_Blended(
+        font: *mut TTF_Font,
+        text: *const c_char,
+        fg: SDL_Color,
+    ) -> *mut SDL_Surface;
 }
 
 // ============================================================================
@@ -331,6 +336,7 @@ impl FontFFI {
     }
 
     /// Renderizar texto (Blended - más lento, con alpha suave)
+    /// ✅ v0.17.0: Usa TTF_RenderUTF8_Blended para soporte UTF-8 correcto
     pub fn render_text_blended(
         &self,
         text: &str,
@@ -342,7 +348,8 @@ impl FontFFI {
             let c_text = CString::new(text).map_err(|e| e.to_string())?;
             let color = SDL_Color { r, g, b, a: 255 };
 
-            let surface = TTF_RenderText_Blended(self.font, c_text.as_ptr(), color);
+            // ✅ Usar UTF8 en lugar de Text (Latin-1)
+            let surface = TTF_RenderUTF8_Blended(self.font, c_text.as_ptr(), color);
 
             if surface.is_null() {
                 Err("Error renderizando texto".to_string())
