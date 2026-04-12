@@ -81,6 +81,17 @@ fn main() -> Result<(), String> {
         // BOUNDING BOX
         h3d.draw_bounding_box_3d((5.0, 0.0, -4.0), (7.0, 2.0, -2.0), ColorRydit::Verde);
 
+        // LETRAS 3D
+        h3d.draw_text_3d((0.0, 3.5, 0.0), "CUBO", 20.0, ColorRydit::Rojo);
+        h3d.draw_text_3d((0.0, 3.5, -4.0), "ESFERA", 20.0, ColorRydit::Amarillo);
+        h3d.draw_text_3d((0.0, 3.5, -8.0), "CILINDRO", 18.0, ColorRydit::Naranja);
+        h3d.draw_text_3d((-4.5, 3.0, -12.5), "PIRAMIDE", 16.0, ColorRydit::Verde);
+        h3d.draw_text_3d((6.0, 3.0, -12.0), "TRIANGULO", 16.0, ColorRydit::Naranja);
+
+        // Texto con fondo
+        h3d.draw_text_3d_with_bg((0.0, 5.0, -2.0), "Ry3D-GFX + Letras 3D", 16.0,
+            ColorRydit::Blanco, ColorRydit::Negro);
+
         // ---- HUD 2D ----
         drop(h3d);
 

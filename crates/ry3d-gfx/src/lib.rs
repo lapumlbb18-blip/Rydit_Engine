@@ -274,14 +274,77 @@ impl<'a> DrawHandle3D<'a> {
     // TEXTO 3D — Letras en coordenadas del mundo (billboard text)
     // ========================================================================
 
-    /// Dibujar texto en coordenadas 3D (proyectando 3D→2D)
-    ///
-    /// ⚠️ PENDIENTE: GetWorldToScreen no está expuesto en raylib FFI Rust.
-    /// Se necesita usar raylib prelude directamente o implementar la proyección manual.
-    /// Por ahora usa DrawText 2D en el HUD para texto.
-    pub fn draw_text_3d(&mut self, _pos: (f32,f32,f32), _text: &str, _size: f32, _color: ColorRydit) {
-        // TODO: Implementar con GetWorldToScreen cuando esté disponible en FFI
-        // Alternativa: usar raylib prelude Camera3D.get_world_to_screen()
+    /// Dibujar texto en coordenadas 3D (proyección perspectiva 3D→2D).
+    /// Equivalente a raylib DrawText3D.
+    pub fn draw_text_3d(&mut self, pos: (f32,f32,f32), text: &str, size: f32, color: ColorRydit) {
+        let screen = Self::world_to_screen(pos, self._camera);
+        if screen.0 > -500.0 && screen.0 < 2500.0 && screen.1 > -500.0 && screen.1 < 2500.0 {
+            let c = to_ffi_color(color);
+            let ct = std::ffi::CString::new(text).unwrap_or_default();
+            unsafe {
+                raylib::ffi::DrawTextEx(
+                    raylib::ffi::GetFontDefault(),
+                    ct.as_ptr(),
+                    raylib::ffi::Vector2 { x: screen.0, y: screen.1 },
+                    size, 1.0, c);
+            }
+        }
+    }
+
+    /// Texto 3D con fondo (mejor legibilidad)
+    pub fn draw_text_3d_with_bg(&mut self, pos: (f32,f32,f32), text: &str, size: f32, fg: ColorRydit, bg: ColorRydit) {
+        let screen = Self::world_to_screen(pos, self._camera);
+        if screen.0 > -500.0 && screen.0 < 2500.0 && screen.1 > -500.0 && screen.1 < 2500.0 {
+            let tw = text.len() as f32 * size * 0.6;
+            unsafe {
+                raylib::ffi::DrawRectangle(
+                    screen.0 as i32 - 4, (screen.1 - 4.0) as i32,
+                    (tw + 8.0) as i32, (size + 8.0) as i32, to_ffi_color(bg));
+            }
+            let ct = std::ffi::CString::new(text).unwrap_or_default();
+            unsafe {
+                raylib::ffi::DrawTextEx(
+                    raylib::ffi::GetFontDefault(),
+                    ct.as_ptr(),
+                    raylib::ffi::Vector2 { x: screen.0, y: screen.1 },
+                    size, 1.0, to_ffi_color(fg));
+            }
+        }
+    }
+
+    /// Proyectar coordenada 3D del mundo a pantalla 2D.
+    fn world_to_screen(world: (f32,f32,f32), cam: &Camera3D) -> (f32, f32) {
+        let sw = 900.0; let sh = 600.0;
+        // Forward
+        let dx = cam.target.x - cam.position.x;
+        let dy = cam.target.y - cam.position.y;
+        let dz = cam.target.z - cam.position.z;
+        let dl = (dx*dx + dy*dy + dz*dz).sqrt();
+        let (fx,fy,fz) = (dx/dl, dy/dl, dz/dl);
+        // Right = cross(up, forward)
+        let (ux,uy,uz) = (cam.up.x, cam.up.y, cam.up.z);
+        let mut rx = uy*fz - uz*fy;
+        let mut ry = uz*fx - ux*fz;
+        let mut rz = ux*fy - uy*fx;
+        let rl = (rx*rx + ry*ry + rz*rz).sqrt().max(0.001);
+        rx /= rl; ry /= rl; rz /= rl;
+        // Up = cross(forward, right)
+        let ux2 = fy*rz - fz*ry;
+        let uy2 = fz*rx - fx*rz;
+        let uz2 = fx*ry - fy*rx;
+        // View offsets
+        let vx = -(rx*cam.position.x + ry*cam.position.y + rz*cam.position.z);
+        let vy = -(ux2*cam.position.x + uy2*cam.position.y + uz2*cam.position.z);
+        let vz = -(fx*cam.position.x + fy*cam.position.y + fz*cam.position.z);
+        // Project
+        let fov = (cam.fovy / 2.0).to_radians().tan();
+        let cx = rx*world.0 + ry*world.1 + rz*world.2 + vx;
+        let cy = ux2*world.0 + uy2*world.1 + uz2*world.2 + vy;
+        let cz = fx*world.0 + fy*world.1 + fz*world.2 + vz;
+        if cz <= 0.01 { return (-9999.0, -9999.0); }
+        let px = (cx / cz) / (fov * (sw / sh));
+        let py = (cy / cz) / fov;
+        ((px * 0.5 + 0.5) * sw, (-py * 0.5 + 0.5) * sh)
     }
 
     // ========================================================================
