@@ -28,6 +28,8 @@ migui = { path = "../migui", features = ["sdl2"] }
 ry-stream = { path = "../ry-stream" }  # 🆕 v0.11.2: LAN streaming
 ry-input = { path = "../ry-input" }  # 🆕 v0.19.0: Input map configurable
 rybot = { path = "../rybot" }  # 🆕 v0.19.0: Motor central
+# rybot usa migui+sdl2, raylib nobuild — conflicto de linker en Android
+# demo_rybot_gui se habilita cuando se resuelva el linking
 raylib = { version = "5.5.1", default-features = false, features = ["nobuild"] }
 gl = "0.14.0"
 sdl2 = "0.37"
@@ -78,7 +80,3 @@ path = "src/bin/demo_3d_touch.rs"
 [[bin]]
 name = "demo_input_map"
 path = "src/bin/demo_input_map.rs"
-
-[[bin]]
-name = "demo_rybot_gui"
-path = "src/bin/demo_rybot_gui.rs"
