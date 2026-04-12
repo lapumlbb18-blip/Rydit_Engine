@@ -372,11 +372,171 @@ impl<'a> DrawHandle3D<'a> {
     }
 }
 
+// ============================================================================
+// MESH — Geometría procedural (alta/media/baja poligonal)
+// ============================================================================
+
+/// Mesh procedural envuelto
+pub struct Mesh3D {
+    inner: raylib::ffi::Mesh,
+}
+
+impl Mesh3D {
+    /// Generar cubo con raylib (nivel de detalle: 1-10)
+    pub fn cube(detail: u32) -> Self {
+        let d = detail.clamp(1, 10) as i32;
+        let mesh = unsafe { raylib::ffi::GenMeshCube(1.0, 1.0, 1.0) };
+        let _ = d; // reserve for future subdivision
+        Self { inner: mesh }
+    }
+
+    /// Generar esfera
+    pub fn sphere(radius: f32, rings: u32, slices: u32) -> Self {
+        let mesh = unsafe { raylib::ffi::GenMeshSphere(radius, rings as i32, slices as i32) };
+        Self { inner: mesh }
+    }
+
+    /// Generar cilindro
+    pub fn cylinder(radius: f32, h: f32, slices: u32) -> Self {
+        let mesh = unsafe { raylib::ffi::GenMeshCylinder(radius, h, slices as i32) };
+        Self { inner: mesh }
+    }
+
+    /// Generar plano
+    pub fn plane(w: f32, h: f32, res_w: u32, res_h: u32) -> Self {
+        let mesh = unsafe { raylib::ffi::GenMeshPlane(w, h, res_w as i32, res_h as i32) };
+        Self { inner: mesh }
+    }
+
+    /// Upload mesh to GPU
+    pub fn upload_gpu(&mut self) {
+        unsafe { raylib::ffi::UploadMesh(&mut self.inner, false) };
+    }
+
+    /// Dibujar mesh con posición, escala y color
+    pub fn draw(&self, pos: (f32,f32,f32), scale: f32, tint: ColorRydit) {
+        let transform = raylib::ffi::Matrix {
+            m0: scale, m4: 0.0, m8: 0.0, m12: pos.0,
+            m1: 0.0, m5: scale, m9: 0.0, m13: pos.1,
+            m2: 0.0, m6: 0.0, m10: scale, m14: pos.2,
+            m3: 0.0, m7: 0.0, m11: 0.0, m15: 1.0,
+        };
+        let c = to_ffi_color(tint);
+        unsafe {
+            let mut mat = raylib::ffi::LoadMaterialDefault();
+            // material.maps is *mut MaterialMap — set color via pointer
+            if !mat.maps.is_null() {
+                (*mat.maps).color = c;
+            }
+            raylib::ffi::DrawMesh(self.inner, mat, transform);
+            raylib::ffi::UnloadMaterial(mat);
+        }
+    }
+}
+
+impl Drop for Mesh3D {
+    fn drop(&mut self) {
+        unsafe { raylib::ffi::UnloadMesh(self.inner) };
+    }
+}
+
+// ========================================================================
+// SKELETON / BONES — Sistema de huesos para animación
+// ========================================================================
+
+/// Hueso individual en un esqueleto
+#[derive(Debug, Clone)]
+pub struct Bone3D {
+    pub name: String,
+    pub parent: Option<usize>,
+    pub position: (f32,f32,f32),
+    pub rotation: (f32,f32,f32),
+    pub scale: (f32,f32,f32),
+    pub length: f32,
+}
+
+impl Bone3D {
+    pub fn new(name: &str, pos: (f32,f32,f32), len: f32) -> Self {
+        Self {
+            name: name.into(),
+            parent: None,
+            position: pos,
+            rotation: (0.0, 0.0, 0.0),
+            scale: (1.0, 1.0, 1.0),
+            length: len,
+        }
+    }
+    pub fn with_parent(mut self, parent: usize) -> Self {
+        self.parent = Some(parent); self
+    }
+}
+
+/// Esqueleto 3D completo
+#[derive(Debug, Clone)]
+pub struct Skeleton3D {
+    pub bones: Vec<Bone3D>,
+    pub root: usize,
+}
+
+impl Skeleton3D {
+    pub fn new(bones: Vec<Bone3D>, root: usize) -> Self {
+        Self { bones, root }
+    }
+
+    /// Esqueleto humanoide básico (22 bones)
+    pub fn humanoid() -> Self {
+        let mut bones = Vec::new();
+        bones.push(Bone3D::new("Hips", (0.0, 1.0, 0.0), 0.2));
+        let hips = bones.len()-1;
+        bones.push(Bone3D::new("Spine", (0.0, 1.3, 0.0), 0.3).with_parent(hips));
+        let spine = bones.len()-1;
+        bones.push(Bone3D::new("Chest", (0.0, 1.6, 0.0), 0.3).with_parent(spine));
+        let chest = bones.len()-1;
+        bones.push(Bone3D::new("UpperChest", (0.0, 1.9, 0.0), 0.3).with_parent(chest));
+        let uc = bones.len()-1;
+        bones.push(Bone3D::new("Neck", (0.0, 2.2, 0.0), 0.15).with_parent(uc));
+        let neck = bones.len()-1;
+        bones.push(Bone3D::new("Head", (0.0, 2.4, 0.0), 0.3).with_parent(neck));
+        // Left arm
+        bones.push(Bone3D::new("LeftShoulder", (-0.2, 1.9, 0.0), 0.1).with_parent(uc));
+        bones.push(Bone3D::new("LeftUpperArm", (-0.4, 1.8, 0.0), 0.3).with_parent(bones.len()-1));
+        bones.push(Bone3D::new("LeftLowerArm", (-0.6, 1.5, 0.0), 0.3).with_parent(bones.len()-1));
+        bones.push(Bone3D::new("LeftHand", (-0.7, 1.2, 0.0), 0.15).with_parent(bones.len()-1));
+        // Right arm
+        bones.push(Bone3D::new("RightShoulder", (0.2, 1.9, 0.0), 0.1).with_parent(uc));
+        bones.push(Bone3D::new("RightUpperArm", (0.4, 1.8, 0.0), 0.3).with_parent(bones.len()-1));
+        bones.push(Bone3D::new("RightLowerArm", (0.6, 1.5, 0.0), 0.3).with_parent(bones.len()-1));
+        bones.push(Bone3D::new("RightHand", (0.7, 1.2, 0.0), 0.15).with_parent(bones.len()-1));
+        // Left leg
+        bones.push(Bone3D::new("LeftUpperLeg", (-0.15, 0.9, 0.0), 0.4).with_parent(hips));
+        bones.push(Bone3D::new("LeftLowerLeg", (-0.15, 0.5, 0.0), 0.4).with_parent(bones.len()-1));
+        bones.push(Bone3D::new("LeftFoot", (-0.15, 0.1, 0.05), 0.2).with_parent(bones.len()-1));
+        // Right leg
+        bones.push(Bone3D::new("RightUpperLeg", (0.15, 0.9, 0.0), 0.4).with_parent(hips));
+        bones.push(Bone3D::new("RightLowerLeg", (0.15, 0.5, 0.0), 0.4).with_parent(bones.len()-1));
+        bones.push(Bone3D::new("RightFoot", (0.15, 0.1, 0.05), 0.2).with_parent(bones.len()-1));
+        Self::new(bones, 0)
+    }
+
+    /// Dibujar esqueleto como líneas + esferas
+    pub fn draw(&self, h3d: &mut DrawHandle3D, bone_c: ColorRydit, joint_c: ColorRydit) {
+        for bone in &self.bones {
+            if let Some(pi) = bone.parent {
+                let parent = &self.bones[pi];
+                h3d.draw_line_3d(parent.position, bone.position, bone_c);
+            }
+            h3d.draw_sphere_3d(bone.position, bone.length * 0.5, joint_c);
+        }
+    }
+}
+
 impl<'a> Drop for DrawHandle3D<'a> {
     fn drop(&mut self) {
         unsafe { raylib::ffi::EndMode3D() };
     }
 }
+
+// ============================================================================
 
 #[cfg(test)]
 mod tests {
