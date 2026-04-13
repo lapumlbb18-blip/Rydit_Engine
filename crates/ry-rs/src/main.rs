@@ -1693,9 +1693,23 @@ pub fn ejecutar_stmt_gfx<'stmt, 'data>(
             }
             // particles::draw() - Dibujar partículas (usar RenderQueue)
             else if func_name == "particles::draw" && args.len() == 0 {
-                // particles::draw() no usa queue, dibuja directamente
-                // Se maneja especial: retorna éxito pero el draw real se hace abajo
                 eprintln!("[PARTICLES] particles::draw() llamado");
+            }
+            // ✅ v0.19.2: particles::enable_velocity_color
+            else if func_name == "particles::enable_velocity_color" && args.len() == 1 {
+                use crate::modules::particles::{ejecutar_funcion as particles_exec};
+                let result = particles_exec("particles::enable_velocity_color", args, executor, input, funcs);
+                if let Some(r) = result {
+                    executor.guardar("__RESULT__", r);
+                }
+            }
+            // ✅ v0.19.2: particles::enable_additive_blend
+            else if func_name == "particles::enable_additive_blend" && args.len() == 0 {
+                use crate::modules::particles::{ejecutar_funcion as particles_exec};
+                let result = particles_exec("particles::enable_additive_blend", args, executor, input, funcs);
+                if let Some(r) = result {
+                    executor.guardar("__RESULT__", r);
+                }
             }
             // particles::set_gravity(x, y)
             else if func_name == "particles::set_gravity" && args.len() == 2 {

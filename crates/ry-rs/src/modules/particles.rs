@@ -127,7 +127,6 @@ pub fn ejecutar_funcion<'a>(
     if name == "particles::enable_velocity_color" && args.len() == 1 {
         let max_speed_val = crate::evaluar_expr_gfx(&args[0], executor, input, funcs);
         if let Valor::Num(max_speed) = max_speed_val {
-            // Guardar variable para que el executor sepa usar draw_with_velocity
             executor.guardar("__PARTICLE_VELOCITY_COLOR__", Valor::Bool(true));
             executor.guardar("__PARTICLE_MAX_SPEED__", Valor::Num(max_speed));
             return Some(Valor::Texto(format!("Color por velocidad activado (max_speed={})", max_speed)));
@@ -136,6 +135,15 @@ pub fn ejecutar_funcion<'a>(
                 "particles::enable_velocity_color() requiere num (max_speed)".to_string(),
             ));
         }
+    }
+
+    // 🆕 v0.19.2: particles::enable_additive_blend() — activar blend aditivo (explosiones brillantes)
+    if name == "particles::enable_additive_blend" && args.len() == 0 {
+        PARTICLES.with(|p| {
+            let mut system = p.borrow_mut();
+            system.additive_blend = true;
+        });
+        return Some(Valor::Texto("Blend aditivo activado — explosiones brillantes".to_string()));
     }
 
     // particles::set_gravity(gravity)

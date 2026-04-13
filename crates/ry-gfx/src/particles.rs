@@ -308,6 +308,8 @@ pub struct ParticleSystem {
     pub global_gravity: f32,
     pub global_wind_x: f32,
     pub global_wind_y: f32,
+    /// 🆕 v0.19.2: Blend aditivo para explosiones brillantes
+    pub additive_blend: bool,
 }
 
 impl ParticleSystem {
@@ -317,6 +319,7 @@ impl ParticleSystem {
             global_gravity: 200.0, // Gravedad hacia abajo
             global_wind_x: 0.0,
             global_wind_y: 0.0,
+            additive_blend: false,
         }
     }
 
@@ -348,15 +351,27 @@ impl ParticleSystem {
 
     /// Dibujar todas las artículos
     pub fn draw(&self, d: &mut RaylibDrawHandle) {
+        if self.additive_blend {
+            unsafe { raylib::ffi::BeginBlendMode(raylib::ffi::BlendMode::BLEND_ADDITIVE as i32) };
+        }
         for emitter in self.emitters.values() {
             emitter.draw(d);
+        }
+        if self.additive_blend {
+            unsafe { raylib::ffi::EndBlendMode() };
         }
     }
 
     /// 🆕 v0.19.2: Dibujar todas las partículas con color por velocidad
     pub fn draw_with_velocity(&self, d: &mut RaylibDrawHandle, max_speed: f32) {
+        if self.additive_blend {
+            unsafe { raylib::ffi::BeginBlendMode(raylib::ffi::BlendMode::BLEND_ADDITIVE as i32) };
+        }
         for emitter in self.emitters.values() {
             emitter.draw_with_velocity(d, max_speed);
+        }
+        if self.additive_blend {
+            unsafe { raylib::ffi::EndBlendMode() };
         }
     }
 
