@@ -1221,6 +1221,12 @@ impl<'a> DrawHandle<'a> {
         self.draw.draw_line(x1, y1, x2, y2, color.to_color());
     }
 
+    /// 🆕 v0.19.2: Dibujar sistema de partículas con color por velocidad
+    pub fn draw_particles_velocity(&mut self, system: &crate::particles::ParticleSystem, max_speed: f32) {
+        let draw_ref = &mut self.draw;
+        system.draw_with_velocity(draw_ref, max_speed);
+    }
+
     /// Dibujar texto
     pub fn draw_text(&mut self, text: &str, x: i32, y: i32, size: i32, color: ColorRydit) {
         self.draw.draw_text(text, x, y, size, color.to_color());

@@ -123,6 +123,21 @@ pub fn ejecutar_funcion<'a>(
         ));
     }
 
+    // 🆕 v0.19.2: particles::enable_velocity_color(max_speed) — activar color por velocidad
+    if name == "particles::enable_velocity_color" && args.len() == 1 {
+        let max_speed_val = crate::evaluar_expr_gfx(&args[0], executor, input, funcs);
+        if let Valor::Num(max_speed) = max_speed_val {
+            // Guardar variable para que el executor sepa usar draw_with_velocity
+            executor.guardar("__PARTICLE_VELOCITY_COLOR__", Valor::Bool(true));
+            executor.guardar("__PARTICLE_MAX_SPEED__", Valor::Num(max_speed));
+            return Some(Valor::Texto(format!("Color por velocidad activado (max_speed={})", max_speed)));
+        } else {
+            return Some(Valor::Error(
+                "particles::enable_velocity_color() requiere num (max_speed)".to_string(),
+            ));
+        }
+    }
+
     // particles::set_gravity(gravity)
     if name == "particles::set_gravity" && args.len() == 1 {
         let gravity_val = crate::evaluar_expr_gfx(&args[0], executor, input, funcs);
@@ -177,6 +192,14 @@ pub fn draw_particles_with_handle<'a>(d: &mut ry_gfx::DrawHandle) {
     PARTICLES.with(|p| {
         let system = p.borrow();
         system.draw(&mut d.draw);
+    });
+}
+
+/// 🆕 v0.19.2: Dibujar partículas con color por velocidad
+pub fn draw_particles_with_handle_velocity<'a>(d: &mut ry_gfx::DrawHandle, max_speed: f32) {
+    PARTICLES.with(|p| {
+        let system = p.borrow();
+        system.draw_with_velocity(&mut d.draw, max_speed);
     });
 }
 

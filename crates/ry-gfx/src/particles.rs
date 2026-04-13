@@ -78,6 +78,53 @@ impl Particle {
         }
     }
 
+    /// 🆕 v0.19.2: Color por velocidad — Azul oscuro → Azul → Amarillo → Rojo → Blanco
+    ///
+    /// Escala de velocidad (pixels/seg):
+    /// - 0-20%: Azul oscuro (lento/pesado)
+    /// - 20-40%: Azul claro (acelerando)
+    /// - 40-60%: Amarillo (eléctrico)
+    /// - 60-80%: Naranja (rápido)
+    /// - 80-95%: Rojo (nitrógeno NFS)
+    /// - 95-100%: Blanco flash (velocidad de la luz)
+    pub fn get_velocity_color(&self, max_speed: f32) -> Color {
+        let speed = (self.vx * self.vx + self.vy * self.vy).sqrt();
+        let t = (speed / max_speed).clamp(0.0, 1.0);
+
+        let (r, g, b) = if t < 0.2 {
+            // Azul oscuro → Azul claro
+            let lt = t / 0.2;
+            lerp3((20, 40, 120), (80, 160, 255), lt)
+        } else if t < 0.4 {
+            // Azul claro → Amarillo
+            let lt = (t - 0.2) / 0.2;
+            lerp3((80, 160, 255), (255, 255, 80), lt)
+        } else if t < 0.6 {
+            // Amarillo → Naranja
+            let lt = (t - 0.4) / 0.2;
+            lerp3((255, 255, 80), (255, 160, 20), lt)
+        } else if t < 0.8 {
+            // Naranja → Rojo
+            let lt = (t - 0.6) / 0.2;
+            lerp3((255, 160, 20), (255, 40, 20), lt)
+        } else if t < 0.95 {
+            // Rojo → Rojo brillante (nitrógeno)
+            let lt = (t - 0.8) / 0.15;
+            lerp3((255, 40, 20), (255, 100, 80), lt)
+        } else {
+            // Rojo brillante → Blanco flash
+            let lt = (t - 0.95) / 0.05;
+            lerp3((255, 100, 80), (255, 255, 255), lt)
+        };
+
+        Color {
+            r: r as u8,
+            g: g as u8,
+            b: b as u8,
+            a: self.get_alpha(),
+        }
+    }
+
     /// Dibujar partícula
     pub fn draw(&self, d: &mut RaylibDrawHandle) {
         let alpha = self.get_alpha();
@@ -89,6 +136,12 @@ impl Particle {
         };
 
         d.draw_circle(self.x as i32, self.y as i32, self.size, color_with_alpha);
+    }
+
+    /// 🆕 v0.19.2: Dibujar con color por velocidad
+    pub fn draw_with_velocity(&self, d: &mut RaylibDrawHandle, max_speed: f32) {
+        let vel_color = self.get_velocity_color(max_speed);
+        d.draw_circle(self.x as i32, self.y as i32, self.size, vel_color);
     }
 }
 
@@ -232,6 +285,13 @@ impl ParticleEmitter {
         }
     }
 
+    /// 🆕 v0.19.2: Dibujar todas las partículas con color por velocidad
+    pub fn draw_with_velocity(&self, d: &mut RaylibDrawHandle, max_speed: f32) {
+        for particle in &self.particles {
+            particle.draw_with_velocity(d, max_speed);
+        }
+    }
+
     /// Verificar si el emisor está vacío
     pub fn is_empty(&self) -> bool {
         self.particles.is_empty() && (!self.active || self.emitted)
@@ -286,10 +346,17 @@ impl ParticleSystem {
         self.emitters.retain(|_, e| !e.is_empty());
     }
 
-    /// Dibujar todas las partículas
+    /// Dibujar todas las artículos
     pub fn draw(&self, d: &mut RaylibDrawHandle) {
         for emitter in self.emitters.values() {
             emitter.draw(d);
+        }
+    }
+
+    /// 🆕 v0.19.2: Dibujar todas las partículas con color por velocidad
+    pub fn draw_with_velocity(&self, d: &mut RaylibDrawHandle, max_speed: f32) {
+        for emitter in self.emitters.values() {
+            emitter.draw_with_velocity(d, max_speed);
         }
     }
 
@@ -338,6 +405,16 @@ fn rand_f32() -> f32 {
         .unwrap()
         .subsec_nanos() as f32;
     (seed.sin() * 10000.0).fract()
+}
+
+/// 🆕 v0.19.2: Interpolación lineal 3D (r, g, b)
+fn lerp3(from: (u8, u8, u8), to: (u8, u8, u8), t: f32) -> (u16, u16, u16) {
+    let t = t.clamp(0.0, 1.0);
+    (
+        (from.0 as f32 + (to.0 as f32 - from.0 as f32) * t) as u16,
+        (from.1 as f32 + (to.1 as f32 - from.1 as f32) * t) as u16,
+        (from.2 as f32 + (to.2 as f32 - from.2 as f32) * t) as u16,
+    )
 }
 
 // ============================================================================
