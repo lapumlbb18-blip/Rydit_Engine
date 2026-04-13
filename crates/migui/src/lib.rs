@@ -29,6 +29,9 @@ pub mod backend_sdl2;
 // Fuentes nativas en Rust (sin FFI)
 pub mod font_native;
 
+// 🆕 v0.19.1: Layout Flexbox — layout automático tipo CSS Flexbox
+pub mod layout;
+
 use std::str::FromStr;
 
 // ============================================================================
