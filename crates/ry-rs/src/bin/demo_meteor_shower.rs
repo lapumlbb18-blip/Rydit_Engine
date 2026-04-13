@@ -9,8 +9,11 @@ use ry_gfx::particles::{ParticleEmitter, ParticleSystem};
 
 fn main() -> Result<(), String> {
     println!("🌠 RyDit — Demo Lluvia de Meteoros");
-    println!("   Gravitación Newtoniana + Color por Velocidad + Blend Aditivo");
+    println!("   Gravitación Newtoniana + Color por Velocidad + Blend Aditivo + Audio Reactivo");
     println!("   [ESPACIO] Nuevo meteoro | [R] Reiniciar | [ESC] Salir");
+
+    // Inicializar audio (miniaudio - detecta PulseAudio/PipeWire/ALSA)
+    unsafe { raylib::ffi::InitAudioDevice() };
 
     let (mut rl, thread) = raylib::init()
         .size(900, 600)
@@ -32,6 +35,22 @@ fn main() -> Result<(), String> {
     let mut frame = 0u64;
     let mut total_energy = 0.0f32;
     let mut impact_count = 0u64;
+
+    // === AUDIO PROCEDURAL — generar sonidos sin archivos (FFI directo) ===
+    let impact_wave = generate_impact_wave(44100);
+    let impact_sound = unsafe { raylib::ffi::LoadSoundFromWave(impact_wave) };
+
+    let explosion_wave = generate_explosion_wave(44100);
+    let explosion_sound = unsafe { raylib::ffi::LoadSoundFromWave(explosion_wave) };
+
+    let rumble_wave = generate_rumble_wave(44100);
+    let rumble_sound = unsafe { raylib::ffi::LoadSoundFromWave(rumble_wave) };
+
+    // Estado de audio para el frame actual
+    let mut play_impact = false;
+    let mut play_explosion = false;
+    let mut impact_pitch = 1.0f32;
+    let mut explosion_volume = 0.5f32;
 
     // Crear meteoros iniciales
     spawn_meteor_cluster(&mut meteors, 450.0, 100.0, 5);
@@ -100,6 +119,15 @@ fn main() -> Result<(), String> {
                     impact_count += 1;
                     total_energy += energy;
 
+                    // === AUDIO ===
+                    if energy > 5000.0 {
+                        play_explosion = true;
+                        explosion_volume = (energy / 50000.0).clamp(0.3, 1.0);
+                    } else {
+                        play_impact = true;
+                        impact_pitch = (energy / 500.0).clamp(0.5, 3.0);
+                    }
+
                     // Meteoros más pequeños mueren, grande sobrevive
                     if meteors[i].mass < meteors[j].mass {
                         meteors[i].alive = false;
@@ -137,6 +165,23 @@ fn main() -> Result<(), String> {
 
         // Update partículas
         ps.update(dt);
+
+        // === AUDIO ===
+        if play_impact {
+            unsafe {
+                raylib::ffi::SetSoundPitch(impact_sound, impact_pitch);
+                raylib::ffi::PlaySound(impact_sound);
+            }
+        }
+        if play_explosion {
+            unsafe {
+                raylib::ffi::SetSoundVolume(explosion_sound, explosion_volume);
+                raylib::ffi::PlaySound(explosion_sound);
+            }
+        }
+        // Reset flags
+        play_impact = false;
+        play_explosion = false;
 
         // === RENDER ===
         let mut d = rl.begin_drawing(&thread);
@@ -322,4 +367,82 @@ fn rand_f32() -> f32 {
         .unwrap()
         .subsec_nanos() as f32;
     (seed.sin() * 10000.0).fract()
+}
+
+// ============================================================================
+// AUDIO PROCEDURAL — generar ondas sin archivos externos (FFI directo)
+// ============================================================================
+
+fn create_wave_from_samples(samples: &[f32], sample_rate: u32) -> raylib::ffi::Wave {
+    let data = samples.as_ptr() as *mut std::ffi::c_void;
+    // Clonar los datos porque Wave toma ownership
+    let boxed = samples.to_vec().into_boxed_slice();
+    let data = Box::into_raw(boxed) as *mut std::ffi::c_void;
+
+    raylib::ffi::Wave {
+        frameCount: samples.len() as u32,
+        sampleRate: sample_rate,
+        sampleSize: 32, // 32-bit float
+        channels: 1,
+        data,
+    }
+}
+
+/// Impacto corto: tono agudo que decae exponencialmente
+fn generate_impact_wave(sample_rate: u32) -> raylib::ffi::Wave {
+    let duration = 0.15; // 150ms
+    let samples = (sample_rate as f32 * duration) as usize;
+    let mut data = Vec::with_capacity(samples);
+    let base_freq = 800.0; // Hz
+
+    for i in 0..samples {
+        let t = i as f32 / sample_rate as f32;
+        let envelope = (-t * 20.0).exp();
+        let sample = (base_freq * t * 2.0 * std::f32::consts::PI).sin() * envelope * 0.8;
+        data.push(sample);
+    }
+
+    create_wave_from_samples(&data, sample_rate)
+}
+
+/// Explosión: ruido blanco con decaimiento lento y filtro low-pass
+fn generate_explosion_wave(sample_rate: u32) -> raylib::ffi::Wave {
+    let duration = 0.5; // 500ms
+    let samples = (sample_rate as f32 * duration) as usize;
+    let mut data = Vec::with_capacity(samples);
+    let mut prev_sample = 0.0f32;
+
+    for i in 0..samples {
+        let t = i as f32 / sample_rate as f32;
+        let noise = (rand_f32() * 2.0 - 1.0) * 0.5;
+        let filtered = prev_sample * 0.7 + noise * 0.3;
+        prev_sample = filtered;
+
+        let envelope = if t < 0.02 {
+            t / 0.02
+        } else {
+            (-(t - 0.02) * 5.0).exp()
+        };
+
+        data.push(filtered * envelope * 0.9);
+    }
+
+    create_wave_from_samples(&data, sample_rate)
+}
+
+/// Retumbo: tono bajo sostenido
+fn generate_rumble_wave(sample_rate: u32) -> raylib::ffi::Wave {
+    let duration = 0.3; // 300ms
+    let samples = (sample_rate as f32 * duration) as usize;
+    let mut data = Vec::with_capacity(samples);
+    let freq = 80.0; // Hz — muy grave
+
+    for i in 0..samples {
+        let t = i as f32 / sample_rate as f32;
+        let envelope = (-t * 4.0).exp();
+        let sample = (freq * t * 2.0 * std::f32::consts::PI).sin() * envelope * 0.5;
+        data.push(sample);
+    }
+
+    create_wave_from_samples(&data, sample_rate)
 }
