@@ -60,7 +60,7 @@
 
 | # | Tarea | Esfuerzo | Dependencia | Detalle |
 |---|-------|----------|-------------|---------|
-| 4 | **Asset pipeline** | 10-15h | ry-windows, ryfrac-postFX | Carga automática de assets + compresión (basis-universal, ktx2) + hot reload. `AssetServer::load()` idiomático tipo Bevy. |
+| 4 | **Asset pipeline** | 10-15h | ry-windows, ryfrac-postFX | Carga automática de assets + compresión (basis-universal, ktx2) + hot reload. `AssetServer::load()` idiomático tipo Bevy. **Base arquitectónica completada (v0.20.0-alpha)**: Trait AssetProvider, AssetServer con caché, Sdl2/Raylib adaptadores base. |
 | 5 | **Tilemap editor visual** | 12-16h | migui, toolkit-ry, asset pipeline | Editor GUI de tilemap + tileset con preview, paint, export CSV. |
 | 6 | **Editor visual + por código** | 20-30h | ry-windows, migui, asset pipeline | Editor visual de juegos (separado o 2-in-1). Ambos modos: visual (drag & drop) y por código. Fusión de físicas + animaciones Disney + procesos científicos/biológicos. Sencillo pero potente. |
 

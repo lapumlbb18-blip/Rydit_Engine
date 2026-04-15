@@ -11,6 +11,7 @@ keywords = ["game-engine", "graphics", "sdl2", "gpu-instancing", "termux"]
 categories = ["game-engines", "rendering::engine"]
 
 [dependencies]
+ry-loader = { version = "0.8.2", path = "../ry-loader" }
 raylib = { version = "5.5.1", default-features = false, features = ["nobuild"] }
 gl = "0.14.0"
 sdl2 = { version = "0.37", features = ["image", "ttf", "mixer"] }

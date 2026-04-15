@@ -305,57 +305,25 @@ impl Sdl2Backend {
 }
 
 // ============================================================================
-// GESTOR DE TEXTURAS SDL2 (v0.10.7) - PENDIENTE
+// ASSET PROVIDER (SDL2)
 // ============================================================================
 
-/// Gestor de texturas con SDL2_image
-/// ⚠️ PENDIENTE: El linking de SDL2_image es complejo, se implementará en v0.10.8
-pub struct TextureManager;
+use ry_loader::AssetProvider;
 
-impl TextureManager {
-    pub fn new() -> Self {
-        Self
+/// Adaptador para usar SDL2 como proveedor de assets
+pub struct Sdl2AssetProvider;
+
+impl AssetProvider for Sdl2AssetProvider {
+    fn load_texture(&self, path: &str) -> Result<Vec<u8>, String> {
+        // En una implementación real de SDL2_image, cargaríamos
+        // el archivo a un buffer o superficie y retornaríamos los bytes.
+        // Por ahora, devolvemos un error para indicar que el linking está pendiente
+        // tal como indica el TextureManager original.
+        Err(format!("SDL2_image linking pendiente - Carga de {} no soportada", path))
     }
 
-    /// Cargar superficie desde archivo (SDL2_image)
-    /// ⚠️ No implementado aún - linking pendiente
-    pub fn load_surface(_path: &str) -> Result<sdl2::surface::Surface<'static>, String> {
-        Err("SDL2_image linking pendiente - v0.10.8".to_string())
-    }
-
-    /// Dibujar textura desde superficie
-    pub fn draw_texture_from_surface(
-        _surface: &sdl2::surface::Surface,
-        _canvas: &mut Canvas<sdl2::video::Window>,
-        _x: i32,
-        _y: i32,
-        _width: u32,
-        _height: u32,
-    ) -> Result<(), String> {
-        Err("SDL2_image linking pendiente - v0.10.8".to_string())
-    }
-
-    /// Cargar y dibujar textura inmediatamente
-    pub fn draw_texture(
-        _path: &str,
-        _canvas: &mut Canvas<sdl2::video::Window>,
-        _x: i32,
-        _y: i32,
-        _width: u32,
-        _height: u32,
-    ) -> Result<(), String> {
-        Err("SDL2_image linking pendiente - v0.10.8".to_string())
-    }
-
-    /// Contar texturas (siempre 0, no almacenamos)
-    pub fn count(&self) -> usize {
-        0
-    }
-}
-
-impl Default for TextureManager {
-    fn default() -> Self {
-        Self::new()
+    fn load_audio(&self, path: &str) -> Result<Vec<u8>, String> {
+        Err(format!("Carga de audio SDL2 pendiente - {}", path))
     }
 }
 

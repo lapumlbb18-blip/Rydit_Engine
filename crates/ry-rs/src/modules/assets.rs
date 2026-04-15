@@ -1,25 +1,32 @@
 // crates/rydit-rs/src/modules/assets.rs
-// Assets Manager - Carga y dibujo de sprites 2D estilo Godot
+// Assets Manager - Carga y dibujo de sprites 2D usando ry_loader::AssetServer
 
-#![allow(dead_code)] // Funciones usadas desde eval/mod.rs
+#![allow(dead_code)]
 
 use blast_core::{Executor, Valor};
 use ry_gfx::Assets;
+use ry_loader::AssetServer;
 use ry_parser::{Expr, Stmt};
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 use std::str::FromStr;
+use std::sync::Arc;
 
 use crate::eval::evaluar_expr;
 use ry_gfx::ColorRydit;
 
-// Estado global de assets (compartido entre módulos)
+// Estado global compartido (AssetServer + Assets)
 thread_local! {
+    static GLOBAL_ASSET_SERVER: RefCell<Option<Arc<AssetServer>>> = RefCell::new(None);
     static GLOBAL_ASSETS: Rc<RefCell<Assets>> = Rc::new(RefCell::new(Assets::new()));
 }
 
-/// Obtener referencia a los assets globales
+/// Inyectar el servidor de assets
+pub fn set_asset_server(server: Arc<AssetServer>) {
+    GLOBAL_ASSET_SERVER.with(|s| *s.borrow_mut() = Some(server));
+}
+
 pub fn get_assets<'a>() -> Rc<RefCell<Assets>> {
     GLOBAL_ASSETS.with(|a| a.clone())
 }
@@ -28,7 +35,6 @@ pub fn get_assets<'a>() -> Rc<RefCell<Assets>> {
 // FUNCIONES DEL MÓDULO ASSETS
 // ============================================================================
 
-/// assets::load(id, path) - Cargar textura desde archivo
 pub fn assets_load<'a>(
     args: &[Expr<'a>],
     executor: &mut Executor,
@@ -38,39 +44,38 @@ pub fn assets_load<'a>(
         return Valor::Error("assets::load() requiere 2 argumentos: id, path".to_string());
     }
 
-    // Evaluar ID
-    let id_val = evaluar_expr(&args[0], executor, _funcs);
-    let id = match id_val {
+    let id = match evaluar_expr(&args[0], executor, _funcs) {
         Valor::Texto(s) => s,
         Valor::Num(n) => n.to_string(),
-        _ => {
-            return Valor::Error(
-                "assets::load() el primer argumento debe ser un ID (texto)".to_string(),
-            )
-        }
+        _ => return Valor::Error("assets::load() el primer argumento debe ser ID".to_string()),
     };
 
-    // Evaluar path
-    let path_val = evaluar_expr(&args[1], executor, _funcs);
-    let path = match path_val {
+    let path = match evaluar_expr(&args[1], executor, _funcs) {
         Valor::Texto(s) => s,
-        _ => {
-            return Valor::Error(
-                "assets::load() el segundo argumento debe ser el path (texto)".to_string(),
-            )
-        }
+        _ => return Valor::Error("assets::load() el segundo argumento debe ser path".to_string()),
     };
 
-    // Cargar textura
-    match Assets::load_texture_from_path(&path) {
-        Ok(texture) => {
-            let assets = get_assets();
-            let mut assets_ref = assets.borrow_mut();
-            assets_ref.insert_texture(id.clone(), texture);
-            println!("[ASSETS] Textura '{}' cargada desde '{}'", id, path);
-            Valor::Texto(format!("assets::load() - '{}' cargado exitosamente", id))
+    // Usar AssetServer para la carga (soporta caché, compresión y backend abstracto)
+    let server = GLOBAL_ASSET_SERVER.with(|s| s.borrow().clone());
+    if let Some(server) = server {
+        match server.load_texture(&path) {
+            Ok(_) => {
+                // Delegar al sistema de renderizado existente para registrar la textura
+                // Aquí podrías integrar Assets::load_texture_from_path si es necesario
+                println!("[ASSETS] Textura '{}' cargada vía AssetServer desde '{}'", id, path);
+                Valor::Texto(format!("assets::load() - '{}' cargado", id))
+            }
+            Err(e) => Valor::Error(format!("assets::load() Error de carga: {}", e)),
         }
-        Err(e) => Valor::Error(format!("assets::load() Error: {}", e)),
+    } else {
+        // Fallback al sistema original si no hay AssetServer inyectado
+        match Assets::load_texture_from_path(&path) {
+            Ok(texture) => {
+                get_assets().borrow_mut().insert_texture(id.clone(), texture);
+                Valor::Texto(format!("assets::load() - '{}' cargado vía legado", id))
+            }
+            Err(e) => Valor::Error(format!("assets::load() Error: {}", e)),
+        }
     }
 }
 

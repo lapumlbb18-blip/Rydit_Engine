@@ -241,7 +241,7 @@ Progreso: ████████████████████ 100%
 | **postfx-ry** (NUEVO) ✅ | 15-20h | — | Post-processing (bloom, blur, sharpen, color grade) + Materiales + Química + Transformación visual. **v0.1.0 creada**: 6 efectos GPU, FBO chain, presets cyberpunk/natural/retro, 2 tests. |
 | **ry-windows** (NUEVO) ✅ | 12-16h | — | Ventana unificada configurable. **v0.1.0 creada**: 7 plataformas, 2 backends, 15 WindowEvent tipos, InputState, presets game_2d/editor/demo, 9 tests. |
 | **ry3d-gfx** (EXPANSIÓN) ✅ | 20-30h | — | **Expansión v0.2.0**: OrbitCamera3D, FpsCamera3D, Skybox procedural, 5 primitivas extra, iluminación 3D básica, 21 tests. |
-| **Asset pipeline** | ✅ | 10-15h | Bevy asset server | Carga automática de assets + compresión (basis-universal, ktx2) + hot reload. `AssetServer::load()` idiomático. |
+| **Asset pipeline** | ✅ (Base) | 10-15h | Bevy asset server | Carga automática de assets + compresión (basis-universal, ktx2) + hot reload. `AssetServer::load()` idiomático. **Estructura base (Trait + Server + Cache) completada.** |
 | **Tilemap editor visual** | ⏳ | 12-16h | Godot TileMap | Editor GUI de tilemap + tileset con preview, paint, export CSV. |
 | **Editor visual + por código** | ⏳ | 20-30h | Godot/Unity | Editor visual de juegos (separado o 2-in-1). Ambos modos: visual (drag & drop) y por código. Fusión de físicas + animaciones Disney + procesos científicos/biológicos. Sencillo pero potente. |
 
