@@ -104,7 +104,7 @@ pub fn draw_particle_sdl2(
 /// Dibujar sistema de partículas con color por velocidad
 pub fn draw_particles_sdl2(
     canvas: &mut Canvas<Window>,
-    ps: &crate::particles::ParticleSystem,
+    ps: &crate::gpu_particles::ParticleSystem,
     max_speed: f32,
 ) {
     for emitter in ps.emitters.values() {

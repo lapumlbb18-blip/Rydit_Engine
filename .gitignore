@@ -144,7 +144,7 @@ context/
 # QWEN.md duplicados (solo raíz se mantiene)
 **/QWEN.md
 **/qwen.md
-**/BITACORA.md
+# **/BITACORA.md
 **/.qwen/
 
 # Archivos de estado de sesión (Qwen Code) - solo raíz

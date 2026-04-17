@@ -9,6 +9,7 @@ categories = ["game-development", "gui"]
 
 [dependencies]
 # Sin dependencias externas por defecto - pure Rust
+ry-input = { path = "../ry-input" }
 
 [features]
 default = []

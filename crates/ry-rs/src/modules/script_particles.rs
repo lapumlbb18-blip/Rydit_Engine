@@ -10,7 +10,7 @@
 
 use blast_core::{Executor, Valor};
 use lizer::Expr;
-use ry_gfx::particles::{ParticleEmitter, ParticleSystem};
+use ry_gfx::gpu_particles::{ParticleEmitter, ParticleSystem};
 use std::cell::RefCell;
 
 // Sistema de partículas global (accesde desde .rydit)

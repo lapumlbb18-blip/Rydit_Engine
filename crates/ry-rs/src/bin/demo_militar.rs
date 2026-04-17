@@ -15,7 +15,7 @@
 // R: Recargar (resetear munición)
 // ESC: Salir
 
-use ry_anim::particles::{Particle, ParticleSystem};
+use ry_anim::anim_particles::{Particle, ParticleSystem};
 use ry_gfx::backend_sdl2::Sdl2Backend;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;

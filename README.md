@@ -10,7 +10,7 @@
 
 **"Construido sin prisa, madurado con paciencia"** — Filosofía *Low-End First*
 
-[![Version](https://img.shields.io/badge/version-v0.19.2-blue.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
+[![Version](https://img.shields.io/badge/version-v0.22.0-blue.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
 [![Errors](https://img.shields.io/badge/errors-0-green.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
 [![Tests](https://img.shields.io/badge/tests-~260-brightgreen.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
@@ -87,21 +87,17 @@ entity player
 `MacOS`
 ---
 
-## 🆕 Novedades v0.19.2
+## 🆕 Novedades v0.22.0
 
-**Estado**: 25 crates · 0 errores · ~260 tests · 12 crates.io · 24+ demos
+**Estado**: 26 crates · 0 errores · ~260 tests · 12 crates.io · 25+ demos
 
 | Feature | Detalle |
 |---------|---------|
-| **Rybot 6 subsistemas conectados** | Input, Physics, Animation, Science, Render, Network orquestados en RybotEngine |
-| **SDL2 Helpers** | `ry_gfx::sdl2_helpers` — velocity_color, blend_additive, newtonian_gravity, audio_procedural |
-| **Color por velocidad** | Ramp visual: azul oscuro → azul → amarillo → naranja → rojo → blanco |
-| **Blend aditivo** | Colores se SUMAN al superponerse — explosiones y energía |
-| **Audio reactivo** | Procedural: shoot (tono descendente), explosion (noise), powerup (sweep) |
-| **Demo War Spacio** | Galaga con SDL2 + gravitación Newtoniana + partículas + color velocidad |
-| **Iluminación 2D** | Luces direccionales + puntuales + sombras simples |
-| **Flexbox UI** | Layout system para migui (auto-sizing, wrapping) |
-| **Gravedad Newtoniana** | F=G·m₁·m₂/r² entre cuerpos en game loop |
+| **ryArt Foundation** | Motor de expresión generativa. Pinceles físicos con inercia y trazo persistente. |
+| **Asset Pipeline v2** | \`AssetServer\` con tipado fuerte (\`load_typed<T>\`) + caché comprimido. |
+| **Input Unificado** | \`InputManager\` maestro que fusiona eventos crudos y mapa de acciones. |
+| **Sdl2Backend Pro** | Sincronización automática de eventos SDL2 → InputManager. |
+| **Demo ryArt Cyberpunk** | Galería de arte digital sombrío con salpicaduras de sangre física. |
 
 ---
 
@@ -109,6 +105,7 @@ entity player
 
 | Demo | Descripción | Tamaño |
 |------|-------------|--------|
+| **demo_ryart_cyberpunk** | 🧪 Combate Cyberpunk + Arte Digital (Física ryArt) | — |
 | **demo\_war\_spacio** | 🚀 Galaga + gravitación Newtoniana + SDL2 Helpers + color velocidad | — |
 | **demo\_text\_3d** | 🔤 Letras 3D con fondo gris para visibilidad | — |
 | **demo\_3d\_primitives** | 🧊 Escena 3D: cubos, esferas, cilindros + Mesh3D + Skeleton3D | — |
@@ -227,12 +224,9 @@ La comunidad técnica está saturada de proyectos generados por IA sin autor rea
 
 | Versión | Features | Estado |
 |---------|----------|--------|
-| **v0.19.2** | Rybot Subsystems + SDL2 Helpers + War Spacio + Iluminación 2D + Flexbox | ✅ |
-| **v0.19.1** | Iluminación 2D + Flexbox + Física Newtoniana | ✅ |
-| **v0.19.0** | Input Map + Rybot + Mesh 3D + Skeleton + Letras 3D | ✅ |
-| **v0.18.0** | 3D + controles táctiles + Transiciones + Audio Mixer + RyScale + UTF-8 | ✅ |
-| **v0.20.0** | Editor visual + Asset pipeline + LAZOS (Python+C++) + Multiplayer LAN | 🔜 |
-| **v1.0.0** | GitHub Actions binaries + Motor completo + Debugger + Comunidad | 🎯 Meta |
+| **v0.22.0** | ryArt + Asset Pipeline v2 + Unificación Input | ✅ |
+| **v0.23.0** | Consolidación ry-rs + Re-exports + Higiene | 🔜 |
+| **v1.0.0** | GitHub Actions binaries + Motor completo + Editor Visual | 🎯 Meta |
 
 > Ver `ROADMAP.md` para plan detallado. Ver `docs/DEVLOG.md` para bitácora técnica sesión a sesión.
 
@@ -261,10 +255,10 @@ Cada línea tiene un commit. Cada demo tiene evidencia ejecutable.
 
 ---
 
-**🛡️ Ry-Dit v0.19.2 — Low-End First**
+**🛡️ Ry-Dit v0.22.0 — Low-End First**
 
-*25 crates · ~260 tests · 12 crates.io · 24+ demos · 0 errores*
+*26 crates · ~260 tests · 12 crates.io · 25+ demos · 0 errores*
 
 *🎮 Gaming · 🎬 Animaciones+Ciencia · 📡 Streaming+Comunidad*
 
-**Próximo: v0.20.0 — Editor visual + LAZOS + Asset Pipeline**
+**Próximo: v0.23.0 — Consolidación ry-rs + Editor Visual**

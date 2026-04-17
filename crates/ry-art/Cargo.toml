@@ -1,0 +1,11 @@
+[package]
+name = "ry-art"
+version = "0.1.0"
+edition = "2021"
+description = "Generative Art & Texture Mod System for Ry-Dit — AI without AI"
+license = "MIT"
+
+[dependencies]
+ry-gfx = { path = "../ry-gfx", features = ["serde"] }
+ry-science = { path = "../ry-science" }
+serde = { version = "1.0", features = ["derive"] }

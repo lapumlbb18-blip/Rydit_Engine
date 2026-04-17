@@ -17,5 +17,6 @@ image = "0.25"  # ✅ v0.10.10: Render de texto a imagen
 [build-dependencies]
 
 [features]
-default = []
+default = ["ab_glyph_feat"]
 sdl2 = ["dep:ry-backend"]  # Activar con: cargo build --features sdl2
+ab_glyph_feat = []

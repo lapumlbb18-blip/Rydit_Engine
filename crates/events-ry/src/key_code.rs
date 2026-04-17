@@ -1,5 +1,7 @@
 //! Código de tecla unificado (abstrae SDL2 Keycode, raylib KeyboardKey, migui::Key)
 
+use std::fmt;
+
 /// Código de tecla maestro - unifica todos los backends
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[non_exhaustive]
@@ -79,6 +81,12 @@ pub enum Key {
     Mute,
     Play,
     Stop,
+}
+
+impl fmt::Display for Key {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.name())
+    }
 }
 
 impl Key {

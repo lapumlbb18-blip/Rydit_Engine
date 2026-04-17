@@ -12,6 +12,7 @@ members = [
     "crates/ry-gfx",
     "crates/migui",
     "crates/ry-loader",
+    "crates/ry-tilemap",
     "crates/ry-script",
     "crates/ry-stream",  # 🆕 v0.11.2: LAN streaming (WebSocket + mDNS + Portal)
     "crates/ry-lexer", "crates/ry-parser", "crates/ry-vm",  # 🆕 v0.11.1: Tests simplificados (Nivel 1, 2, 3)

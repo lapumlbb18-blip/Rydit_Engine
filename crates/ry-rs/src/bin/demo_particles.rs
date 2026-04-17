@@ -1,7 +1,7 @@
 // Demo de Partículas v0.5.3
 // Ejecutar: cargo run --bin demo_particles
 
-use ry_gfx::particles::{ParticleEmitter, ParticleSystem};
+use ry_gfx::gpu_particles::{ParticleEmitter, ParticleSystem};
 use ry_gfx::{ColorRydit, Key, RyditGfx};
 
 fn main() {

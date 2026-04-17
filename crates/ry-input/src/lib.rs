@@ -423,6 +423,11 @@ impl InputState {
     pub fn list_actions(&self) -> &[String] {
         self.map.actions()
     }
+
+    /// Verificar si una tecla o botón específico está presionado (por su label)
+    pub fn is_key_pressed(&self, label: &str) -> bool {
+        self.keys.get(label).map(|k| k.is_pressed()).unwrap_or(false)
+    }
 }
 
 // ============================================================================

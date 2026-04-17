@@ -1599,7 +1599,7 @@ pub fn ejecutar_stmt_gfx<'stmt, 'data>(
             }
             // ✅ v0.9.2 - particles::create_emitter(nombre, x, y, rate)
             else if func_name == "particles::create_emitter" && args.len() >= 4 {
-                use crate::modules::particles;
+                use crate::modules::script_particles;
 
                 let nombre_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 let x_val = evaluar_expr_gfx(&args[1], executor, input, funcs);
@@ -1610,7 +1610,7 @@ pub fn ejecutar_stmt_gfx<'stmt, 'data>(
                     (nombre_val, x_val, y_val, rate_val)
                 {
                     // Crear emisor (se guarda en estado global)
-                    let result = particles::ejecutar_funcion(
+                    let result = script_particles::ejecutar_funcion(
                         "particles::create_emitter",
                         &[
                             Expr::Texto(&nombre.clone()),
@@ -1633,13 +1633,13 @@ pub fn ejecutar_stmt_gfx<'stmt, 'data>(
             }
             // particles::set_emitter_type(nombre, tipo)
             else if func_name == "particles::set_emitter_type" && args.len() == 2 {
-                use crate::modules::particles;
+                use crate::modules::script_particles;
 
                 let nombre_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 let tipo_val = evaluar_expr_gfx(&args[1], executor, input, funcs);
 
                 if let (Valor::Texto(nombre), Valor::Texto(tipo)) = (nombre_val, tipo_val) {
-                    let result = particles::ejecutar_funcion(
+                    let result = script_particles::ejecutar_funcion(
                         "particles::set_emitter_type",
                         &[Expr::Texto(&nombre.clone()), Expr::Texto(&tipo.clone())],
                         executor,
@@ -1655,11 +1655,11 @@ pub fn ejecutar_stmt_gfx<'stmt, 'data>(
             }
             // particles::remove_emitter(nombre)
             else if func_name == "particles::remove_emitter" && args.len() == 1 {
-                use crate::modules::particles;
+                use crate::modules::script_particles;
 
                 let nombre_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 if let Valor::Texto(nombre) = nombre_val {
-                    let result = particles::ejecutar_funcion(
+                    let result = script_particles::ejecutar_funcion(
                         "particles::remove_emitter",
                         &[Expr::Texto(&nombre.clone())],
                         executor,
@@ -1673,11 +1673,11 @@ pub fn ejecutar_stmt_gfx<'stmt, 'data>(
             }
             // particles::update(dt) - DEBE llamarse en cada frame
             else if func_name == "particles::update" && args.len() == 1 {
-                use crate::modules::particles;
+                use crate::modules::script_particles;
 
                 let dt_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 if let Valor::Num(dt) = dt_val {
-                    let result = particles::ejecutar_funcion(
+                    let result = script_particles::ejecutar_funcion(
                         "particles::update",
                         &[Expr::Num(dt)],
                         executor,
@@ -1697,7 +1697,7 @@ pub fn ejecutar_stmt_gfx<'stmt, 'data>(
             }
             // ✅ v0.19.2: particles::enable_velocity_color
             else if func_name == "particles::enable_velocity_color" && args.len() == 1 {
-                use crate::modules::particles::{ejecutar_funcion as particles_exec};
+                use crate::modules::script_particles::{ejecutar_funcion as particles_exec};
                 let result = particles_exec("particles::enable_velocity_color", args, executor, input, funcs);
                 if let Some(r) = result {
                     executor.guardar("__RESULT__", r);
@@ -1705,7 +1705,7 @@ pub fn ejecutar_stmt_gfx<'stmt, 'data>(
             }
             // ✅ v0.19.2: particles::enable_additive_blend
             else if func_name == "particles::enable_additive_blend" && args.len() == 0 {
-                use crate::modules::particles::{ejecutar_funcion as particles_exec};
+                use crate::modules::script_particles::{ejecutar_funcion as particles_exec};
                 let result = particles_exec("particles::enable_additive_blend", args, executor, input, funcs);
                 if let Some(r) = result {
                     executor.guardar("__RESULT__", r);
@@ -1713,13 +1713,13 @@ pub fn ejecutar_stmt_gfx<'stmt, 'data>(
             }
             // particles::set_gravity(x, y)
             else if func_name == "particles::set_gravity" && args.len() == 2 {
-                use crate::modules::particles;
+                use crate::modules::script_particles;
 
                 let x_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 let y_val = evaluar_expr_gfx(&args[1], executor, input, funcs);
 
                 if let (Valor::Num(x), Valor::Num(y)) = (x_val, y_val) {
-                    let result = particles::ejecutar_funcion(
+                    let result = script_particles::ejecutar_funcion(
                         "particles::set_gravity",
                         &[Expr::Num(x), Expr::Num(y)],
                         executor,
@@ -1733,9 +1733,9 @@ pub fn ejecutar_stmt_gfx<'stmt, 'data>(
             }
             // particles::particle_count()
             else if func_name == "particles::particle_count" && args.len() == 0 {
-                use crate::modules::particles;
+                use crate::modules::script_particles;
 
-                let result = particles::ejecutar_funcion(
+                let result = script_particles::ejecutar_funcion(
                     "particles::particle_count",
                     &[],
                     executor,

@@ -23,6 +23,9 @@ use sdl2::pixels::Color;
 use sdl2::rect::Rect;
 use std::path::Path;
 use std::time::Instant;
+use std::sync::Arc;
+use ry_loader::AssetServer;
+use ry_gfx::backend_sdl2::Sdl2AssetProvider;
 
 // ============================================================================
 // PARTÍCULA
@@ -77,31 +80,38 @@ struct SpriteInfo {
     x: f32, y: f32,
     size: u32,
     color: Color,
+    texture: Option<Arc<Vec<u8>>>, // Datos crudos vía AssetServer
 }
 
 // ============================================================================
 // MAIN
 // ============================================================================
 fn main() -> Result<(), String> {
-    println!("🛡️ RyDit v0.11.6 - Demo COMPLETO SDL2");
-    println!("=======================================");
+    println!("🛡️ RyDit v0.22.0 - Demo COMPLETO SDL2 (Asset Pipeline)");
+    println!("======================================================");
+    println!("✅ Asset Pipeline: AssetServer + Sdl2AssetProvider");
     println!("🎨 SDL2 Directo (como demo_movimiento.rs)");
     println!("🎮 Input DOS EVENTOS");
     println!("🎆 50K Partículas");
-    println!("🖼️  Sprites PNG");
     println!("🏃 Jugador Platformer + Colisiones");
-    println!("📝 Texto SDL2_ttf");
     println!("🪟 1280x720 + Zink + DRI3");
-    println!("=======================================\n");
+    println!("======================================================\n");
 
     // =========================================================================
-    // 1. SDL2 DIRECTO (como demo_movimiento.rs)
+    // 1. ASSET PIPELINE INITIALIZATION
+    // =========================================================================
+    let provider = Arc::new(Sdl2AssetProvider);
+    let asset_server = Arc::new(AssetServer::new(provider));
+    println!("✅ AssetServer inicializado con Sdl2AssetProvider");
+
+    // =========================================================================
+    // 2. SDL2 INITIALIZATION
     // =========================================================================
     let sdl = sdl2::init().map_err(|e| e.to_string())?;
     let video = sdl.video().map_err(|e| e.to_string())?;
 
     let window = video
-        .window("Demo COMPLETO SDL2 - RyDit v0.11.6", 1280, 720)
+        .window("Demo COMPLETO SDL2 - RyDit v0.22.0", 1280, 720)
         .position_centered()
         .opengl()
         .build()
@@ -110,31 +120,37 @@ fn main() -> Result<(), String> {
     let mut canvas = window.into_canvas().present_vsync().build().map_err(|e| e.to_string())?;
     let mut event_pump = sdl.event_pump().map_err(|e| e.to_string())?;
 
-    println!("✅ SDL2 inicializado correctamente");
-    println!("✅ Ventana: 1280x720");
-    println!("✅ SDL2_ttf: ⏸️ (usando fallback rects)");
+    println!("✅ SDL2 inicializado");
 
     // =========================================================================
-    // 2. VERIFICAR SPRITES
+    // 3. CARGA DE ASSETS VÍA PIPELINE
     // =========================================================================
     let sprites_dir = "/data/data/com.termux/files/home/shield-project/logo_icon_asst/sprites";
-    println!("\n📂 Sprites en: {}", sprites_dir);
+    println!("\n📂 Cargando assets vía AssetServer: {}", sprites_dir);
     
     let mut sprites = vec![
-        SpriteInfo { nombre: "tank".into(), archivo: "tank_16x16.png".into(), existe: false, x: 100.0, y: 500.0, size: 64, color: Color::RGB(0, 255, 0) },
-        SpriteInfo { nombre: "helicopter".into(), archivo: "helicopter_16x16.png".into(), existe: false, x: 300.0, y: 100.0, size: 64, color: Color::RGB(0, 255, 255) },
-        SpriteInfo { nombre: "crate".into(), archivo: "crate_8x8.png".into(), existe: false, x: 1100.0, y: 500.0, size: 32, color: Color::RGB(139, 69, 19) },
-        SpriteInfo { nombre: "platform".into(), archivo: "platform_16x16.png".into(), existe: false, x: 600.0, y: 400.0, size: 96, color: Color::RGB(128, 128, 128) },
+        SpriteInfo { nombre: "tank".into(), archivo: "tank_16x16.png".into(), existe: false, x: 100.0, y: 500.0, size: 64, color: Color::RGB(0, 255, 0), texture: None },
+        SpriteInfo { nombre: "helicopter".into(), archivo: "helicopter_16x16.png".into(), existe: false, x: 300.0, y: 100.0, size: 64, color: Color::RGB(0, 255, 255), texture: None },
+        SpriteInfo { nombre: "crate".into(), archivo: "crate_8x8.png".into(), existe: false, x: 1100.0, y: 500.0, size: 32, color: Color::RGB(139, 69, 19), texture: None },
+        SpriteInfo { nombre: "platform".into(), archivo: "platform_16x16.png".into(), existe: false, x: 600.0, y: 400.0, size: 96, color: Color::RGB(128, 128, 128), texture: None },
     ];
 
     for s in &mut sprites {
         let path = format!("{}/{}", sprites_dir, s.archivo);
-        s.existe = Path::new(&path).exists();
-        println!("  ├─ {}... {}", s.archivo, if s.existe { "✅" } else { "❌" });
+        match asset_server.load_texture(&path) {
+            Ok(data) => {
+                s.existe = true;
+                s.texture = Some(Arc::new(data));
+                println!("  ├─ {}... ✅ (Cargado en caché)", s.archivo);
+            }
+            Err(e) => {
+                println!("  ├─ {}... ❌ ({})", s.archivo, e);
+            }
+        }
     }
 
     let sprites_ok = sprites.iter().filter(|s| s.existe).count();
-    println!("\n✅ {}/4 sprites encontrados", sprites_ok);
+    println!("\n✅ {}/4 sprites gestionados por el pipeline", sprites_ok);
 
     // =========================================================================
     // 3. PLATAFORMAS (Colisiones)

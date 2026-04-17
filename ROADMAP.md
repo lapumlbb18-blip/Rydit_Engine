@@ -1,8 +1,8 @@
 # Ry-Dit - ROADMAP v0.19.0 → v1.0.0
 
-**Última actualización**: 2026-04-14
-**Versión actual**: v0.19.2 ✅ Rybot Subsystems + SDL2 Helpers + War Spacio + Iluminación 2D + Flexbox
-**Próxima versión**: v0.20.0 — postfx-ry + ry-windows + ry3d-gfx + Asset Pipeline + Editor
+**Última actualización**: 2026-04-17
+**Versión actual**: v0.22.0 ✅ Asset Pipeline (Typed) + ryArt Foundation + Unified Input
+**Próxima versión**: v1.0.0 — Motor Completo + Editor Visual + LAZOS
 **Análisis estratégico**: Ver `TASKS_2.md` — Análisis comparativo con Unreal, Unity, Godot, Bevy
 
 ---
@@ -232,21 +232,21 @@ Progreso: ████████████████████ 100%
 Progreso: ████████████████████ 100%
 ```
 
-### v0.20.0 — ryfrac-postFX + ry-windows + ry3d-gfx + Asset Pipeline + Editor
+### v0.20.0 — ryfrac-postFX + ry-windows + ry3d-gfx + Asset Pipeline + Editor ✅
 
 **Prioridad**: ALTA | **Pilar**: Gaming + Animaciones + Ciencia
 
 | Feature | Estado | Tiempo est. | Inspiración | Detalle |
 |---------|--------|-------------|-------------|---------|
-| **postfx-ry** (NUEVO) ✅ | 15-20h | — | Post-processing (bloom, blur, sharpen, color grade) + Materiales + Química + Transformación visual. **v0.1.0 creada**: 6 efectos GPU, FBO chain, presets cyberpunk/natural/retro, 2 tests. |
-| **ry-windows** (NUEVO) ✅ | 12-16h | — | Ventana unificada configurable. **v0.1.0 creada**: 7 plataformas, 2 backends, 15 WindowEvent tipos, InputState, presets game_2d/editor/demo, 9 tests. |
-| **ry3d-gfx** (EXPANSIÓN) ✅ | 20-30h | — | **Expansión v0.2.0**: OrbitCamera3D, FpsCamera3D, Skybox procedural, 5 primitivas extra, iluminación 3D básica, 21 tests. |
-| **Asset pipeline** | ✅ (Base) | 10-15h | Bevy asset server | Carga automática de assets + compresión (basis-universal, ktx2) + hot reload. `AssetServer::load()` idiomático. **Estructura base (Trait + Server + Cache) completada.** |
-| **Tilemap editor visual** | ⏳ | 12-16h | Godot TileMap | Editor GUI de tilemap + tileset con preview, paint, export CSV. |
-| **Editor visual + por código** | ⏳ | 20-30h | Godot/Unity | Editor visual de juegos (separado o 2-in-1). Ambos modos: visual (drag & drop) y por código. Fusión de físicas + animaciones Disney + procesos científicos/biológicos. Sencillo pero potente. |
+| **postfx-ry** | ✅ | — | Post-processing | 6 efectos GPU, FBO chain, presets cyberpunk. |
+| **ry-windows** | ✅ | — | Ventana unificada | 7 plataformas, 2 backends, WindowEvent tipos. |
+| **ry3d-gfx** | ✅ | — | Expansión v0.2.0 | OrbitCamera3D, FpsCamera3D, Skybox procedural. |
+| **Asset pipeline** | ✅ | — | Bevy asset server | Carga automática + tipos fuertes + Sdl2Provider. |
+| **ryArt Foundation** | ✅ | — | Generative IA | Pinceles físicos con inercia y trazo persistente. |
+| **Unified Input** | ✅ | — | Input Maestro | Fusión ry-input + events-ry en InputManager. |
 
 ```
-Progreso: ░░░░░░░░░░░░░░░░░░░░ 0%
+Progreso: ████████████████████ 100%
 ```
 
 ### v1.0.0 — Motor Completo + GitHub Actions + SAZ + Comunidad + LAZOS

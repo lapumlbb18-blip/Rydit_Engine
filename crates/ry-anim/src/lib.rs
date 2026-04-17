@@ -14,7 +14,7 @@
 //! - Principio #11: Solid Drawing
 //! - Principio #12: Appeal
 
-pub mod particles;
+pub mod anim_particles;
 pub mod disney;
 pub mod illusions;
 pub mod effects;

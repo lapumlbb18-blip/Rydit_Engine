@@ -235,16 +235,16 @@ pub fn ejecutar_programa_gfx<'a>(
                         queue.execute_with_handle(&mut d, &assets_borrow);
 
                         // ✅ v0.10.4: Dibujar partículas (misma sesión de dibujado)
-                        use crate::modules::particles;
+                        use crate::modules::script_particles;
                         // 🆕 v0.19.2: Color por velocidad
                         if let Some(blast_core::Valor::Bool(true)) = executor.leer("__PARTICLE_VELOCITY_COLOR__") {
                             let max_speed = match executor.leer("__PARTICLE_MAX_SPEED__") {
                                 Some(blast_core::Valor::Num(s)) => s as f32,
                                 _ => 300.0,
                             };
-                            particles::draw_particles_with_handle_velocity(&mut d, max_speed);
+                            script_particles::draw_particles_with_handle_velocity(&mut d, max_speed);
                         } else {
-                            particles::draw_particles_with_handle(&mut d);
+                            script_particles::draw_particles_with_handle(&mut d);
                         }
 
                         // Drop explícito para forzar buffer swap
@@ -367,8 +367,8 @@ pub fn ejecutar_programa_gfx<'a>(
                         queue.execute_with_handle(&mut d, &assets_borrow);
 
                         // ✅ v0.10.4: Dibujar partículas
-                        use crate::modules::particles;
-                        particles::draw_particles_with_handle(&mut d);
+                        use crate::modules::script_particles;
+                        script_particles::draw_particles_with_handle(&mut d);
 
                         drop(d);
                     }
@@ -434,8 +434,8 @@ pub fn ejecutar_programa_gfx<'a>(
                 queue.execute_with_handle(&mut d, &assets_borrow);
 
                 // ✅ v0.10.4: Dibujar partículas
-                use crate::modules::particles;
-                particles::draw_particles_with_handle(&mut d);
+                use crate::modules::script_particles;
+                script_particles::draw_particles_with_handle(&mut d);
 
                 drop(d);
             }

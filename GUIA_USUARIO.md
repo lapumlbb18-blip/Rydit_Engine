@@ -1,7 +1,7 @@
 # 🛡️ Ry-Dit - Guía del Usuario
 
-**Versión**: v0.19.2
-**Última actualización**: 2026-04-13
+**Versión**: v0.22.0
+**Última actualización**: 2026-04-17
 
 ---
 
@@ -46,12 +46,13 @@ Rybot conecta 6 subsistemas especializados en un solo motor coherente:
 
 | Subsistema | Crate | Función |
 |-----------|-------|---------|
-| **Input** | `ry-input` | Input map configurable (.rydit-input) |
-| **Física** | `ry-physics` | Gravedad Newtoniana, proyectiles, N-body |
-| **Animación** | `ry-anim` | 12 principios Disney, action sprite |
-| **Ciencia** | `ry-science` | Bezier curves, simulaciones |
-| **Render** | `ry-gfx` + `ry3d-gfx` | Partículas, GPU instancing, 3D |
-| **Red** | `ry-stream` | WebSocket LAN server |
+| **Input** | \`events-ry\` + \`ry-input\` | Input unificado + acciones (.rydit-input) |
+| **Física** | \`ry-physics\` | Gravedad Newtoniana, proyectiles, N-body |
+| **Animación** | \`ry-anim\` | 12 principios Disney, action sprite |
+| **Ciencia** | \`ry-science\` | Bezier curves, simulaciones |
+| **Arte** | \`ry-art\` | ryArt: Arte generativo y pinceles físicos |
+| **Render** | \`ry-gfx\` + \`ry3d-gfx\` | Partículas, GPU instancing, 3D |
+| **Red** | \`ry-stream\` | WebSocket LAN server |
 
 ### Input Map Configurable (.rydit-input)
 
@@ -132,6 +133,24 @@ cargo run --bin demo_war_spacio --release
 ```
 
 **Controles**: WASD mover, SPACE disparar, R reiniciar, ESC salir.
+
+---
+
+### ryArt — Motor de Expresión Generativa
+
+Ry-Dit incluye **ryArt**, un sistema para crear arte digital, texturas y efectos visuales de forma procedimental utilizando la física y matemática del motor:
+
+| Herramienta | Descripción |
+|-------------|-------------|
+| \`PhysicsBrush\` | Pincel con inercia y masa para trazos orgánicos. |
+| \`OrganicNoise\` | Generador de texturas basado en ruido de Perlin/Simplex. |
+| \`ArtCanvas\` | Superficie de dibujo persistente integrada con el Asset Pipeline. |
+
+**Ejemplo de uso**:
+\`\`\`rust
+let mut brush = PhysicsBrush::new(ColorRydit::Rojo, 15.0);
+brush.stroke(&mut canvas, mouse_x, mouse_y, pressure);
+\`\`\`
 
 ---
 
@@ -593,10 +612,10 @@ cargo search v-shield
 
 <div align="center">
 
-**🛡️ Ry-Dit v0.19.2 - Guía del Usuario**
+**🛡️ Ry-Dit v0.22.0 - Guía del Usuario**
 
 *Construido sin prisa, madurado con paciencia*
 
-*25 crates · 12 publicados · ~260 tests · 24+ demos · 0 errores · Low-End First*
+*26 crates · 12 publicados · ~260 tests · 25+ demos · 0 errores · Low-End First*
 
 </div>

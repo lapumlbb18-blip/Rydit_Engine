@@ -25,12 +25,14 @@ default = ["dual-backend"]
 
 # Backend raylib solo (drawing 2D/3D + text gaming)
 raylib-only = ["dep:raylib", "dep:gl"]
+raylib-backend = ["raylib-only"]
 
 # Backend SDL2 solo (input + audio + assets + TTF profesional)
 sdl2-only = ["dep:sdl2"]
+sdl2-backend = ["sdl2-only"]
 
 # Dual: raylib para drawing + SDL2 para input/audio/texto TTF profesional (recomendado desktop)
-dual-backend = ["dep:raylib", "dep:sdl2", "dep:gl"]
+dual-backend = ["raylib-only", "sdl2-only"]
 
 # Mobile: raylib drawing + SDL2 input (Termux-X11 / Zink / VirGL)
 mobile-hybrid = ["dep:raylib", "dep:sdl2", "dep:gl"]

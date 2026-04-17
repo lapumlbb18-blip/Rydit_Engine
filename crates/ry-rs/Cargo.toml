@@ -11,6 +11,7 @@ path = "src/lib.rs"
 ry-core = { path = "../ry-core" }
 ry-config = { path = "../ry-config" }  # 🆕 v0.14.0: Config parser
 ry-loader = { path = "../ry-loader" }
+ry-tilemap = { path = "../ry-tilemap" }
 ry-science = { path = "../ry-science" }
 ry-physics = { path = "../ry-physics" }
 ry-anim = { path = "../ry-anim" }
@@ -28,6 +29,7 @@ migui = { path = "../migui", features = ["sdl2"] }
 ry-stream = { path = "../ry-stream" }  # 🆕 v0.11.2: LAN streaming
 ry-input = { path = "../ry-input" }  # 🆕 v0.19.0: Input map configurable
 rybot = { path = "../rybot" }  # 🆕 v0.19.0: Motor central
+ry-art = { path = "../ry-art" }
 # rybot usa migui+sdl2, raylib nobuild — conflicto de linker en Android
 # demo_rybot_gui se habilita cuando se resuelva el linking
 raylib = { version = "5.5.1", default-features = false, features = ["nobuild"] }
@@ -100,3 +102,7 @@ path = "src/bin/demo_input_map.rs"
 [[bin]]
 name = "demo_fase2_completo"
 path = "src/bin/demo_fase2_completo.rs"
+
+[[bin]]
+name = "demo_ryart_cyberpunk"
+path = "src/bin/demo_ryart_cyberpunk.rs"

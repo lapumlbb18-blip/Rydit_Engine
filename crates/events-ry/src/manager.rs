@@ -11,6 +11,7 @@ use crate::input_event::InputEvent;
 use crate::key_code::Key;
 use crate::text_input::{TextInput, TextInputAction};
 use crate::shell::{Shell, ShellResult};
+use ry_input::{InputState, InputMap};
 
 /// InputManager - Punto de entrada unificado
 pub struct InputManager {
@@ -20,6 +21,11 @@ pub struct InputManager {
     text_input: TextInput,
     /// Shell para comandos
     shell: Shell,
+    /// Estado de acciones configurables (InputMap + InputState)
+    input_state: InputState,
+    /// Posición del ratón rastreada (para backends inyectados)
+    mouse_x: i32,
+    mouse_y: i32,
     /// Buffer de eventos pendientes
     event_buffer: Vec<InputEvent>,
     /// Acciones de text input pendientes
@@ -41,6 +47,9 @@ impl InputManager {
             backend: Box::new(crate::backend::MockBackend::new()),
             text_input: TextInput::new(),
             shell: Shell::with_defaults(),
+            input_state: InputState::new(&InputMap::with_defaults()),
+            mouse_x: 0,
+            mouse_y: 0,
             event_buffer: Vec::new(),
             text_actions: Vec::new(),
             text_input_active: false,
@@ -53,26 +62,45 @@ impl InputManager {
             backend: Box::new(backend),
             text_input: TextInput::new(),
             shell: Shell::with_defaults(),
+            input_state: InputState::new(&InputMap::with_defaults()),
+            mouse_x: 0,
+            mouse_y: 0,
             event_buffer: Vec::new(),
             text_actions: Vec::new(),
             text_input_active: false,
         }
     }
 
-    /// Inicializar backend
-    pub fn init(&mut self) -> Result<(), String> {
-        self.backend.init()
+    /// Iniciar frame del sistema de acciones
+    pub fn begin_frame(&mut self) {
+        self.input_state.begin_frame();
     }
 
-    /// Obtener eventos raw del backend
+    /// Obtener eventos raw del backend y actualizar el estado de acciones
     pub fn poll_raw_events(&mut self) -> Vec<InputEvent> {
         let backend_events = self.backend.poll_events();
+        for event in &backend_events {
+            self.update_action_state(event);
+        }
         self.event_buffer.extend(backend_events.clone());
         backend_events
     }
 
-    /// Inyectar un evento manualmente (para tests o backends custom)
+    /// Inyectar un evento manualmente y actualizar el estado de acciones
     pub fn inject_event(&mut self, event: InputEvent) {
+        self.update_action_state(&event);
+
+        // Rastrear posición del ratón para backends externos
+        match event {
+            InputEvent::MouseMoved { x, y } | 
+            InputEvent::MousePressed { x, y, .. } | 
+            InputEvent::MouseReleased { x, y, .. } => {
+                self.mouse_x = x;
+                self.mouse_y = y;
+            }
+            _ => {}
+        }
+
         // Procesar text input si está activo
         if self.text_input_active {
             if let Some(action) = self.text_input.process_event(&event) {
@@ -81,6 +109,45 @@ impl InputManager {
         }
 
         self.event_buffer.push(event);
+    }
+
+    /// Helper interno para sincronizar InputEvent -> InputState (ry-input)
+    fn update_action_state(&mut self, event: &InputEvent) {
+        match event {
+            InputEvent::KeyPressed { key } => {
+                self.input_state.update_key(&key.to_string(), true);
+            }
+            InputEvent::KeyReleased { key } => {
+                self.input_state.update_key(&key.to_string(), false);
+            }
+            InputEvent::MousePressed { button, .. } => {
+                self.input_state.update_mouse_button(&format!("Mouse{:?}", button), true);
+            }
+            InputEvent::MouseReleased { button, .. } => {
+                self.input_state.update_mouse_button(&format!("Mouse{:?}", button), false);
+            }
+            _ => {}
+        }
+    }
+
+    /// Verificar si una acción está presionada
+    pub fn is_action_pressed(&self, action: &str) -> bool {
+        self.input_state.is_action_pressed(action)
+    }
+
+    /// Verificar si una acción fue presionada este frame
+    pub fn is_action_just_pressed(&self, action: &str) -> bool {
+        self.input_state.is_action_just_pressed(action)
+    }
+
+    /// Obtener el estado de input para configuración avanzada
+    pub fn input_state(&self) -> &InputState {
+        &self.input_state
+    }
+
+    /// Obtener el estado de input mutable para rebinds
+    pub fn input_state_mut(&mut self) -> &mut InputState {
+        &mut self.input_state
     }
 
     /// Obtener eventos pendientes
@@ -159,14 +226,14 @@ impl InputManager {
         self.backend.is_key_just_pressed(key)
     }
 
-    /// Obtener posición del mouse
+    /// Obtener posición del mouse (ahora rastreada)
     pub fn mouse_position(&self) -> (i32, i32) {
-        self.backend.mouse_position()
+        (self.mouse_x, self.mouse_y)
     }
 
-    /// Verificar botón del mouse
+    /// Verificar botón del mouse (ahora usa el estado unificado)
     pub fn is_mouse_button_down(&self, button: crate::input_event::MouseButton) -> bool {
-        self.backend.is_mouse_button_down(button)
+        self.input_state.is_key_pressed(&format!("Mouse{:?}", button))
     }
 
     // ========================================================================

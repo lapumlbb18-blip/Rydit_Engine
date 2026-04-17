@@ -68,7 +68,7 @@ mod manager;
 // ============================================================================
 // Export público
 // ============================================================================
-pub use input_event::InputEvent;
+pub use input_event::{InputEvent, MouseButton};
 pub use key_code::Key;
 pub use backend::InputBackend;
 pub use text_input::{TextInput, TextInputAction};

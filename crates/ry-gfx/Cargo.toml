@@ -17,6 +17,8 @@ gl = "0.14.0"
 sdl2 = { version = "0.37", features = ["image", "ttf", "mixer"] }
 v-shield = { version = "0.2", default-features = false, features = ["native"] }
 migui = { version = "0.4", path = "../migui", optional = true }
+events-ry = { path = "../events-ry" }
+serde = { version = "1.0", features = ["derive"], optional = true }
 
 [build-dependencies]
 pkg-config = "0.3"
@@ -24,3 +26,4 @@ pkg-config = "0.3"
 [features]
 default = []
 migui = ["dep:migui"]
+serde = ["dep:serde"]

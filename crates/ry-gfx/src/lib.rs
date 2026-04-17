@@ -38,7 +38,7 @@
 #![allow(clippy::too_many_arguments)]
 
 // Módulo de partículas v0.5.3
-pub mod particles;
+pub mod gpu_particles;
 
 // Módulo de cámara 2D v0.9.0
 pub mod camera;
@@ -511,6 +511,7 @@ pub const KEY_F12: KeyboardKey = unsafe { std::mem::transmute(301i32) };
 
 /// Colores básicos para RyDit
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum ColorRydit {
     Rojo,
     Verde,
@@ -1225,7 +1226,7 @@ impl<'a> DrawHandle<'a> {
     }
 
     /// 🆕 v0.19.2: Dibujar sistema de partículas con color por velocidad
-    pub fn draw_particles_velocity(&mut self, system: &crate::particles::ParticleSystem, max_speed: f32) {
+    pub fn draw_particles_velocity(&mut self, system: &crate::gpu_particles::ParticleSystem, max_speed: f32) {
         let draw_ref = &mut self.draw;
         system.draw_with_velocity(draw_ref, max_speed);
     }

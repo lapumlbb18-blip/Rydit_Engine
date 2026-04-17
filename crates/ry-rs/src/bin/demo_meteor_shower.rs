@@ -5,7 +5,7 @@
 
 use raylib::prelude::*;
 use ry_gfx::lighting::*;
-use ry_gfx::particles::{ParticleEmitter, ParticleSystem};
+use ry_gfx::gpu_particles::{ParticleEmitter, ParticleSystem};
 
 fn main() -> Result<(), String> {
     println!("🌠 RyDit — Demo Lluvia de Meteoros");

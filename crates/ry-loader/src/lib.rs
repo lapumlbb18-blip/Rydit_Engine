@@ -33,6 +33,20 @@ pub enum AssetError {
     UnsupportedFormat(String),
 }
 
+use serde::{Deserialize, Serialize};
+
+// ============================================================================
+// ASSET TYPES
+// ============================================================================
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum AssetType {
+    Texture,
+    Audio,
+    Json,
+    Config,
+}
+
 // ============================================================================
 // ASSET SERVER
 // ============================================================================
@@ -53,13 +67,35 @@ impl AssetServer {
     }
 
     pub fn load_texture(&self, path: &str) -> Result<Vec<u8>, String> {
+        self.get_or_load(path, || self.provider.load_texture(path))
+    }
+
+    pub fn load_audio(&self, path: &str) -> Result<Vec<u8>, String> {
+        self.get_or_load(path, || self.provider.load_audio(path))
+    }
+
+    /// Cargar un asset y deserializarlo desde JSON
+    pub fn load_typed<T>(&self, path: &str) -> Result<T, String> 
+    where T: for<'de> Deserialize<'de> 
+    {
+        let data = self.get_or_load(path, || {
+            // Asumimos que el provider puede leer archivos genéricos como texturas por ahora
+            self.provider.load_texture(path) 
+        })?;
+
+        serde_json::from_slice(&data).map_err(|e| format!("Error deserializando {}: {}", path, e))
+    }
+
+    fn get_or_load<F>(&self, path: &str, loader: F) -> Result<Vec<u8>, String>
+    where F: FnOnce() -> Result<Vec<u8>, String>
+    {
         let cache = self.cache.read().map_err(|e| e.to_string())?;
         if let Some(data) = cache.get(path) {
             return Ok(data.clone());
         }
         drop(cache);
 
-        let raw_data = self.provider.load_texture(path)?;
+        let raw_data = loader()?;
         let data = self.compressor.decompress(&raw_data).unwrap_or(raw_data);
 
         let mut cache = self.cache.write().map_err(|e| e.to_string())?;

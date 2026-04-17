@@ -6,7 +6,6 @@ use crate::{ModuleError, ModuleResult, RyditModule, ModuleMetadata};
 use serde_json::{json, Value};
 use std::collections::HashMap;
 use std::sync::{Arc, RwLock};
-use std::path::Path;
 use std::fs;
 
 /// Tipos de recursos soportados
@@ -18,6 +17,9 @@ pub enum AssetType {
     Font,
     Model,
     Data,
+    SpriteAnimation, // 🆕 v0.20.0
+    SpriteSheet,     // 🆕 v0.20.0
+    Config,          // 🆕 v0.20.0
     Unknown,
 }
 
@@ -65,6 +67,13 @@ impl AssetServer {
     pub fn get(&self, id: &str) -> Option<Arc<Asset>> {
         let assets = self.assets.read().unwrap();
         assets.get(id).cloned()
+    }
+
+    /// Obtener un recurso deserializado en un tipo específico
+    pub fn get_typed<T: serde::de::DeserializeOwned + 'static>(&self, id: &str) -> Result<T, String> {
+        let assets = self.assets.read().unwrap();
+        let asset = assets.get(id).ok_or_else(|| format!("Asset no encontrado: {}", id))?;
+        serde_json::from_slice(&asset.data).map_err(|e| format!("Error deserializando asset {}: {}", id, e))
     }
 
     /// Recargar un recurso (Hot Reload)
@@ -149,6 +158,9 @@ impl RyditModule for AssetModule {
                     "music" => AssetType::Music,
                     "font" => AssetType::Font,
                     "model" => AssetType::Model,
+                    "spriteanimation" => AssetType::SpriteAnimation,
+                    "spritesheet" => AssetType::SpriteSheet,
+                    "config" => AssetType::Config,
                     _ => AssetType::Data,
                 };
 
@@ -159,24 +171,24 @@ impl RyditModule for AssetModule {
             },
             "asset::get" => {
                 let id = params.as_str().unwrap_or("");
-                match self.server.get(id) {
+                match self.server.as_ref().get(id) {
                     Some(a) => Ok(json!({ "id": a.id, "path": a.path, "type": a.asset_type, "version": a.version, "size": a.data.len() })),
                     None => Err(ModuleError { code: "NOT_FOUND".to_string(), message: "Asset no encontrado".to_string() }),
                 }
             },
             "asset::reload" => {
                 let id = params.as_str().unwrap_or("");
-                match self.server.reload(id) {
+                match self.server.as_ref().reload(id) {
                     Ok(a) => Ok(json!({ "id": a.id, "path": a.path, "version": a.version })),
                     Err(e) => Err(ModuleError { code: "RELOAD_ERROR".to_string(), message: e }),
                 }
             },
             "asset::unload" => {
                 let id = params.as_str().unwrap_or("");
-                Ok(json!(self.server.unload(id)))
+                Ok(json!(self.server.as_ref().unload(id)))
             },
             "asset::list" => {
-                Ok(json!(self.server.list()))
+                Ok(json!(self.server.as_ref().list()))
             },
             _ => Err(ModuleError {
                 code: "UNKNOWN_COMMAND".to_string(),

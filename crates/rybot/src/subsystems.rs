@@ -3,7 +3,7 @@
 use ry_input::{InputMap, InputState};
 use ry_physics::PhysicsModule;
 use ry_anim::disney;
-use ry_gfx::particles::ParticleSystem;
+use ry_gfx::gpu_particles::ParticleSystem;
 use ry_stream::server::StreamServer;
 
 // ============================================================================

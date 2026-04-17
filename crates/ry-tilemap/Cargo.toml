@@ -1,0 +1,11 @@
+[package]
+name = "ry-tilemap"
+version = "0.1.0"
+edition = "2021"
+description = "Ry Tilemap System - Pure Rust implementation"
+license = "MIT"
+
+[dependencies]
+ry-loader = { version = "0.8.2", path = "../ry-loader" }
+ry-gfx = { version = "0.10.8", path = "../ry-gfx" }
+sdl2 = { version = "0.37", features = ["image", "ttf", "mixer"] }

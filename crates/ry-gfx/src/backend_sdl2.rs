@@ -181,7 +181,6 @@ impl Sdl2Backend {
         // Limpiar pantalla (negro por defecto)
         self.canvas.set_draw_color(Color::RGB(0, 0, 0));
         self.canvas.clear();
-        self.canvas.present(); // Presentar inmediatamente después de clear
     }
 
     /// Limpiar fondo con color
@@ -297,10 +296,66 @@ impl Sdl2Backend {
         60
     }
 
-    /// Obtener FPS reales (aproximado)
-    pub fn get_fps(&self) -> i32 {
-        // SDL2 no tiene get_fps(), usamos 60 por vsync
-        60
+    /// Sincroniza eventos de SDL2 directamente con el InputManager de events-ry
+    pub fn actualizar_input_unificado(&mut self, manager: &mut events_ry::InputManager) {
+        manager.begin_frame();
+        for event in self.event_pump.poll_iter() {
+            match event {
+                Event::Quit { .. } => {
+                    manager.inject_event(events_ry::InputEvent::WindowCloseRequested);
+                }
+                Event::KeyDown { keycode: Some(k), .. } => {
+                    // Mapeo simple de Keycode -> Key (mejorar con tabla completa)
+                    if let Some(ry_key) = map_sdl_keycode_to_ry(k) {
+                        manager.inject_event(events_ry::InputEvent::KeyPressed { key: ry_key });
+                    }
+                }
+                Event::KeyUp { keycode: Some(k), .. } => {
+                    if let Some(ry_key) = map_sdl_keycode_to_ry(k) {
+                        manager.inject_event(events_ry::InputEvent::KeyReleased { key: ry_key });
+                    }
+                }
+                Event::MouseButtonDown { mouse_btn, x, y, .. } => {
+                    let btn = match mouse_btn {
+                        sdl2::mouse::MouseButton::Left => events_ry::MouseButton::Left,
+                        sdl2::mouse::MouseButton::Right => events_ry::MouseButton::Right,
+                        _ => events_ry::MouseButton::Middle,
+                    };
+                    manager.inject_event(events_ry::InputEvent::MousePressed { x, y, button: btn });
+                }
+                Event::MouseButtonUp { mouse_btn, x, y, .. } => {
+                    let btn = match mouse_btn {
+                        sdl2::mouse::MouseButton::Left => events_ry::MouseButton::Left,
+                        sdl2::mouse::MouseButton::Right => events_ry::MouseButton::Right,
+                        _ => events_ry::MouseButton::Middle,
+                    };
+                    manager.inject_event(events_ry::InputEvent::MouseReleased { x, y, button: btn });
+                }
+                Event::MouseMotion { x, y, .. } => {
+                    manager.inject_event(events_ry::InputEvent::MouseMoved { x, y });
+                }
+                _ => {}
+            }
+        }
+    }
+}
+
+/// Helper interno para mapear Keycodes de SDL2 a los unificados de RyDit
+fn map_sdl_keycode_to_ry(k: sdl2::keyboard::Keycode) -> Option<events_ry::Key> {
+    use sdl2::keyboard::Keycode as S;
+    use events_ry::Key as R;
+    match k {
+        S::A => Some(R::A), S::B => Some(R::B), S::C => Some(R::C), S::D => Some(R::D),
+        S::E => Some(R::E), S::F => Some(R::F), S::G => Some(R::G), S::H => Some(R::H),
+        S::I => Some(R::I), S::J => Some(R::J), S::K => Some(R::K), S::L => Some(R::L),
+        S::M => Some(R::M), S::N => Some(R::N), S::O => Some(R::O), S::P => Some(R::P),
+        S::Q => Some(R::Q), S::R => Some(R::R), S::S => Some(R::S), S::T => Some(R::T),
+        S::U => Some(R::U), S::V => Some(R::V), S::W => Some(R::W), S::X => Some(R::X),
+        S::Y => Some(R::Y), S::Z => Some(R::Z),
+        S::Escape => Some(R::Escape),
+        S::Space => Some(R::Space),
+        S::Return => Some(R::Enter),
+        _ => None,
     }
 }
 
@@ -315,15 +370,13 @@ pub struct Sdl2AssetProvider;
 
 impl AssetProvider for Sdl2AssetProvider {
     fn load_texture(&self, path: &str) -> Result<Vec<u8>, String> {
-        // En una implementación real de SDL2_image, cargaríamos
-        // el archivo a un buffer o superficie y retornaríamos los bytes.
-        // Por ahora, devolvemos un error para indicar que el linking está pendiente
-        // tal como indica el TextureManager original.
-        Err(format!("SDL2_image linking pendiente - Carga de {} no soportada", path))
+        // Carga de bytes crudos desde el sistema de archivos
+        std::fs::read(path).map_err(|e| format!("Error leyendo textura {}: {}", path, e))
     }
 
     fn load_audio(&self, path: &str) -> Result<Vec<u8>, String> {
-        Err(format!("Carga de audio SDL2 pendiente - {}", path))
+        // Carga de bytes crudos para audio (wav, ogg, mp3)
+        std::fs::read(path).map_err(|e| format!("Error leyendo audio {}: {}", path, e))
     }
 }
 

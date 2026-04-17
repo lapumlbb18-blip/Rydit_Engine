@@ -1,9 +1,9 @@
 # 🛡️ Ry-Dit - Tareas Completadas y Pendientes
 
-**Última actualización**: 2026-04-14
-**Versión actual**: v0.19.2 ✅ SDL2 Helpers + Rybot Subsystems + War Spacio + Iluminación 2D + Flexbox
-**Próxima versión**: v0.20.0 — ryfrac-postFX + ry-windows + ry3d-gfx + Asset Pipeline + Editor
-**Análisis estratégico**: Ver `TASKS_2.md` — Comparativa con Unreal, Unity, Godot, Bevy
+**Última actualización**: 2026-04-16
+**Versión actual**: v0.21.0 ✅ Tipado Fuerte Assets + Higiene Módulos + 5 READMEs
+**Próxima versión**: v0.22.0 — Asset Pipeline (Integración) + Editor Visual (Prototipo) + Hot Reload Real
+**Análisis estratégico**: Ver `TASKS_2.md`
 
 ---
 
@@ -14,65 +14,39 @@
 | **Crates** | 25 |
 | **Errores** | 0 |
 | **Tests** | ~260 pasando |
-| **Crates publicados** | 12 |
-| **Demos funcionales** | 24+ |
-| **Launchers** | 11+ con auto-detección DISPLAY + Zink |
+| **Higiene de código** | ✅ Renombrado de módulos de partículas (anim, gpu, script) |
 
 ---
 
-## ✅ TAREAS COMPLETADAS (v0.15.0 → v0.19.2)
+## ✅ TAREAS COMPLETADAS (v0.15.0 → v0.22.0)
 
 | Versión | Features Clave | Fecha |
 |---------|---------------|-------|
-| v0.15.0 | GPU Instancing (50K) + FSR 1.0 | — |
-| v0.16.0-alpha | CI 3 plataformas + 6 crates | — |
-| v0.16.1 | Snake + Buscaminas + Action Sprite + Tilemap 2.0 | Abr 9 |
-| v0.17.0 | Demo Militar + Emoji Atlas + Audio Mixer | Abr 11 |
-| v0.18.0 | 3D Primitives + 19 Transiciones + UTF-8 Fix | Abr 11 |
-| v0.19.0 | ry-input + rybot + Mesh3D + Skeleton3D + Letras 3D | Abr 12 |
-| v0.19.1 | Iluminación 2D + Flexbox + Física Newtoniana | Abr 13 |
-| v0.19.2 | SDL2 Helpers + War Spacio + Rybot Subsystems | Abr 13 |
 | v0.19.3 | Ciencia Avanzada + Radiación + Genética (DNA) | Abr 15 |
+| v0.20.0 | postfx-ry + ry-windows + Asset Pipeline Base | Abr 15 |
+| v0.21.0 | Tipado Fuerte Assets + Higiene Partículas | Abr 16 |
+| v0.22.0 | ryArt + Unificación Input + Asset Pipeline v2 | Abr 17 |
 
 ---
 
-## 🔴 TAREAS PENDIENTES — PRIORIDAD ALTA (v0.20.0)
+## 🔴 TAREAS PENDIENTES — PRIORIDAD ALTA (v0.23.0 - Consolidación)
 
-### 3 Crates Nuevos — Desarrollo en Paralelo
-
-| # | Crate | Esfuerzo | Dependencia | Detalle |
-|---|-------|----------|-------------|---------|
-| 1 | **postfx-ry** (NUEVO) ✅ | 15-20h | ry-gfx, ry-anim, ry-physics | Post-processing (bloom, blur, sharpen, color grade) + Materiales (goma, lava, vidrio, metal) + Química (mezcla, reacción, fusión) + Transformación visual (cortar, mojar, endurecer, reventar, estirar, fusionar). Puente entre física, química y animación visual. **v0.1.0 creada**: 6 efectos GPU, FBO chain, 3 presets (cyberpunk/natural/retro), 2 tests. |
-| 2 | **ry-windows** (NUEVO) ✅ | 12-16h | ry-backend, ry-input, migui | Ventana unificada configurable por plataforma (Termux/openbox, Windows, Linux, Mac, Android, iOS). Menús/submenus/controles en pantalla preconfigurables en el buildeo. Fusión SDL2 + Raylib a nivel de ventana/binario. **v0.1.0 creada**: WindowConfig, WindowBuilder, Platform enum (7 plataformas), Backend enum, WindowEvent (15 tipos), InputState, WindowTrait, SDL2 + Raylib implementations, presets (game_2d, editor, demo), 9 tests. |
-| 3 | **ry3d-gfx** (EXPANSIÓN) ✅ | 20-30h | ry-gfx, postfx-ry | Desarrollo paralelo continuo: **v0.1.0 → v0.2.0**: OrbitCamera3D (mouse drag + scroll zoom), FpsCamera3D (WASD + mouse look), Skybox procedural (day/sunset/night presets), Primitivas extra (cono, toroide, cápsula, pirámide, heightmap), Iluminación 3D básica (reservado para shaders), 21 tests (de 3 a 21). |
-
-### 🚀 CIENCIA Y FÍSICA FASE 2 COMPLETADAS ✅
-
-| # | Feature | Estado | Crate | Detalle |
-|---|---------|--------|-------|---------|
-| F1 | L-System Avanzado | ✅ | ry-science | 8 presets + interpretación turtle graphics |
-| F2 | Sistema Solar | ✅ | ry-physics | Leyes de Kepler + simulación orbital real |
-| F3 | Radiación Atómica | ✅ | ry-physics | Fisión, Fusión, Decaimiento, Geiger rate |
-| F4 | Fuego Convección | ✅ | ry-physics | Física térmica unificada en partículas |
-| F5 | Mutación Genética | ✅ | ry-science | **DNA system**: mutación por radiación, crossover y fenotipo |
-
-### Asset Pipeline + Editor
+### Estructura Maestro
 
 | # | Tarea | Esfuerzo | Dependencia | Detalle |
 |---|-------|----------|-------------|---------|
-| 4 | **Asset pipeline** | 10-15h | ry-windows, ryfrac-postFX | Carga automática de assets + compresión (basis-universal, ktx2) + hot reload. `AssetServer::load()` idiomático tipo Bevy. **Base arquitectónica completada (v0.20.0-alpha)**: Trait AssetProvider, AssetServer con caché, Sdl2/Raylib adaptadores base. |
-| 5 | **Tilemap editor visual** | 12-16h | migui, toolkit-ry, asset pipeline | Editor GUI de tilemap + tileset con preview, paint, export CSV. |
-| 6 | **Editor visual + por código** | 20-30h | ry-windows, migui, asset pipeline | Editor visual de juegos (separado o 2-in-1). Ambos modos: visual (drag & drop) y por código. Fusión de físicas + animaciones Disney + procesos científicos/biológicos. Sencillo pero potente. |
+| 1 | **Re-exports masivos ry-rs** | 2h | — | Puerta única de entrada via \`ry_rs::prelude\`. |
+| 2 | **Higiene de Código Muerto** | 4h | — | Evaluar módulos RPG/Quests vs Futuro. |
+| 3 | **Eliminar Advertencias** | 2h | — | Limpiar imports inactivos detectados. |
 
-### Conexiones Estructurales
+### ryArt + Editor
 
 | # | Tarea | Esfuerzo | Detalle |
 |---|-------|----------|---------|
-| 7 | **Crates huérfanos** | 4-6h | ry-god → rybot seguridad, ry-script → ry-vm, ry-system-ry → workspace |
-| 8 | **Subsystems rybot** | 10-15h | Physics, Animation, Science, Render, Network — conectar lógica real |
-| 9 | **Duplicados** | 6-8h | particles.rs (3), camera.rs (2), theme.rs (2), backend_sdl2.rs (2), cli.rs (2) |
-| 10 | **Re-exports** | 3-4h | ry-rs/lib.rs, ry-gfx/lib.rs — exponer tipos clave |
-| 11 | **5 READMEs faltantes** | 5h | ry-lexer, ry-parser, events-ry, ry-loader, blast-core |
+| 4 | **ryArt Skins Toolkit** | 8h | Estilos procedimentales para botones y HUDs. |
+| 5 | **Hot Reload Real** | 6h | Recarga de texturas en runtime sin reiniciar. |
+| 6 | **Prototipo Editor Visual** | 20h | Ventana de inspección de entidades con migui. |
+
 
 ---
 
