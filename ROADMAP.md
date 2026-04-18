@@ -1,7 +1,7 @@
 # Ry-Dit - ROADMAP v0.19.0 → v1.0.0
 
 **Última actualización**: 2026-04-17
-**Versión actual**: v0.22.0 ✅ Asset Pipeline (Typed) + ryArt Foundation + Unified Input
+**Versión actual**: v0.23.0 ✅ Consolidación Estructural + Puerta Principal ry-rs + Prelude
 **Próxima versión**: v1.0.0 — Motor Completo + Editor Visual + LAZOS
 **Análisis estratégico**: Ver `TASKS_2.md` — Análisis comparativo con Unreal, Unity, Godot, Bevy
 

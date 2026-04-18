@@ -26,18 +26,11 @@
 | v0.20.0 | postfx-ry + ry-windows + Asset Pipeline Base | Abr 15 |
 | v0.21.0 | Tipado Fuerte Assets + Higiene Partículas | Abr 16 |
 | v0.22.0 | ryArt + Unificación Input + Asset Pipeline v2 | Abr 17 |
+| v0.23.0 | Consolidación Estructural + API Maestra | Abr 17 |
 
 ---
 
-## 🔴 TAREAS PENDIENTES — PRIORIDAD ALTA (v0.23.0 - Consolidación)
-
-### Estructura Maestro
-
-| # | Tarea | Esfuerzo | Dependencia | Detalle |
-|---|-------|----------|-------------|---------|
-| 1 | **Re-exports masivos ry-rs** | 2h | — | Puerta única de entrada via \`ry_rs::prelude\`. |
-| 2 | **Higiene de Código Muerto** | 4h | — | Evaluar módulos RPG/Quests vs Futuro. |
-| 3 | **Eliminar Advertencias** | 2h | — | Limpiar imports inactivos detectados. |
+## 🔴 TAREAS PENDIENTES — PRIORIDAD ALTA (v1.0.0 - Hacia la Meta)
 
 ### ryArt + Editor
 

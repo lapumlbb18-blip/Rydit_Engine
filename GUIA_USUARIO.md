@@ -36,6 +36,26 @@ Ry-Dit es un **motor de juegos 2D + lenguaje de scripting en Rust**, diseñado p
 
 ---
 
+## Puerta Principal (ry-rs)
+
+A partir de la v0.23.0, Ry-Dit utiliza un sistema de **Puerta Principal Unificada**. No necesitas importar múltiples crates para empezar a desarrollar.
+
+### El Prelude Maestro
+Añade esto al inicio de tu archivo de Rust para tener acceso a todo el motor:
+
+```rust
+use ry_rs::prelude::*;
+```
+
+Esto te dará acceso a:
+- `RybotEngine`: El orquestador central.
+- `InputManager`: Gestión unificada de teclado/mouse/gamepad.
+- `RyditGfx`: El motor de renderizado 2D.
+- `PhysicsBrush`: Pinceles procedimentales de ryArt.
+- `AssetServer`: Carga de recursos con tipos fuertes.
+
+---
+
 ## Rybot Engine
 
 Ry-Dit ahora incluye **Rybot**, el motor central que orquesta todos los crates del ecosistema.
