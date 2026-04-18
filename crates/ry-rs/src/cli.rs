@@ -8,9 +8,12 @@ use blast_core::Executor;
 use migui::Migui;
 use ry_gfx::RyditGfx;
   // 🆕 v0.14.0: ry-config crate
+use crate::executor::{
+    ejecutar_programa, ejecutar_programa_gfx, ejecutar_programa_migui,
+};
+use crate::interpreter::init_global_loader;
 
-use crate::{
-    ejecutar_programa, ejecutar_programa_gfx, ejecutar_programa_migui, init_global_loader,
+pub use crate::{
     lazos::lazos_loop, repl::repl_mode,
 };
 

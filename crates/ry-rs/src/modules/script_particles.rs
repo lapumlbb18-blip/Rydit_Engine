@@ -23,15 +23,15 @@ pub fn ejecutar_funcion<'a>(
     name: &str,
     args: &[Expr<'a>],
     executor: &mut Executor,
-    input: &crate::InputEstado,
+    input: &crate::interpreter::InputEstado,
     funcs: &mut std::collections::HashMap<String, (Vec<String>, Vec<lizer::Stmt>)>,
 ) -> Option<Valor> {
     // particles::create_emitter(nombre, x, y, rate)
     if name == "particles::create_emitter" && args.len() >= 4 {
-        let nombre_val = crate::evaluar_expr_gfx(&args[0], executor, input, funcs);
-        let x_val = crate::evaluar_expr_gfx(&args[1], executor, input, funcs);
-        let y_val = crate::evaluar_expr_gfx(&args[2], executor, input, funcs);
-        let rate_val = crate::evaluar_expr_gfx(&args[3], executor, input, funcs);
+        let nombre_val = crate::interpreter::evaluar_expr_gfx(&args[0], executor, input, funcs);
+        let x_val = crate::interpreter::evaluar_expr_gfx(&args[1], executor, input, funcs);
+        let y_val = crate::interpreter::evaluar_expr_gfx(&args[2], executor, input, funcs);
+        let rate_val = crate::interpreter::evaluar_expr_gfx(&args[3], executor, input, funcs);
 
         if let (Valor::Texto(nombre), Valor::Num(x), Valor::Num(y), Valor::Num(rate)) =
             (nombre_val, x_val, y_val, rate_val)
@@ -51,8 +51,8 @@ pub fn ejecutar_funcion<'a>(
     // particles::set_emitter_type(nombre, tipo)
     // Tipos: "fire", "smoke", "sparks", "explosion"
     if name == "particles::set_emitter_type" && args.len() == 2 {
-        let nombre_val = crate::evaluar_expr_gfx(&args[0], executor, input, funcs);
-        let tipo_val = crate::evaluar_expr_gfx(&args[1], executor, input, funcs);
+        let nombre_val = crate::interpreter::evaluar_expr_gfx(&args[0], executor, input, funcs);
+        let tipo_val = crate::interpreter::evaluar_expr_gfx(&args[1], executor, input, funcs);
 
         if let (Valor::Texto(nombre), Valor::Texto(tipo)) = (nombre_val, tipo_val) {
             PARTICLES.with(|p| {
@@ -82,7 +82,7 @@ pub fn ejecutar_funcion<'a>(
 
     // particles::remove_emitter(nombre)
     if name == "particles::remove_emitter" && args.len() == 1 {
-        let nombre_val = crate::evaluar_expr_gfx(&args[0], executor, input, funcs);
+        let nombre_val = crate::interpreter::evaluar_expr_gfx(&args[0], executor, input, funcs);
 
         if let Valor::Texto(nombre) = nombre_val {
             PARTICLES.with(|p| {
@@ -99,7 +99,7 @@ pub fn ejecutar_funcion<'a>(
 
     // particles::update(dt)
     if name == "particles::update" && args.len() == 1 {
-        let dt_val = crate::evaluar_expr_gfx(&args[0], executor, input, funcs);
+        let dt_val = crate::interpreter::evaluar_expr_gfx(&args[0], executor, input, funcs);
 
         if let Valor::Num(dt) = dt_val {
             PARTICLES.with(|p| {
@@ -125,7 +125,7 @@ pub fn ejecutar_funcion<'a>(
 
     // 🆕 v0.19.2: particles::enable_velocity_color(max_speed) — activar color por velocidad
     if name == "particles::enable_velocity_color" && args.len() == 1 {
-        let max_speed_val = crate::evaluar_expr_gfx(&args[0], executor, input, funcs);
+        let max_speed_val = crate::interpreter::evaluar_expr_gfx(&args[0], executor, input, funcs);
         if let Valor::Num(max_speed) = max_speed_val {
             executor.guardar("__PARTICLE_VELOCITY_COLOR__", Valor::Bool(true));
             executor.guardar("__PARTICLE_MAX_SPEED__", Valor::Num(max_speed));
@@ -148,7 +148,7 @@ pub fn ejecutar_funcion<'a>(
 
     // particles::set_gravity(gravity)
     if name == "particles::set_gravity" && args.len() == 1 {
-        let gravity_val = crate::evaluar_expr_gfx(&args[0], executor, input, funcs);
+        let gravity_val = crate::interpreter::evaluar_expr_gfx(&args[0], executor, input, funcs);
 
         if let Valor::Num(gravity) = gravity_val {
             PARTICLES.with(|p| {

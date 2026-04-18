@@ -306,7 +306,7 @@ pub fn save_set_var<'a>(
         // Set variable
         let value_str = match &value {
             Valor::Num(n) => format!("{}", n),
-            Valor::Texto(t) => format!("\"{}\"", escape_json(t)),
+            Valor::Texto(t) => format!("\"{}\"", escape_json(&t)),
             Valor::Bool(b) => format!("{}", b),
             _ => "\"\"".to_string(),
         };

@@ -9,12 +9,12 @@ use ry_gfx::render_queue::{DrawCommand, RenderQueue};
 use ry_gfx::RyditGfx;
 use ry_parser::{Program, Stmt};
 
-use crate::{
+use crate::interpreter::{
     ejecutar_stmt, ejecutar_stmt_gfx, ejecutar_stmt_migui, evaluar_expr_migui, InputEstado,
 };
 
 // 🆕 RyBot - Motor central (stub — crate real en crates/rybot/)
-use crate::rybot::RyBot;
+use crate::rybot_stub::RyBot;
 
 /// Ejecutar programa en modo comandante (sin gráficos)
 pub fn ejecutar_programa<'a>(
@@ -142,7 +142,7 @@ pub fn ejecutar_programa_gfx<'a>(
 
                     // Verificar condición del While
                     let cond_val =
-                        crate::evaluar_expr_gfx_for_loop(condition, executor, &input, funcs);
+                        crate::interpreter::evaluar_expr_gfx_for_loop(condition, executor, &input, funcs);
                     let es_verdad = match cond_val {
                         blast_core::Valor::Num(n) => n != 0.0,
                         blast_core::Valor::Bool(b) => b,

@@ -18,7 +18,7 @@
 
 use blast_core::{Executor, Valor};
 use lizer::{Expr, Stmt};
-use ry_gfx::{ColorRydit, DrawHandle};
+use ry_gfx;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::fs;

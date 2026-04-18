@@ -351,14 +351,14 @@ pub fn csv_filter<'a>(
                 let matches = match &value_val {
                     Valor::Texto(s) => {
                         if let Valor::Texto(cell_s) = cell {
-                            cell_s == s
+                            *cell_s == *s
                         } else {
                             false
                         }
                     }
                     Valor::Num(n) => {
                         if let Valor::Num(cell_n) = cell {
-                            cell_n == n
+                            *cell_n == *n
                         } else {
                             false
                         }

@@ -8,7 +8,7 @@ use ry_parser::{BinaryOp, Expr, Stmt, UnaryOp};
 use std::collections::{HashMap, HashSet};
 
 // Importar funciones auxiliares desde main.rs
-use crate::{ejecutar_stmt, valor_a_bool, valor_ry_a_serde, valor_serde_a_rydit};
+use crate::interpreter::{ejecutar_stmt, valor_a_bool, valor_ry_a_serde, valor_serde_a_rydit};
 
 // ✅ v0.10.4: Conectar módulos
 use crate::modules::assets::{assets_draw, assets_load};
@@ -4436,7 +4436,7 @@ fn evaluar_funcion_por_nombre(
         let mut loaded_modules = HashSet::new();
         let mut importing_stack = Vec::new();
         for stmt in &body {
-            let (_continue_flag, val_opt) = crate::ejecutar_stmt(
+            let (_continue_flag, val_opt) = crate::interpreter::ejecutar_stmt(
                 stmt, executor, funcs, &mut loaded_modules, &mut importing_stack,
             );
             if let Some(val) = val_opt {

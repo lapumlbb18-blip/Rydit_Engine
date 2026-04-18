@@ -81,7 +81,7 @@ pub fn repl_mode() {
                     println!("[RYDIT] {} statements", program.statements.len());
                     // Ejecutar statements
                     for stmt in &program.statements {
-                        crate::ejecutar_stmt(
+                        crate::interpreter::ejecutar_stmt(
                             stmt,
                             &mut executor,
                             &mut funcs,

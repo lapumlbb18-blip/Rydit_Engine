@@ -4,7 +4,7 @@
 use serde_json::{json, Value};
 use std::io::{self, BufRead, Write};
 
-use crate::get_loader;
+use crate::interpreter::get_loader;
 
 /// Loop principal del Protocolo LAZOS
 /// Lee comandos JSON desde stdin, ejecuta, responde por stdout
