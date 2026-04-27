@@ -213,6 +213,9 @@ impl MiguiSdl2Backend {
                     ));
                     let _ = self.core.canvas.clear();
                 }
+                DrawCommand::DrawViewport3D { .. } => {
+                    // El renderizado de viewports 3D se delega a ry-gfx (Patrón Fusional)
+                }
             }
         }
 

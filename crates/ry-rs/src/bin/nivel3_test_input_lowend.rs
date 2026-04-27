@@ -42,14 +42,16 @@ fn main() {
         backend.draw_rect_color(x, y, 40, 40, color);
 
         // Dibujar instrucciones
-        backend.draw_text_color("Usa flechas para mover", 90, 20, 16, ColorRydit::Blanco);
-        backend.draw_text_color("ESPACIO: cambiar color", 105, 40, 16, ColorRydit::Blanco);
-        backend.draw_text_color(
+        backend.draw_text("Usa flechas para mover", 90, 20, 16, 255, 255, 255);
+        backend.draw_text("ESPACIO: cambiar color", 105, 40, 16, 255, 255, 255);
+        backend.draw_text(
             &format!("Pos: ({}, {})", x, y),
             150,
             270,
             14,
-            ColorRydit::Amarillo,
+            255,
+            255,
+            0,
         );
 
         // Input handling

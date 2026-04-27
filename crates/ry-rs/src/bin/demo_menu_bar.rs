@@ -302,7 +302,10 @@ fn main() {
                 }
                 migui::DrawCommand::Clear { color } => {
                     canvas.set_draw_color(SdlColor::RGBA(color.r, color.g, color.b, color.a));
-                    canvas.clear();
+                    let _ = canvas.clear();
+                }
+                migui::DrawCommand::DrawViewport3D { .. } => {
+                    // Ignorado en este demo de UI simple
                 }
             }
         }

@@ -1004,7 +1004,55 @@ impl RyditGfx {
         }
     }
 
-    // ... (FSR functions omitidas para brevedad, se mantienen igual pero con checks si es necesario)
+    /// Inicializar FSR upscaler
+    pub fn init_fsr(&mut self, quality: fsr::FsrQuality) -> Result<(), String> {
+        match fsr::FsrUpscaler::new() {
+            Ok(fsr) => {
+                eprintln!("[FSR] Inicializado: {:?}", quality);
+                self.fsr = Some(fsr);
+                self.fsr_enabled = true;
+                Ok(())
+            }
+            Err(e) => {
+                eprintln!("[FSR] Error al inicializar: {} (FSR desactivado)", e);
+                self.fsr = None;
+                self.fsr_enabled = false;
+                Err(e)
+            }
+        }
+    }
+
+    /// Activar/desactivar FSR
+    pub fn set_fsr_enabled(&mut self, enabled: bool) {
+        if let Some(ref mut fsr) = self.fsr {
+            fsr.set_enabled(enabled);
+            self.fsr_enabled = enabled;
+        }
+    }
+
+    /// Cambiar calidad FSR
+    pub fn set_fsr_quality(&mut self, quality: fsr::FsrQuality) {
+        if let Some(ref mut fsr) = self.fsr {
+            fsr.set_quality(quality);
+        }
+    }
+
+    /// Cycle FSR quality modes
+    pub fn cycle_fsr_quality(&mut self) {
+        if let Some(ref mut fsr) = self.fsr {
+            fsr.cycle_quality();
+        }
+    }
+
+    /// Verificar si FSR está activo
+    pub fn is_fsr_enabled(&self) -> bool {
+        self.fsr_enabled && self.fsr.is_some()
+    }
+
+    /// Obtener calidad FSR actual
+    pub fn fsr_quality(&self) -> Option<fsr::FsrQuality> {
+        self.fsr.as_ref().map(|f| f.quality())
+    }
 
     /// Limpiar pantalla
     pub fn clear_background(&mut self, color: ColorRydit) {

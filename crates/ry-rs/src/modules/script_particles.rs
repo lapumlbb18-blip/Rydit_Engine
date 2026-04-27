@@ -190,7 +190,9 @@ pub fn draw_particles<'a>(gfx: &mut ry_gfx::RyditGfx) {
     PARTICLES.with(|p| {
         let system = p.borrow();
         let mut d = gfx.begin_draw();
-        system.draw(&mut d.draw);
+        if let Some(ref mut rd) = d.draw {
+            system.draw(rd);
+        }
         drop(d);
     });
 }
@@ -199,7 +201,9 @@ pub fn draw_particles<'a>(gfx: &mut ry_gfx::RyditGfx) {
 pub fn draw_particles_with_handle<'a>(d: &mut ry_gfx::DrawHandle) {
     PARTICLES.with(|p| {
         let system = p.borrow();
-        system.draw(&mut d.draw);
+        if let Some(ref mut rd) = d.draw {
+            system.draw(rd);
+        }
     });
 }
 
@@ -207,7 +211,9 @@ pub fn draw_particles_with_handle<'a>(d: &mut ry_gfx::DrawHandle) {
 pub fn draw_particles_with_handle_velocity<'a>(d: &mut ry_gfx::DrawHandle, max_speed: f32) {
     PARTICLES.with(|p| {
         let system = p.borrow();
-        system.draw_with_velocity(&mut d.draw, max_speed);
+        if let Some(ref mut rd) = d.draw {
+            system.draw_with_velocity(rd, max_speed);
+        }
     });
 }
 

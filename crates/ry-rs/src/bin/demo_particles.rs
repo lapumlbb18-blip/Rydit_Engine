@@ -118,7 +118,9 @@ fn main() {
         // TODO: Integrar particles.draw con RenderQueue
         {
             let mut d = gfx.begin_draw();
-            particles.draw(&mut d.draw);
+            if let Some(ref mut rd) = d.draw {
+                particles.draw(rd);
+            }
             drop(d);
         }
 
@@ -155,7 +157,9 @@ fn main() {
         // Ejecutar queue (sin assets - particles no usa sprites)
         // Las partículas se dibujan directamente con particles.draw()
         let mut d = gfx.begin_draw();
-        particles.draw(&mut d.draw);
+        if let Some(ref mut rd) = d.draw {
+            particles.draw(rd);
+        }
         drop(d);
 
         if escape {

@@ -561,6 +561,7 @@ pub fn ejecutar_programa_migui<'a>(
         }
 
         // Renderizar con el backend optimizado
-        gfx.render_migui_frame(gui.draw_commands());
+        let mut dummy_viewports = ry_gfx::viewports::ViewportManager::new();
+        gfx.render_migui_frame(gui.draw_commands(), &mut dummy_viewports);
     }
 }
