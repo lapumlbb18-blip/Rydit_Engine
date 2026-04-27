@@ -141,7 +141,7 @@ impl RybotEngine {
     /// Crear motor nuevo
     pub fn new() -> Self {
         Self {
-            state: EngineState::Running,
+            state: EngineState::Initializing,
             scene: SceneTree::new(),
             input: InputSubsystem::new(),
             physics: PhysicsSubsystem::new(),
@@ -152,6 +152,14 @@ impl RybotEngine {
             config: HashMap::new(),
             target_fps: 60,
             frame: 0,
+        }
+    }
+
+    /// Iniciar el motor
+    pub fn start(&mut self) {
+        if self.state == EngineState::Initializing {
+            self.state = EngineState::Running;
+            println!("[RYBOT] Motor iniciado");
         }
     }
 
@@ -318,7 +326,7 @@ impl RybotEngine {
     }
 
     /// Obtener todas las stats del motor
-    pub fn get_stats(&self) -> EngineStats {
+    pub fn get_stats(&self, pan_x: f32, pan_y: f32, zoom: f32) -> EngineStats {
         EngineStats {
             frame: self.frame,
             state: self.state,
@@ -328,6 +336,9 @@ impl RybotEngine {
             animation_enabled: self.animation.enabled(),
             network_enabled: self.network.enabled(),
             target_fps: self.target_fps,
+            pan_x,
+            pan_y,
+            zoom,
         }
     }
 }
@@ -343,6 +354,9 @@ pub struct EngineStats {
     pub animation_enabled: bool,
     pub network_enabled: bool,
     pub target_fps: u32,
+    pub pan_x: f32,
+    pub pan_y: f32,
+    pub zoom: f32,
 }
 
 impl std::fmt::Display for EngineStats {

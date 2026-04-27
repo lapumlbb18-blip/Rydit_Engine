@@ -254,8 +254,16 @@ impl ScienceSubsystem {
 // RENDER — Conectado a ry-gfx + ry3d-gfx
 // ============================================================================
 
+/// Tipos de backend soportados
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum RenderBackend {
+    Raylib,
+    Sdl2,
+}
+
 /// Subsistema de render — coordina ry-gfx (2D) + ry3d-gfx (3D)
 pub struct RenderSubsystem {
+    pub backend: RenderBackend,
     pub use_3d: bool,
     pub fps: f32,
     pub frame_count: u64,
@@ -269,11 +277,18 @@ impl Default for RenderSubsystem {
 impl RenderSubsystem {
     pub fn new() -> Self {
         Self {
+            backend: RenderBackend::Raylib, // Por defecto legacy
             use_3d: false,
             fps: 0.0,
             frame_count: 0,
             particles: None,
         }
+    }
+
+    /// Configurar el backend líder
+    pub fn set_backend(&mut self, backend: RenderBackend) {
+        self.backend = backend;
+        println!("[RENDER] Backend cambiado a: {:?}", backend);
     }
 
     pub fn update(&mut self) {

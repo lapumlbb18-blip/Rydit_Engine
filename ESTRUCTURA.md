@@ -35,7 +35,8 @@ shield-project/
 │   ├── launcher_torreta.sh       # Torreta vs Sprites
 │   └── launcher_sdl2.sh          # SDL2 base
 │
-├── crates/
+├───crates/
+│   ├───ry-editor/      (🆕 v0.22.0: Entorno de Desarrollo Consolidado)
 │   ├── ry-core/                  # ✅ Core trait + registry (crates.io)
 │   ├── ry-lexer/                 # Zero-copy lexer
 │   ├── ry-parser/                # AST parser

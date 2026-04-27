@@ -1,0 +1,17 @@
+[package]
+name = "ry-editor"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Núcleo Visual
+ry-gfx = { path = "../ry-gfx", features = ["migui"] }
+migui = { path = "../migui" }
+
+# Núcleo Inteligente y Estilo
+rybot = { path = "../rybot" }
+ry-anim = { path = "../ry-anim" }
+ry-art = { path = "../ry-art" }
+
+# Utilitarios
+blast-core = { path = "../blast-core" }

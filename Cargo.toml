@@ -26,6 +26,7 @@ members = [
     "crates/rybot",       # 🆕 v0.19.0: Motor central — orquesta crates
     "crates/postfx-ry",   # 🆕 v0.20.0: Post-processing effects (bloom, blur, color grade)
     "crates/ry-windows",  # 🆕 v0.20.0: Unified window management (SDL2 + Raylib, multiplatform)
+    "crates/ry-editor",   # 🆕 v0.22.0: Entorno de Desarrollo Consolidado
 ]
 
 # =============================================================================

@@ -70,7 +70,7 @@ jobs:
           retention-days: 7
 
   # ============================================================================
-  # BUILD en Windows (MSVC) — sin tests (requiere SDL2 dll manual)
+  # BUILD en Windows (MSVC)
   # ============================================================================
   build-windows:
     runs-on: windows-latest
@@ -95,8 +95,15 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cargo-
 
-      - name: Build workspace (libs only, skip demos)
-        run: cargo build --workspace --lib --verbose
+      - name: Build workspace (release)
+        run: cargo build --release -p ry-rs --verbose
+
+      - name: Upload release binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: rydit-rs-windows
+          path: target/release/rydit-rs.exe
+          retention-days: 7
 
   # ============================================================================
   # BUILD en macOS
@@ -123,14 +130,46 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cargo-
 
-      - name: Build workspace (libs only, skip demos)
-        run: cargo build --workspace --lib --verbose
+      - name: Build workspace (release)
+        run: cargo build --release -p ry-rs --verbose
+
+      - name: Upload release binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: rydit-rs-macos
+          path: target/release/rydit-rs
+          retention-days: 7
+
+  # ============================================================================
+  # BUILD para Android / Termux (AARCH64 Linux)
+  # ============================================================================
+  build-android-aarch64:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-unknown-linux-gnu
+
+      - name: Install cross-compilation tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+
+      - name: Build (aarch64)
+        run: |
+          # Nota: Requiere configuración de linker en .cargo/config.toml para que funcione el cross-compile
+          # Por ahora solo garantizamos que la estructura permita añadirlo.
+          # cargo build --target aarch64-unknown-linux-gnu --release -p ry-rs --verbose || echo "⚠️ Cross-compile requiere SDL2 aarch64 libs"
+          echo "Build aarch64 preparado para integración de libs"
 
   # ============================================================================
   # RELEASE: Crear artifacts (solo en tag/release)
   # ============================================================================
   release:
-    needs: [build-linux]
+    needs: [build-linux, build-windows, build-macos]
     runs-on: ubuntu-latest
     if: github.event_name == 'release'
     steps:

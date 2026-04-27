@@ -11,6 +11,7 @@ use std::collections::HashMap;
 // ============================================================================
 
 /// Estado del input - se actualiza vía eventos SDL2
+#[derive(Debug, Clone)]
 pub struct InputState {
     /// Teclas actualmente presionadas
     pub teclas: HashMap<Keycode, bool>,
@@ -18,6 +19,17 @@ pub struct InputState {
     pub teclas_pressionadas_frame: Vec<Keycode>,
     /// Mapeo de teclas SDL2 a nombres RyDit
     pub mapeo_teclas: HashMap<Keycode, String>,
+
+    // Mouse / Touch
+    pub mouse_x: i32,
+    pub mouse_y: i32,
+    pub prev_mouse_x: i32,
+    pub prev_mouse_y: i32,
+    pub mouse_left: bool,
+    pub mouse_right: bool,
+    pub mouse_middle: bool,
+    pub mouse_left_pressed: bool,
+    pub mouse_left_released: bool,
 }
 
 impl InputState {
@@ -26,6 +38,15 @@ impl InputState {
             teclas: HashMap::new(),
             teclas_pressionadas_frame: Vec::new(),
             mapeo_teclas: HashMap::new(),
+            mouse_x: 0,
+            mouse_y: 0,
+            prev_mouse_x: 0,
+            prev_mouse_y: 0,
+            mouse_left: false,
+            mouse_right: false,
+            mouse_middle: false,
+            mouse_left_pressed: false,
+            mouse_left_released: false,
         };
 
         // Inicializar mapeo de teclas
@@ -161,6 +182,41 @@ impl InputState {
             } => {
                 self.teclas.insert(*keycode, false);
             }
+            // MOUSE / TOUCH
+            Event::MouseMotion { x, y, .. } => {
+                self.prev_mouse_x = self.mouse_x;
+                self.prev_mouse_y = self.mouse_y;
+                self.mouse_x = *x;
+                self.mouse_y = *y;
+            }
+            Event::MouseButtonDown { mouse_btn, x, y, .. } => {
+                self.prev_mouse_x = *x;
+                self.prev_mouse_y = *y;
+                self.mouse_x = *x;
+                self.mouse_y = *y;
+                match mouse_btn {
+                    sdl2::mouse::MouseButton::Left => {
+                        self.mouse_left = true;
+                        self.mouse_left_pressed = true;
+                    }
+                    sdl2::mouse::MouseButton::Right => self.mouse_right = true,
+                    sdl2::mouse::MouseButton::Middle => self.mouse_middle = true,
+                    _ => {}
+                }
+            }
+            Event::MouseButtonUp { mouse_btn, x, y, .. } => {
+                self.mouse_x = *x;
+                self.mouse_y = *y;
+                match mouse_btn {
+                    sdl2::mouse::MouseButton::Left => {
+                        self.mouse_left = false;
+                        self.mouse_left_released = true;
+                    }
+                    sdl2::mouse::MouseButton::Right => self.mouse_right = false,
+                    sdl2::mouse::MouseButton::Middle => self.mouse_middle = false,
+                    _ => {}
+                }
+            }
             _ => {}
         }
     }
@@ -168,6 +224,8 @@ impl InputState {
     /// Limpiar eventos del frame anterior
     pub fn limpiar_frame(&mut self) {
         self.teclas_pressionadas_frame.clear();
+        self.mouse_left_pressed = false;
+        self.mouse_left_released = false;
     }
 
     /// Verificar si una tecla está presionada (por nombre RyDit)

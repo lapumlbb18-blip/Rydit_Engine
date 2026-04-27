@@ -291,6 +291,11 @@ pub enum DrawCommand {
         color: Color,
         thickness: f32,
     },
+    /// Renderizado 3D encapsulado en un área 2D
+    DrawViewport3D {
+        id: String,
+        rect: Rect,
+    },
 }
 
 // ============================================================================
@@ -392,6 +397,10 @@ pub trait MiguiBackend {
                     thickness,
                 } => {
                     self.draw_line(*x1, *y1, *x2, *y2, *color, *thickness);
+                }
+                DrawCommand::DrawViewport3D { id, rect } => {
+                    // El backend puede elegir ignorarlo aquí si el renderizado 3D 
+                    // se maneja fuera del flujo standard de comandos 2D
                 }
             }
         }
@@ -703,6 +712,36 @@ impl Migui {
         });
 
         new_value
+    }
+
+    /// Viewport 3D - define un área para renderizado 3D (ED-1)
+    pub fn viewport_3d(&mut self, id: WidgetId, rect: Rect) {
+        let state = self.widget_states.entry(id.0.clone()).or_default();
+        state.hovered = rect.contains(self.mouse_x, self.mouse_y);
+
+        // El viewport es esencialmente un marcador para el backend
+        self.draw_commands.push(DrawCommand::DrawViewport3D {
+            id: id.0,
+            rect,
+        });
+
+        // Dibujar borde decorativo
+        self.draw_commands.push(DrawCommand::DrawLine {
+            x1: rect.x,
+            y1: rect.y,
+            x2: rect.x + rect.w,
+            y2: rect.y,
+            color: Color::BORDER,
+            thickness: 1.0,
+        });
+        self.draw_commands.push(DrawCommand::DrawLine {
+            x1: rect.x,
+            y1: rect.y + rect.h,
+            x2: rect.x + rect.w,
+            y2: rect.y + rect.h,
+            color: Color::BORDER,
+            thickness: 1.0,
+        });
     }
 
     /// Panel - contenedor visual

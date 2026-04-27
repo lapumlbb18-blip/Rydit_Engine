@@ -244,15 +244,17 @@ impl RenderQueue {
                         color,
                     } => {
                         // Dibujar textura con escala y rotación
-                        assets.draw_texture_ex_by_id(
-                            &mut d.draw,
-                            &id,
-                            x,
-                            y,
-                            scale,
-                            rotation,
-                            color,
-                        );
+                        if let Some(ref mut rd) = d.draw {
+                            assets.draw_texture_ex_by_id(
+                                rd,
+                                &id,
+                                x,
+                                y,
+                                scale,
+                                rotation,
+                                color,
+                            );
+                        }
                     }
                     DrawCommand::Clear { color } => {
                         d.clear(color);
@@ -323,7 +325,9 @@ impl RenderQueue {
                     color,
                 } => {
                     // d es DrawHandle, usar d.draw para obtener RaylibDrawHandle
-                    assets.draw_texture_ex_by_id(&mut d.draw, &id, x, y, scale, rotation, color);
+                    if let Some(ref mut rd) = d.draw {
+                        assets.draw_texture_ex_by_id(rd, &id, x, y, scale, rotation, color);
+                    }
                 }
                 DrawCommand::Clear { color } => {
                     d.clear(color);

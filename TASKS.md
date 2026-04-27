@@ -1,7 +1,8 @@
 # 🛡️ Ry-Dit - Tareas Completadas y Pendientes
 
-**Última actualización**: 2026-04-16
+**Última actualización**: 2026-04-19
 **Versión actual**: v0.21.0 ✅ Tipado Fuerte Assets + Higiene Módulos + 5 READMEs
+**Foco de Sesión**: Ver [TASKS_3D_GIT_EDITOR.md](TASKS_3D_GIT_EDITOR.md) para 3D Touch, CI/CD y Editor.
 **Próxima versión**: v0.22.0 — Asset Pipeline (Integración) + Editor Visual (Prototipo) + Hot Reload Real
 **Análisis estratégico**: Ver `TASKS_2.md`
 

@@ -17,9 +17,38 @@ use crate::input_sdl2::InputState;
 use crate::sdl2_ffi::FontFFI;
 use crate::ColorRydit;
 
-// ============================================================================
-// SDL2 BACKEND
-// ============================================================================
+// Importar migui para el backend
+#[cfg(feature = "migui")]
+use migui::{Color as MiguiColor, MiguiBackend, Rect as MiguiRect};
+
+// ... (en la implementación de Sdl2Backend)
+
+#[cfg(feature = "migui")]
+impl MiguiBackend for Sdl2Backend {
+    fn clear(&mut self, color: MiguiColor) {
+        self.canvas.set_draw_color(Color::RGBA(color.r, color.g, color.b, color.a));
+        self.canvas.clear();
+    }
+
+    fn draw_rect(&mut self, rect: MiguiRect, color: MiguiColor) {
+        self.canvas.set_draw_color(Color::RGBA(color.r, color.g, color.b, color.a));
+        let sdl_rect = Rect::new(rect.x as i32, rect.y as i32, rect.w as u32, rect.h as u32);
+        let _ = self.canvas.fill_rect(sdl_rect);
+    }
+
+    fn draw_text(&mut self, text: &str, x: f32, y: f32, size: f32, color: MiguiColor) {
+        self.draw_text(text, x as i32, y as i32, size as u16, color.r, color.g, color.b);
+    }
+
+    fn draw_line(&mut self, x1: f32, y1: f32, x2: f32, y2: f32, color: MiguiColor, thickness: f32) {
+        self.canvas.set_draw_color(Color::RGBA(color.r, color.g, color.b, color.a));
+        // SDL2 nativo no tiene line_thickness directo en canvas básico, dibujamos línea simple
+        let _ = self.canvas.draw_line(
+            sdl2::rect::Point::new(x1 as i32, y1 as i32),
+            sdl2::rect::Point::new(x2 as i32, y2 as i32)
+        );
+    }
+}
 
 /// Backend SDL2 completo para RyDit
 pub struct Sdl2Backend {
@@ -285,15 +314,70 @@ impl Sdl2Backend {
         }
     }
 
-    /// Dibujar texto con ColorRydit
-    pub fn draw_text_color(&mut self, text: &str, x: i32, y: i32, size: u16, color: ColorRydit) {
-        let (r, g, b) = color.to_rgb();
-        self.draw_text(text, x, y, size, r, g, b);
-    }
+    /// Renderizar comandos de migui usando el backend de SDL2
+    pub fn render_migui_commands(
+        &mut self, 
+        commands: &[migui::DrawCommand], 
+        viewports: &mut crate::viewports::ViewportManager
+    ) {
+        for cmd in commands {
+            match cmd {
+                migui::DrawCommand::Clear { color } => {
+                    self.canvas.set_draw_color(Color::RGBA(color.r, color.g, color.b, color.a));
+                    self.canvas.clear();
+                }
+                migui::DrawCommand::DrawRect { rect, color } => {
+                    self.canvas.set_draw_color(Color::RGBA(color.r, color.g, color.b, color.a));
+                    let r = Rect::new(rect.x as i32, rect.y as i32, rect.w as u32, rect.h as u32);
+                    let _ = self.canvas.fill_rect(r);
+                }
+                migui::DrawCommand::DrawText { text, x, y, size, color } => {
+                    self.draw_text(text, *x as i32, *y as i32, *size as u16, color.r, color.g, color.b);
+                }
+                migui::DrawCommand::DrawLine { x1, y1, x2, y2, color, thickness: _ } => {
+                    self.canvas.set_draw_color(Color::RGBA(color.r, color.g, color.b, color.a));
+                    let _ = self.canvas.draw_line(
+                        sdl2::rect::Point::new(*x1 as i32, *y1 as i32),
+                        sdl2::rect::Point::new(*x2 as i32, *y2 as i32)
+                    );
+                }
+                migui::DrawCommand::DrawViewport3D { id, rect } => {
+                    if let Some(vp) = viewports.viewports.get_mut(id) {
+                        // 1. Iniciar modo textura en Raylib (vía FFI para evitar necesidad de RaylibHandle)
+                        // Esto asume que el contexto OpenGL es el mismo.
+                        unsafe {
+                            raylib::ffi::BeginTextureMode(vp.target);
+                            raylib::ffi::ClearBackground(raylib::ffi::Color { r: 30, g: 30, b: 35, a: 255 });
+                            
+                            // --- DIBUJO RAYLIB (Fusión) ---
+                            // Aquí se inyectan comandos de raylib::ffi
+                            if vp.grid_enabled {
+                                // Dibujar grid minimalista vía FFI
+                                let grid_color = raylib::ffi::Color { r: 60, g: 60, b: 70, a: 100 };
+                                raylib::ffi::DrawLine(0, (vp.height/2) as i32, vp.width as i32, (vp.height/2) as i32, grid_color);
+                            }
+                            
+                            raylib::ffi::EndTextureMode();
+                        }
 
-    /// Obtener FPS objetivo (vsync = 60)
-    pub fn get_target_fps(&self) -> i32 {
-        60
+                        // 2. Puente: Dibujar el buffer de Raylib en SDL2
+                        // En un sistema con contexto compartido, podemos usar la ID de textura de Raylib directamente.
+                        // Para esta implementación, usaremos un rectángulo de color como "zona de influencia"
+                        // hasta que el sistema de FFI esté 100% linkeado con la 6.0.
+                        let r = Rect::new(rect.x as i32, rect.y as i32, rect.w as u32, rect.h as u32);
+                        self.canvas.set_draw_color(Color::RGB(40, 40, 50));
+                        let _ = self.canvas.fill_rect(r);
+                        
+                        // Borde del viewport
+                        self.canvas.set_draw_color(Color::RGB(100, 100, 255));
+                        let _ = self.canvas.draw_rect(r);
+                        
+                        // Etiqueta del viewport
+                        self.draw_text(&format!("Viewport: {}", id), rect.x as i32 + 5, rect.y as i32 + 5, 12, 100, 100, 255);
+                    }
+                }
+            }
+        }
     }
 
     /// Sincroniza eventos de SDL2 directamente con el InputManager de events-ry

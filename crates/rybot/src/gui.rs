@@ -52,6 +52,15 @@ pub struct RybotGui {
     pub show_inspector: bool,
     pub show_scene_tree: bool,
     pub show_stats: bool,
+    pub show_animation: bool,
+    pub show_tilemap: bool,
+
+    // Inspector sections (submenus)
+    pub inspector_sections: std::collections::HashMap<String, bool>,
+
+    // Window positions extra
+    pub animation_rect: Rect,
+    pub tilemap_rect: Rect,
 }
 
 impl Default for RybotGui {
@@ -62,6 +71,11 @@ impl Default for RybotGui {
 
 impl RybotGui {
     pub fn new() -> Self {
+        let mut inspector_sections = std::collections::HashMap::new();
+        inspector_sections.insert("MOTOR".to_string(), true);
+        inspector_sections.insert("SUBSISTEMAS".to_string(), true);
+        inspector_sections.insert("PROPIEDADES".to_string(), false);
+
         Self {
             open: false,
             active_panel: ActivePanel::None,
@@ -72,22 +86,30 @@ impl RybotGui {
             status_message: String::new(),
             status_ok: true,
             new_project_rect: Rect::new(20.0, 20.0, 400.0, 300.0),
-            inspector_rect: Rect::new(440.0, 20.0, 350.0, 500.0),
-            scene_tree_rect: Rect::new(20.0, 340.0, 400.0, 300.0),
-            stats_rect: Rect::new(440.0, 540.0, 350.0, 100.0),
+            inspector_rect: Rect::new(820.0, 30.0, 350.0, 400.0),
+            scene_tree_rect: Rect::new(820.0, 440.0, 350.0, 330.0),
+            stats_rect: Rect::new(10.0, 600.0, 350.0, 150.0),
+            animation_rect: Rect::new(10.0, 440.0, 800.0, 150.0),
+            tilemap_rect: Rect::new(200.0, 100.0, 600.0, 400.0),
             menu_bar_open: true,
             show_new_project: false,
             show_inspector: true,
             show_scene_tree: true,
-            show_stats: true,
+            show_stats: false,
+            show_animation: true,
+            show_tilemap: false,
+            inspector_sections,
         }
     }
 
     /// Dibujar toda la GUI de Rybot
-    pub fn draw(&mut self, gui: &mut Migui, engine: &RybotEngine) {
+    pub fn draw(&mut self, gui: &mut Migui, stats: &crate::EngineStats, scene: &crate::SceneTree) {
         if !self.open {
             return;
         }
+
+        // Toolkit / Toolbar (Acceso rápido táctil/mouse)
+        self.draw_toolkit(gui);
 
         // Menu bar
         if self.menu_bar_open {
@@ -99,13 +121,116 @@ impl RybotGui {
             self.draw_new_project(gui);
         }
         if self.show_inspector {
-            self.draw_inspector(gui, engine);
+            self.draw_inspector(gui, stats);
         }
         if self.show_scene_tree {
-            self.draw_scene_tree(gui, engine);
+            self.draw_scene_tree(gui, scene);
         }
         if self.show_stats {
-            self.draw_engine_stats(gui, engine);
+            self.draw_engine_stats(gui, stats);
+        }
+        if self.show_animation {
+            self.draw_animation_panel(gui);
+        }
+        if self.show_tilemap {
+            self.draw_tilemap_panel(gui);
+        }
+    }
+
+    // ========================================================================
+    // TOOLKIT / TOOLBAR (Quick Access)
+    // ========================================================================
+
+    fn draw_toolkit(&mut self, gui: &mut Migui) {
+        let bar_w = 40.0;
+        let bar_h = 240.0;
+        let x = 0.0;
+        let y = 100.0;
+
+        // Fondo del Toolkit (barra lateral)
+        gui.panel(
+            WidgetId::new("toolkit_bg"),
+            Rect::new(x, y, bar_w, bar_h),
+            Color::new(50, 50, 60, 200),
+        );
+
+        let btn_size = 32.0;
+        let mut curr_y = y + 5.0;
+        let left = x + (bar_w - btn_size) / 2.0;
+
+        // Botón 1: Animación
+        if gui.button(WidgetId::new("tool_1"), Rect::new(left, curr_y, btn_size, btn_size), "🎬") {
+            self.show_animation = !self.show_animation;
+        }
+        curr_y += btn_size + 5.0;
+
+        // Botón 2: Tilemap
+        if gui.button(WidgetId::new("tool_2"), Rect::new(left, curr_y, btn_size, btn_size), "🗺") {
+            self.show_tilemap = !self.show_tilemap;
+        }
+        curr_y += btn_size + 5.0;
+
+        // Botón 3: Inspector
+        if gui.button(WidgetId::new("tool_3"), Rect::new(left, curr_y, btn_size, btn_size), "📋") {
+            self.show_inspector = !self.show_inspector;
+        }
+        curr_y += btn_size + 5.0;
+
+        // Botón 4: Scene Tree
+        if gui.button(WidgetId::new("tool_4"), Rect::new(left, curr_y, btn_size, btn_size), "🌳") {
+            self.show_scene_tree = !self.show_scene_tree;
+        }
+    }
+
+    // ========================================================================
+    // ANIMATION PANEL (Action Assets)
+    // ========================================================================
+
+    fn draw_animation_panel(&mut self, gui: &mut Migui) {
+        let mut open = self.show_animation;
+        if gui.window(
+            WidgetId::new("win_animation"),
+            "🎬 Línea de Tiempo / Action Assets",
+            self.animation_rect,
+            &mut open,
+        ) {
+            self.show_animation = open;
+            let mut y = 60.0;
+            let left = self.animation_rect.x + 15.0;
+            
+            gui.label(WidgetId::new("lbl_anim_placeholder"), 
+                "Controles de Reproducción: [ ▶ ] [ ⏸ ] [ ⏹ ]  |  Hot Reload: [ 🔄 ]",
+                Rect::new(left, y, self.animation_rect.w - 30.0, 20.0));
+            y += 30.0;
+            
+            // Simulación de Timeline
+            gui.panel(WidgetId::new("timeline_bg"), 
+                Rect::new(left, y, self.animation_rect.w - 30.0, 40.0),
+                Color::new(30, 30, 30, 255));
+            
+            // Cursor de tiempo
+            gui.panel(WidgetId::new("timeline_cursor"),
+                Rect::new(left + 50.0, y, 2.0, 40.0),
+                Color::RED);
+        }
+    }
+
+    // ========================================================================
+    // TILEMAP PANEL
+    // ========================================================================
+
+    fn draw_tilemap_panel(&mut self, gui: &mut Migui) {
+        let mut open = self.show_tilemap;
+        if gui.window(
+            WidgetId::new("win_tilemap"),
+            "🗺 Tilemap Editor",
+            self.tilemap_rect,
+            &mut open,
+        ) {
+            self.show_tilemap = open;
+            gui.label(WidgetId::new("lbl_tile_placeholder"), 
+                "Paleta de Tiles: [ 🧱 ] [ 🌿 ] [ 💧 ] [ 🏠 ]",
+                Rect::new(self.tilemap_rect.x + 15.0, 60.0, 200.0, 20.0));
         }
     }
 
@@ -270,7 +395,7 @@ impl RybotGui {
     // INSPECTOR PANEL
     // ========================================================================
 
-    fn draw_inspector(&mut self, gui: &mut Migui, engine: &RybotEngine) {
+    fn draw_inspector(&mut self, gui: &mut Migui, stats: &crate::EngineStats) {
         let mut open = self.show_inspector;
         if gui.window(
             WidgetId::new("win_inspector"),
@@ -284,72 +409,102 @@ impl RybotGui {
             let left = self.inspector_rect.x + 15.0;
             let w = self.inspector_rect.w - 30.0;
 
-            // Sección: Motor
-            gui.label(WidgetId::new("sec_motor"), "══ MOTOR ══",
-                Rect::new(left, y, w, 20.0));
-            y += 22.0;
-
-            let state_label = match engine.state() {
-                crate::EngineState::Running => "🟢 Running",
-                crate::EngineState::Paused => "🟡 Paused",
-                crate::EngineState::Loading => "🔵 Loading",
-                crate::EngineState::Initializing => "⚪ Initializing",
-                crate::EngineState::ShuttingDown => "🔴 ShuttingDown",
-            };
-            gui.label(WidgetId::new("ins_state"), &format!("Estado: {}", state_label),
-                Rect::new(left, y, w, 20.0));
-            y += 20.0;
-            gui.label(WidgetId::new("ins_frame"), &format!("Frame: {}", engine.frame()),
-                Rect::new(left, y, w, 20.0));
-            y += 20.0;
-
-            // Botones de control del motor
-            y += 5.0;
-            if engine.is_running() {
-                if gui.button(WidgetId::new("btn_pause"),
-                    Rect::new(left, y, w / 2.0 - 5.0, 28.0), "⏸ Pausar") {
-                    // engine mut needed
-                }
-                if gui.button(WidgetId::new("btn_shutdown"),
-                    Rect::new(left + w / 2.0 + 5.0, y, w / 2.0 - 5.0, 28.0), "⏹ Detener") {
-                    // engine mut needed
-                }
-            } else if engine.is_paused() {
-                if gui.button(WidgetId::new("btn_resume"),
-                    Rect::new(left, y, w, 28.0), "▶ Reanudar") {
-                    // engine mut needed
-                }
-            }
-            y += 35.0;
-
-            // Sección: Subsistemas
-            y += 5.0;
-            gui.label(WidgetId::new("sec_subs"), "══ SUBSISTEMAS ══",
-                Rect::new(left, y, w, 20.0));
-            y += 22.0;
-
-            let subs = [
-                ("Input", engine.input().action_count() > 0),
-                ("Físicas", engine.physics().enabled()),
-                ("Animación", engine.animation().enabled()),
-                ("Ciencia", engine.science().enabled()),
-                ("Red", engine.network().enabled()),
-            ];
-            for (name, active) in &subs {
-                let status = if *active { "✅" } else { "❌" };
-                gui.label(WidgetId::new(&format!("sub_{}", name)),
-                    &format!("{}  {}", status, name),
-                    Rect::new(left, y, w, 20.0));
+            // --- SECCIÓN: MOTOR ---
+            if self.collapsible_section(gui, "MOTOR", left, &mut y, w) {
+                let state_label = match stats.state {
+                    crate::EngineState::Running => "🟢 Running",
+                    crate::EngineState::Paused => "🟡 Paused",
+                    crate::EngineState::Loading => "🔵 Loading",
+                    crate::EngineState::Initializing => "⚪ Initializing",
+                    crate::EngineState::ShuttingDown => "🔴 ShuttingDown",
+                };
+                gui.label(WidgetId::new("ins_state"), &format!("Estado: {}", state_label),
+                    Rect::new(left + 10.0, y, w - 10.0, 20.0));
                 y += 20.0;
+                gui.label(WidgetId::new("ins_frame"), &format!("Frame: {}", stats.frame),
+                    Rect::new(left + 10.0, y, w - 10.0, 20.0));
+                y += 20.0;
+
+                // Botones de control del motor
+                y += 5.0;
+                if stats.state == crate::EngineState::Running {
+                    let _ = gui.button(WidgetId::new("btn_pause"),
+                        Rect::new(left + 10.0, y, (w - 10.0) / 2.0 - 5.0, 28.0), "⏸ Pausar");
+                    let _ = gui.button(WidgetId::new("btn_shutdown"),
+                        Rect::new(left + 10.0 + (w - 10.0) / 2.0 + 5.0, y, (w - 10.0) / 2.0 - 5.0, 28.0), "⏹ Detener");
+                } else if stats.state == crate::EngineState::Paused {
+                    let _ = gui.button(WidgetId::new("btn_resume"),
+                        Rect::new(left + 10.0, y, w - 10.0, 28.0), "▶ Reanudar");
+                }
+                y += 35.0;
+            }
+
+            // --- SECCIÓN: SUBSISTEMAS ---
+            if self.collapsible_section(gui, "SUBSISTEMAS", left, &mut y, w) {
+                let subs = [
+                    ("Input", stats.input_actions > 0),
+                    ("Físicas", stats.physics_enabled),
+                    ("Animación", stats.animation_enabled),
+                    ("Red", stats.network_enabled),
+                ];
+                for (name, active) in &subs {
+                    let status = if *active { "✅" } else { "❌" };
+                    gui.label(WidgetId::new(&format!("sub_{}", name)),
+                        &format!("{}  {}", status, name),
+                        Rect::new(left + 10.0, y, w - 10.0, 20.0));
+                    y += 20.0;
+                }
+                y += 5.0;
+            }
+
+            // --- SECCIÓN: PROPIEDADES ---
+            if self.collapsible_section(gui, "PROPIEDADES", left, &mut y, w) {
+                gui.label(WidgetId::new("ins_node_name"), "📦 Objeto: Cubo_Test",
+                    Rect::new(left + 10.0, y, w - 10.0, 20.0));
+                y += 22.0;
+
+                // Transform
+                gui.label(WidgetId::new("ins_pos"), &format!("Pos: {:.1}, {:.1}", stats.pan_x, stats.pan_y),
+                    Rect::new(left + 20.0, y, w - 20.0, 20.0));
+                y += 20.0;
+                
+                gui.label(WidgetId::new("ins_zoom"), &format!("Zoom: {:.2}x", stats.zoom),
+                    Rect::new(left + 20.0, y, w - 20.0, 20.0));
+                y += 20.0;
+                
+                gui.label(WidgetId::new("ins_scale"), "Escala: 1.0, 1.0, 1.0",
+                    Rect::new(left + 20.0, y, w - 20.0, 20.0));
+                y += 25.0;
+
+                if gui.button(WidgetId::new("btn_reset_transform"),
+                    Rect::new(left + 10.0, y, w - 10.0, 25.0), "🔄 Reset Transform") {
+                    // Reset logic
+                }
+                y += 30.0;
             }
         }
+    }
+
+    /// Helper para dibujar una sección colapsable
+    fn collapsible_section(&mut self, gui: &mut Migui, title: &str, x: f32, y: &mut f32, w: f32) -> bool {
+        let is_open = *self.inspector_sections.get(title).unwrap_or(&false);
+        let icon = if is_open { "▼" } else { "▶" };
+        let label = format!("{} {}", icon, title);
+
+        if gui.button(WidgetId::new(&format!("sec_btn_{}", title)),
+            Rect::new(x, *y, w, 22.0), &label) {
+            self.inspector_sections.insert(title.to_string(), !is_open);
+        }
+        *y += 24.0;
+
+        is_open
     }
 
     // ========================================================================
     // SCENE TREE PANEL
     // ========================================================================
 
-    fn draw_scene_tree(&mut self, gui: &mut Migui, engine: &RybotEngine) {
+    fn draw_scene_tree(&mut self, gui: &mut Migui, scene: &crate::SceneTree) {
         let mut open = self.show_scene_tree;
         if gui.window(
             WidgetId::new("win_scene"),
@@ -363,7 +518,6 @@ impl RybotGui {
             let left = self.scene_tree_rect.x + 15.0;
             let w = self.scene_tree_rect.w - 30.0;
 
-            let scene = engine.scene();
             let count = scene.node_count();
             gui.label(WidgetId::new("st_count"),
                 &format!("Nodos: {}", count),
@@ -415,9 +569,7 @@ impl RybotGui {
     // ENGINE STATS PANEL
     // ========================================================================
 
-    fn draw_engine_stats(&mut self, gui: &mut Migui, engine: &RybotEngine) {
-        let stats = engine.get_stats();
-
+    fn draw_engine_stats(&mut self, gui: &mut Migui, stats: &crate::EngineStats) {
         let mut open = self.show_stats;
         if gui.window(
             WidgetId::new("win_stats"),
